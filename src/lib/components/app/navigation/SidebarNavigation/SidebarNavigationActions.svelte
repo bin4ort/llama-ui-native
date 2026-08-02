@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
+	import { t, tr } from '$lib/stores/i18n.svelte';
 	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -140,7 +140,7 @@
 
 							{#if showIcons}
 								<span in:fade={itemTransition} out:fade={itemTransition} class="min-w-0 truncate"
-									>{item.tooltip}</span
+									>{tr.dict[item.tooltip] || item.tooltip}</span
 								>
 							{/if}
 						</span>
@@ -176,7 +176,7 @@
 				<div transition:fade={itemTransition}>
 					<ActionIcon
 						icon={item.icon}
-						tooltip={item.tooltip}
+						tooltip={tr.dict[item.tooltip] || item.tooltip}
 						tooltipSide={TooltipSide.RIGHT}
 						size="lg"
 						iconSize={ICON_CLASS_DEFAULT}

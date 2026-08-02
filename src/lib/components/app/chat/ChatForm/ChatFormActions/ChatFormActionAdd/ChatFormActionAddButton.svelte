@@ -4,10 +4,9 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Tooltip from '$lib/components/ui/tooltip';
 	import { ATTACHMENT_TOOLTIP_TEXT } from '$lib/constants';
+	import { tr } from '$lib/stores/i18n.svelte';
 
-	interface Props {
-		disabled?: boolean;
-		onclick?: (e: MouseEvent) => void;
+	let { disabled = false, onclick }: Props = $props();
 	}
 
 	let { disabled = false, onclick }: Props = $props();
@@ -22,13 +21,13 @@
 			variant="secondary"
 			type="button"
 		>
-			<span class="sr-only">{ATTACHMENT_TOOLTIP_TEXT}</span>
+			<span class="sr-only">{tr.dict[ATTACHMENT_TOOLTIP_TEXT] || ATTACHMENT_TOOLTIP_TEXT}</span>
 
 			<Plus class={ICON_CLASS_DEFAULT} />
 		</Button>
 	</Tooltip.Trigger>
 
 	<Tooltip.Content>
-		<p>{ATTACHMENT_TOOLTIP_TEXT}</p>
+		<p>{tr.dict[ATTACHMENT_TOOLTIP_TEXT] || ATTACHMENT_TOOLTIP_TEXT}</p>
 	</Tooltip.Content>
 </Tooltip.Root>
