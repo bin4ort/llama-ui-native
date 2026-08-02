@@ -125,7 +125,7 @@
 
 				{#if field.help || SETTING_CONFIG_INFO[field.key]}
 					<p class="mt-1 text-xs text-muted-foreground">
-						{field.help || SETTING_CONFIG_INFO[field.key]}
+						{tr.dict[field.help || SETTING_CONFIG_INFO[field.key]] || field.help || SETTING_CONFIG_INFO[field.key]}
 					</p>
 				{/if}
 
@@ -224,7 +224,7 @@
 				</Select.Root>
 				{#if field.help || SETTING_CONFIG_INFO[field.key]}
 					<p class="mt-1 text-xs text-muted-foreground">
-						{field.help || SETTING_CONFIG_INFO[field.key]}
+						{tr.dict[field.help || SETTING_CONFIG_INFO[field.key]] || field.help || SETTING_CONFIG_INFO[field.key]}
 					</p>
 				{/if}
 			{:else if field.type === SettingsFieldType.RADIO && field.radioOptions}
@@ -270,7 +270,7 @@
 
 				{#if field.help || SETTING_CONFIG_INFO[field.key]}
 					<p class="text-xs text-muted-foreground">
-						{field.help || SETTING_CONFIG_INFO[field.key]}
+						{tr.dict[field.help || SETTING_CONFIG_INFO[field.key]] || field.help || SETTING_CONFIG_INFO[field.key]}
 					</p>
 				{/if}
 			{:else if field.type === SettingsFieldType.CHECKBOX}
@@ -296,7 +296,7 @@
 
 						{#if field.help || SETTING_CONFIG_INFO[field.key]}
 							<p class="text-xs text-muted-foreground">
-								{field.help || SETTING_CONFIG_INFO[field.key]}
+								{tr.dict[field.help || SETTING_CONFIG_INFO[field.key]] || field.help || SETTING_CONFIG_INFO[field.key]}
 							</p>
 						{/if}
 					</div>
