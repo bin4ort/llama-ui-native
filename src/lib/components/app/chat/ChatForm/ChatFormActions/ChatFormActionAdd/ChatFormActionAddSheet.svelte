@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
+	import { t, tr } from '$lib/stores/i18n.svelte';
 
 	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
 	import type { Snippet } from 'svelte';
@@ -188,7 +188,7 @@
 									>
 										<item.icon class="{ICON_CLASS_DEFAULT} shrink-0" />
 
-										<span>{item.label}</span>
+										<span>{tr.dict[item.label] || item.label}</span>
 									</button>
 								{:else if item.disabledTooltip}
 									<Tooltip.Root delayDuration={TOOLTIP_DELAY_DURATION}>
@@ -196,7 +196,7 @@
 											<button type="button" class={sheetItemClass} disabled>
 												<item.icon class="{ICON_CLASS_DEFAULT} shrink-0" />
 
-												<span>{item.label}</span>
+												<span>{tr.dict[item.label] || item.label}</span>
 											</button>
 										</Tooltip.Trigger>
 

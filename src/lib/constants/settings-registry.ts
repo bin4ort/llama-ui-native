@@ -112,6 +112,8 @@ const SETTINGS_REGISTRY: Record<string, SettingsSectionEntry> = {
 							{ value: 'en', label: 'English', icon: Globe },
 							{ value: 'de', label: 'Deutsch', icon: Globe },
 							{ value: 'ru', label: 'Русский', icon: Globe },
+							{ value: 'es', label: 'Español', icon: Globe },
+							{ value: 'fr', label: 'Français', icon: Globe },
 						]
 					},
 					{
