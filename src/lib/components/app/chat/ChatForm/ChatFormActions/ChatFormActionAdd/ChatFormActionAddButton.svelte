@@ -6,7 +6,9 @@
 	import { ATTACHMENT_TOOLTIP_TEXT } from '$lib/constants';
 	import { tr } from '$lib/stores/i18n.svelte';
 
-	let { disabled = false, onclick }: Props = $props();
+	interface Props {
+		disabled?: boolean;
+		onclick?: (e: MouseEvent) => void;
 	}
 
 	let { disabled = false, onclick }: Props = $props();
