@@ -1,3 +1,5 @@
+// MIT License — Copyright (c) 2025 Llama UI Native
+// See LICENSE file in the project root.
 /* i18n.js — Minimal DOM translation for strings not handled by SvelteKit's $state */
 (function() {
 	var L = (localStorage.getItem('lang') || 'en').trim();

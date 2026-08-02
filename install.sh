@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# MIT License — Copyright (c) 2025 Llama UI Native
 # Llama UI Native — install script
 set -euo pipefail
 

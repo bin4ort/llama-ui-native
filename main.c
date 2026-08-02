@@ -1,3 +1,7 @@
+/*
+ * MIT License — Copyright (c) 2025 Llama UI Native
+ * See LICENSE file in the project root.
+ */
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
 #include <stdlib.h>

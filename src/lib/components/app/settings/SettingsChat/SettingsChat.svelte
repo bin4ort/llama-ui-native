@@ -1,4 +1,6 @@
 <script lang="ts">
+	// MIT License — Copyright (c) 2025 Llama UI Native
+	// See LICENSE file in the project root.
 	import {
 		SettingsChatDesktopSidebar,
 		SettingsChatFields,
@@ -14,7 +16,7 @@
 		SETTINGS_CHAT_SECTIONS,
 		SETTINGS_SECTION_TITLES
 	} from '$lib/constants';
-	import type { SettingsSection } from '$lib/types';
+
 	import { RouterService } from '$lib/services/router.service';
 	import { setMode } from 'mode-watcher';
 	import { ColorMode } from '$lib/enums/ui.enums';
@@ -28,15 +30,10 @@
 	import { modelsStore } from '$lib/stores/models.svelte';
 	import { isRouterMode } from '$lib/stores/server.svelte';
 	import { applyLang } from '$lib/stores/i18n.svelte';
-	interface Props {
-		initialSection?: string;
-		getSectionHref?: (section: SettingsSection) => string;
-	}
-
-	let { initialSection, getSectionHref }: Props = $props();
+	let { initialSection, getSectionHref } = $props();
 
 	let activeSlug = $derived(
-		initialSection ?? (page.params as Record<string, string | undefined>).section ?? 'general'
+		initialSection ?? (page.params).section ?? 'general'
 	);
 
 	let currentSection = $derived(
@@ -44,9 +41,9 @@
 			SETTINGS_CHAT_SECTIONS[0]
 	);
 
-	let localConfig: SettingsConfigType = $state({ ...config() });
+	let localConfig = $state({ ...config() });
 
-	let mobileHeader: { updateCarousel: () => void } | undefined;
+	let mobileHeader;
 
 	let fetchInitiated = false;
 
@@ -62,21 +59,21 @@
 		}
 	});
 
-	function handleThemeChange(newTheme: string) {
+	function handleThemeChange(newTheme) {
 		localConfig.theme = newTheme;
-		setMode(newTheme as ColorMode);
+		setMode(newTheme);
 	}
 
-	function handleConfigChange(key: string, value: string | boolean) {
+	function handleConfigChange(key, value) {
 		localConfig[key] = value;
 		if (key === 'language') {
-			applyLang(value as string);
+			applyLang(value);
 		}
 	}
 
 	function handleReset() {
 		localConfig = { ...config() };
-		setMode(localConfig.theme as ColorMode);
+		setMode(localConfig.theme);
 		mobileHeader?.updateCarousel();
 	}
 
@@ -101,7 +98,7 @@
 			if (processedConfig[field] !== undefined && processedConfig[field] !== '') {
 				const numValue = Number(processedConfig[field]);
 				if (!isNaN(numValue)) {
-					if ((POSITIVE_INTEGER_FIELDS as readonly string[]).includes(field)) {
+					if (POSITIVE_INTEGER_FIELDS.includes(field)) {
 						processedConfig[field] = Math.max(1, Math.round(numValue));
 					} else {
 						processedConfig[field] = numValue;
@@ -134,16 +131,16 @@
 	<div class="flex flex-1 flex-col gap-4 md:flex-row">
 		<SettingsChatDesktopSidebar
 			sections={SETTINGS_CHAT_SECTIONS}
-			isActive={(section: SettingsSection) => section.slug === activeSlug}
+			isActive={(section) => section.slug === activeSlug}
 			getHref={getSectionHref ??
-				((section: SettingsSection) => RouterService.settings(section.slug))}
+				((section) => RouterService.settings(section.slug))}
 		/>
 
 		<SettingsChatMobileHeader
 			sections={SETTINGS_CHAT_SECTIONS}
-			isActive={(section: SettingsSection) => section.slug === activeSlug}
+			isActive={(section) => section.slug === activeSlug}
 			getHref={getSectionHref ??
-				((section: SettingsSection) => RouterService.settings(section.slug))}
+				((section) => RouterService.settings(section.slug))}
 			bind:this={mobileHeader}
 		/>
 

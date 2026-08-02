@@ -1,3 +1,7 @@
+/*
+ * MIT License — Copyright (c) 2025 Llama UI Native
+ * See LICENSE file in the project root.
+ */
 #ifndef SERVER_H
 #define SERVER_H
 

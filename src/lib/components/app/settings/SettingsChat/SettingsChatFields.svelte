@@ -1,4 +1,6 @@
 <script lang="ts">
+	// MIT License — Copyright (c) 2025 Llama UI Native
+	// See LICENSE file in the project root.
 	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
 	import { RotateCcw, FlaskConical } from '@lucide/svelte';
 	import { Checkbox } from '$lib/components/ui/checkbox';
@@ -15,16 +17,9 @@
 	import { normalizeFloatingPoint } from '$lib/utils/precision';
 	import { SettingsChatParameterSourceIndicator } from '$lib/components/app/settings';
 	import { tr, t } from '$lib/stores/i18n.svelte';
-	import type { Component } from 'svelte';
 
-	interface Props {
-		fields: SettingsFieldConfig[];
-		localConfig: SettingsConfigType;
-		onConfigChange: (key: string, value: string | boolean) => void;
-		onThemeChange?: (theme: string) => void;
-	}
 
-	let { fields, localConfig, onConfigChange, onThemeChange }: Props = $props();
+	let { fields, localConfig, onConfigChange, onThemeChange } = $props();
 
 	let currentModelParams = $derived.by(() => {
 		propsCacheVersion();
@@ -35,13 +30,10 @@
 			if (currentModelName) {
 				const currentModelProps = modelsStore.getModelProps(currentModelName);
 
-				return (currentModelProps?.default_generation_settings?.params ?? {}) as Record<
-					string,
-					unknown
-				>;
+				return (currentModelProps?.default_generation_settings?.params ?? {});
 			}
 		}
-		return (serverStore.defaultParams ?? {}) as Record<string, unknown>;
+		return (serverStore.defaultParams ?? {});
 	});
 </script>
 
@@ -153,7 +145,7 @@
 				{/if}
 			{:else if field.type === SettingsFieldType.SELECT}
 				{@const selectedOption = field.options?.find(
-					(opt: { value: string; label: string; icon?: Component }) =>
+					(opt) =>
 						opt.value === localConfig[field.key]
 				)}
 				{@const currentValue = localConfig[field.key]}
@@ -238,7 +230,7 @@
 			{:else if field.type === SettingsFieldType.RADIO && field.radioOptions}
 				{@const radioOptions = field.radioOptions}
 				{@const currentMode =
-					radioOptions.find((o: { key: string }) => Boolean(localConfig[o.key]))?.value ??
+					radioOptions.find((o) => Boolean(localConfig[o.key]))?.value ??
 					radioOptions[0].value}
 
 				<Label class="flex items-center gap-1.5 text-sm font-medium mb-4">

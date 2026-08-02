@@ -1,3 +1,7 @@
+/*
+ * MIT License — Copyright (c) 2025 Llama UI Native
+ * See LICENSE file in the project root.
+ */
 #include "server.h"
 #define MG_ENABLE_LOG 0
 #include "mongoose.h"
