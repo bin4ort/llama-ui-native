@@ -6,3 +6,4 @@ dist/
 llama-ui-native
 **/*.bak
 .DS_Store
+node_modules/
