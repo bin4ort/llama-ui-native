@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+import { tr } from '$lib/stores/i18n.svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import { settingsStore } from '$lib/stores/settings.svelte';
 	import { RotateCcw } from '@lucide/svelte';
@@ -38,7 +39,7 @@
 		</Button>
 	</div>
 
-	<Button onclick={handleSave}>Save settings</Button>
+	<Button onclick={handleSave}>{tr.dict["Save settings"] || "Save settings"}</Button>
 </div>
 
 <AlertDialog.Root bind:open={showResetDialog}>

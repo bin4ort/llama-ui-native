@@ -92,8 +92,8 @@
 								onConfigChange(field.key, '');
 							}}
 							class="absolute top-1/2 right-2 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded transition-colors hover:bg-muted"
-							aria-label="Reset to default"
-							title="Reset to default"
+							aria-label={tr.dict["Reset to default"] || "Reset to default"}
+							title={tr.dict["Reset to default"] || "Reset to default"}
 						>
 							<RotateCcw class="h-3 w-3" />
 						</button>
@@ -199,8 +199,8 @@
 									onConfigChange(field.key, '');
 								}}
 								class="absolute top-1/2 right-8 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded transition-colors hover:bg-muted"
-								aria-label="Reset to default"
-								title="Reset to default"
+								aria-label={tr.dict["Reset to default"] || "Reset to default"}
+								title={tr.dict["Reset to default"] || "Reset to default"}
 							>
 								<RotateCcw class="h-3 w-3" />
 							</button>
