@@ -1,12 +1,5 @@
-<script lang="ts">
-	import { SyntaxHighlightedCode } from '$lib/components/app';
-
-	interface Props {
-		displayTextContent: string | undefined;
-		language: string;
-	}
-
-	let { displayTextContent, language }: Props = $props();
+<script>let { displayTextContent, language } = $props();
+export {};
 </script>
 
 {#if displayTextContent}

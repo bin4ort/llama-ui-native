@@ -1,86 +1,34 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { FolderOpen, ChevronDown, ChevronRight, Loader2, Braces } from '@lucide/svelte';
-	import { Checkbox } from '$lib/components/ui/checkbox';
-	import * as Collapsible from '$lib/components/ui/collapsible';
-	import { mcpStore } from '$lib/stores/mcp.svelte';
-	import type { MCPResourceInfo, MCPResourceTemplateInfo, MCPServerResources } from '$lib/types';
-	import { SvelteSet } from 'svelte/reactivity';
-	import {
-		type ResourceTreeNode,
-		buildResourceTree,
-		countTreeResources,
-		sortTreeChildren
-	} from './mcp-resources-browser';
-	import { getDisplayName, getResourceIcon } from '$lib/utils';
-	import { McpServerIdentity } from '$lib/components/app/mcp';
-
-	interface Props {
-		serverName: string;
-		serverRes: MCPServerResources;
-		isExpanded: boolean;
-		selectedUris: Set<string>;
-		selectedTemplateUri?: string | null;
-		expandedFolders: SvelteSet<string>;
-		onToggleServer: () => void;
-		onToggleFolder: (folderId: string) => void;
-		onSelect?: (resource: MCPResourceInfo, shiftKey?: boolean) => void;
-		onToggle?: (resource: MCPResourceInfo, checked: boolean) => void;
-		onTemplateSelect?: (template: MCPResourceTemplateInfo) => void;
-		searchQuery?: string;
-	}
-
-	let {
-		serverName,
-		serverRes,
-		isExpanded,
-		selectedUris,
-		selectedTemplateUri,
-		expandedFolders,
-		onToggleServer,
-		onToggleFolder,
-		onSelect,
-		onToggle,
-		onTemplateSelect,
-		searchQuery = ''
-	}: Props = $props();
-
-	let serverDisplayName = $derived(mcpStore.getServerDisplayName(serverName));
-	let serverFaviconUrl = $derived(mcpStore.getServerFavicon(serverName));
-
-	const hasResources = $derived(serverRes.resources.length > 0);
-	const hasTemplates = $derived(serverRes.templates.length > 0);
-	const hasContent = $derived(hasResources || hasTemplates);
-	const resourceTree = $derived(buildResourceTree(serverRes.resources, serverName, searchQuery));
-
-	const templateInfos = $derived<MCPResourceTemplateInfo[]>(
-		serverRes.templates.map((t) => ({
-			uriTemplate: t.uriTemplate,
-			name: t.name,
-			title: t.title,
-			description: t.description,
-			mimeType: t.mimeType,
-			serverName,
-			annotations: t.annotations,
-			icons: t.icons
-		}))
-	);
-
-	function handleResourceClick(resource: MCPResourceInfo, event: MouseEvent) {
-		onSelect?.(resource, event.shiftKey);
-	}
-
-	function handleCheckboxChange(resource: MCPResourceInfo, checked: boolean) {
-		onToggle?.(resource, checked);
-	}
-
-	function isResourceSelected(resource: MCPResourceInfo): boolean {
-		return selectedUris.has(resource.uri);
-	}
+<script>import { mcpStore } from '$lib/stores/mcp.svelte';
+import { buildResourceTree } from './mcp-resources-browser';
+let { serverName, serverRes, isExpanded, selectedUris, selectedTemplateUri, expandedFolders, onToggleServer, onToggleFolder, onSelect, onToggle, onTemplateSelect, searchQuery = '' } = $props();
+let serverDisplayName = $derived(mcpStore.getServerDisplayName(serverName));
+let serverFaviconUrl = $derived(mcpStore.getServerFavicon(serverName));
+const hasResources = $derived(serverRes.resources.length > 0);
+const hasTemplates = $derived(serverRes.templates.length > 0);
+const hasContent = $derived(hasResources || hasTemplates);
+const resourceTree = $derived(buildResourceTree(serverRes.resources, serverName, searchQuery));
+const templateInfos = $derived(serverRes.templates.map((t) => ({
+    uriTemplate: t.uriTemplate,
+    name: t.name,
+    title: t.title,
+    description: t.description,
+    mimeType: t.mimeType,
+    serverName,
+    annotations: t.annotations,
+    icons: t.icons
+})));
+function handleResourceClick(resource, event) {
+    onSelect?.(resource, event.shiftKey);
+}
+function handleCheckboxChange(resource, checked) {
+    onToggle?.(resource, checked);
+}
+function isResourceSelected(resource) {
+    return selectedUris.has(resource.uri);
+}
 </script>
 
-{#snippet renderTreeNode(node: ResourceTreeNode, depth: number, parentPath: string)}
+{#snippet renderTreeNode(node, depth, parentPath)}
 	{@const isFolder = !node.resource && node.children.size > 0}
 	{@const folderId = `${serverName}:${parentPath}/${node.name}`}
 	{@const isFolderExpanded = expandedFolders.has(folderId)}
@@ -134,7 +82,7 @@
 					'hover:bg-muted/50',
 					isSelected && 'bg-muted'
 				]}
-				onclick={(e: MouseEvent) => handleResourceClick(resource, e)}
+				onclick={(e) => handleResourceClick(resource, e)}
 				title={resourceDisplayName}
 			>
 				<ResourceIcon class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />

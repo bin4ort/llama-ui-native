@@ -1,74 +1,19 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { Plus, File, MessageSquare, Zap, FolderOpen } from '@lucide/svelte';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import * as Tooltip from '$lib/components/ui/tooltip';
-	import { buttonVariants } from '$lib/components/ui/button';
-	import { cn } from '$lib/components/ui/utils';
-	import {
-		ATTACHMENT_FILE_ITEMS,
-		ATTACHMENT_TOOLTIP_TEXT,
-		TOOLTIP_DELAY_DURATION
-	} from '$lib/constants';
-	import {
-		ChatFormActionAddToolsSubmenu,
-		ChatFormActionAddMcpServersSubmenu,
-		ChatFormActionAddReasoningSubmenu
-	} from '$lib/components/app';
-	import { useAttachmentMenu } from '$lib/hooks/use-attachment-menu.svelte';
-
-	interface Props {
-		class?: string;
-		disabled?: boolean;
-		hasAudioModality?: boolean;
-		hasVideoModality?: boolean;
-		hasVisionModality?: boolean;
-		hasMcpPromptsSupport?: boolean;
-		hasMcpResourcesSupport?: boolean;
-		onFileUpload?: () => void;
-		onSystemPromptClick?: () => void;
-		onMcpPromptClick?: () => void;
-		onMcpSettingsClick?: () => void;
-		onMcpResourcesClick?: () => void;
-	}
-
-	let {
-		class: className = '',
-		disabled = false,
-		hasAudioModality = false,
-		hasVideoModality = false,
-		hasVisionModality = false,
-		hasMcpPromptsSupport = false,
-		hasMcpResourcesSupport = false,
-		onFileUpload,
-		onSystemPromptClick,
-		onMcpPromptClick,
-		onMcpSettingsClick,
-		onMcpResourcesClick
-	}: Props = $props();
-
-	let dropdownOpen = $state(false);
-
-	function handleMcpSettingsClick() {
-		dropdownOpen = false;
-		onMcpSettingsClick?.();
-	}
-
-	const attachmentMenu = useAttachmentMenu(
-		() => ({
-			hasVisionModality,
-			hasAudioModality,
-			hasVideoModality,
-			hasMcpPromptsSupport,
-			hasMcpResourcesSupport
-		}),
-		() => ({ onFileUpload, onSystemPromptClick, onMcpPromptClick, onMcpResourcesClick }),
-		() => {
-			dropdownOpen = false;
-		}
-	);
+<script>import { useAttachmentMenu } from '$lib/hooks/use-attachment-menu.svelte';
+let { class: className = '', disabled = false, hasAudioModality = false, hasVideoModality = false, hasVisionModality = false, hasMcpPromptsSupport = false, hasMcpResourcesSupport = false, onFileUpload, onSystemPromptClick, onMcpPromptClick, onMcpSettingsClick, onMcpResourcesClick } = $props();
+let dropdownOpen = $state(false);
+function handleMcpSettingsClick() {
+    dropdownOpen = false;
+    onMcpSettingsClick?.();
+}
+const attachmentMenu = useAttachmentMenu(() => ({
+    hasVisionModality,
+    hasAudioModality,
+    hasVideoModality,
+    hasMcpPromptsSupport,
+    hasMcpResourcesSupport
+}), () => ({ onFileUpload, onSystemPromptClick, onMcpPromptClick, onMcpResourcesClick }), () => {
+    dropdownOpen = false;
+});
 </script>
 
 <div class="flex items-center gap-1 {className}">

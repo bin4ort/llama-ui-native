@@ -1,32 +1,5 @@
-<script lang="ts">
-	import { Switch } from '$lib/components/ui/switch';
-	import { Badge } from '$lib/components/ui/badge';
-	import { McpCapabilitiesBadges, McpServerIdentity } from '$lib/components/app/mcp';
-	import { MCP_TRANSPORT_LABELS, MCP_TRANSPORT_ICONS } from '$lib/constants';
-	import { MCPTransportType } from '$lib/enums';
-	import type { MCPServerInfo, MCPCapabilitiesInfo } from '$lib/types';
-
-	interface Props {
-		displayName: string;
-		faviconUrl?: string | null;
-		enabled: boolean;
-		disabled?: boolean;
-		onToggle: (enabled: boolean) => void;
-		serverInfo?: MCPServerInfo;
-		capabilities?: MCPCapabilitiesInfo;
-		transportType?: MCPTransportType;
-	}
-
-	let {
-		displayName,
-		faviconUrl,
-		enabled,
-		disabled = false,
-		onToggle,
-		serverInfo,
-		capabilities,
-		transportType
-	}: Props = $props();
+<script>let { displayName, faviconUrl, enabled, disabled = false, onToggle, serverInfo, capabilities, transportType } = $props();
+export {};
 </script>
 
 <div class="space-y-3">

@@ -1,41 +1,9 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	// Fall-through renderer for tool calls without a dedicated block.
-	// Renders section.toolArgs / section.toolResult directly using the
-	// shared chrome shell.
-
-	import { Loader2 } from '@lucide/svelte';
-	import { MarkdownContent, SyntaxHighlightedCode } from '$lib/components/app';
-	import { FileTypeText, ToolResultKind } from '$lib/enums';
-	import { MAX_HEIGHT_CODE_BLOCK } from '$lib/constants';
-	import {
-		classifyToolResult,
-		formatJsonPretty,
-		parseToolResultWithImages,
-		type AgenticSection,
-		type ToolResultLine
-	} from '$lib/utils';
-	import { getBuiltinToolUi } from '$lib/constants/built-in-tools';
-	import type { DatabaseMessageExtra } from '$lib/types';
-	import ToolCallBlock from './ToolCallBlock.svelte';
-
-	interface Props {
-		section: AgenticSection;
-		open: boolean;
-		isStreaming: boolean;
-		attachments?: DatabaseMessageExtra[];
-		onToggle?: () => void;
-	}
-
-	let { section, open, isStreaming, attachments, onToggle }: Props = $props();
-
-	const title = $derived(getBuiltinToolUi(section.toolName)?.label ?? section.toolName ?? '');
-
-	const parsedLines: ToolResultLine[] = $derived(
-		section.toolResult ? parseToolResultWithImages(section.toolResult, attachments) : []
-	);
-	const outputKind = $derived(classifyToolResult(section.toolResult));
+<script>import { classifyToolResult, parseToolResultWithImages } from '$lib/utils';
+import { getBuiltinToolUi } from '$lib/constants/built-in-tools';
+let { section, open, isStreaming, attachments, onToggle } = $props();
+const title = $derived(getBuiltinToolUi(section.toolName)?.label ?? section.toolName ?? '');
+const parsedLines = $derived(section.toolResult ? parseToolResultWithImages(section.toolResult, attachments) : []);
+const outputKind = $derived(classifyToolResult(section.toolResult));
 </script>
 
 <ToolCallBlock {section} {open} {isStreaming} meta={null} {title} {onToggle}>

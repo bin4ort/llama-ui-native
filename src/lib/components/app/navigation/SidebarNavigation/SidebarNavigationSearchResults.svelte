@@ -1,48 +1,10 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-	import { buildConversationTree } from '$lib/stores/conversations.svelte';
-	import SidebarNavigationConversationItem from './SidebarNavigationConversationItem.svelte';
-
-	interface Props {
-		class?: string;
-		searchQuery: string;
-		filteredConversations: DatabaseConversation[];
-		currentChatId: string | undefined;
-		isSelectionMode?: boolean;
-		selectedIds?: Set<string>;
-		onSelect: (id: string) => void;
-		onEdit: (id: string) => void;
-		onDelete: (id: string) => void;
-		onStop: (id: string) => void;
-		onToggleSelect?: (id: string) => void;
-		onEnterSelectionMode?: (id: string) => void;
-		onSelectionClick?: (id: string, options: { shiftKey: boolean }) => void;
-		onRowMouseDown?: (id: string, event: MouseEvent) => void;
-	}
-
-	let {
-		class: className = '',
-		searchQuery,
-		filteredConversations,
-		currentChatId,
-		isSelectionMode = false,
-		selectedIds = new Set<string>(),
-		onSelect,
-		onEdit,
-		onDelete,
-		onStop,
-		onToggleSelect,
-		onEnterSelectionMode,
-		onSelectionClick,
-		onRowMouseDown
-	}: Props = $props();
-
-	let tree = $derived(buildConversationTree(filteredConversations));
-
-	const hasQuery = $derived(searchQuery.trim().length > 0);
-	const showHeader = $derived(hasQuery && filteredConversations.length > 0);
-
-	const emptyMessage = $derived(hasQuery ? t("No results found") : t("Start typing to see results"));
+<script>import { t } from '$lib/stores/i18n.svelte';
+import { buildConversationTree } from '$lib/stores/conversations.svelte';
+let { class: className = '', searchQuery, filteredConversations, currentChatId, isSelectionMode = false, selectedIds = new Set(), onSelect, onEdit, onDelete, onStop, onToggleSelect, onEnterSelectionMode, onSelectionClick, onRowMouseDown } = $props();
+let tree = $derived(buildConversationTree(filteredConversations));
+const hasQuery = $derived(searchQuery.trim().length > 0);
+const showHeader = $derived(hasQuery && filteredConversations.length > 0);
+const emptyMessage = $derived(hasQuery ? t("No results found") : t("Start typing to see results"));
 </script>
 
 <div class="flex min-h-0 flex-1 flex-col gap-2 whitespace-nowrap {className}">

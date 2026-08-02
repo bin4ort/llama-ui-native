@@ -1,54 +1,27 @@
-<script lang="ts">
-	import { Card } from '$lib/components/ui/card';
-	import { ChatAttachmentsList, MarkdownContent } from '$lib/components/app';
-	import { config } from '$lib/stores/settings.svelte';
-	import type { DatabaseMessageExtra } from '$lib/types/database';
-
-	interface Props {
-		content: string;
-		attachments?: DatabaseMessageExtra[];
-		renderMarkdown?: boolean;
-		textColorClass?: string;
-		cardBgClass?: string;
-		maxHeightStyle?: string;
-	}
-
-	let {
-		content,
-		attachments = [],
-		renderMarkdown = false,
-		textColorClass = 'text-foreground',
-		cardBgClass = 'dark:bg-primary/15',
-		maxHeightStyle = ''
-	}: Props = $props();
-
-	let isMultiline = $state(false);
-	let messageElement: HTMLElement | undefined = $state();
-	const currentConfig = config();
-
-	$effect(() => {
-		if (!messageElement || !content.trim()) return;
-
-		if (content.includes('\n')) {
-			isMultiline = true;
-			return;
-		}
-
-		const resizeObserver = new ResizeObserver((entries) => {
-			for (const entry of entries) {
-				const element = entry.target as HTMLElement;
-				const estimatedSingleLineHeight = 24; // Typical line height for text-md
-
-				isMultiline = element.offsetHeight > estimatedSingleLineHeight * 1.5;
-			}
-		});
-
-		resizeObserver.observe(messageElement);
-
-		return () => {
-			resizeObserver.disconnect();
-		};
-	});
+<script>import { config } from '$lib/stores/settings.svelte';
+let { content, attachments = [], renderMarkdown = false, textColorClass = 'text-foreground', cardBgClass = 'dark:bg-primary/15', maxHeightStyle = '' } = $props();
+let isMultiline = $state(false);
+let messageElement = $state();
+const currentConfig = config();
+$effect(() => {
+    if (!messageElement || !content.trim())
+        return;
+    if (content.includes('\n')) {
+        isMultiline = true;
+        return;
+    }
+    const resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+            const element = entry.target;
+            const estimatedSingleLineHeight = 24; // Typical line height for text-md
+            isMultiline = element.offsetHeight > estimatedSingleLineHeight * 1.5;
+        }
+    });
+    resizeObserver.observe(messageElement);
+    return () => {
+        resizeObserver.disconnect();
+    };
+});
 </script>
 
 {#if attachments && attachments.length > 0}

@@ -1,18 +1,5 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { RefreshCw, Loader2 } from '@lucide/svelte';
-	import { Button } from '$lib/components/ui/button';
-	import { SearchInput } from '$lib/components/app/forms';
-
-	interface Props {
-		isLoading: boolean;
-		onRefresh: () => void;
-		onSearch?: (query: string) => void;
-		searchQuery?: string;
-	}
-
-	let { isLoading, onRefresh, onSearch, searchQuery = '' }: Props = $props();
+<script>let { isLoading, onRefresh, onSearch, searchQuery = '' } = $props();
+export {};
 </script>
 
 <div class="flex flex-col gap-2">

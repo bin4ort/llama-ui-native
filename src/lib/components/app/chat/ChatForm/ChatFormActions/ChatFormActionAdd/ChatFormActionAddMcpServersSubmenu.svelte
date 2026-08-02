@@ -1,63 +1,42 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { Settings, Plus } from '@lucide/svelte';
-	import { Switch } from '$lib/components/ui/switch';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import { McpLogo, DropdownMenuSearchable, McpServerIdentity } from '$lib/components/app';
-	import { conversationsStore } from '$lib/stores/conversations.svelte';
-	import { mcpStore } from '$lib/stores/mcp.svelte';
-	import { HealthCheckStatus } from '$lib/enums';
-	import type { MCPServerSettingsEntry } from '$lib/types';
-	import { goto } from '$app/navigation';
-	import { ROUTES } from '$lib/constants/routes';
-
-	interface Props {
-		onMcpSettingsClick?: () => void;
-	}
-
-	let { onMcpSettingsClick }: Props = $props();
-
-	let mcpSearchQuery = $state('');
-	// Every configured server is listed; `enabled` is an on/off state,
-	// not a visibility filter, so a disabled server stays toggleable.
-	let mcpServers = $derived(mcpStore.getServers());
-	let hasMcpServers = $derived(mcpServers.length > 0);
-	let filteredMcpServers = $derived.by(() => {
-		const query = mcpSearchQuery.toLowerCase().trim();
-		if (!query) return mcpServers;
-		return mcpServers.filter((s) => {
-			const name = getServerLabel(s).toLowerCase();
-			const url = s.url.toLowerCase();
-			return name.includes(query) || url.includes(query);
-		});
-	});
-
-	function getServerLabel(server: MCPServerSettingsEntry): string {
-		return mcpStore.getServerLabel(server);
-	}
-
-	function isServerEnabledForChat(serverId: string): boolean {
-		return conversationsStore.isMcpServerEnabledForChat(serverId);
-	}
-
-	async function toggleServerForChat(serverId: string) {
-		await conversationsStore.toggleMcpServerForChat(serverId);
-	}
-
-	function handleMcpSubMenuOpen(open: boolean) {
-		if (open) {
-			mcpSearchQuery = '';
-			mcpStore.runHealthChecksForServers(mcpServers);
-		}
-	}
-
-	function handleMcpSettingsClick() {
-		onMcpSettingsClick?.();
-
-		goto(`${hasMcpServers ? '' : '?add'}${ROUTES.MCP_SERVERS}`);
-	}
+<script>import { conversationsStore } from '$lib/stores/conversations.svelte';
+import { mcpStore } from '$lib/stores/mcp.svelte';
+import { goto } from '$app/navigation';
+import { ROUTES } from '$lib/constants/routes';
+let { onMcpSettingsClick } = $props();
+let mcpSearchQuery = $state('');
+// Every configured server is listed; `enabled` is an on/off state,
+// not a visibility filter, so a disabled server stays toggleable.
+let mcpServers = $derived(mcpStore.getServers());
+let hasMcpServers = $derived(mcpServers.length > 0);
+let filteredMcpServers = $derived.by(() => {
+    const query = mcpSearchQuery.toLowerCase().trim();
+    if (!query)
+        return mcpServers;
+    return mcpServers.filter((s) => {
+        const name = getServerLabel(s).toLowerCase();
+        const url = s.url.toLowerCase();
+        return name.includes(query) || url.includes(query);
+    });
+});
+function getServerLabel(server) {
+    return mcpStore.getServerLabel(server);
+}
+function isServerEnabledForChat(serverId) {
+    return conversationsStore.isMcpServerEnabledForChat(serverId);
+}
+async function toggleServerForChat(serverId) {
+    await conversationsStore.toggleMcpServerForChat(serverId);
+}
+function handleMcpSubMenuOpen(open) {
+    if (open) {
+        mcpSearchQuery = '';
+        mcpStore.runHealthChecksForServers(mcpServers);
+    }
+}
+function handleMcpSettingsClick() {
+    onMcpSettingsClick?.();
+    goto(`${hasMcpServers ? '' : '?add'}${ROUTES.MCP_SERVERS}`);
+}
 </script>
 
 <DropdownMenu.Root>

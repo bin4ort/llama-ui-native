@@ -1,16 +1,5 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import { ChevronLeft, ChevronRight } from '@lucide/svelte';
-	import { Button } from '$lib/components/ui/button';
-
-	interface Props {
-		onPrev: () => void;
-		onNext: () => void;
-		show: boolean;
-	}
-
-	let { onPrev, onNext, show }: Props = $props();
+<script>let { onPrev, onNext, show } = $props();
+export {};
 </script>
 
 {#if show}

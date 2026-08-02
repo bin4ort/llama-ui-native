@@ -1,16 +1,5 @@
-<script lang="ts">
-	import { ChatMessageStatistics } from '$lib/components/app';
-	import { ChatMessageStatisticsMode } from '$lib/enums';
-	import type { UseProcessingStateReturn } from '$lib/hooks/use-processing-state.svelte';
-
-	interface Props {
-		message: DatabaseMessage;
-		isLoading: boolean;
-		processingState: UseProcessingStateReturn;
-		showMessageStats: boolean;
-	}
-
-	let { message, isLoading, processingState, showMessageStats }: Props = $props();
+<script>let { message, isLoading, processingState, showMessageStats } = $props();
+export {};
 </script>
 
 {#if showMessageStats && message.timings && message.timings.predicted_n && message.timings.predicted_ms}

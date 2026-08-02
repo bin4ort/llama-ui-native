@@ -1,182 +1,104 @@
-<script lang="ts">
-	import {
-		ChatMessageStatistics,
-		MarkdownContent,
-		ChatMessageActionCardPermissionRequest,
-		ChatMessageActionCardContinueRequest
-	} from '$lib/components/app';
-
-	import { AgenticSectionType, ChatMessageStatsView, ToolPermissionDecision } from '$lib/enums';
-	import type {
-		ChatMessageAgenticTimings,
-		ChatMessageAgenticTurnStats,
-		DatabaseMessage
-	} from '$lib/types';
-	import { deriveAgenticSections, type AgenticSection } from '$lib/utils';
-	import {
-		agenticPendingPermissionRequest,
-		agenticResolvePermission,
-		agenticPendingContinueRequest,
-		agenticResolveContinue,
-		agenticLastError,
-		agenticExecutingToolCallId
-	} from '$lib/stores/agentic.svelte';
-	import { config } from '$lib/stores/settings.svelte';
-	import ChatMessageReasoningBlock from './ChatMessageReasoningBlock.svelte';
-	import ChatMessageToolCallBlock from './ChatMessage/ChatMessageToolCall/ChatMessageToolCallBlock.svelte';
-
-	interface Props {
-		message: DatabaseMessage;
-		toolMessages?: DatabaseMessage[];
-		isStreaming?: boolean;
-		isLastAssistantMessage?: boolean;
-	}
-
-	let {
-		message,
-		toolMessages = [],
-		isStreaming = false,
-		isLastAssistantMessage = false
-	}: Props = $props();
-
-	let expandedStates: Record<number, boolean> = $state({});
-
-	const renderThinkingAsMarkdown = $derived(config().renderThinkingAsMarkdown as boolean);
-	const showThoughtInProgress = $derived(Boolean(config().showThoughtInProgress));
-	const alwaysShowToolCallContent = $derived(Boolean(config().alwaysShowToolCallContent));
-	const showMessageStats = $derived(Boolean(config().showMessageStats));
-	const showAgenticTurnStats = $derived(showMessageStats && Boolean(config().showAgenticTurnStats));
-
-	const hasReasoningError = $derived(
-		isLastAssistantMessage ? !!agenticLastError(message.convId) : false
-	);
-
-	let permissionDismissed = $state(false);
-
-	const pendingPermission = $derived(
-		isStreaming && isLastAssistantMessage ? agenticPendingPermissionRequest(message.convId) : null
-	);
-
-	let prevPendingRef: typeof pendingPermission = null;
-	$effect(() => {
-		if (pendingPermission !== prevPendingRef) {
-			prevPendingRef = pendingPermission;
-			if (pendingPermission) {
-				permissionDismissed = false;
-			}
-		}
-	});
-
-	function handlePermission(decision: ToolPermissionDecision) {
-		permissionDismissed = true;
-		agenticResolvePermission(message.convId, decision);
-	}
-
-	let continueDismissed = $state(false);
-
-	const pendingContinue = $derived(
-		isStreaming && isLastAssistantMessage ? agenticPendingContinueRequest(message.convId) : false
-	);
-
-	let prevContinueRef = false;
-	$effect(() => {
-		if (pendingContinue !== prevContinueRef) {
-			prevContinueRef = pendingContinue;
-			if (pendingContinue) {
-				continueDismissed = false;
-			}
-		}
-	});
-
-	function handleContinue(shouldContinue: boolean) {
-		continueDismissed = true;
-		agenticResolveContinue(message.convId, shouldContinue);
-	}
-
-	const sections = $derived(deriveAgenticSections(message, toolMessages, [], isStreaming));
-
-	const currentlyExecutingToolCallId = $derived(
-		isStreaming ? agenticExecutingToolCallId(message.convId) : null
-	);
-
-	type TurnGroup = {
-		sections: AgenticSection[];
-		flatIndices: number[];
-	};
-
-	const turnGroups: TurnGroup[] = $derived.by(() => {
-		const groups: TurnGroup[] = [];
-		let currentTurn: AgenticSection[] = [];
-		let currentIndices: number[] = [];
-		let prevWasTool = false;
-
-		for (let i = 0; i < sections.length; i++) {
-			const section = sections[i];
-			const isTool =
-				section.type === AgenticSectionType.TOOL_CALL ||
-				section.type === AgenticSectionType.TOOL_CALL_PENDING ||
-				section.type === AgenticSectionType.TOOL_CALL_STREAMING;
-
-			if (!isTool && prevWasTool && currentTurn.length > 0) {
-				groups.push({ sections: currentTurn, flatIndices: currentIndices });
-				currentTurn = [];
-				currentIndices = [];
-			}
-
-			currentTurn.push(section);
-			currentIndices.push(i);
-			prevWasTool = isTool;
-		}
-
-		if (currentTurn.length > 0) {
-			groups.push({ sections: currentTurn, flatIndices: currentIndices });
-		}
-
-		return groups;
-	});
-
-	function getDefaultExpanded(section: AgenticSection): boolean {
-		if (
-			section.type === AgenticSectionType.TOOL_CALL ||
-			section.type === AgenticSectionType.TOOL_CALL_PENDING ||
-			section.type === AgenticSectionType.TOOL_CALL_STREAMING
-		) {
-			return alwaysShowToolCallContent;
-		}
-
-		if (section.type === AgenticSectionType.REASONING_PENDING) {
-			return showThoughtInProgress;
-		}
-
-		return false;
-	}
-
-	function isExpanded(index: number, section: AgenticSection): boolean {
-		if (expandedStates[index] !== undefined) {
-			return expandedStates[index];
-		}
-
-		return getDefaultExpanded(section);
-	}
-
-	function toggleExpanded(index: number, section: AgenticSection) {
-		const currentState = isExpanded(index, section);
-
-		expandedStates[index] = !currentState;
-	}
-
-	function buildTurnAgenticTimings(stats: ChatMessageAgenticTurnStats): ChatMessageAgenticTimings {
-		return {
-			turns: 1,
-			toolCallsCount: stats.toolCalls.length,
-			toolsMs: stats.toolsMs,
-			toolCalls: stats.toolCalls,
-			llm: stats.llm
-		};
-	}
+<script>import { AgenticSectionType } from '$lib/enums';
+import { deriveAgenticSections } from '$lib/utils';
+import { agenticPendingPermissionRequest, agenticResolvePermission, agenticPendingContinueRequest, agenticResolveContinue, agenticLastError, agenticExecutingToolCallId } from '$lib/stores/agentic.svelte';
+import { config } from '$lib/stores/settings.svelte';
+let { message, toolMessages = [], isStreaming = false, isLastAssistantMessage = false } = $props();
+let expandedStates = $state({});
+const renderThinkingAsMarkdown = $derived(config().renderThinkingAsMarkdown);
+const showThoughtInProgress = $derived(Boolean(config().showThoughtInProgress));
+const alwaysShowToolCallContent = $derived(Boolean(config().alwaysShowToolCallContent));
+const showMessageStats = $derived(Boolean(config().showMessageStats));
+const showAgenticTurnStats = $derived(showMessageStats && Boolean(config().showAgenticTurnStats));
+const hasReasoningError = $derived(isLastAssistantMessage ? !!agenticLastError(message.convId) : false);
+let permissionDismissed = $state(false);
+const pendingPermission = $derived(isStreaming && isLastAssistantMessage ? agenticPendingPermissionRequest(message.convId) : null);
+let prevPendingRef = null;
+$effect(() => {
+    if (pendingPermission !== prevPendingRef) {
+        prevPendingRef = pendingPermission;
+        if (pendingPermission) {
+            permissionDismissed = false;
+        }
+    }
+});
+function handlePermission(decision) {
+    permissionDismissed = true;
+    agenticResolvePermission(message.convId, decision);
+}
+let continueDismissed = $state(false);
+const pendingContinue = $derived(isStreaming && isLastAssistantMessage ? agenticPendingContinueRequest(message.convId) : false);
+let prevContinueRef = false;
+$effect(() => {
+    if (pendingContinue !== prevContinueRef) {
+        prevContinueRef = pendingContinue;
+        if (pendingContinue) {
+            continueDismissed = false;
+        }
+    }
+});
+function handleContinue(shouldContinue) {
+    continueDismissed = true;
+    agenticResolveContinue(message.convId, shouldContinue);
+}
+const sections = $derived(deriveAgenticSections(message, toolMessages, [], isStreaming));
+const currentlyExecutingToolCallId = $derived(isStreaming ? agenticExecutingToolCallId(message.convId) : null);
+const turnGroups = $derived.by(() => {
+    const groups = [];
+    let currentTurn = [];
+    let currentIndices = [];
+    let prevWasTool = false;
+    for (let i = 0; i < sections.length; i++) {
+        const section = sections[i];
+        const isTool = section.type === AgenticSectionType.TOOL_CALL ||
+            section.type === AgenticSectionType.TOOL_CALL_PENDING ||
+            section.type === AgenticSectionType.TOOL_CALL_STREAMING;
+        if (!isTool && prevWasTool && currentTurn.length > 0) {
+            groups.push({ sections: currentTurn, flatIndices: currentIndices });
+            currentTurn = [];
+            currentIndices = [];
+        }
+        currentTurn.push(section);
+        currentIndices.push(i);
+        prevWasTool = isTool;
+    }
+    if (currentTurn.length > 0) {
+        groups.push({ sections: currentTurn, flatIndices: currentIndices });
+    }
+    return groups;
+});
+function getDefaultExpanded(section) {
+    if (section.type === AgenticSectionType.TOOL_CALL ||
+        section.type === AgenticSectionType.TOOL_CALL_PENDING ||
+        section.type === AgenticSectionType.TOOL_CALL_STREAMING) {
+        return alwaysShowToolCallContent;
+    }
+    if (section.type === AgenticSectionType.REASONING_PENDING) {
+        return showThoughtInProgress;
+    }
+    return false;
+}
+function isExpanded(index, section) {
+    if (expandedStates[index] !== undefined) {
+        return expandedStates[index];
+    }
+    return getDefaultExpanded(section);
+}
+function toggleExpanded(index, section) {
+    const currentState = isExpanded(index, section);
+    expandedStates[index] = !currentState;
+}
+function buildTurnAgenticTimings(stats) {
+    return {
+        turns: 1,
+        toolCallsCount: stats.toolCalls.length,
+        toolsMs: stats.toolsMs,
+        toolCalls: stats.toolCalls,
+        llm: stats.llm
+    };
+}
 </script>
 
-{#snippet renderSection(section: AgenticSection, index: number)}
+{#snippet renderSection(section, index)}
 	{#if section.type === AgenticSectionType.TEXT}
 		<div class="agentic-text">
 			<MarkdownContent content={section.content} attachments={message?.extra} />

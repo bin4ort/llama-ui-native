@@ -1,80 +1,34 @@
-<script lang="ts">
-	import {
-		ChatAttachmentsListItem,
-		DialogChatAttachmentsPreview,
-		DialogMcpResourcePreview,
-		HorizontalScrollCarousel
-	} from '$lib/components/app';
-	import type { DatabaseMessageExtraMcpResource } from '$lib/types';
-	import { getAttachmentDisplayItems, isMcpPrompt, isMcpResource } from '$lib/utils';
-
-	interface Props {
-		class?: string;
-		style?: string;
-		// For ChatMessage - stored attachments
-		attachments?: DatabaseMessageExtra[];
-		readonly?: boolean;
-		// For ChatForm - pending uploads
-		onFileRemove?: (fileId: string) => void;
-		uploadedFiles?: ChatUploadedFile[];
-		// Image size customization
-		imageClass?: string;
-		imageHeight?: string;
-		imageWidth?: string;
-		// Limit display to single row with "+ X more" button
-		limitToSingleRow?: boolean;
-		// For vision modality check
-		activeModelId?: string;
-	}
-
-	let {
-		class: className = '',
-		style = '',
-		attachments = [],
-		readonly = false,
-		onFileRemove,
-		uploadedFiles = $bindable([]),
-		// Default to small size for form previews
-		imageClass = '',
-		imageHeight = 'h-24',
-		imageWidth = 'w-auto',
-		limitToSingleRow = false,
-		activeModelId
-	}: Props = $props();
-
-	let carouselRef: HorizontalScrollCarousel | undefined = $state();
-	let mcpResourcePreviewOpen = $state(false);
-	let mcpResourcePreviewExtra = $state<DatabaseMessageExtraMcpResource | null>(null);
-	let previewFocusIndex = $state(0);
-	let viewAllDialogOpen = $state(false);
-
-	let displayItems = $derived(getAttachmentDisplayItems({ uploadedFiles, attachments }));
-
-	function openPreview(item: ChatAttachmentDisplayItem, event?: MouseEvent) {
-		event?.stopPropagation();
-		event?.preventDefault();
-
-		// Find the index of the clicked item among non-MCP attachments
-		const nonMcpItems = displayItems.filter((i) => !isMcpPrompt(i) && !isMcpResource(i));
-		const index = nonMcpItems.findIndex((i) => i.id === item.id);
-
-		previewFocusIndex = index >= 0 ? index : 0;
-		viewAllDialogOpen = true;
-	}
-
-	function openMcpResourcePreview(extra: DatabaseMessageExtraMcpResource) {
-		mcpResourcePreviewExtra = extra;
-		mcpResourcePreviewOpen = true;
-	}
-
-	$effect(() => {
-		if (carouselRef && displayItems.length) {
-			carouselRef.resetScroll();
-		}
-	});
+<script>import { getAttachmentDisplayItems, isMcpPrompt, isMcpResource } from '$lib/utils';
+let { class: className = '', style = '', attachments = [], readonly = false, onFileRemove, uploadedFiles = $bindable([]), 
+// Default to small size for form previews
+imageClass = '', imageHeight = 'h-24', imageWidth = 'w-auto', limitToSingleRow = false, activeModelId } = $props();
+let carouselRef = $state();
+let mcpResourcePreviewOpen = $state(false);
+let mcpResourcePreviewExtra = $state(null);
+let previewFocusIndex = $state(0);
+let viewAllDialogOpen = $state(false);
+let displayItems = $derived(getAttachmentDisplayItems({ uploadedFiles, attachments }));
+function openPreview(item, event) {
+    event?.stopPropagation();
+    event?.preventDefault();
+    // Find the index of the clicked item among non-MCP attachments
+    const nonMcpItems = displayItems.filter((i) => !isMcpPrompt(i) && !isMcpResource(i));
+    const index = nonMcpItems.findIndex((i) => i.id === item.id);
+    previewFocusIndex = index >= 0 ? index : 0;
+    viewAllDialogOpen = true;
+}
+function openMcpResourcePreview(extra) {
+    mcpResourcePreviewExtra = extra;
+    mcpResourcePreviewOpen = true;
+}
+$effect(() => {
+    if (carouselRef && displayItems.length) {
+        carouselRef.resetScroll();
+    }
+});
 </script>
 
-{#snippet attachmentitem(item: ChatAttachmentDisplayItem)}
+{#snippet attachmentitem(item)}
 	<ChatAttachmentsListItem
 		{imageClass}
 		{imageHeight}
@@ -83,7 +37,7 @@
 		{limitToSingleRow}
 		{onFileRemove}
 		onMcpResourcePreview={openMcpResourcePreview}
-		onPreview={(i: ChatAttachmentDisplayItem, event?: MouseEvent) => openPreview(i, event)}
+		onPreview={(i, event) => openPreview(i, event)}
 		{readonly}
 	/>
 {/snippet}

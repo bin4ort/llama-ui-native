@@ -1,21 +1,8 @@
-<script lang="ts">
-	import { BadgeInfo } from '$lib/components/app';
-	import * as Tooltip from '$lib/components/ui/tooltip';
-	import { copyToClipboard } from '$lib/utils';
-	import type { Component } from 'svelte';
-
-	interface Props {
-		class?: string;
-		icon: Component;
-		value: string | number;
-		tooltipLabel?: string;
-	}
-
-	let { class: className = '', icon: IconComponent, value, tooltipLabel }: Props = $props();
-
-	function handleClick() {
-		void copyToClipboard(String(value));
-	}
+<script>import { copyToClipboard } from '$lib/utils';
+let { class: className = '', icon: IconComponent, value, tooltipLabel } = $props();
+function handleClick() {
+    void copyToClipboard(String(value));
+}
 </script>
 
 {#if tooltipLabel}

@@ -1,38 +1,28 @@
-<script lang="ts">
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { AlertTriangle, Server } from '@lucide/svelte';
-	import { Badge } from '$lib/components/ui/badge';
-	import { Button } from '$lib/components/ui/button';
-	import { serverProps, serverLoading, serverError } from '$lib/stores/server.svelte';
-	import { singleModelName } from '$lib/stores/models.svelte';
-
-	interface Props {
-		class?: string;
-		showActions?: boolean;
-	}
-
-	let { class: className = '', showActions = false }: Props = $props();
-
-	let error = $derived(serverError());
-	let loading = $derived(serverLoading());
-	let model = $derived(singleModelName());
-	let serverData = $derived(serverProps());
-
-	function getStatusColor() {
-		if (loading) return 'bg-yellow-500';
-		if (error) return 'bg-red-500';
-		if (serverData) return 'bg-green-500';
-
-		return 'bg-gray-500';
-	}
-
-	function getStatusText() {
-		if (loading) return 'Connecting...';
-		if (error) return 'Connection Error';
-		if (serverData) return 'Connected';
-
-		return 'Unknown';
-	}
+<script>import { serverProps, serverLoading, serverError } from '$lib/stores/server.svelte';
+import { singleModelName } from '$lib/stores/models.svelte';
+let { class: className = '', showActions = false } = $props();
+let error = $derived(serverError());
+let loading = $derived(serverLoading());
+let model = $derived(singleModelName());
+let serverData = $derived(serverProps());
+function getStatusColor() {
+    if (loading)
+        return 'bg-yellow-500';
+    if (error)
+        return 'bg-red-500';
+    if (serverData)
+        return 'bg-green-500';
+    return 'bg-gray-500';
+}
+function getStatusText() {
+    if (loading)
+        return 'Connecting...';
+    if (error)
+        return 'Connection Error';
+    if (serverData)
+        return 'Connected';
+    return 'Unknown';
+}
 </script>
 
 <div class="flex items-center space-x-3 {className}">

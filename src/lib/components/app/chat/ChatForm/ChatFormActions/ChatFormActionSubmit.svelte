@@ -1,20 +1,6 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import { ArrowUp } from '@lucide/svelte';
-	import { Button } from '$lib/components/ui/button';
-	import * as Tooltip from '$lib/components/ui/tooltip';
-
-	interface Props {
-		canSend?: boolean;
-		disabled?: boolean;
-		showErrorState?: boolean;
-		tooltipLabel?: string;
-	}
-
-	let { canSend = false, disabled = false, showErrorState = false, tooltipLabel }: Props = $props();
-
-	let isDisabled = $derived(!canSend || disabled);
+<script>let { canSend = false, disabled = false, showErrorState = false, tooltipLabel } = $props();
+let isDisabled = $derived(!canSend || disabled);
+export {};
 </script>
 
 {#snippet submitButton(props = {})}

@@ -1,27 +1,10 @@
-<script lang="ts">
-	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-	import { Checkbox } from '$lib/components/ui/checkbox';
-	import Label from '$lib/components/ui/label/label.svelte';
-	import { Shield, ShieldOff } from '@lucide/svelte';
-	import { t } from '$lib/stores/i18n.svelte';
-
-	let {
-		open = $bindable(),
-		includeSensitiveData = $bindable(false),
-		onCancel,
-		onConfirm
-	}: {
-		open: boolean;
-		includeSensitiveData: boolean;
-		onCancel: () => void;
-		onConfirm: () => void;
-	} = $props();
-
-	function handleOpenChange(newOpen: boolean) {
-		if (!newOpen) {
-			onCancel();
-		}
-	}
+<script>let { open = $bindable(), includeSensitiveData = $bindable(false), onCancel, onConfirm } = $props();
+function handleOpenChange(newOpen) {
+    if (!newOpen) {
+        onCancel();
+    }
+}
+export {};
 </script>
 
 <AlertDialog.Root {open} onOpenChange={handleOpenChange}>
@@ -39,7 +22,7 @@
 			<AlertDialog.Description>
 				{#if includeSensitiveData}
 					<p class="text-amber-500">
-						{t("Warning: This export will include sensitive data such as API keys and MCP server custom headers (e.g., authorization tokens). Do not share this file with anyone you don't trust.")}
+						{t("Warning: This export will include sensitive data such keys and MCP server custom headers (e.g., authorization tokens). Do not share this file with anyone you don't trust.")}
 					</p>
 				{:else}
 					<p>

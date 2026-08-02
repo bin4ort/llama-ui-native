@@ -1,32 +1,12 @@
-<script lang="ts">
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { Music, Video, FileText } from '@lucide/svelte';
-	import { HorizontalScrollCarousel } from '$lib/components/app/misc';
-
-	interface PreviewItem {
-		id: string;
-		name: string;
-		isImage: boolean;
-		isAudio: boolean;
-		isVideo: boolean;
-		preview?: string;
-	}
-
-	interface Props {
-		items: PreviewItem[];
-		currentIndex: number;
-		onNavigate: (index: number) => void;
-	}
-
-	let { items, currentIndex, onNavigate }: Props = $props();
-
-	function getFileExtension(name: string): string {
-		const parts = name.split('.');
-		if (parts.length > 1) {
-			return parts.pop()?.toUpperCase() ?? '';
-		}
-		return '';
-	}
+<script>let { items, currentIndex, onNavigate } = $props();
+function getFileExtension(name) {
+    const parts = name.split('.');
+    if (parts.length > 1) {
+        return parts.pop()?.toUpperCase() ?? '';
+    }
+    return '';
+}
+export {};
 </script>
 
 {#if items.length > 1}

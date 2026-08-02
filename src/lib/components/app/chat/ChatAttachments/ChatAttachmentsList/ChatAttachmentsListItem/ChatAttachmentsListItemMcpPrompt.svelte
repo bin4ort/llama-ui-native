@@ -1,26 +1,5 @@
-<script lang="ts">
-	import { ChatMessageMcpPromptContent, ActionIcon } from '$lib/components/app';
-	import { X } from '@lucide/svelte';
-	import type { DatabaseMessageExtraMcpPrompt } from '$lib/types';
-	import { McpPromptVariant } from '$lib/enums';
-
-	interface Props {
-		class?: string;
-		isLoading?: boolean;
-		loadError?: string;
-		onRemove?: () => void;
-		prompt: DatabaseMessageExtraMcpPrompt;
-		readonly?: boolean;
-	}
-
-	let {
-		class: className = '',
-		isLoading = false,
-		loadError,
-		onRemove,
-		prompt,
-		readonly = false
-	}: Props = $props();
+<script>let { class: className = '', isLoading = false, loadError, onRemove, prompt, readonly = false } = $props();
+export {};
 </script>
 
 <div class="group relative {className}">

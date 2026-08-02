@@ -1,39 +1,16 @@
-<script lang="ts">
-	import * as Dialog from '$lib/components/ui/dialog';
-	import { ConversationSelection } from '$lib/components/app';
-	import { t } from '$lib/stores/i18n.svelte';
-
-	interface Props {
-		conversations: DatabaseConversation[];
-		messageCountMap?: Map<string, number>;
-		mode: 'export' | 'import';
-		onCancel: () => void;
-		onConfirm: (selectedConversations: DatabaseConversation[]) => void;
-		open?: boolean;
-	}
-
-	let {
-		conversations,
-		messageCountMap = new Map(),
-		mode,
-		onCancel,
-		onConfirm,
-		open = $bindable(false)
-	}: Props = $props();
-
-	let conversationSelectionRef: ConversationSelection | undefined = $state();
-
-	let previousOpen = $state(false);
-
-	$effect(() => {
-		if (open && !previousOpen && conversationSelectionRef) {
-			conversationSelectionRef.reset();
-		} else if (!open && previousOpen) {
-			onCancel();
-		}
-
-		previousOpen = open;
-	});
+<script>let { conversations, messageCountMap = new Map(), mode, onCancel, onConfirm, open = $bindable(false) } = $props();
+let conversationSelectionRef = $state();
+let previousOpen = $state(false);
+$effect(() => {
+    if (open && !previousOpen && conversationSelectionRef) {
+        conversationSelectionRef.reset();
+    }
+    else if (!open && previousOpen) {
+        onCancel();
+    }
+    previousOpen = open;
+});
+export {};
 </script>
 
 <Dialog.Root bind:open>

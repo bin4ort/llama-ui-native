@@ -1,14 +1,5 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-	import { Wrench, Database, MessageSquare, FileText, Sparkles, ListChecks } from '@lucide/svelte';
-	import type { MCPCapabilitiesInfo } from '$lib/types';
-	import { Badge } from '$lib/components/ui/badge';
-
-	interface Props {
-		capabilities?: MCPCapabilitiesInfo;
-	}
-
-	let { capabilities }: Props = $props();
+<script>let { capabilities } = $props();
+export {};
 </script>
 
 {#if capabilities}

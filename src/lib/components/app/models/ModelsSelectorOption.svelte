@@ -1,62 +1,20 @@
-<script lang="ts">
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import {
-		CircleAlert,
-		Heart,
-		HeartOff,
-		Info,
-		Loader2,
-		Power,
-		PowerOff,
-		RotateCw
-	} from '@lucide/svelte';
-	import { ActionIcon, ModelId } from '$lib/components/app';
-	import ModelLoadHighlight from './ModelLoadHighlight.svelte';
-	import type { ModelOption } from '$lib/types/models';
-	import { ServerModelStatus } from '$lib/enums';
-	import { modelsStore, routerModels } from '$lib/stores/models.svelte';
-	import { modelLoadFraction, modelLoadProgressText } from '$lib/utils';
-
-	interface Props {
-		option: ModelOption;
-		isSelected: boolean;
-		isHighlighted: boolean;
-		isFav: boolean;
-		hideOrgName?: boolean;
-		onSelect: (modelId: string) => void;
-		onMouseEnter: () => void;
-		onKeyDown: (e: KeyboardEvent) => void;
-		onInfoClick?: (modelName: string) => void;
-	}
-
-	let {
-		option,
-		isSelected,
-		isHighlighted,
-		isFav,
-		hideOrgName = false,
-		onSelect,
-		onMouseEnter,
-		onKeyDown,
-		onInfoClick
-	}: Props = $props();
-
-	let currentRouterModels = $derived(routerModels());
-	let serverStatus = $derived.by(() => {
-		const model = currentRouterModels.find((m) => m.id === option.model);
-		return (model?.status?.value as ServerModelStatus) ?? null;
-	});
-	let isOperationInProgress = $derived(modelsStore.isModelOperationInProgress(option.model));
-	let isFailed = $derived(serverStatus === ServerModelStatus.FAILED);
-	let isSleeping = $derived(serverStatus === ServerModelStatus.SLEEPING);
-	let isLoaded = $derived(
-		(serverStatus === ServerModelStatus.LOADED || isSleeping) && !isOperationInProgress
-	);
-	let isLoading = $derived(serverStatus === ServerModelStatus.LOADING || isOperationInProgress);
-
-	let loadProgress = $derived(isLoading ? modelsStore.getLoadProgress(option.model) : null);
-	let loadPercent = $derived(Math.round(modelLoadFraction(loadProgress) * 100));
-	let loadTitle = $derived(modelLoadProgressText(loadProgress));
+<script>import { ServerModelStatus } from '$lib/enums';
+import { modelsStore, routerModels } from '$lib/stores/models.svelte';
+import { modelLoadFraction, modelLoadProgressText } from '$lib/utils';
+let { option, isSelected, isHighlighted, isFav, hideOrgName = false, onSelect, onMouseEnter, onKeyDown, onInfoClick } = $props();
+let currentRouterModels = $derived(routerModels());
+let serverStatus = $derived.by(() => {
+    const model = currentRouterModels.find((m) => m.id === option.model);
+    return model?.status?.value ?? null;
+});
+let isOperationInProgress = $derived(modelsStore.isModelOperationInProgress(option.model));
+let isFailed = $derived(serverStatus === ServerModelStatus.FAILED);
+let isSleeping = $derived(serverStatus === ServerModelStatus.SLEEPING);
+let isLoaded = $derived((serverStatus === ServerModelStatus.LOADED || isSleeping) && !isOperationInProgress);
+let isLoading = $derived(serverStatus === ServerModelStatus.LOADING || isOperationInProgress);
+let loadProgress = $derived(isLoading ? modelsStore.getLoadProgress(option.model) : null);
+let loadPercent = $derived(Math.round(modelLoadFraction(loadProgress) * 100));
+let loadTitle = $derived(modelLoadProgressText(loadProgress));
 </script>
 
 <div

@@ -1,55 +1,29 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import { isMobile } from '$lib/stores/viewport.svelte';
-	import { autoResizeTextarea } from '$lib/utils';
-	import { onMount } from 'svelte';
-
-	interface Props {
-		class?: string;
-		disabled?: boolean;
-		onInput?: () => void;
-		onKeydown?: (event: KeyboardEvent) => void;
-		onPaste?: (event: ClipboardEvent) => void;
-		placeholder?: string;
-		value?: string;
-	}
-
-	let {
-		class: className = '',
-		disabled = false,
-		onInput,
-		onKeydown,
-		onPaste,
-		placeholder = t('Ask anything...'),
-		value = $bindable('')
-	}: Props = $props();
-
-	let textareaElement: HTMLTextAreaElement | undefined;
-
-	onMount(() => {
-		if (textareaElement) {
-			autoResizeTextarea(textareaElement);
-			textareaElement.focus();
-		}
-	});
-
-	// Expose the textarea element for external access
-	export function getElement() {
-		return textareaElement;
-	}
-
-	export function focus() {
-		if (isMobile.current) return;
-
-		textareaElement?.focus({ preventScroll: true });
-	}
-
-	export function resetHeight() {
-		if (textareaElement) {
-			textareaElement.style.height = '1rem';
-		}
-	}
+<script>import { t } from '$lib/stores/i18n.svelte';
+import { isMobile } from '$lib/stores/viewport.svelte';
+import { autoResizeTextarea } from '$lib/utils';
+import { onMount } from 'svelte';
+let { class: className = '', disabled = false, onInput, onKeydown, onPaste, placeholder = t('Ask anything...'), value = $bindable('') } = $props();
+let textareaElement;
+onMount(() => {
+    if (textareaElement) {
+        autoResizeTextarea(textareaElement);
+        textareaElement.focus();
+    }
+});
+// Expose the textarea element for external access
+export function getElement() {
+    return textareaElement;
+}
+export function focus() {
+    if (isMobile.current)
+        return;
+    textareaElement?.focus({ preventScroll: true });
+}
+export function resetHeight() {
+    if (textareaElement) {
+        textareaElement.style.height = '1rem';
+    }
+}
 </script>
 
 <div class="flex-1 {className}">

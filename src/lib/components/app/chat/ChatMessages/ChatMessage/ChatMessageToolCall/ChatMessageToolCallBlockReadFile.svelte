@@ -1,22 +1,6 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import { SyntaxHighlightedCode } from '$lib/components/app';
-	import { DEFAULT_LANGUAGE, MAX_HEIGHT_CODE_BLOCK } from '$lib/constants';
-	import { type AgenticSection } from '$lib/utils';
-	import { parseReadFileMeta } from './parsers/read-file';
-	import ToolCallBlock from './ToolCallBlock.svelte';
-
-	interface Props {
-		section: AgenticSection;
-		open: boolean;
-		isStreaming: boolean;
-		onToggle?: () => void;
-	}
-
-	let { section, open, isStreaming, onToggle }: Props = $props();
-
-	const readFileMeta = $derived(parseReadFileMeta(section));
+<script>import { parseReadFileMeta } from './parsers/read-file';
+let { section, open, isStreaming, onToggle } = $props();
+const readFileMeta = $derived(parseReadFileMeta(section));
 </script>
 
 <ToolCallBlock {section} {open} {isStreaming} meta={readFileMeta} {onToggle}>

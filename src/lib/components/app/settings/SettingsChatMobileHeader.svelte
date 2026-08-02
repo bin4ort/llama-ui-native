@@ -1,34 +1,19 @@
-<script lang="ts">
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { Settings, ChevronLeft, ChevronRight } from '@lucide/svelte';
-	import { onMount, tick } from 'svelte';
-	import type { SettingsSection, SettingsSectionTitle } from '$lib/types';
-	import { useScrollCarousel } from '$lib/hooks/use-scroll-carousel.svelte';
-
-	interface Props {
-		sections: SettingsSection[];
-		isActive: (section: SettingsSection) => boolean;
-		getHref?: (section: SettingsSection) => string;
-		onSectionChange?: (section: SettingsSectionTitle) => void;
-	}
-
-	let { sections, isActive, getHref, onSectionChange }: Props = $props();
-
-	const carousel = useScrollCarousel();
-
-	onMount(async () => {
-		await tick();
-		if (carousel.scrollContainer) {
-			const activeTab = carousel.scrollContainer.querySelector('[data-active="true"]');
-			if (activeTab instanceof HTMLElement) {
-				carousel.scrollToCenter(activeTab);
-			}
-		}
-	});
-
-	export function updateCarousel() {
-		setTimeout(carousel.updateScrollButtons, 100);
-	}
+<script>import { onMount, tick } from 'svelte';
+import { useScrollCarousel } from '$lib/hooks/use-scroll-carousel.svelte';
+let { sections, isActive, getHref, onSectionChange } = $props();
+const carousel = useScrollCarousel();
+onMount(async () => {
+    await tick();
+    if (carousel.scrollContainer) {
+        const activeTab = carousel.scrollContainer.querySelector('[data-active="true"]');
+        if (activeTab instanceof HTMLElement) {
+            carousel.scrollToCenter(activeTab);
+        }
+    }
+});
+export function updateCarousel() {
+    setTimeout(carousel.updateScrollButtons, 100);
+}
 </script>
 
 <div class="sticky top-0 z-10 flex flex-col bg-background md:hidden">
@@ -66,8 +51,8 @@
 									: 'text-muted-foreground'}"
 								data-active={isActive(section)}
 								href={getHref(section)}
-								onclick={(e: MouseEvent) => {
-									carousel.scrollToCenter(e.currentTarget as HTMLElement);
+								onclick={(e) => {
+									carousel.scrollToCenter(e.currentTarget);
 								}}
 							>
 								<section.icon class="{ICON_CLASS_DEFAULT} flex-shrink-0" />
@@ -81,9 +66,9 @@
 									? 'bg-accent text-accent-foreground'
 									: 'text-muted-foreground'}"
 								data-active={isActive(section)}
-								onclick={(e: MouseEvent) => {
+								onclick={(e) => {
 									onSectionChange?.(section.title);
-									carousel.scrollToCenter(e.currentTarget as HTMLElement);
+									carousel.scrollToCenter(e.currentTarget);
 								}}
 							>
 								<section.icon class="{ICON_CLASS_DEFAULT} flex-shrink-0" />

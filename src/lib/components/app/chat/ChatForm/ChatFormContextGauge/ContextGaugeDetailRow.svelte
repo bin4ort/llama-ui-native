@@ -1,11 +1,4 @@
-<script lang="ts">
-	interface Props {
-		label: string;
-		value: string;
-		subtitle?: string;
-	}
-
-	let { label, value, subtitle }: Props = $props();
+<script>let { label, value, subtitle } = $props();
 </script>
 
 <div class="grid gap-1.5">

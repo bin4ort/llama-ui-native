@@ -1,25 +1,9 @@
-<script lang="ts">
-	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-	import { t } from '$lib/stores/i18n.svelte';
-
-	interface Props {
-		open: boolean;
-		fileErrorData: {
-			generallyUnsupported: File[];
-			modalityUnsupported: File[];
-			modalityReasons: Record<string, string>;
-			supportedTypes: string[];
-		};
-		onOpenChange?: (open: boolean) => void;
-	}
-
-	let { open = $bindable(), fileErrorData, onOpenChange }: Props = $props();
-
-	function handleOpenChange(newOpen: boolean) {
-		open = newOpen;
-
-		onOpenChange?.(newOpen);
-	}
+<script>let { open = $bindable(), fileErrorData, onOpenChange } = $props();
+function handleOpenChange(newOpen) {
+    open = newOpen;
+    onOpenChange?.(newOpen);
+}
+export {};
 </script>
 
 <AlertDialog.Root {open} onOpenChange={handleOpenChange}>

@@ -1,26 +1,8 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import { XCircle } from '@lucide/svelte';
-	import { MAX_HEIGHT_CODE_BLOCK, RESULT_STAT_SEPARATOR } from '$lib/constants';
-	import { computeLineDiff, prefixFor, type AgenticSection } from '$lib/utils';
-	import { parseEditFileMeta } from './parsers/edit-file';
-	import ToolCallBlock from './ToolCallBlock.svelte';
-
-	interface Props {
-		section: AgenticSection;
-		open: boolean;
-		isStreaming: boolean;
-		onToggle?: () => void;
-	}
-
-	let { section, open, isStreaming, onToggle }: Props = $props();
-
-	const editFileMeta = $derived(parseEditFileMeta(section));
-
-	const editDiffs = $derived(
-		(editFileMeta?.edits ?? []).map((edit) => computeLineDiff(edit.oldText, edit.newText))
-	);
+<script>import { computeLineDiff } from '$lib/utils';
+import { parseEditFileMeta } from './parsers/edit-file';
+let { section, open, isStreaming, onToggle } = $props();
+const editFileMeta = $derived(parseEditFileMeta(section));
+const editDiffs = $derived((editFileMeta?.edits ?? []).map((edit) => computeLineDiff(edit.oldText, edit.newText)));
 </script>
 
 <ToolCallBlock {section} {open} {isStreaming} meta={editFileMeta} {onToggle}>

@@ -1,67 +1,36 @@
-<script lang="ts">
-	import { Dialog } from 'bits-ui';
-	import { X } from '@lucide/svelte';
-	import * as DialogUI from '$lib/components/ui/dialog';
-	import { ChatAttachmentsPreview } from '$lib/components/app';
-	import { KeyboardKey } from '$lib/enums';
-	import { t } from '$lib/stores/i18n.svelte';
-
-	interface Props {
-		open: boolean;
-		uploadedFiles?: ChatUploadedFile[];
-		attachments?: DatabaseMessageExtra[];
-		activeModelId?: string;
-		previewFocusIndex?: number;
-	}
-
-	let {
-		open = $bindable(false),
-		uploadedFiles = [],
-		attachments = [],
-		activeModelId,
-		previewFocusIndex = 0
-	}: Props = $props();
-
-	function handleClose() {
-		open = false;
-	}
-
-	$effect(() => {
-		if (!open) return;
-
-		function handleKeyDown(event: KeyboardEvent) {
-			const target = event.target as HTMLElement;
-
-			if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
-
-			switch (event.key) {
-				case KeyboardKey.ARROW_LEFT:
-					event.preventDefault();
-					event.stopPropagation();
-
-					document.dispatchEvent(new CustomEvent('chat-attachments-nav', { detail: -1 }));
-
-					break;
-				case KeyboardKey.ARROW_RIGHT:
-					event.preventDefault();
-					event.stopPropagation();
-
-					document.dispatchEvent(new CustomEvent('chat-attachments-nav', { detail: 1 }));
-
-					break;
-				case KeyboardKey.SPACE:
-					event.preventDefault();
-					event.stopPropagation();
-
-					document.dispatchEvent(new CustomEvent('chat-attachments-nav', { detail: 1 }));
-
-					break;
-			}
-		}
-
-		document.addEventListener('keydown', handleKeyDown);
-		return () => document.removeEventListener('keydown', handleKeyDown);
-	});
+<script>import { KeyboardKey } from '$lib/enums';
+let { open = $bindable(false), uploadedFiles = [], attachments = [], activeModelId, previewFocusIndex = 0 } = $props();
+function handleClose() {
+    open = false;
+}
+$effect(() => {
+    if (!open)
+        return;
+    function handleKeyDown(event) {
+        const target = event.target;
+        if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')
+            return;
+        switch (event.key) {
+            case KeyboardKey.ARROW_LEFT:
+                event.preventDefault();
+                event.stopPropagation();
+                document.dispatchEvent(new CustomEvent('chat-attachments-nav', { detail: -1 }));
+                break;
+            case KeyboardKey.ARROW_RIGHT:
+                event.preventDefault();
+                event.stopPropagation();
+                document.dispatchEvent(new CustomEvent('chat-attachments-nav', { detail: 1 }));
+                break;
+            case KeyboardKey.SPACE:
+                event.preventDefault();
+                event.stopPropagation();
+                document.dispatchEvent(new CustomEvent('chat-attachments-nav', { detail: 1 }));
+                break;
+        }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+});
 </script>
 
 <Dialog.Root bind:open>

@@ -1,52 +1,7 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import {
-		ChatMessageActionIcons,
-		ChatMessageEditForm,
-		ChatMessageMcpPromptContent
-	} from '$lib/components/app';
-	import { getMessageEditContext } from '$lib/contexts';
-	import { MessageRole, McpPromptVariant } from '$lib/enums';
-	import type { DatabaseMessageExtraMcpPrompt } from '$lib/types';
-
-	interface Props {
-		class?: string;
-		message: DatabaseMessage;
-		mcpPrompt: DatabaseMessageExtraMcpPrompt;
-		siblingInfo?: ChatMessageSiblingInfo | null;
-		showDeleteDialog: boolean;
-		deletionInfo: {
-			totalCount: number;
-			userMessages: number;
-			assistantMessages: number;
-			messageTypes: string[];
-		} | null;
-		onCopy: () => void;
-		onEdit: () => void;
-		onDelete: () => void;
-		onConfirmDelete: () => void;
-		onNavigateToSibling?: (siblingId: string) => void;
-		onShowDeleteDialogChange: (show: boolean) => void;
-	}
-
-	let {
-		class: className = '',
-		message,
-		mcpPrompt,
-		siblingInfo = null,
-		showDeleteDialog,
-		deletionInfo,
-		onCopy,
-		onEdit,
-		onDelete,
-		onConfirmDelete,
-		onNavigateToSibling,
-		onShowDeleteDialogChange
-	}: Props = $props();
-
-	// Get edit context
-	const editCtx = getMessageEditContext();
+<script>import { getMessageEditContext } from '$lib/contexts';
+let { class: className = '', message, mcpPrompt, siblingInfo = null, showDeleteDialog, deletionInfo, onCopy, onEdit, onDelete, onConfirmDelete, onNavigateToSibling, onShowDeleteDialogChange } = $props();
+// Get edit context
+const editCtx = getMessageEditContext();
 </script>
 
 <div

@@ -1,70 +1,26 @@
-<script lang="ts">
-	import {
-		ChatAttachmentsListItemMcpPrompt,
-		ChatAttachmentsListItemMcpResource,
-		ChatAttachmentsListItemThumbnailImage,
-		ChatAttachmentsListItemThumbnailFile
-	} from '$lib/components/app';
-	import { AttachmentType } from '$lib/enums';
-	import type {
-		ChatAttachmentDisplayItem,
-		DatabaseMessageExtraMcpPrompt,
-		DatabaseMessageExtraMcpResource,
-		MCPResourceAttachment
-	} from '$lib/types';
-	import { isMcpPrompt, isMcpResource, isPdfFile } from '$lib/utils';
-
-	interface Props {
-		class?: string;
-		imageClass?: string;
-		imageHeight?: string;
-		imageWidth?: string;
-		item: ChatAttachmentDisplayItem;
-		limitToSingleRow?: boolean;
-		onFileRemove?: (fileId: string) => void;
-		onMcpResourcePreview?: (extra: DatabaseMessageExtraMcpResource) => void;
-		onPreview?: (item: ChatAttachmentDisplayItem) => void;
-		readonly?: boolean;
-	}
-
-	let {
-		class: className = '',
-		imageClass = '',
-		imageHeight = 'h-24',
-		imageWidth = 'w-auto',
-		item,
-		limitToSingleRow = false,
-		onFileRemove,
-		onMcpResourcePreview,
-		onPreview,
-		readonly = false
-	}: Props = $props();
-
-	const scrollClasses = $derived(limitToSingleRow ? 'first:ml-4 last:mr-4' : '');
-
-	function toMcpResourceAttachment(
-		extra: DatabaseMessageExtraMcpResource,
-		id: string
-	): MCPResourceAttachment {
-		return {
-			id,
-			resource: {
-				uri: extra.uri,
-				name: extra.name,
-				title: extra.name,
-				serverName: extra.serverName
-			}
-		};
-	}
+<script>let { class: className = '', imageClass = '', imageHeight = 'h-24', imageWidth = 'w-auto', item, limitToSingleRow = false, onFileRemove, onMcpResourcePreview, onPreview, readonly = false } = $props();
+const scrollClasses = $derived(limitToSingleRow ? 'first:ml-4 last:mr-4' : '');
+function toMcpResourceAttachment(extra, id) {
+    return {
+        id,
+        resource: {
+            uri: extra.uri,
+            name: extra.name,
+            title: extra.name,
+            serverName: extra.serverName
+        }
+    };
+}
+export {};
 </script>
 
 {#if isMcpPrompt(item)}
 	{@const mcpPrompt =
 		item.attachment?.type === AttachmentType.MCP_PROMPT
-			? (item.attachment as DatabaseMessageExtraMcpPrompt)
+			? (item.attachment)
 			: item.uploadedFile?.mcpPrompt
 				? {
-						type: AttachmentType.MCP_PROMPT as const,
+						type: AttachmentType.MCP_PROMPT,
 						name: item.name,
 						serverName: item.uploadedFile.mcpPrompt.serverName,
 						promptName: item.uploadedFile.mcpPrompt.promptName,
@@ -83,7 +39,7 @@
 		/>
 	{/if}
 {:else if isMcpResource(item)}
-	{@const mcpResource = item.attachment as DatabaseMessageExtraMcpResource}
+	{@const mcpResource = item.attachment}
 
 	<ChatAttachmentsListItemMcpResource
 		class="flex-shrink-0 {className} {scrollClasses}"

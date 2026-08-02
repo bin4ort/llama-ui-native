@@ -1,19 +1,7 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { PencilRuler, ChevronDown, ChevronRight, Loader2, Info, Check } from '@lucide/svelte';
-	import { Checkbox } from '$lib/components/ui/checkbox';
-	import * as Collapsible from '$lib/components/ui/collapsible';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import * as Tooltip from '$lib/components/ui/tooltip';
-	import { toolsStore } from '$lib/stores/tools.svelte';
-	import { CLI_FLAGS } from '$lib/constants';
-	import { mcpStore } from '$lib/stores/mcp.svelte';
-	import { useToolsPanel } from '$lib/hooks/use-tools-panel.svelte';
-
-	const toolsPanel = useToolsPanel();
-	const hasMcpServersAvailable = $derived(mcpStore.getServers().length > 0);
+<script>import { mcpStore } from '$lib/stores/mcp.svelte';
+import { useToolsPanel } from '$lib/hooks/use-tools-panel.svelte';
+const toolsPanel = useToolsPanel();
+const hasMcpServersAvailable = $derived(mcpStore.getServers().length > 0);
 </script>
 
 <DropdownMenu.Sub onOpenChange={(open) => open && toolsPanel.handleOpen()}>
@@ -92,7 +80,7 @@
 											alt=""
 											class="{ICON_CLASS_DEFAULT} shrink-0 rounded-sm"
 											onerror={(e) => {
-												(e.currentTarget as HTMLImageElement).style.display = 'none';
+												(e.currentTarget).style.display = 'none';
 											}}
 										/>
 									{/if}

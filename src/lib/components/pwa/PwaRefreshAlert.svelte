@@ -1,9 +1,6 @@
-<script lang="ts">
-	import * as Card from '$lib/components/ui/card';
-	import { Button } from '$lib/components/ui/button';
-
-	let { needRefresh: needRefreshProp, updateServiceWorker, forceReload } = $props();
-	let needRefresh = $derived(needRefreshProp ?? false);
+<script>let { needRefresh: needRefreshProp, updateServiceWorker, forceReload } = $props();
+let needRefresh = $derived(needRefreshProp ?? false);
+export {};
 </script>
 
 {#if needRefresh}

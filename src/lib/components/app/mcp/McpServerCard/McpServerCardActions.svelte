@@ -1,16 +1,5 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-	import { Trash2, RefreshCw, Pencil } from '@lucide/svelte';
-	import { Button } from '$lib/components/ui/button';
-
-	interface Props {
-		isHealthChecking: boolean;
-		onEdit: () => void;
-		onRefresh: () => void;
-		onDelete: () => void;
-	}
-
-	let { isHealthChecking, onEdit, onRefresh, onDelete }: Props = $props();
+<script>let { isHealthChecking, onEdit, onRefresh, onDelete } = $props();
+export {};
 </script>
 
 <div class="flex shrink-0 items-center gap-1">

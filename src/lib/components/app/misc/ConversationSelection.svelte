@@ -1,88 +1,49 @@
-<script lang="ts">
-	import { Button } from '$lib/components/ui/button';
-	import { Checkbox } from '$lib/components/ui/checkbox';
-	import SearchInput from '$lib/components/app/forms/SearchInput.svelte';
-	import { ScrollArea } from '$lib/components/ui/scroll-area';
-	import { SvelteSet } from 'svelte/reactivity';
-	import { useMarqueeSelection } from '$lib/hooks/use-marquee-selection.svelte';
-
-	interface Props {
-		conversations: DatabaseConversation[];
-		messageCountMap?: Map<string, number>;
-		mode: 'export' | 'import';
-		onCancel: () => void;
-		onConfirm: (selectedConversations: DatabaseConversation[]) => void;
-		isOpen?: boolean;
-	}
-
-	let {
-		conversations,
-		messageCountMap = new Map(),
-		mode,
-		onCancel,
-		onConfirm,
-		isOpen = true
-	}: Props = $props();
-
-	let searchQuery = $state('');
-	let selectedIds = $state.raw<SvelteSet<string>>(getInitialSelectedIds());
-
-	function getInitialSelectedIds(): SvelteSet<string> {
-		return new SvelteSet(conversations.map((c) => c.id));
-	}
-
-	let filteredConversations = $derived(
-		conversations.filter((conv) => {
-			const name = conv.name || 'Untitled conversation';
-			return name.toLowerCase().includes(searchQuery.toLowerCase());
-		})
-	);
-
-	let orderedIds = $derived(filteredConversations.map((c) => c.id));
-
-	let allSelected = $derived(
-		filteredConversations.length > 0 &&
-			filteredConversations.every((conv) => selectedIds.has(conv.id))
-	);
-
-	let someSelected = $derived(
-		filteredConversations.some((conv) => selectedIds.has(conv.id)) && !allSelected
-	);
-
-	const marquee = useMarqueeSelection({
-		selectedIds: () => selectedIds,
-		orderedIds: () => orderedIds,
-		enabled: () => isOpen
-	});
-
-	function toggleAll() {
-		const newSet = new SvelteSet(selectedIds);
-		if (allSelected) {
-			filteredConversations.forEach((conv) => newSet.delete(conv.id));
-		} else {
-			filteredConversations.forEach((conv) => newSet.add(conv.id));
-		}
-		selectedIds = newSet;
-	}
-
-	function handleConfirm() {
-		const selected = conversations.filter((conv) => selectedIds.has(conv.id));
-		onConfirm(selected);
-	}
-
-	function handleCancel() {
-		selectedIds = getInitialSelectedIds();
-		searchQuery = '';
-		marquee.reset();
-
-		onCancel();
-	}
-
-	export function reset() {
-		selectedIds = getInitialSelectedIds();
-		searchQuery = '';
-		marquee.reset();
-	}
+<script>import { SvelteSet } from 'svelte/reactivity';
+import { useMarqueeSelection } from '$lib/hooks/use-marquee-selection.svelte';
+let { conversations, messageCountMap = new Map(), mode, onCancel, onConfirm, isOpen = true } = $props();
+let searchQuery = $state('');
+let selectedIds = $state.raw(getInitialSelectedIds());
+function getInitialSelectedIds() {
+    return new SvelteSet(conversations.map((c) => c.id));
+}
+let filteredConversations = $derived(conversations.filter((conv) => {
+    const name = conv.name || 'Untitled conversation';
+    return name.toLowerCase().includes(searchQuery.toLowerCase());
+}));
+let orderedIds = $derived(filteredConversations.map((c) => c.id));
+let allSelected = $derived(filteredConversations.length > 0 &&
+    filteredConversations.every((conv) => selectedIds.has(conv.id)));
+let someSelected = $derived(filteredConversations.some((conv) => selectedIds.has(conv.id)) && !allSelected);
+const marquee = useMarqueeSelection({
+    selectedIds: () => selectedIds,
+    orderedIds: () => orderedIds,
+    enabled: () => isOpen
+});
+function toggleAll() {
+    const newSet = new SvelteSet(selectedIds);
+    if (allSelected) {
+        filteredConversations.forEach((conv) => newSet.delete(conv.id));
+    }
+    else {
+        filteredConversations.forEach((conv) => newSet.add(conv.id));
+    }
+    selectedIds = newSet;
+}
+function handleConfirm() {
+    const selected = conversations.filter((conv) => selectedIds.has(conv.id));
+    onConfirm(selected);
+}
+function handleCancel() {
+    selectedIds = getInitialSelectedIds();
+    searchQuery = '';
+    marquee.reset();
+    onCancel();
+}
+export function reset() {
+    selectedIds = getInitialSelectedIds();
+    searchQuery = '';
+    marquee.reset();
+}
 </script>
 
 <div class="space-y-4">

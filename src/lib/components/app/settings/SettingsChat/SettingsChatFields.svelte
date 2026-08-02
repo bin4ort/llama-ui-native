@@ -1,40 +1,17 @@
-<script lang="ts">
-	// MIT License — Copyright (c) 2025 Llama UI Native
-	// See LICENSE file in the project root.
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { RotateCcw, FlaskConical } from '@lucide/svelte';
-	import { Checkbox } from '$lib/components/ui/checkbox';
-	import { Input } from '$lib/components/ui/input';
-	import Label from '$lib/components/ui/label/label.svelte';
-	import * as RadioGroup from '$lib/components/ui/radio-group';
-	import * as Select from '$lib/components/ui/select';
-	import { Textarea } from '$lib/components/ui/textarea';
-	import { SETTING_CONFIG_INFO, SETTINGS_KEYS } from '$lib/constants';
-	import { SettingsFieldType } from '$lib/enums/settings.enums';
-	import { settingsStore } from '$lib/stores/settings.svelte';
-	import { serverStore } from '$lib/stores/server.svelte';
-	import { modelsStore, selectedModelName, propsCacheVersion } from '$lib/stores/models.svelte';
-	import { normalizeFloatingPoint } from '$lib/utils/precision';
-	import { SettingsChatParameterSourceIndicator } from '$lib/components/app/settings';
-	import { tr, t } from '$lib/stores/i18n.svelte';
-
-
-	let { fields, localConfig, onConfigChange, onThemeChange } = $props();
-
-	let currentModelParams = $derived.by(() => {
-		propsCacheVersion();
-
-		if (serverStore.isRouterMode) {
-			const currentModelName = selectedModelName();
-
-			if (currentModelName) {
-				const currentModelProps = modelsStore.getModelProps(currentModelName);
-
-				return (currentModelProps?.default_generation_settings?.params ?? {});
-			}
-		}
-		return (serverStore.defaultParams ?? {});
-	});
+<script>import { serverStore } from '$lib/stores/server.svelte';
+import { modelsStore, selectedModelName, propsCacheVersion } from '$lib/stores/models.svelte';
+let { fields, localConfig, onConfigChange, onThemeChange } = $props();
+let currentModelParams = $derived.by(() => {
+    propsCacheVersion();
+    if (serverStore.isRouterMode) {
+        const currentModelName = selectedModelName();
+        if (currentModelName) {
+            const currentModelProps = modelsStore.getModelProps(currentModelName);
+            return (currentModelProps?.default_generation_settings?.params ?? {});
+        }
+    }
+    return (serverStore.defaultParams ?? {});
+});
 </script>
 
 {#each fields as field (field.key)}

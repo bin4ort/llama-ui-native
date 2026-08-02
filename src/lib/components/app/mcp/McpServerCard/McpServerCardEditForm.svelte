@@ -1,69 +1,40 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-	import { Button } from '$lib/components/ui/button';
-	import { McpServerForm } from '$lib/components/app/mcp';
-	import { parseHeadersToArray } from '$lib/utils';
-
-	interface Props {
-		serverId: string;
-		serverUrl: string;
-		serverUseProxy?: boolean;
-		/** Current automatic label, prefilled so the user can customize it. */
-		serverLabel?: string;
-		onSave: (url: string, headers: string, useProxy: boolean, name?: string) => void;
-		onCancel: () => void;
-	}
-
-	let {
-		serverId,
-		serverUrl,
-		serverUseProxy = false,
-		serverLabel = '',
-		onSave,
-		onCancel
-	}: Props = $props();
-
-	let editUrl = $derived(serverUrl);
-	let editName = $derived(serverLabel);
-	let editHeaders = $state('');
-	let editUseProxy = $derived(serverUseProxy);
-
-	let urlError = $derived.by(() => {
-		if (!editUrl.trim()) return 'URL is required';
-		try {
-			new URL(editUrl);
-			return null;
-		} catch {
-			return 'Invalid URL format';
-		}
-	});
-
-	let headerPairsValid = $derived(
-		parseHeadersToArray(editHeaders).every((p) => p.key.trim() && p.value.trim())
-	);
-	let canSave = $derived(!urlError && headerPairsValid);
-
-	function handleSave() {
-		if (!canSave) return;
-
-		// An unchanged prefill keeps following the automatic label; only an
-		// actual edit becomes a persisted custom display name.
-		const name = editName.trim() !== serverLabel.trim() ? editName.trim() : undefined;
-
-		onSave(editUrl.trim(), editHeaders.trim(), editUseProxy, name);
-	}
-
-	function handleSubmit(event: SubmitEvent) {
-		event.preventDefault();
-		handleSave();
-	}
-
-	export function setInitialValues(url: string, headers: string, useProxy: boolean, name = '') {
-		editUrl = url;
-		editHeaders = headers;
-		editUseProxy = useProxy;
-		editName = name;
-	}
+<script>import { parseHeadersToArray } from '$lib/utils';
+let { serverId, serverUrl, serverUseProxy = false, serverLabel = '', onSave, onCancel } = $props();
+let editUrl = $derived(serverUrl);
+let editName = $derived(serverLabel);
+let editHeaders = $state('');
+let editUseProxy = $derived(serverUseProxy);
+let urlError = $derived.by(() => {
+    if (!editUrl.trim())
+        return 'URL is required';
+    try {
+        new URL(editUrl);
+        return null;
+    }
+    catch {
+        return 'Invalid URL format';
+    }
+});
+let headerPairsValid = $derived(parseHeadersToArray(editHeaders).every((p) => p.key.trim() && p.value.trim()));
+let canSave = $derived(!urlError && headerPairsValid);
+function handleSave() {
+    if (!canSave)
+        return;
+    // An unchanged prefill keeps following the automatic label; only an
+    // actual edit becomes a persisted custom display name.
+    const name = editName.trim() !== serverLabel.trim() ? editName.trim() : undefined;
+    onSave(editUrl.trim(), editHeaders.trim(), editUseProxy, name);
+}
+function handleSubmit(event) {
+    event.preventDefault();
+    handleSave();
+}
+export function setInitialValues(url, headers, useProxy, name = '') {
+    editUrl = url;
+    editHeaders = headers;
+    editUseProxy = useProxy;
+    editName = name;
+}
 </script>
 
 <form onsubmit={handleSubmit} class="contents">

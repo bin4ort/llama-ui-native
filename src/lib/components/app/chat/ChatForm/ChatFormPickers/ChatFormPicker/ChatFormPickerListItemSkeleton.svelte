@@ -1,10 +1,4 @@
-<script lang="ts">
-	interface Props {
-		titleWidth?: string;
-		showBadge?: boolean;
-	}
-
-	let { titleWidth = 'w-48', showBadge = false }: Props = $props();
+<script>let { titleWidth = 'w-48', showBadge = false } = $props();
 </script>
 
 <div class="flex w-full items-start gap-3 rounded-lg px-3 py-2">

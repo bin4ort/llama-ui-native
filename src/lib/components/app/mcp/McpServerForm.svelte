@@ -1,146 +1,65 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-	import { Input } from '$lib/components/ui/input';
-	import { Switch } from '$lib/components/ui/switch';
-	import { KeyValuePairs } from '$lib/components/app';
-	import type { KeyValuePair } from '$lib/types';
-	import { parseHeadersToArray, serializeHeaders } from '$lib/utils';
-	import { UrlProtocol } from '$lib/enums';
-	import {
-		AUTHORIZATION_HEADER,
-		BEARER_PREFIX,
-		CLI_FLAGS,
-		MCP_SERVER_URL_PLACEHOLDER,
-		REDACTED_HEADERS
-	} from '$lib/constants';
-	import { mcpStore } from '$lib/stores/mcp.svelte';
-
-	interface Props {
-		url: string;
-		headers: string;
-		name?: string;
-		onNameChange?: (name: string) => void;
-		/** Shown in the empty display name field, e.g. the current automatic label. */
-		namePlaceholder?: string;
-		useProxy?: boolean;
-		onUrlChange: (url: string) => void;
-		onHeadersChange: (headers: string) => void;
-		onUseProxyChange?: (useProxy: boolean) => void;
-		urlError?: string | null;
-		id?: string;
-		/**
-		 * "Wants Authorization" is the user's *intent* to add a Bearer token
-		 * (separate from `hasAuthorization` which reflects what's already in
-		 * the headers). Bindable so a parent - e.g. the recommendation cards
-		 * on the "Add New Server" dialog - can flip the switch on when the
-		 * picked server ships a `needsAuthorization: true` flag.
-		 */
-		wantsAuthorization?: boolean;
-		/**
-		 * Marks the "Authorization" field as required. Locks the toggle so the
-		 * user can't dismiss it, and visually marks the field with a red
-		 * asterisk. The parent is expected to gate its submit affordance on
-		 * the bearer token actually being filled. Used by the "Add New Server"
-		 * dialog for recommendations whose `needsAuthorization` flag is true.
-		 */
-		required?: boolean;
-	}
-
-	let {
-		url,
-		headers,
-		name = '',
-		onNameChange,
-		namePlaceholder = t("Name reported by the server"),
-		useProxy = false,
-		onUrlChange,
-		onHeadersChange,
-		onUseProxyChange,
-		urlError = null,
-		id = 'server',
-		wantsAuthorization = $bindable(false),
-		required = false
-	}: Props = $props();
-
-	let isWebSocket = $derived(
-		url.toLowerCase().startsWith(UrlProtocol.WEBSOCKET) ||
-			url.toLowerCase().startsWith(UrlProtocol.WEBSOCKET_SECURE)
-	);
-
-	let headerPairs = $derived<KeyValuePair[]>(parseHeadersToArray(headers));
-
-	// Heuristic: this dedicated UI only owns Authorization headers that already
-	// carry a Bearer scheme. Anything else (e.g. Basic, raw tokens) stays in the
-	// KV section so the user can still edit those values verbatim.
-	const matchesAuthorizationKey = (key: string): boolean =>
-		REDACTED_HEADERS.has(key.trim().toLowerCase());
-
-	const isBearerScheme = (value: string): boolean =>
-		value.trim().toLowerCase().startsWith(BEARER_PREFIX.toLowerCase());
-
-	const ownedByBearerUi = (p: KeyValuePair): boolean =>
-		matchesAuthorizationKey(p.key) && isBearerScheme(p.value);
-
-	let hasAuthorization = $derived(headerPairs.some(ownedByBearerUi));
-
-	let showAuthorization = $derived(hasAuthorization || wantsAuthorization);
-
-	let urlInput: HTMLInputElement | null = $state(null);
-	let bearerInput: HTMLInputElement | null = $state(null);
-
-	$effect(() => {
-		urlInput?.focus();
-	});
-
-	$effect(() => {
-		if (wantsAuthorization && bearerInput) {
-			bearerInput.focus();
-		}
-	});
-
-	let bearerToken = $derived.by(() => {
-		const auth = headerPairs.find(ownedByBearerUi);
-		if (!auth) return '';
-		return auth.value.trim().slice(BEARER_PREFIX.length).trim();
-	});
-
-	$effect(() => {
-		if (!headers.trim()) {
-			wantsAuthorization = false;
-		}
-	});
-
-	function updateHeaderPairs(newPairs: KeyValuePair[]) {
-		headerPairs = newPairs;
-		onHeadersChange(serializeHeaders(newPairs));
-	}
-
-	// The dedicated UI owns the Authorization slot end-to-end when the user
-	// engages it: any prior Authorization row (Bearer or otherwise) is replaced
-	// by exactly one { Authorization: "Bearer <token>" } entry. JSON's last-key
-	// behavior would otherwise pick one arbitrarily, so we strip first.
-	function updateBearerToken(token: string) {
-		const filtered = headerPairs.filter((p) => !matchesAuthorizationKey(p.key));
-
-		const trimmed = token.trim();
-
-		if (trimmed) {
-			filtered.push({ key: AUTHORIZATION_HEADER, value: `${BEARER_PREFIX}${trimmed}` });
-		}
-
-		updateHeaderPairs(filtered);
-	}
-
-	function setUseAuthorization(checked: boolean) {
-		wantsAuthorization = checked;
-
-		if (!checked) {
-			// Only drop the entry this UI owns; a non-Bearer Authorization row
-			// authored in the KV section must survive a toggle off untouched.
-			const filtered = headerPairs.filter((p) => !ownedByBearerUi(p));
-			updateHeaderPairs(filtered);
-		}
-	}
+<script>import { t } from '$lib/stores/i18n.svelte';
+import { parseHeadersToArray, serializeHeaders } from '$lib/utils';
+import { UrlProtocol } from '$lib/enums';
+import { AUTHORIZATION_HEADER, BEARER_PREFIX, REDACTED_HEADERS } from '$lib/constants';
+let { url, headers, name = '', onNameChange, namePlaceholder = t("Name reported by the server"), useProxy = false, onUrlChange, onHeadersChange, onUseProxyChange, urlError = null, id = 'server', wantsAuthorization = $bindable(false), required = false } = $props();
+let isWebSocket = $derived(url.toLowerCase().startsWith(UrlProtocol.WEBSOCKET) ||
+    url.toLowerCase().startsWith(UrlProtocol.WEBSOCKET_SECURE));
+let headerPairs = $derived(parseHeadersToArray(headers));
+// Heuristic: this dedicated UI only owns Authorization headers that already
+// carry a Bearer scheme. Anything else (e.g. Basic, raw tokens) stays in the
+// KV section so the user can still edit those values verbatim.
+const matchesAuthorizationKey = (key) => REDACTED_HEADERS.has(key.trim().toLowerCase());
+const isBearerScheme = (value) => value.trim().toLowerCase().startsWith(BEARER_PREFIX.toLowerCase());
+const ownedByBearerUi = (p) => matchesAuthorizationKey(p.key) && isBearerScheme(p.value);
+let hasAuthorization = $derived(headerPairs.some(ownedByBearerUi));
+let showAuthorization = $derived(hasAuthorization || wantsAuthorization);
+let urlInput = $state(null);
+let bearerInput = $state(null);
+$effect(() => {
+    urlInput?.focus();
+});
+$effect(() => {
+    if (wantsAuthorization && bearerInput) {
+        bearerInput.focus();
+    }
+});
+let bearerToken = $derived.by(() => {
+    const auth = headerPairs.find(ownedByBearerUi);
+    if (!auth)
+        return '';
+    return auth.value.trim().slice(BEARER_PREFIX.length).trim();
+});
+$effect(() => {
+    if (!headers.trim()) {
+        wantsAuthorization = false;
+    }
+});
+function updateHeaderPairs(newPairs) {
+    headerPairs = newPairs;
+    onHeadersChange(serializeHeaders(newPairs));
+}
+// The dedicated UI owns the Authorization slot end-to-end when the user
+// engages it: any prior Authorization row (Bearer or otherwise) is replaced
+// by exactly one { Authorization: "Bearer <token>" } entry. JSON's last-key
+// behavior would otherwise pick one arbitrarily, so we strip first.
+function updateBearerToken(token) {
+    const filtered = headerPairs.filter((p) => !matchesAuthorizationKey(p.key));
+    const trimmed = token.trim();
+    if (trimmed) {
+        filtered.push({ key: AUTHORIZATION_HEADER, value: `${BEARER_PREFIX}${trimmed}` });
+    }
+    updateHeaderPairs(filtered);
+}
+function setUseAuthorization(checked) {
+    wantsAuthorization = checked;
+    if (!checked) {
+        // Only drop the entry this UI owns; a non-Bearer Authorization row
+        // authored in the KV section must survive a toggle off untouched.
+        const filtered = headerPairs.filter((p) => !ownedByBearerUi(p));
+        updateHeaderPairs(filtered);
+    }
+}
 </script>
 
 <div class="grid gap-2">

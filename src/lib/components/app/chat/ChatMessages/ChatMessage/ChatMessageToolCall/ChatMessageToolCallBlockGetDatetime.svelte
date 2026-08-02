@@ -1,44 +1,27 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import { Clock, Loader2 } from '@lucide/svelte';
-	import { AgenticSectionType } from '$lib/enums';
-	import type { AgenticSection } from '$lib/utils';
-
-	interface Props {
-		section: AgenticSection;
-		isStreaming?: boolean;
-	}
-
-	let { section, isStreaming = false }: Props = $props();
-
-	const isPending = $derived(section.type === AgenticSectionType.TOOL_CALL_PENDING);
-	const isStreamingCall = $derived(section.type === AgenticSectionType.TOOL_CALL_STREAMING);
-	const showSpinner = $derived(isPending || (isStreamingCall && isStreaming));
-
-	type GetDatetimeMeta = {
-		dateString?: string;
-		errorMessage?: string;
-	};
-
-	function parseGetDatetimeMeta(toolResultString: string | undefined): GetDatetimeMeta {
-		if (!toolResultString) return {};
-
-		try {
-			const parsed: unknown = JSON.parse(toolResultString);
-			if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-				const obj = parsed as Record<string, unknown>;
-				if (typeof obj.error === 'string') return { errorMessage: obj.error };
-				if (typeof obj.result === 'string') return { dateString: obj.result.trim() };
-			}
-		} catch {
-			return { dateString: toolResultString.trim() };
-		}
-
-		return {};
-	}
-
-	const dateMeta = $derived(parseGetDatetimeMeta(section.toolResult));
+<script>import { AgenticSectionType } from '$lib/enums';
+let { section, isStreaming = false } = $props();
+const isPending = $derived(section.type === AgenticSectionType.TOOL_CALL_PENDING);
+const isStreamingCall = $derived(section.type === AgenticSectionType.TOOL_CALL_STREAMING);
+const showSpinner = $derived(isPending || (isStreamingCall && isStreaming));
+function parseGetDatetimeMeta(toolResultString) {
+    if (!toolResultString)
+        return {};
+    try {
+        const parsed = JSON.parse(toolResultString);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+            const obj = parsed;
+            if (typeof obj.error === 'string')
+                return { errorMessage: obj.error };
+            if (typeof obj.result === 'string')
+                return { dateString: obj.result.trim() };
+        }
+    }
+    catch {
+        return { dateString: toolResultString.trim() };
+    }
+    return {};
+}
+const dateMeta = $derived(parseGetDatetimeMeta(section.toolResult));
 </script>
 
 <div class="text-muted-foreground flex items-center gap-2 py-1.5">

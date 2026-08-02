@@ -1,28 +1,5 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { Mic, Square } from '@lucide/svelte';
-	import { Button } from '$lib/components/ui/button';
-	import * as Tooltip from '$lib/components/ui/tooltip';
-
-	interface Props {
-		class?: string;
-		disabled?: boolean;
-		hasAudioModality?: boolean;
-		isLoading?: boolean;
-		isRecording?: boolean;
-		onMicClick?: () => void;
-	}
-
-	let {
-		class: className = '',
-		disabled = false,
-		hasAudioModality = false,
-		isLoading = false,
-		isRecording = false,
-		onMicClick
-	}: Props = $props();
+<script>let { class: className = '', disabled = false, hasAudioModality = false, isLoading = false, isRecording = false, onMicClick } = $props();
+export {};
 </script>
 
 <div class="flex items-center gap-1 {className}">

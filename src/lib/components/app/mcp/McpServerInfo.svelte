@@ -1,16 +1,6 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-	import { ChevronDown, ChevronRight } from '@lucide/svelte';
-	import * as Collapsible from '$lib/components/ui/collapsible';
-
-	interface Props {
-		instructions?: string;
-		class?: string;
-	}
-
-	let { instructions, class: className }: Props = $props();
-
-	let isExpanded = $state(false);
+<script>let { instructions, class: className } = $props();
+let isExpanded = $state(false);
+export {};
 </script>
 
 {#if instructions}

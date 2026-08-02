@@ -1,13 +1,6 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { AlertTriangle, Loader2, RefreshCw } from '@lucide/svelte';
-	import * as Alert from '$lib/components/ui/alert';
-	import { serverError, serverLoading, serverStatus, serverStore } from '$lib/stores/server.svelte';
-
-	let hasError = $derived(!!serverError());
-	let isLoadingModel = $derived(serverStatus() === 503);
+<script>import { serverError, serverStatus } from '$lib/stores/server.svelte';
+let hasError = $derived(!!serverError());
+let isLoadingModel = $derived(serverStatus() === 503);
 </script>
 
 {#if hasError}

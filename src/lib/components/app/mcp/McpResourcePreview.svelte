@@ -1,75 +1,51 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { FileText, Loader2, AlertCircle, Download } from '@lucide/svelte';
-	import { Button } from '$lib/components/ui/button';
-	import { mcpStore } from '$lib/stores/mcp.svelte';
-	import {
-		isImageMimeType,
-		createBase64DataUrl,
-		getResourceTextContent,
-		getResourceBlobContent,
-		downloadResourceContent
-	} from '$lib/utils';
-	import { MimeTypeApplication, MimeTypeText } from '$lib/enums';
-	import { ActionIconCopyToClipboard } from '$lib/components/app';
-	import type { MCPResourceInfo, MCPResourceContent } from '$lib/types';
-
-	interface Props {
-		resource: MCPResourceInfo | null;
-		/** Pre-loaded content (e.g., from template resolution). Skips store fetch when provided. */
-		preloadedContent?: MCPResourceContent[] | null;
-		class?: string;
-	}
-
-	let { resource, preloadedContent, class: className }: Props = $props();
-
-	let content = $state<MCPResourceContent[] | null>(null);
-	let isLoading = $state(false);
-	let error = $state<string | null>(null);
-
-	$effect(() => {
-		if (resource) {
-			if (preloadedContent) {
-				content = preloadedContent;
-				isLoading = false;
-				error = null;
-			} else {
-				loadContent(resource.uri);
-			}
-		} else {
-			content = null;
-			error = null;
-		}
-	});
-
-	async function loadContent(uri: string) {
-		isLoading = true;
-		error = null;
-
-		try {
-			const result = await mcpStore.readResource(uri);
-			if (result) {
-				content = result;
-			} else {
-				error = 'Failed to load resource content';
-			}
-		} catch (e) {
-			error = e instanceof Error ? e.message : 'Unknown error';
-		} finally {
-			isLoading = false;
-		}
-	}
-
-	function handleDownload() {
-		const text = getResourceTextContent(content);
-		if (!text || !resource) return;
-		downloadResourceContent(
-			text,
-			resource.mimeType || MimeTypeText.PLAIN,
-			resource.name || 'resource.txt'
-		);
-	}
+<script>import { mcpStore } from '$lib/stores/mcp.svelte';
+import { getResourceTextContent, downloadResourceContent } from '$lib/utils';
+import { MimeTypeText } from '$lib/enums';
+let { resource, preloadedContent, class: className } = $props();
+let content = $state(null);
+let isLoading = $state(false);
+let error = $state(null);
+$effect(() => {
+    if (resource) {
+        if (preloadedContent) {
+            content = preloadedContent;
+            isLoading = false;
+            error = null;
+        }
+        else {
+            loadContent(resource.uri);
+        }
+    }
+    else {
+        content = null;
+        error = null;
+    }
+});
+async function loadContent(uri) {
+    isLoading = true;
+    error = null;
+    try {
+        const result = await mcpStore.readResource(uri);
+        if (result) {
+            content = result;
+        }
+        else {
+            error = 'Failed to load resource content';
+        }
+    }
+    catch (e) {
+        error = e instanceof Error ? e.message : 'Unknown error';
+    }
+    finally {
+        isLoading = false;
+    }
+}
+function handleDownload() {
+    const text = getResourceTextContent(content);
+    if (!text || !resource)
+        return;
+    downloadResourceContent(text, resource.mimeType || MimeTypeText.PLAIN, resource.name || 'resource.txt');
+}
 </script>
 
 <div class={['flex flex-col gap-3', className]}>

@@ -1,19 +1,7 @@
-<script lang="ts">
-	import { ArrowBigUp } from '@lucide/svelte';
-
-	interface Props {
-		keys: string[];
-		variant?: 'default' | 'destructive';
-		class?: string;
-	}
-
-	let { keys, variant = 'default', class: className = '' }: Props = $props();
-
-	let baseClasses =
-		'px-1 pointer-events-none inline-flex select-none items-center gap-0.5 font-sans text-md font-medium opacity-0 transition-opacity -my-1';
-	let variantClasses = $derived(
-		variant === 'destructive' ? 'text-destructive' : 'text-muted-foreground'
-	);
+<script>let { keys, variant = 'default', class: className = '' } = $props();
+let baseClasses = 'px-1 pointer-events-none inline-flex select-none items-center gap-0.5 font-sans text-md font-medium opacity-0 transition-opacity -my-1';
+let variantClasses = $derived(variant === 'destructive' ? 'text-destructive' : 'text-muted-foreground');
+export {};
 </script>
 
 <kbd class="{baseClasses} {variantClasses} {className}">

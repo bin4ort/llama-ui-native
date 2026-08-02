@@ -1,14 +1,5 @@
-<script lang="ts">
-	import type { Snippet } from 'svelte';
-
-	interface Props {
-		isSelected?: boolean;
-		onclick: () => void;
-		dataIndex?: number;
-		children: Snippet;
-	}
-
-	let { isSelected = false, onclick, dataIndex, children }: Props = $props();
+<script>let { isSelected = false, onclick, dataIndex, children } = $props();
+export {};
 </script>
 
 <button

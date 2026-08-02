@@ -1,68 +1,45 @@
-<script lang="ts">
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { ChevronLeft, ChevronRight } from '@lucide/svelte';
-	import type { Snippet } from 'svelte';
-
-	interface Props {
-		class?: string;
-		children?: Snippet;
-		gapSize?: string;
-		onScrollableChange?: (isScrollable: boolean) => void;
-	}
-
-	let { class: className = '', children, gapSize = '3', onScrollableChange }: Props = $props();
-
-	let canScrollLeft = $state(false);
-	let canScrollRight = $state(false);
-	let scrollContainer: HTMLDivElement | undefined = $state();
-
-	function scrollLeft(event?: MouseEvent) {
-		event?.stopPropagation();
-		event?.preventDefault();
-
-		if (!scrollContainer) return;
-
-		scrollContainer.scrollBy({ left: scrollContainer.clientWidth * -0.67, behavior: 'smooth' });
-	}
-
-	function scrollRight(event?: MouseEvent) {
-		event?.stopPropagation();
-		event?.preventDefault();
-
-		if (!scrollContainer) return;
-
-		scrollContainer.scrollBy({ left: scrollContainer.clientWidth * 0.67, behavior: 'smooth' });
-	}
-
-	function updateScrollButtons() {
-		if (!scrollContainer) return;
-
-		const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
-
-		canScrollLeft = scrollLeft > 0;
-		canScrollRight = scrollLeft < scrollWidth - clientWidth - 1;
-
-		const isScrollable = scrollWidth > clientWidth;
-		onScrollableChange?.(isScrollable);
-	}
-
-	export function resetScroll() {
-		if (scrollContainer) {
-			scrollContainer.scrollLeft = 0;
-			setTimeout(() => {
-				updateScrollButtons();
-			}, 0);
-		}
-	}
-
-	$effect(() => {
-		if (!scrollContainer) return;
-
-		const observer = new ResizeObserver(() => updateScrollButtons());
-		observer.observe(scrollContainer);
-
-		return () => observer.disconnect();
-	});
+<script>let { class: className = '', children, gapSize = '3', onScrollableChange } = $props();
+let canScrollLeft = $state(false);
+let canScrollRight = $state(false);
+let scrollContainer = $state();
+function scrollLeft(event) {
+    event?.stopPropagation();
+    event?.preventDefault();
+    if (!scrollContainer)
+        return;
+    scrollContainer.scrollBy({ left: scrollContainer.clientWidth * -0.67, behavior: 'smooth' });
+}
+function scrollRight(event) {
+    event?.stopPropagation();
+    event?.preventDefault();
+    if (!scrollContainer)
+        return;
+    scrollContainer.scrollBy({ left: scrollContainer.clientWidth * 0.67, behavior: 'smooth' });
+}
+function updateScrollButtons() {
+    if (!scrollContainer)
+        return;
+    const { scrollLeft, scrollWidth, clientWidth } = scrollContainer;
+    canScrollLeft = scrollLeft > 0;
+    canScrollRight = scrollLeft < scrollWidth - clientWidth - 1;
+    const isScrollable = scrollWidth > clientWidth;
+    onScrollableChange?.(isScrollable);
+}
+export function resetScroll() {
+    if (scrollContainer) {
+        scrollContainer.scrollLeft = 0;
+        setTimeout(() => {
+            updateScrollButtons();
+        }, 0);
+    }
+}
+$effect(() => {
+    if (!scrollContainer)
+        return;
+    const observer = new ResizeObserver(() => updateScrollButtons());
+    observer.observe(scrollContainer);
+    return () => observer.disconnect();
+});
 </script>
 
 <div class="relative {className}">

@@ -1,11 +1,5 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { ArrowDown } from '@lucide/svelte';
-	import ActionIcon from '$lib/components/app/actions/ActionIcon.svelte';
-
-	let { onclick }: { onclick: (e?: MouseEvent) => void } = $props();
+<script>let { onclick } = $props();
+export {};
 </script>
 
 <div class="pointer-events-auto flex justify-center relative h-0">

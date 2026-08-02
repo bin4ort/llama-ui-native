@@ -1,5 +1,4 @@
-<script lang="ts">
-	let { percent }: { percent: number } = $props();
+<script>let { percent } = $props();
 </script>
 
 <!-- thin determinate load bar pinned to the bottom edge, pulsing while it fills -->

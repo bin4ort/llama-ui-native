@@ -1,41 +1,7 @@
-<script lang="ts">
-	import { Button, type ButtonVariant, type ButtonSize } from '$lib/components/ui/button';
-	import * as Tooltip from '$lib/components/ui/tooltip';
-	import type { Component } from 'svelte';
-	import { TooltipSide } from '$lib/enums';
-
-	interface Props {
-		ariaLabel?: string;
-		class?: string;
-		disabled?: boolean;
-		href?: string;
-		icon: Component;
-		iconSize?: string;
-		onclick?: (e?: MouseEvent) => void;
-		size?: ButtonSize;
-		stopPropagationOnClick?: boolean;
-		tooltip?: string;
-		variant?: ButtonVariant;
-		tooltipSide?: TooltipSide;
-	}
-
-	let {
-		icon,
-		tooltip,
-		variant = 'ghost',
-		href = '',
-		size = 'sm',
-		class: className = '',
-		disabled = false,
-		iconSize = 'h-3 w-3',
-		tooltipSide = TooltipSide.TOP,
-		stopPropagationOnClick = false,
-		onclick,
-		ariaLabel
-	}: Props = $props();
-
-	let innerWidth = $state(0);
-	const showTooltip = $derived(!!tooltip && innerWidth > 768);
+<script>import { TooltipSide } from '$lib/enums';
+let { icon, tooltip, variant = 'ghost', href = '', size = 'sm', class: className = '', disabled = false, iconSize = 'h-3 w-3', tooltipSide = TooltipSide.TOP, stopPropagationOnClick = false, onclick, ariaLabel } = $props();
+let innerWidth = $state(0);
+const showTooltip = $derived(!!tooltip && innerWidth > 768);
 </script>
 
 {#snippet button(props = {})}
@@ -45,7 +11,7 @@
 		{variant}
 		{size}
 		{disabled}
-		onclick={(e: MouseEvent) => {
+		onclick={(e) => {
 			if (stopPropagationOnClick) e.stopPropagation();
 
 			onclick?.(e);

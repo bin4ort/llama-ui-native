@@ -1,46 +1,16 @@
-<script lang="ts">
-	import { ModelsService } from '$lib/services/models.service';
-	import { config } from '$lib/stores/settings.svelte';
-	import { TruncatedText } from '$lib/components/app';
-
-	interface Props {
-		modelId: string;
-		hideOrgName?: boolean;
-		showRaw?: boolean;
-		hideQuantization?: boolean;
-		hideTags?: boolean;
-		aliases?: string[];
-		tags?: string[];
-		class?: string;
-	}
-
-	let {
-		modelId,
-		hideOrgName = false,
-		showRaw = undefined,
-		hideQuantization,
-		hideTags,
-		aliases,
-		tags,
-		class: className = '',
-		...rest
-	}: Props = $props();
-
-	const badgeClass =
-		'inline-flex w-fit shrink-0 items-center justify-center whitespace-nowrap rounded-md border border-border/50 px-1 py-0 text-[10px] font-mono bg-foreground/15 dark:bg-foreground/10 text-foreground [a&]:hover:bg-foreground/25';
-	const tagBadgeClass =
-		'inline-flex w-fit shrink-0 items-center justify-center whitespace-nowrap rounded-md border border-border/50 px-1 py-0 text-[10px] font-mono text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground';
-
-	let parsed = $derived(ModelsService.parseModelId(modelId));
-	let resolvedShowRaw = $derived(showRaw ?? (config().showRawModelNames as boolean) ?? false);
-	let resolvedHideQuantization = $derived(hideQuantization ?? !config().showModelQuantization);
-	let resolvedHideTags = $derived(hideTags ?? !config().showModelTags);
-
-	let uniqueAliases = $derived([...new Set(aliases ?? [])]);
-	let uniqueTags = $derived([...new Set([...(parsed.tags ?? []), ...(tags ?? [])])]);
-
-	let primaryAlias = $derived(uniqueAliases.length === 1 ? uniqueAliases[0] : null);
-	let displayName = $derived(primaryAlias ?? parsed.modelName ?? modelId);
+<script>import { ModelsService } from '$lib/services/models.service';
+import { config } from '$lib/stores/settings.svelte';
+let { modelId, hideOrgName = false, showRaw = undefined, hideQuantization, hideTags, aliases, tags, class: className = '', ...rest } = $props();
+const badgeClass = 'inline-flex w-fit shrink-0 items-center justify-center whitespace-nowrap rounded-md border border-border/50 px-1 py-0 text-[10px] font-mono bg-foreground/15 dark:bg-foreground/10 text-foreground [a&]:hover:bg-foreground/25';
+const tagBadgeClass = 'inline-flex w-fit shrink-0 items-center justify-center whitespace-nowrap rounded-md border border-border/50 px-1 py-0 text-[10px] font-mono text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground';
+let parsed = $derived(ModelsService.parseModelId(modelId));
+let resolvedShowRaw = $derived(showRaw ?? config().showRawModelNames ?? false);
+let resolvedHideQuantization = $derived(hideQuantization ?? !config().showModelQuantization);
+let resolvedHideTags = $derived(hideTags ?? !config().showModelTags);
+let uniqueAliases = $derived([...new Set(aliases ?? [])]);
+let uniqueTags = $derived([...new Set([...(parsed.tags ?? []), ...(tags ?? [])])]);
+let primaryAlias = $derived(uniqueAliases.length === 1 ? uniqueAliases[0] : null);
+let displayName = $derived(primaryAlias ?? parsed.modelName ?? modelId);
 </script>
 
 {#if resolvedShowRaw}

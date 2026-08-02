@@ -1,10 +1,4 @@
-<script lang="ts">
-	interface Props {
-		currentItem: { name?: string } | null;
-		displayPreview: string | undefined;
-	}
-
-	let { currentItem, displayPreview }: Props = $props();
+<script>let { currentItem, displayPreview } = $props();
 </script>
 
 {#if displayPreview}

@@ -1,31 +1,16 @@
-<script lang="ts">
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { Download } from '@lucide/svelte';
-	import ZoomInIcon from '@lucide/svelte/icons/zoom-in';
-	import ZoomOutIcon from '@lucide/svelte/icons/zoom-out';
-	import RotateCcwIcon from '@lucide/svelte/icons/rotate-ccw';
-	import { t } from '$lib/stores/i18n.svelte';
-
-	interface Props {
-		scale: number;
-		svgHtml: string;
-		onZoomIn: () => void;
-		onZoomOut: () => void;
-		onResetView: () => void;
-	}
-
-	let { scale, svgHtml, onZoomIn, onZoomOut, onResetView }: Props = $props();
-
-	function downloadSvg() {
-		if (!svgHtml) return;
-		const blob = new Blob([svgHtml], { type: 'image/svg+xml' });
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = 'diagram.svg';
-		a.click();
-		URL.revokeObjectURL(url);
-	}
+<script>let { scale, svgHtml, onZoomIn, onZoomOut, onResetView } = $props();
+function downloadSvg() {
+    if (!svgHtml)
+        return;
+    const blob = new Blob([svgHtml], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'diagram.svg';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+export {};
 </script>
 
 <div

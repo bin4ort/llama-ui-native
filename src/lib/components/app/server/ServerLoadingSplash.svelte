@@ -1,14 +1,5 @@
-<script lang="ts">
-	import { Server } from '@lucide/svelte';
-	import { ServerStatus } from '$lib/components/app';
-	import { fade } from 'svelte/transition';
-
-	interface Props {
-		class?: string;
-		message?: string;
-	}
-
-	let { class: className = '', message = 'Initializing connection to server...' }: Props = $props();
+<script>let { class: className = '', message = 'Initializing connection to server...' } = $props();
+export {};
 </script>
 
 <div class="flex h-full items-center justify-center {className}">

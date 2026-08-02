@@ -1,52 +1,21 @@
-<script lang="ts">
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { Input } from '$lib/components/ui/input';
-	import { Search, X } from '@lucide/svelte';
-
-	interface Props {
-		autofocus?: boolean;
-		value?: string;
-		placeholder?: string;
-		onInput?: (value: string) => void;
-		onClose?: () => void;
-		onKeyDown?: (event: KeyboardEvent) => void;
-		class?: string;
-		id?: string;
-		ref?: HTMLInputElement | null;
-		isCancelAlwaysVisible?: boolean;
-	}
-
-	let {
-		autofocus,
-		value = $bindable(''),
-		placeholder = 'Search...',
-		onInput,
-		onClose,
-		onKeyDown,
-		class: className,
-		id,
-		ref = $bindable(null),
-		isCancelAlwaysVisible = false
-	}: Props = $props();
-
-	let showClearButton = $derived(isCancelAlwaysVisible || !!value || !!onClose);
-
-	function handleInput(event: Event) {
-		const target = event.target as HTMLInputElement;
-
-		value = target.value;
-		onInput?.(target.value);
-	}
-
-	function handleClear() {
-		if (value) {
-			value = '';
-			onInput?.('');
-			ref?.focus({ preventScroll: true });
-		} else {
-			onClose?.();
-		}
-	}
+<script>let { autofocus, value = $bindable(''), placeholder = 'Search...', onInput, onClose, onKeyDown, class: className, id, ref = $bindable(null), isCancelAlwaysVisible = false } = $props();
+let showClearButton = $derived(isCancelAlwaysVisible || !!value || !!onClose);
+function handleInput(event) {
+    const target = event.target;
+    value = target.value;
+    onInput?.(target.value);
+}
+function handleClear() {
+    if (value) {
+        value = '';
+        onInput?.('');
+        ref?.focus({ preventScroll: true });
+    }
+    else {
+        onClose?.();
+    }
+}
+export {};
 </script>
 
 <div class="relative {className}">

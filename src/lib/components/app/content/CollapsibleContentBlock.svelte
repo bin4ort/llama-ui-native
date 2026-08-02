@@ -1,43 +1,8 @@
-<script lang="ts">
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import ChevronDown from '@lucide/svelte/icons/chevron-down';
-	import * as Collapsible from '$lib/components/ui/collapsible/index.js';
-	import { cn } from '$lib/components/ui/utils';
-	import type { Snippet } from 'svelte';
-	import type { Component } from 'svelte';
-	import { t } from '$lib/stores/i18n.svelte';
-
-	interface Props {
-		open?: boolean;
-		class?: string;
-		icon?: Component;
-		iconClass?: string;
-		iconUrl?: string | null;
-		title?: string;
-		titleSnippet?: Snippet;
-		subtitle?: string;
-		shimmerTitle?: boolean;
-		onToggle?: () => void;
-		children: Snippet;
-	}
-
-	let {
-		open = $bindable(false),
-		class: className = '',
-		icon: IconComponent,
-		iconClass = ICON_CLASS_DEFAULT,
-		iconUrl = null,
-		title = '',
-		titleSnippet,
-		subtitle,
-		shimmerTitle = false,
-		onToggle,
-		children
-	}: Props = $props();
-
-	function hideBrokenIcon(event: Event) {
-		(event.currentTarget as HTMLImageElement).style.display = 'none';
-	}
+<script>import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
+let { open = $bindable(false), class: className = '', icon: IconComponent, iconClass = ICON_CLASS_DEFAULT, iconUrl = null, title = '', titleSnippet, subtitle, shimmerTitle = false, onToggle, children } = $props();
+function hideBrokenIcon(event) {
+    event.currentTarget.style.display = 'none';
+}
 </script>
 
 <Collapsible.Root

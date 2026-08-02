@@ -1,13 +1,5 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import { serverStore } from '$lib/stores/server.svelte';
-
-	interface Props {
-		isEmpty: boolean;
-	}
-
-	let { isEmpty = false }: Props = $props();
+<script>let { isEmpty = false } = $props();
+export {};
 </script>
 
 <div

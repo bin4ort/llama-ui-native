@@ -1,163 +1,97 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	// Block for `exec_shell_command`. Unlike the other tools, this
-	// renderer uses CollapsibleTerminalBlock (terminal-style frame)
-	// and treats "live" output chunks as active even after the call
-	// resolved, so the spinner stays on while stdout is still flowing.
-	// The scroll-to-bottom auto-scroll logic mirrors what was here
-	// before extraction.
-
-	import { Check, Loader2, XCircle, AlertTriangle } from '@lucide/svelte';
-	import { CollapsibleTerminalBlock } from '$lib/components/app';
-	import { SETTINGS_KEYS } from '$lib/constants';
-	import { config } from '$lib/stores/settings.svelte';
-	import { TOOL_RUNTIME_SCROLL_AT_BOTTOM_THRESHOLD_PX } from '$lib/constants/auto-scroll';
-	import {
-		highlightCode,
-		isExitCodeSummaryLine,
-		parseExecShellCommandError,
-		parseExecShellCommandExitStatus,
-		parseToolResultWithImages,
-		type AgenticSection,
-		type ExecShellExitStatus,
-		type ToolResultLine
-	} from '$lib/utils';
-	import { parseExecShellCommandMeta } from './parsers/exec-shell-command';
-	import type { DatabaseMessageExtra } from '$lib/types';
-	import ToolCallBlock from './ToolCallBlock.svelte';
-
-	interface Props {
-		section: AgenticSection;
-		open: boolean;
-		isStreaming: boolean;
-		/** True while the agentic loop is streaming output chunks for THIS
-		 *  tool call. Drives max-height + auto-scroll while true; releases
-		 *  them when the loop reports this call as done. */
-		isExecuting?: boolean;
-		attachments?: DatabaseMessageExtra[];
-		onToggle?: () => void;
-	}
-
-	let { section, open, isStreaming, isExecuting = false, attachments, onToggle }: Props = $props();
-
-	// `isLive` covers all in-flight phases: pre-chunk spinner and
-	// streaming itself. Frozen output (tool done while agent continues)
-	// is not live.
-	const isLive = $derived(isExecuting);
-
-	const execShellMeta = $derived(parseExecShellCommandMeta(section));
-	const execShellError = $derived(parseExecShellCommandError(section.toolResult));
-	const execShellExitStatus: ExecShellExitStatus | undefined = $derived(
-		parseExecShellCommandExitStatus(section.toolResult)
-	);
-
-	const parsedLines: ToolResultLine[] = $derived(
-		section.toolResult ? parseToolResultWithImages(section.toolResult, attachments) : []
-	);
-
-	// Drop the trailing "[exit code: N]" line - rendered as a colored
-	// badge below. During streaming we keep it so a partial stream still
-	// shows the status once the final chunk lands.
-	const outputLines: ToolResultLine[] = $derived(
-		execShellExitStatus && parsedLines.length > 0
-			? parsedLines.slice(0, parsedLines.length - 1)
-			: parsedLines
-	);
-
-	const isExitCodeFinalLine = $derived(
-		execShellExitStatus !== undefined &&
-			parsedLines.length > 0 &&
-			isExitCodeSummaryLine(parsedLines[parsedLines.length - 1].text, execShellExitStatus)
-	);
-
-	// Highlight just the command for the title; the (typically large)
-	// output blob uses bare monospace to skip hljs per-line highlighting.
-	const highlightedCommandHtml = $derived(
-		execShellMeta ? highlightCode(execShellMeta.command, 'bash') : ''
-	);
-
-	const exitBadgeClass = $derived(
-		execShellExitStatus?.timedOut
-			? 'exit-badge warning'
-			: execShellExitStatus?.code === 0
-				? 'exit-badge success'
-				: 'exit-badge failure'
-	);
-
-	const useFullHeightCodeBlocks = $derived(
-		Boolean(config()[SETTINGS_KEYS.FULL_HEIGHT_CODE_BLOCKS])
-	);
-
-	const autoScroll = $derived(isLive && !useFullHeightCodeBlocks);
-
-	const SCROLL_BOTTOM_THRESHOLD_PX = TOOL_RUNTIME_SCROLL_AT_BOTTOM_THRESHOLD_PX;
-
-	let scrollEl: HTMLDivElement | undefined = $state();
-	let userScrolledUp = $state(false);
-	let lastScrollTop = 0;
-	let pendingFrame: number | null = null;
-
-	function isAtBottom(): boolean {
-		if (!scrollEl) return false;
-		return (
-			scrollEl.scrollHeight - scrollEl.clientHeight - scrollEl.scrollTop <=
-			SCROLL_BOTTOM_THRESHOLD_PX
-		);
-	}
-
-	function scrollToBottomOnFrame() {
-		if (pendingFrame !== null || !scrollEl || userScrolledUp) return;
-		pendingFrame = requestAnimationFrame(() => {
-			pendingFrame = null;
-
-			// Re-check on rAF - user may scroll between scheduling and paint.
-			if (scrollEl && !userScrolledUp) {
-				scrollEl.scrollTop = scrollEl.scrollHeight;
-			}
-		});
-	}
-
-	function handleScrollEvent() {
-		if (!scrollEl) return;
-		const isScrollingUp = scrollEl.scrollTop < lastScrollTop;
-		if (isScrollingUp && !isAtBottom()) {
-			userScrolledUp = true;
-		} else if (isAtBottom()) {
-			userScrolledUp = false;
-		}
-		lastScrollTop = scrollEl.scrollTop;
-	}
-
-	$effect(() => {
-		void section.toolResult;
-		if (!scrollEl || !autoScroll) return;
-		scrollToBottomOnFrame();
-	});
-
-	$effect(() => {
-		// Catch layout changes that don't touch toolResult (line-wrap
-		// reflow, image attaches, hljs settle).
-		if (!scrollEl || !autoScroll) return;
-
-		const observer = new MutationObserver(() => scrollToBottomOnFrame());
-		observer.observe(scrollEl, {
-			childList: true,
-			subtree: true,
-			characterData: true
-		});
-
-		return () => observer.disconnect();
-	});
-
-	$effect(() => {
-		// Reset on stream end so the next render (full-height) starts
-		// pinned.
-		if (!isLive) {
-			userScrolledUp = false;
-			lastScrollTop = 0;
-		}
-	});
+<script>import { SETTINGS_KEYS } from '$lib/constants';
+import { config } from '$lib/stores/settings.svelte';
+import { TOOL_RUNTIME_SCROLL_AT_BOTTOM_THRESHOLD_PX } from '$lib/constants/auto-scroll';
+import { highlightCode, isExitCodeSummaryLine, parseExecShellCommandError, parseExecShellCommandExitStatus, parseToolResultWithImages } from '$lib/utils';
+import { parseExecShellCommandMeta } from './parsers/exec-shell-command';
+let { section, open, isStreaming, isExecuting = false, attachments, onToggle } = $props();
+// `isLive` covers all in-flight phases: pre-chunk spinner and
+// streaming itself. Frozen output (tool done while agent continues)
+// is not live.
+const isLive = $derived(isExecuting);
+const execShellMeta = $derived(parseExecShellCommandMeta(section));
+const execShellError = $derived(parseExecShellCommandError(section.toolResult));
+const execShellExitStatus = $derived(parseExecShellCommandExitStatus(section.toolResult));
+const parsedLines = $derived(section.toolResult ? parseToolResultWithImages(section.toolResult, attachments) : []);
+// Drop the trailing "[exit code: N]" line - rendered as a colored
+// badge below. During streaming we keep it so a partial stream still
+// shows the status once the final chunk lands.
+const outputLines = $derived(execShellExitStatus && parsedLines.length > 0
+    ? parsedLines.slice(0, parsedLines.length - 1)
+    : parsedLines);
+const isExitCodeFinalLine = $derived(execShellExitStatus !== undefined &&
+    parsedLines.length > 0 &&
+    isExitCodeSummaryLine(parsedLines[parsedLines.length - 1].text, execShellExitStatus));
+// Highlight just the command for the title; the (typically large)
+// output blob uses bare monospace to skip hljs per-line highlighting.
+const highlightedCommandHtml = $derived(execShellMeta ? highlightCode(execShellMeta.command, 'bash') : '');
+const exitBadgeClass = $derived(execShellExitStatus?.timedOut
+    ? 'exit-badge warning'
+    : execShellExitStatus?.code === 0
+        ? 'exit-badge success'
+        : 'exit-badge failure');
+const useFullHeightCodeBlocks = $derived(Boolean(config()[SETTINGS_KEYS.FULL_HEIGHT_CODE_BLOCKS]));
+const autoScroll = $derived(isLive && !useFullHeightCodeBlocks);
+const SCROLL_BOTTOM_THRESHOLD_PX = TOOL_RUNTIME_SCROLL_AT_BOTTOM_THRESHOLD_PX;
+let scrollEl = $state();
+let userScrolledUp = $state(false);
+let lastScrollTop = 0;
+let pendingFrame = null;
+function isAtBottom() {
+    if (!scrollEl)
+        return false;
+    return (scrollEl.scrollHeight - scrollEl.clientHeight - scrollEl.scrollTop <=
+        SCROLL_BOTTOM_THRESHOLD_PX);
+}
+function scrollToBottomOnFrame() {
+    if (pendingFrame !== null || !scrollEl || userScrolledUp)
+        return;
+    pendingFrame = requestAnimationFrame(() => {
+        pendingFrame = null;
+        // Re-check on rAF - user may scroll between scheduling and paint.
+        if (scrollEl && !userScrolledUp) {
+            scrollEl.scrollTop = scrollEl.scrollHeight;
+        }
+    });
+}
+function handleScrollEvent() {
+    if (!scrollEl)
+        return;
+    const isScrollingUp = scrollEl.scrollTop < lastScrollTop;
+    if (isScrollingUp && !isAtBottom()) {
+        userScrolledUp = true;
+    }
+    else if (isAtBottom()) {
+        userScrolledUp = false;
+    }
+    lastScrollTop = scrollEl.scrollTop;
+}
+$effect(() => {
+    void section.toolResult;
+    if (!scrollEl || !autoScroll)
+        return;
+    scrollToBottomOnFrame();
+});
+$effect(() => {
+    // Catch layout changes that don't touch toolResult (line-wrap
+    // reflow, image attaches, hljs settle).
+    if (!scrollEl || !autoScroll)
+        return;
+    const observer = new MutationObserver(() => scrollToBottomOnFrame());
+    observer.observe(scrollEl, {
+        childList: true,
+        subtree: true,
+        characterData: true
+    });
+    return () => observer.disconnect();
+});
+$effect(() => {
+    // Reset on stream end so the next render (full-height) starts
+    // pinned.
+    if (!isLive) {
+        userScrolledUp = false;
+        lastScrollTop = 0;
+    }
+});
 </script>
 
 {#snippet execShellTitle()}

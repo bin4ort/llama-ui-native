@@ -1,72 +1,47 @@
-<script lang="ts">
-	import { X, Plus } from '@lucide/svelte';
-	import { mcpStore } from '$lib/stores/mcp.svelte';
-	import { conversationsStore } from '$lib/stores/conversations.svelte';
-	import { toolsStore } from '$lib/stores/tools.svelte';
-	import { Button } from '$lib/components/ui/button';
-	import * as Empty from '$lib/components/ui/empty';
-	import { ActionIcon, McpServerCard, McpServerCardSkeleton } from '$lib/components/app';
-	import { DialogMcpServerAddNew } from '$lib/components/app/dialogs';
-	import { HealthCheckStatus } from '$lib/enums';
-	import { ROUTES } from '$lib/constants';
-	import { fade } from 'svelte/transition';
-	import { onMount } from 'svelte';
-	import McpLogo from '../mcp/McpLogo.svelte';
-	import { browser } from '$app/environment';
-	import { page } from '$app/state';
-	import { goto, replaceState } from '$app/navigation';
-
-	interface Props {
-		class?: string;
-	}
-
-	let { class: className }: Props = $props();
-
-	let servers = $derived(mcpStore.getServers());
-
-	let isAddingServer = $state(false);
-
-	let previousRouteId = $state<string | null>(null);
-
-	$effect(() => {
-		const currentId = page.route.id;
-		return () => {
-			previousRouteId = currentId;
-		};
-	});
-
-	function handleClose() {
-		const prevIsMcpServers = previousRouteId === '/mcp-servers';
-		if (browser && window.history.length > 1 && !prevIsMcpServers) {
-			history.back();
-		} else {
-			goto(ROUTES.START);
-		}
-	}
-
-	onMount(() => {
-		if (page.url.searchParams.has('add')) {
-			isAddingServer = true;
-
-			const newUrl = new URL(page.url);
-			newUrl.searchParams.delete('add');
-
-			replaceState(newUrl, {});
-		}
-	});
-
-	// Each card decides for itself whether to render based on its own
-	// health-check state, so adding a server only flashes the new card
-	// (not every other already-loaded card) until its health check resolves.
-	// Disabled servers never receive a startup health check, so IDLE only
-	// counts as pending when the server is enabled; otherwise the real card
-	// renders and keeps the enable toggle reachable.
-	function isServerPending(serverId: string, enabled: boolean): boolean {
-		const status = mcpStore.getHealthCheckState(serverId).status;
-		return (
-			status === HealthCheckStatus.CONNECTING || (status === HealthCheckStatus.IDLE && enabled)
-		);
-	}
+<script>import { mcpStore } from '$lib/stores/mcp.svelte';
+import { HealthCheckStatus } from '$lib/enums';
+import { ROUTES } from '$lib/constants';
+import { onMount } from 'svelte';
+import { browser } from '$app/environment';
+import { page } from '$app/state';
+import { goto, replaceState } from '$app/navigation';
+let { class: className } = $props();
+let servers = $derived(mcpStore.getServers());
+let isAddingServer = $state(false);
+let previousRouteId = $state(null);
+$effect(() => {
+    const currentId = page.route.id;
+    return () => {
+        previousRouteId = currentId;
+    };
+});
+function handleClose() {
+    const prevIsMcpServers = previousRouteId === '/mcp-servers';
+    if (browser && window.history.length > 1 && !prevIsMcpServers) {
+        history.back();
+    }
+    else {
+        goto(ROUTES.START);
+    }
+}
+onMount(() => {
+    if (page.url.searchParams.has('add')) {
+        isAddingServer = true;
+        const newUrl = new URL(page.url);
+        newUrl.searchParams.delete('add');
+        replaceState(newUrl, {});
+    }
+});
+// Each card decides for itself whether to render based on its own
+// health-check state, so adding a server only flashes the new card
+// (not every other already-loaded card) until its health check resolves.
+// Disabled servers never receive a startup health check, so IDLE only
+// counts as pending when the server is enabled; otherwise the real card
+// renders and keeps the enable toggle reachable.
+function isServerPending(serverId, enabled) {
+    const status = mcpStore.getHealthCheckState(serverId).status;
+    return (status === HealthCheckStatus.CONNECTING || (status === HealthCheckStatus.IDLE && enabled));
+}
 </script>
 
 <div in:fade={{ duration: 150 }} class="flex min-h-[calc(100dvh-4rem)] flex-col">

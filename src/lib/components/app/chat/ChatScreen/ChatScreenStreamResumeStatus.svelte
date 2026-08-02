@@ -1,11 +1,5 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import { chatStore } from '$lib/stores/chat.svelte';
-	import { StreamConnectionState } from '$lib/enums';
-	import { Loader2 } from '@lucide/svelte';
-
-	let state = $derived(chatStore.streamConnectionState);
+<script>import { chatStore } from '$lib/stores/chat.svelte';
+let state = $derived(chatStore.streamConnectionState);
 </script>
 
 {#if state === StreamConnectionState.RESUMING}

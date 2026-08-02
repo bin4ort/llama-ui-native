@@ -1,21 +1,6 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import { XCircle } from '@lucide/svelte';
-	import { type AgenticSection } from '$lib/utils';
-	import { parseFileGlobSearchMeta } from './parsers/file-glob-search';
-	import ToolCallBlock from './ToolCallBlock.svelte';
-
-	interface Props {
-		section: AgenticSection;
-		open: boolean;
-		isStreaming: boolean;
-		onToggle?: () => void;
-	}
-
-	let { section, open, isStreaming, onToggle }: Props = $props();
-
-	const fileGlobMeta = $derived(parseFileGlobSearchMeta(section));
+<script>import { parseFileGlobSearchMeta } from './parsers/file-glob-search';
+let { section, open, isStreaming, onToggle } = $props();
+const fileGlobMeta = $derived(parseFileGlobSearchMeta(section));
 </script>
 
 <ToolCallBlock {section} {open} {isStreaming} meta={fileGlobMeta} {onToggle}>

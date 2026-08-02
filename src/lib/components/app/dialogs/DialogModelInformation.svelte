@@ -1,77 +1,55 @@
-<script lang="ts">
-	import * as Dialog from '$lib/components/ui/dialog';
-	import * as Table from '$lib/components/ui/table';
-	import { BadgesModality, ActionIconCopyToClipboard } from '$lib/components/app';
-	import { serverStore } from '$lib/stores/server.svelte';
-	import { modelsStore, modelOptions, modelsLoading } from '$lib/stores/models.svelte';
-	import { formatFileSize, formatParameters, formatNumber } from '$lib/utils';
-	import type { ApiLlamaCppServerProps } from '$lib/types';
-	import { t } from '$lib/stores/i18n.svelte';
-
-	interface Props {
-		open?: boolean;
-		onOpenChange?: (open: boolean) => void;
-		// when set, fetch props from the child process (router mode)
-		modelId?: string | null;
-	}
-
-	let { open = $bindable(), onOpenChange, modelId = null }: Props = $props();
-
-	let isRouter = $derived(serverStore.isRouterMode);
-
-	// per-model props fetched from the child process
-	let routerModelProps = $state<ApiLlamaCppServerProps | null>(null);
-	let isLoadingRouterProps = $state(false);
-
-	// in router mode use per-model props, otherwise use global props
-	let serverProps = $derived(isRouter && modelId ? routerModelProps : serverStore.props);
-
-	let modelName = $derived(isRouter && modelId ? modelId : modelsStore.singleModelName);
-	let models = $derived(modelOptions());
-	let isLoadingModels = $derived(modelsLoading());
-
-	// in router mode, find the model option matching modelId
-	// in single mode, use the first model as before
-	let firstModel = $derived.by(() => {
-		if (isRouter && modelId) {
-			return models.find((m) => m.model === modelId) ?? null;
-		}
-		return models[0] ?? null;
-	});
-
-	// Get modalities from modelStore using the model ID from the first model
-	let modalities = $derived.by(() => {
-		if (!firstModel?.id) return [];
-		return modelsStore.getModelModalitiesArray(firstModel.id);
-	});
-
-	// Ensure models are fetched when dialog opens
-	$effect(() => {
-		if (open && models.length === 0) {
-			modelsStore.fetch();
-		}
-	});
-
-	// fetch per-model props from child process when dialog opens in router mode
-	$effect(() => {
-		if (open && isRouter && modelId) {
-			isLoadingRouterProps = true;
-			modelsStore
-				.fetchModelProps(modelId)
-				.then((props) => {
-					routerModelProps = props;
-				})
-				.catch(() => {
-					routerModelProps = null;
-				})
-				.finally(() => {
-					isLoadingRouterProps = false;
-				});
-		}
-		if (!open) {
-			routerModelProps = null;
-		}
-	});
+<script>import { serverStore } from '$lib/stores/server.svelte';
+import { modelsStore, modelOptions, modelsLoading } from '$lib/stores/models.svelte';
+let { open = $bindable(), onOpenChange, modelId = null } = $props();
+let isRouter = $derived(serverStore.isRouterMode);
+// per-model props fetched from the child process
+let routerModelProps = $state(null);
+let isLoadingRouterProps = $state(false);
+// in router mode use per-model props, otherwise use global props
+let serverProps = $derived(isRouter && modelId ? routerModelProps : serverStore.props);
+let modelName = $derived(isRouter && modelId ? modelId : modelsStore.singleModelName);
+let models = $derived(modelOptions());
+let isLoadingModels = $derived(modelsLoading());
+// in router mode, find the model option matching modelId
+// in single mode, use the first model as before
+let firstModel = $derived.by(() => {
+    if (isRouter && modelId) {
+        return models.find((m) => m.model === modelId) ?? null;
+    }
+    return models[0] ?? null;
+});
+// Get modalities from modelStore using the model ID from the first model
+let modalities = $derived.by(() => {
+    if (!firstModel?.id)
+        return [];
+    return modelsStore.getModelModalitiesArray(firstModel.id);
+});
+// Ensure models are fetched when dialog opens
+$effect(() => {
+    if (open && models.length === 0) {
+        modelsStore.fetch();
+    }
+});
+// fetch per-model props from child process when dialog opens in router mode
+$effect(() => {
+    if (open && isRouter && modelId) {
+        isLoadingRouterProps = true;
+        modelsStore
+            .fetchModelProps(modelId)
+            .then((props) => {
+            routerModelProps = props;
+        })
+            .catch(() => {
+            routerModelProps = null;
+        })
+            .finally(() => {
+            isLoadingRouterProps = false;
+        });
+    }
+    if (!open) {
+        routerModelProps = null;
+    }
+});
 </script>
 
 <Dialog.Root bind:open {onOpenChange}>

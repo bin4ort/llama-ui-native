@@ -1,74 +1,31 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-	import { Download, Pin, PinOff, Trash2, X } from '@lucide/svelte';
-	import { ActionIcon, DialogConfirmation } from '$lib/components/app';
-	import { Checkbox } from '$lib/components/ui/checkbox';
-	import { TooltipSide } from '$lib/enums';
-
-	interface Props {
-		class?: string;
-		selectedCount: number;
-		visibleCount: number;
-		allVisibleSelected: boolean;
-		someVisibleSelected: boolean;
-		someSelectedPinned: boolean;
-		pinStateIsMixed: boolean;
-		onSelectAllToggle: () => void;
-		onBulkPinToggle: () => void;
-		onBulkExport: () => void;
-		onBulkDelete: () => void;
-		onClose: () => void;
-	}
-
-	let {
-		class: className = '',
-		selectedCount,
-		visibleCount,
-		allVisibleSelected,
-		someVisibleSelected,
-		someSelectedPinned,
-		pinStateIsMixed,
-		onSelectAllToggle,
-		onBulkPinToggle,
-		onBulkExport,
-		onBulkDelete,
-		onClose
-	}: Props = $props();
-
-	let showDeleteDialog = $state(false);
-
-	function handleDeleteClick() {
-		showDeleteDialog = true;
-	}
-
-	function handleDeleteConfirm() {
-		showDeleteDialog = false;
-		onBulkDelete();
-	}
-
-	function handleDeleteCancel() {
-		showDeleteDialog = false;
-	}
-
-	const hasSelection = $derived(selectedCount > 0);
-	const isMasterChecked = $derived(allVisibleSelected);
-	const isMasterIndeterminate = $derived(!allVisibleSelected && someVisibleSelected);
-
-	const pinTooltip = $derived(
-		hasSelection
-			? pinStateIsMixed
-				? t("Unavailable for mixed state selection")
-				: someSelectedPinned
-					? selectedCount === 1
-						? t("Unpin")
-						: t("Unpin all")
-					: selectedCount === 1
-						? t("Pin")
-						: t("Pin all")
-			: t("Pin")
-	);
-
-	const pinDisabled = $derived(!hasSelection || pinStateIsMixed);
+<script>import { t } from '$lib/stores/i18n.svelte';
+let { class: className = '', selectedCount, visibleCount, allVisibleSelected, someVisibleSelected, someSelectedPinned, pinStateIsMixed, onSelectAllToggle, onBulkPinToggle, onBulkExport, onBulkDelete, onClose } = $props();
+let showDeleteDialog = $state(false);
+function handleDeleteClick() {
+    showDeleteDialog = true;
+}
+function handleDeleteConfirm() {
+    showDeleteDialog = false;
+    onBulkDelete();
+}
+function handleDeleteCancel() {
+    showDeleteDialog = false;
+}
+const hasSelection = $derived(selectedCount > 0);
+const isMasterChecked = $derived(allVisibleSelected);
+const isMasterIndeterminate = $derived(!allVisibleSelected && someVisibleSelected);
+const pinTooltip = $derived(hasSelection
+    ? pinStateIsMixed
+        ? t("Unavailable for mixed state selection")
+        : someSelectedPinned
+            ? selectedCount === 1
+                ? t("Unpin")
+                : t("Unpin all")
+            : selectedCount === 1
+                ? t("Pin")
+                : t("Pin all")
+    : t("Pin"));
+const pinDisabled = $derived(!hasSelection || pinStateIsMixed);
 </script>
 
 <div

@@ -1,96 +1,60 @@
-<script lang="ts">
-	import { ChevronDown, Loader2, Package } from '@lucide/svelte';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import * as Tooltip from '$lib/components/ui/tooltip';
-	import { KeyboardKey, ServerModelStatus } from '$lib/enums';
-	import { useModelsSelector } from '$lib/hooks/use-models-selector.svelte';
-	import { modelsStore, routerModels } from '$lib/stores/models.svelte';
-	import { modelLoadFraction } from '$lib/utils';
-	import {
-		DialogModelInformation,
-		DropdownMenuSearchable,
-		ModelId,
-		ModelsSelectorList,
-		ModelsSelectorOption
-	} from '$lib/components/app';
-	import ModelLoadHighlight from './ModelLoadHighlight.svelte';
-	import type { ModelItem } from './utils';
-
-	interface Props {
-		class?: string;
-		currentModel?: string | null;
-		disabled?: boolean;
-		forceForegroundText?: boolean;
-		onModelChange?: (modelId: string, modelName: string) => Promise<boolean> | boolean | void;
-		useGlobalSelection?: boolean;
-	}
-
-	let {
-		class: className = '',
-		currentModel = null,
-		disabled = false,
-		forceForegroundText = false,
-		onModelChange,
-		useGlobalSelection = false
-	}: Props = $props();
-
-	let isOpen = $state(false);
-	let highlightedIndex = $state<number>(-1);
-
-	const ms = useModelsSelector({
-		currentModel: () => currentModel,
-		useGlobalSelection: () => useGlobalSelection,
-		onModelChange: () => onModelChange,
-		onOpenChange: (open) => {
-			isOpen = open;
-			highlightedIndex = -1;
-		}
-	});
-
-	$effect(() => {
-		void ms.searchTerm;
-		highlightedIndex = -1;
-	});
-
-	export function open() {
-		ms.handleOpenChange(true);
-	}
-
-	function handleSearchKeyDown(event: KeyboardEvent) {
-		if (event.isComposing) return;
-
-		if (event.key === KeyboardKey.ARROW_DOWN) {
-			event.preventDefault();
-
-			if (ms.filteredOptions.length === 0) return;
-
-			if (highlightedIndex === -1 || highlightedIndex === ms.filteredOptions.length - 1) {
-				highlightedIndex = 0;
-			} else {
-				highlightedIndex += 1;
-			}
-		} else if (event.key === KeyboardKey.ARROW_UP) {
-			event.preventDefault();
-
-			if (ms.filteredOptions.length === 0) return;
-
-			if (highlightedIndex === -1 || highlightedIndex === 0) {
-				highlightedIndex = ms.filteredOptions.length - 1;
-			} else {
-				highlightedIndex -= 1;
-			}
-		} else if (event.key === KeyboardKey.ENTER) {
-			event.preventDefault();
-
-			if (highlightedIndex >= 0 && highlightedIndex < ms.filteredOptions.length) {
-				const option = ms.filteredOptions[highlightedIndex];
-
-				ms.handleSelect(option.id);
-			} else if (ms.filteredOptions.length > 0) {
-				highlightedIndex = 0;
-			}
-		}
-	}
+<script>import { KeyboardKey } from '$lib/enums';
+import { useModelsSelector } from '$lib/hooks/use-models-selector.svelte';
+let { class: className = '', currentModel = null, disabled = false, forceForegroundText = false, onModelChange, useGlobalSelection = false } = $props();
+let isOpen = $state(false);
+let highlightedIndex = $state(-1);
+const ms = useModelsSelector({
+    currentModel: () => currentModel,
+    useGlobalSelection: () => useGlobalSelection,
+    onModelChange: () => onModelChange,
+    onOpenChange: (open) => {
+        isOpen = open;
+        highlightedIndex = -1;
+    }
+});
+$effect(() => {
+    void ms.searchTerm;
+    highlightedIndex = -1;
+});
+export function open() {
+    ms.handleOpenChange(true);
+}
+function handleSearchKeyDown(event) {
+    if (event.isComposing)
+        return;
+    if (event.key === KeyboardKey.ARROW_DOWN) {
+        event.preventDefault();
+        if (ms.filteredOptions.length === 0)
+            return;
+        if (highlightedIndex === -1 || highlightedIndex === ms.filteredOptions.length - 1) {
+            highlightedIndex = 0;
+        }
+        else {
+            highlightedIndex += 1;
+        }
+    }
+    else if (event.key === KeyboardKey.ARROW_UP) {
+        event.preventDefault();
+        if (ms.filteredOptions.length === 0)
+            return;
+        if (highlightedIndex === -1 || highlightedIndex === 0) {
+            highlightedIndex = ms.filteredOptions.length - 1;
+        }
+        else {
+            highlightedIndex -= 1;
+        }
+    }
+    else if (event.key === KeyboardKey.ENTER) {
+        event.preventDefault();
+        if (highlightedIndex >= 0 && highlightedIndex < ms.filteredOptions.length) {
+            const option = ms.filteredOptions[highlightedIndex];
+            ms.handleSelect(option.id);
+        }
+        else if (ms.filteredOptions.length > 0) {
+            highlightedIndex = 0;
+        }
+    }
+}
 </script>
 
 <div class={['relative inline-flex flex-col items-end gap-1', className]}>
@@ -216,7 +180,7 @@
 								<p class="px-4 py-3 text-sm text-muted-foreground">No models found.</p>
 							{/if}
 
-							{#snippet modelOption(item: ModelItem, hideOrgName: boolean)}
+							{#snippet modelOption(item, hideOrgName)}
 								{@const { option, flatIndex } = item}
 								{@const isSelected = currentModel === option.model || ms.activeId === option.id}
 								{@const isHighlighted = flatIndex === highlightedIndex}

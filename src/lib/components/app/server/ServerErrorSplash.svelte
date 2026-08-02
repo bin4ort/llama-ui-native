@@ -1,130 +1,98 @@
-<script lang="ts">
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { base } from '$app/paths';
-	import { AlertTriangle, RefreshCw, Key, CheckCircle, XCircle } from '@lucide/svelte';
-	import { goto } from '$app/navigation';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import Label from '$lib/components/ui/label/label.svelte';
-	import { serverStore, serverLoading } from '$lib/stores/server.svelte';
-	import { config, settingsStore } from '$lib/stores/settings.svelte';
-	import { AUTHORIZATION_HEADER, BEARER_PREFIX, SETTINGS_KEYS } from '$lib/constants';
-	import { ROUTES } from '$lib/constants/routes';
-	import { fade, fly, scale } from 'svelte/transition';
-	import { KeyboardKey } from '$lib/enums';
-
-	interface Props {
-		class?: string;
-		error: string;
-		onRetry?: () => void;
-		showRetry?: boolean;
-		showTroubleshooting?: boolean;
-	}
-
-	let {
-		class: className = '',
-		error,
-		onRetry,
-		showRetry = true,
-		showTroubleshooting = false
-	}: Props = $props();
-
-	let isServerLoading = $derived(serverLoading());
-	let isAccessDeniedError = $derived(
-		error.toLowerCase().includes('access denied') ||
-			error.toLowerCase().includes('invalid api key') ||
-			error.toLowerCase().includes('unauthorized') ||
-			error.toLowerCase().includes('401') ||
-			error.toLowerCase().includes('403')
-	);
-
-	let apiKeyInput = $state('');
-	let showApiKeyInput = $state(false);
-	let apiKeyState = $state<'idle' | 'validating' | 'success' | 'error'>('idle');
-	let apiKeyError = $state('');
-
-	function handleRetryConnection() {
-		if (onRetry) {
-			onRetry();
-		} else {
-			serverStore.fetch();
-		}
-	}
-
-	function handleShowApiKeyInput() {
-		showApiKeyInput = true;
-		// Pre-fill with current API key if it exists
-		const currentConfig = config();
-		apiKeyInput = currentConfig.apiKey?.toString() || '';
-	}
-
-	async function handleSaveApiKey() {
-		if (!apiKeyInput.trim()) return;
-
-		apiKeyState = 'validating';
-		apiKeyError = '';
-
-		try {
-			// Update the API key in settings first
-			settingsStore.updateConfig(SETTINGS_KEYS.API_KEY, apiKeyInput.trim());
-
-			// Test the API key by making a real request to the server
-			const response = await fetch(`${base}/props`, {
-				headers: {
-					'Content-Type': 'application/json',
-					[AUTHORIZATION_HEADER]: `${BEARER_PREFIX}${apiKeyInput.trim()}`
-				}
-			});
-
-			if (response.ok) {
-				// API key is valid - User Story B
-				apiKeyState = 'success';
-
-				// Show success state briefly, then navigate to home
-				setTimeout(() => {
-					goto(ROUTES.START);
-				}, 1000);
-			} else {
-				// API key is invalid - User Story A
-				apiKeyState = 'error';
-
-				if (response.status === 401 || response.status === 403) {
-					apiKeyError = 'Invalid API key - please check and try again';
-				} else {
-					apiKeyError = `Authentication failed (${response.status})`;
-				}
-
-				// Reset to idle state after showing error (don't reload UI)
-				setTimeout(() => {
-					apiKeyState = 'idle';
-				}, 3000);
-			}
-		} catch (error) {
-			// Network or other errors - User Story A
-			apiKeyState = 'error';
-
-			if (error instanceof Error) {
-				if (error.message.includes('fetch')) {
-					apiKeyError = 'Cannot connect to server - check if server is running';
-				} else {
-					apiKeyError = error.message;
-				}
-			} else {
-				apiKeyError = 'Connection error - please try again';
-			}
-
-			// Reset to idle state after showing error (don't reload UI)
-			setTimeout(() => {
-				apiKeyState = 'idle';
-			}, 3000);
-		}
-	}
-
-	function handleApiKeyKeydown(event: KeyboardEvent) {
-		if (event.key === KeyboardKey.ENTER) {
-			handleSaveApiKey();
-		}
-	}
+<script>import { base } from '$app/paths';
+import { goto } from '$app/navigation';
+import { serverStore, serverLoading } from '$lib/stores/server.svelte';
+import { config, settingsStore } from '$lib/stores/settings.svelte';
+import { AUTHORIZATION_HEADER, BEARER_PREFIX, SETTINGS_KEYS } from '$lib/constants';
+import { ROUTES } from '$lib/constants/routes';
+import { KeyboardKey } from '$lib/enums';
+let { class: className = '', error, onRetry, showRetry = true, showTroubleshooting = false } = $props();
+let isServerLoading = $derived(serverLoading());
+let isAccessDeniedError = $derived(error.toLowerCase().includes('access denied') ||
+    error.toLowerCase().includes('invalid api key') ||
+    error.toLowerCase().includes('unauthorized') ||
+    error.toLowerCase().includes('401') ||
+    error.toLowerCase().includes('403'));
+let apiKeyInput = $state('');
+let showApiKeyInput = $state(false);
+let apiKeyState = $state('idle');
+let apiKeyError = $state('');
+function handleRetryConnection() {
+    if (onRetry) {
+        onRetry();
+    }
+    else {
+        serverStore.fetch();
+    }
+}
+function handleShowApiKeyInput() {
+    showApiKeyInput = true;
+    // Pre-fill with current API key if it exists
+    const currentConfig = config();
+    apiKeyInput = currentConfig.apiKey?.toString() || '';
+}
+async function handleSaveApiKey() {
+    if (!apiKeyInput.trim())
+        return;
+    apiKeyState = 'validating';
+    apiKeyError = '';
+    try {
+        // Update the API key in settings first
+        settingsStore.updateConfig(SETTINGS_KEYS.API_KEY, apiKeyInput.trim());
+        // Test the API key by making a real request to the server
+        const response = await fetch(`${base}/props`, {
+            headers: {
+                'Content-Type': 'application/json',
+                [AUTHORIZATION_HEADER]: `${BEARER_PREFIX}${apiKeyInput.trim()}`
+            }
+        });
+        if (response.ok) {
+            // API key is valid - User Story B
+            apiKeyState = 'success';
+            // Show success state briefly, then navigate to home
+            setTimeout(() => {
+                goto(ROUTES.START);
+            }, 1000);
+        }
+        else {
+            // API key is invalid - User Story A
+            apiKeyState = 'error';
+            if (response.status === 401 || response.status === 403) {
+                apiKeyError = 'Invalid API key - please check and try again';
+            }
+            else {
+                apiKeyError = `Authentication failed (${response.status})`;
+            }
+            // Reset to idle state after showing error (don't reload UI)
+            setTimeout(() => {
+                apiKeyState = 'idle';
+            }, 3000);
+        }
+    }
+    catch (error) {
+        // Network or other errors - User Story A
+        apiKeyState = 'error';
+        if (error instanceof Error) {
+            if (error.message.includes('fetch')) {
+                apiKeyError = 'Cannot connect to server - check if server is running';
+            }
+            else {
+                apiKeyError = error.message;
+            }
+        }
+        else {
+            apiKeyError = 'Connection error - please try again';
+        }
+        // Reset to idle state after showing error (don't reload UI)
+        setTimeout(() => {
+            apiKeyState = 'idle';
+        }, 3000);
+    }
+}
+function handleApiKeyKeydown(event) {
+    if (event.key === KeyboardKey.ENTER) {
+        handleSaveApiKey();
+    }
+}
 </script>
 
 <div class="flex h-full items-center justify-center {className}">

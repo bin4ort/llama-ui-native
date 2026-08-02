@@ -1,26 +1,15 @@
-<script lang="ts">
-	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { ChevronDown, ChevronRight } from '@lucide/svelte';
-	import { Checkbox } from '$lib/components/ui/checkbox';
-	import * as Collapsible from '$lib/components/ui/collapsible';
-	import { TruncatedText, McpServerIdentity } from '$lib/components/app';
-	import { toolsStore } from '$lib/stores/tools.svelte';
-	import { permissionsStore } from '$lib/stores/permissions.svelte';
-	import { mcpStore } from '$lib/stores/mcp.svelte';
-	import { getBuiltinToolUi } from '$lib/constants/built-in-tools';
-	import { ToolSource } from '$lib/enums/tools.enums';
-	import { SvelteSet } from 'svelte/reactivity';
-
-	let expandedGroups = new SvelteSet<string>();
-	let groups = $derived(toolsStore.toolGroups);
-
-	function toggleExpanded(key: string) {
-		if (expandedGroups.has(key)) {
-			expandedGroups.delete(key);
-		} else {
-			expandedGroups.add(key);
-		}
-	}
+<script>import { toolsStore } from '$lib/stores/tools.svelte';
+import { SvelteSet } from 'svelte/reactivity';
+let expandedGroups = new SvelteSet();
+let groups = $derived(toolsStore.toolGroups);
+function toggleExpanded(key) {
+    if (expandedGroups.has(key)) {
+        expandedGroups.delete(key);
+    }
+    else {
+        expandedGroups.add(key);
+    }
+}
 </script>
 
 {#if groups.length === 0}

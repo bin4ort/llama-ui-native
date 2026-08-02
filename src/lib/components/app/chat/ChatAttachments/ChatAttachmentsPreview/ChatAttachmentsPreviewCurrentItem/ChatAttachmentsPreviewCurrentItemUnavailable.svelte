@@ -1,13 +1,5 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import type { Component } from 'svelte';
-
-	interface Props {
-		IconComponent: Component;
-	}
-
-	let { IconComponent }: Props = $props();
+<script>let { IconComponent } = $props();
+export {};
 </script>
 
 <div class="flex flex-1 items-center justify-center p-8">

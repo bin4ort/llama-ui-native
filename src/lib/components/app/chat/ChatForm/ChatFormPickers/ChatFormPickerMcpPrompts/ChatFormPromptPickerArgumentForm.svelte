@@ -1,43 +1,5 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-
-	import type { MCPPromptInfo } from '$lib/types';
-	import ChatFormPromptPickerArgumentInput from './ChatFormPromptPickerArgumentInput.svelte';
-	import { Button } from '$lib/components/ui/button';
-
-	interface Props {
-		prompt: MCPPromptInfo;
-		promptArgs: Record<string, string>;
-		suggestions: Record<string, string[]>;
-		loadingSuggestions: Record<string, boolean>;
-		activeAutocomplete: string | null;
-		autocompleteIndex: number;
-		promptError: string | null;
-		onArgInput: (argName: string, value: string) => void;
-		onArgKeydown: (event: KeyboardEvent, argName: string) => void;
-		onArgBlur: (argName: string) => void;
-		onArgFocus: (argName: string) => void;
-		onSelectSuggestion: (argName: string, value: string) => void;
-		onSubmit: (event: SubmitEvent) => void;
-		onCancel: () => void;
-	}
-
-	let {
-		prompt,
-		promptArgs,
-		suggestions,
-		loadingSuggestions,
-		activeAutocomplete,
-		autocompleteIndex,
-		promptError,
-		onArgInput,
-		onArgKeydown,
-		onArgBlur,
-		onArgFocus,
-		onSelectSuggestion,
-		onSubmit,
-		onCancel
-	}: Props = $props();
+<script>let { prompt, promptArgs, suggestions, loadingSuggestions, activeAutocomplete, autocompleteIndex, promptError, onArgInput, onArgKeydown, onArgBlur, onArgFocus, onSelectSuggestion, onSubmit, onCancel } = $props();
+export {};
 </script>
 
 <form onsubmit={onSubmit} class="space-y-3 pt-4">

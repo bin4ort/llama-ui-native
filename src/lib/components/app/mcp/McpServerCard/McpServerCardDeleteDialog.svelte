@@ -1,15 +1,5 @@
-<script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
-	import * as AlertDialog from '$lib/components/ui/alert-dialog';
-
-	interface Props {
-		open: boolean;
-		displayName: string;
-		onOpenChange: (open: boolean) => void;
-		onConfirm: () => void;
-	}
-
-	let { open = $bindable(), displayName, onOpenChange, onConfirm }: Props = $props();
+<script>let { open = $bindable(), displayName, onOpenChange, onConfirm } = $props();
+export {};
 </script>
 
 <AlertDialog.Root bind:open {onOpenChange}>
