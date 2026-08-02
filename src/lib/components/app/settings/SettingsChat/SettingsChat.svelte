@@ -29,7 +29,7 @@
 	import { settingsReferrer } from '$lib/stores/settings-referrer.svelte';
 	import { modelsStore } from '$lib/stores/models.svelte';
 	import { isRouterMode } from '$lib/stores/server.svelte';
-	import { applyLang } from '$lib/stores/i18n.svelte';
+	import { applyLang, tr } from '$lib/stores/i18n.svelte';
 	let { initialSection, getSectionHref } = $props();
 
 	let activeSlug = $derived(

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { t } from '$lib/stores/i18n.svelte';
+	import { t, tr } from '$lib/stores/i18n.svelte';
 
 	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
 	import { Plus, File, MessageSquare, Zap, FolderOpen } from '@lucide/svelte';
