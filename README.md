@@ -1,144 +1,83 @@
 # Llama UI Native
 
-A native GTK desktop application that wraps the [llama.cpp Web UI](https://github.com/ggml-org/llama.cpp) in a WebKitGTK window with a built-in HTTP server for API proxying.
+A native GTK desktop application wrapping the llama.cpp Web UI in a WebKitGTK window with a built-in HTTP server.
 
 ## Overview
 
-- **Native wrapper**: C application using GTK 3 + WebKitGTK 4.1
+- **Native wrapper**: C + GTK 3 + WebKitGTK 4.1
 - **Frontend**: SvelteKit 5 static build served by embedded Mongoose HTTP server
-- **Backend proxy**: Proxies `/v1/chat/completions` to a local llama.cpp server
-- **Port**: UI runs on `http://localhost:8765`, expects llama.cpp server on port 8080
+- **Backend**: Proxies `/v1/chat/completions` to a local llama.cpp server
+- **Ports**: UI on `localhost:8765`, llama.cpp server expected on `localhost:8080`
 
 ## Project Structure
 
 ```
-LlamaUI-Native/
-├── main.c              # GTK window + WebKitWebView
-├── server.c/.h         # Mongoose HTTP server + API proxy
-├── mongoose.c/.h       # Mongoose embedded web server
-├── frontend/v2/        # Compiled SvelteKit static output
-│   ├── index.html      # Entry point
-│   ├── _app/           # Bundled JS/CSS assets
-│   ├── lang/           # Translation JSON files (en.json, de.json, ru.json)
-│   └── i18n.js         # DOM-walking i18n fallback script
-├── install.sh          # One-command build + install script
-├── launch.sh           # Launcher (sets LD_LIBRARY_PATH)
-└── scripts/            # Vite plugins (build info, splash screen, etc.)
-```
-
-The source code for the Web UI lives in a separate tree:
-```
-/home/stry4ok/Development/Tools/llama.cpp/tools/ui/
-├── src/                # SvelteKit source
-│   ├── routes/         # Page routes
-│   ├── lib/
-│   │   ├── components/ # UI components
-│   │   └── stores/     # State stores (including i18n.svelte.ts)
-│   └── app.html        # HTML template
-├── static/             # Static assets (favicons, etc.)
-├── scripts/            # Vite plugins
-├── lang/               # (Translation files built into dist/ at build time)
-└── package.json        # Dependencies and build scripts
+├── main.c / server.c     # GTK window + Mongoose HTTP server + API proxy
+├── mongoose.c / .h       # Embedded web server
+├── src/                  # SvelteKit source (edit here, then build)
+├── frontend/v2/          # Compiled static output (served by C server)
+│   ├── index.html
+│   ├── _app/             # Bundled JS/CSS
+│   ├── lang/             # Translation JSON files
+│   └── i18n.js           # DOM-walking i18n fallback
+├── scripts/              # Vite build plugins
+├── install.sh            # Build + install
+└── launch.sh             # Launcher (sets LD_LIBRARY_PATH)
 ```
 
 ## Building
 
 ### Prerequisites
 
-**Arch Linux:**
+**Arch:**
 ```bash
-sudo pacman -S gcc gtk3 webkit2gtk-4.1 curl pkgconf
+sudo pacman -S gcc gtk3 webkit2gtk-4.1 curl pkgconf nodejs npm
 ```
 
 **Debian/Ubuntu:**
 ```bash
-sudo apt install gcc libgtk-3-dev libwebkit2gtk-4.1-dev libcurl4-openssl-dev pkg-config
+sudo apt install gcc libgtk-3-dev libwebkit2gtk-4.1-dev libcurl4-openssl-dev pkg-config nodejs npm
 ```
 
-### Build the frontend
+### Build
 
 ```bash
-cd /home/stry4ok/Development/Tools/llama.cpp/tools/ui
+# Frontend
 npm install
 npm run build
-```
+# Output goes to dist/ — already copied to frontend/v2/
 
-### Copy frontend output
-
-```bash
-cp -r /home/stry4ok/Development/Tools/llama.cpp/tools/ui/dist/* \
-      /home/stry4ok/Development/Projects/LlamaUI-Native/frontend/v2/
-```
-
-### Compile the native binary
-
-```bash
-cd /home/stry4ok/Development/Projects/LlamaUI-Native
+# C binary
 ./install.sh
+# Or: gcc -o llama-ui-native main.c server.c mongoose.c $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) -lpthread -lm -lcurl -Wall
 ```
 
-Or manually:
-```bash
-gcc -o llama-ui-native main.c server.c mongoose.c \
-    $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) \
-    -lpthread -lm -lcurl -Wall
-```
-
-### Running
+### Run
 
 ```bash
 ./launch.sh
-# Or directly:
-./llama-ui-native
 ```
 
-## Adding Language Support
+## Adding a Language
 
-1. Copy the English translation file:
-   ```bash
-   cp frontend/v2/lang/en.json frontend/v2/lang/{code}.json
-   ```
+1. Copy `frontend/v2/lang/en.json` to `frontend/v2/lang/{code}.json`
+2. Translate all values (keep keys in English)
+3. Add the language option in `src/lib/constants/settings-registry.ts` (line ~112)
+4. Add the language dict in `src/lib/stores/i18n.svelte.ts` (follow the `DE`/`RU` pattern)
+5. Add the language code handling in the `applyCode()` function
+6. Run `npm run build` and commit
 
-2. Translate all values in the new JSON file. Keep keys in English.
+## Translation Architecture
 
-3. Add hardcoded `$state` field translations to `src/lib/stores/i18n.svelte.ts` in the source tree, then rebuild the frontend.
+The app uses SvelteKit's native `$state` reactivity for translations:
 
-4. The language is selected at runtime via the Settings panel. The selection is stored in `localStorage` key `lang`.
-
-## Architecture
-
-### Translation System (i18n)
-
-The app uses a two-layer translation system:
-
-1. **SvelteKit $state** (`src/lib/stores/i18n.svelte.ts`):
-   - Core UI strings use typed `$state` fields (e.g., `tr.Settings`, `tr.NewChat`)
-   - Hardcoded translations for DE and RU inline
-   - Dynamic strings use `tr.dict` populated from `/lang/{code}.json` at runtime
-   - `t(key)` function looks up `tr.dict[key]` or returns the key as fallback
-
-2. **DOM-walking fallback** (`frontend/v2/i18n.js`):
-   - Background script that walks text nodes and replaces them using de.json
-   - Handles strings that Svelte's reactive system missed
-   - Polls `localStorage` for language changes every 300ms
-
-### Server Architecture
-
-- Mongoose HTTP server serves static files from `frontend/v2/`
-- API-like endpoints: `/health`, `/api/network-info`, `/v1/models`, `/props`, `/slots`
-- SSE proxy: `/v1/chat/completions` and `/completion` are proxied to the llama.cpp backend via libcurl
-- CORS headers are set for all responses
-
-### GTK Wrapper
-
-- `main.c` creates a GTK Window with a fullscreen WebKitWebView
-- External links are opened in the system browser
-- Dark background (#141414) set via GTK CSS provider
-- Developer extras enabled: Web Inspector available
+- **Named properties**: `tr.Settings`, `tr.General` etc. — instant via Svelte reactivity
+- **Dict entries**: `tr.dict[key]` — populated from inline `*_FULL` dicts at runtime
+- **Templates**: All UI text uses `{tr.dict["key"] || "key"}` for reactive updates
+- **Fallback**: `i18n.js` DOM-walking script catches any remaining hardcoded text
 
 ## Notes
 
-- The C server expects a llama.cpp server running on `http://localhost:8080`
-- Change `BACKEND_URL` in `server.h` to use a different backend
-- The native binary must run from the project directory (it uses relative paths)
-- The `launch.sh` script handles setting `LD_LIBRARY_PATH` for bundled libraries
+- Change `BACKEND_URL` in `server.h` to point to a different llama.cpp server
+- The binary must run from the project directory (uses relative paths)
+- `launch.sh` handles `LD_LIBRARY_PATH` for bundled libraries

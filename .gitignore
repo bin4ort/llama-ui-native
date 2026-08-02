@@ -1,9 +1,12 @@
 node_modules/
 .svelte-kit/
 dist/
-.svelte-kit/
 *.o
 llama-ui-native
 **/*.bak
 .DS_Store
-node_modules/
+*.swp
+*.swo
+*~
+.env
+.env.*
