@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
     chdir_to_bindir();
 
     char cwd[PATH_MAX];
-    char icon_path[PATH_MAX + 14];
+    char icon_path[PATH_MAX + 32];
     if (getcwd(cwd, sizeof(cwd)))
         snprintf(icon_path, sizeof(icon_path), "%s/static/icon-128.png", cwd);
 

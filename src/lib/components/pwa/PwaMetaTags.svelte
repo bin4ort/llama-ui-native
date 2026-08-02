@@ -1,4 +1,5 @@
 <script>import { APP_NAME } from '$lib/constants';
+import { THEME_COLORS, MEDIA_QUERIES } from '$lib/constants/pwa';
 let { appName = APP_NAME } = $props();
 </script>
 
