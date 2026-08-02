@@ -12,7 +12,7 @@ const execShellMeta = $derived(parseExecShellCommandMeta(section));
 const execShellError = $derived(parseExecShellCommandError(section.toolResult));
 const execShellExitStatus = $derived(parseExecShellCommandExitStatus(section.toolResult));
 const parsedLines = $derived(section.toolResult ? parseToolResultWithImages(section.toolResult, attachments) : []);
-// Drop the trailing "[exit code: N]" line - rendered as a colored
+// Drop the trailing "[exit code: N]" line - renderedcolored
 // badge below. During streaming we keep it so a partial stream still
 // shows the status once the final chunk lands.
 const outputLines = $derived(execShellExitStatus && parsedLines.length > 0

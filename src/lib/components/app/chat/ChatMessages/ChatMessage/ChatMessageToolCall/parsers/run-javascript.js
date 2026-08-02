@@ -2,7 +2,7 @@
 // optional timeout from args (strict parsing) and surfaces any error
 // from the result blob. SandboxService.formatReply emits a JSON object
 // containing an `error` field on failure, but a partial/non-JSON
-// failure renders as a flat line beginning with `Error:`. Both shapes
+// failure rendersflat line beginning with `Error:`. Both shapes
 // are handled.
 import { BuiltInTool } from '$lib/enums';
 import { parseToolArgs } from './_shared';

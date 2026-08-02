@@ -36,7 +36,7 @@ export class ToolsService {
      * events followed by a terminal `data: {"done": true}` (optionally with
      * `error`). Yields the chunk string for each partial event.
      *
-     * The terminal event's `error` field, if present, is yielded as a final
+     * The terminal event's `error` field, if present, is yieldedfinal
      * synthetic chunk prefixed with an error marker so the accumulated content
      * already carries the failure context for the caller.
      *

@@ -960,7 +960,7 @@ if (typeof module !== 'undefined' && nerdamer === undefined) {
             return this;
         } // Nothing to add
 
-        // we don't want to carry -1 as a factor. If a factor already exists,
+        // we don't want to carry -1factor. If a factor already exists,
         // then add the minus one to that factor and return.
         if (s.equals(-1) && this.length > 0) {
             const fo = core.Utils.firstObject(this.factors, null, true);
@@ -2499,7 +2499,7 @@ if (typeof module !== 'undefined' && nerdamer === undefined) {
                 const df = dx
                     ? dx
                     : core.Build.build(core.Calculus.diff(/** @type {NerdamerSymbolType} */ (f).clone()));
-                // If the function was passed in as a function then don't recalculate.
+                // If the function was passed infunction then don't recalculate.
                 const fn = f instanceof Function ? f : core.Build.build(f);
                 const max = 10000;
                 let done = false;

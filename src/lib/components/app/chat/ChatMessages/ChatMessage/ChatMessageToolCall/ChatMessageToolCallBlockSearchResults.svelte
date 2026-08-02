@@ -17,7 +17,7 @@ const icon = $derived(showSpinner ? Loader2 : undefined);
 const iconClass = $derived(showSpinner ? ICON_CLASS_SPIN : ICON_CLASS_DEFAULT);
 // Verb reflects state: "Searching" while the call is in flight, "Searched"
 // once results (or a definitive empty response) have arrived. Lets the
-// heading read as a live progress indicator rather than a completed
+// heading readlive progress indicator rather than a completed
 // retrospective.
 const title = $derived.by(() => {
     const verb = showSpinner ? 'Searching' : 'Searched';

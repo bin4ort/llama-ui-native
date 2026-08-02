@@ -5,7 +5,7 @@ import { NEWLINE, DEFAULT_LANGUAGE, LANG_PATTERN, AMPERSAND_REGEX, LT_REGEX, GT_
  *
  * Tool call payloads frequently arrive with surrounding whitespace from LLM
  * formatting (`"\nfunction ...\n"`). Preserving those newlines makes hljs emit
- * a leading/trailing empty line that `<pre>` then renders as a phantom row,
+ * a leading/trailing empty line that `<pre>` then rendersphantom row,
  * pushing real content away from the box edge. The trim keeps the body intact
  * so internal blank lines are still rendered as such.
  */

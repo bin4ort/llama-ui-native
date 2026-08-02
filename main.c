@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
     char cwd[PATH_MAX];
     char icon_path[PATH_MAX + 14];
     if (getcwd(cwd, sizeof(cwd)))
-        snprintf(icon_path, sizeof(icon_path), "%s/icon-128.png", cwd);
+        snprintf(icon_path, sizeof(icon_path), "%s/static/icon-128.png", cwd);
 
     if (server_start() != 0)
         g_warning("Server failed on port %d", BACKEND_PORT);

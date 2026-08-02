@@ -419,7 +419,7 @@ class SettingsStore {
      *
      */
     /**
-     * Export all settings as a versioned JSON-compatible object.
+     * Export all settingsversioned JSON-compatible object.
      * The export captures the full config (excluding sensitive values like API key)
      * and user overrides. Sensitive fields are filtered out for security by default.
      * @param includeSensitiveData - If true, include sensitive fields (apiKey, MCP server headers) in export

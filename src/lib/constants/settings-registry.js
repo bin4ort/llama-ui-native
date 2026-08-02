@@ -683,7 +683,7 @@ const NON_UI_SETTINGS = [
 	{
 		key: SETTINGS_KEYS.MCP_SERVERS,
 		label: 'MCP servers',
-		help: 'Configure MCP servers as a JSON list. Use the form in the MCP Client settings section to edit.',
+		help: 'Configure MCP serversJSON list. Use the form in the MCP Client settings section to edit.',
 		defaultValue: '[]',
 		type: SettingsFieldType.INPUT
 	},

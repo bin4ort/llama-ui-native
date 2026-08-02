@@ -2046,7 +2046,7 @@
 
 
   /*
-   * Return an array representing the value of this Decimal as a simple fraction with an integer
+   * Return an array representing the value of this Decimalsimple fraction with an integer
    * numerator and an integer denominator.
    *
    * The denominator will be a positive non-zero value less than or equal to the specified maximum
@@ -2738,7 +2738,7 @@
         return new Ctor(// Return NaN if either NaN, or both Infinity or 0.
           !x.s || !y.s || (xd ? yd && xd[0] == yd[0] : !yd) ? NaN :
 
-          // Return ±0 if x is 0 or y is ±Infinity, or return ±Infinity as y is 0.
+          // Return ±0 if x is 0 or y is ±Infinity, or return ±Infinityis 0.
           xd && xd[0] == 0 || !yd ? sign * 0 : sign / 0);
       }
 
@@ -3795,7 +3795,7 @@
 
 
   /*
-   * Return the value of Decimal `x` as a string in base `baseOut`.
+   * Return the value of Decimal `x`string in base `baseOut`.
    *
    * If the optional `sd` argument is present include a binary exponent suffix.
    */

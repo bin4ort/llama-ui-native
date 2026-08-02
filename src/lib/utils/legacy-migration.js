@@ -122,7 +122,7 @@ function parseLegacyToolCalls(content) {
             turns.push({ textBefore: cleanRemaining, toolCalls: [] });
         }
     }
-    // If no tool calls found at all, return the original content as a single turn
+    // If no tool calls found at all, return the original contentsingle turn
     if (turns.length === 0) {
         turns.push({ textBefore: content.trim(), toolCalls: [] });
     }

@@ -51,7 +51,7 @@
  * ### 5. Newline Substitution for `<br>` in Combined String
  * When combining siblings, existing `<br>` elements become `\n` in the combined
  * string. This allows list content to span visual lines while still being parsed
- * as a single unit.
+ *single unit.
  *
  * @example
  * // Input Markdown:

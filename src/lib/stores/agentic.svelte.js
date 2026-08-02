@@ -180,7 +180,7 @@ class AgenticStore {
     }
     /**
      * Queue a steering message. When the current agentic turn completes,
-     * the flow exits and the caller re-sends the message as a normal chat message.
+     * the flow exits and the caller re-sends the messagenormal chat message.
      */
     injectSteeringMessage(conversationId, content, extras) {
         this._steeringMessages.set(conversationId, { content, extras });

@@ -62,7 +62,7 @@ export function parsePartialJsonArgs(toolArgsString) {
         let completed = toolArgsString;
         if (escape) {
             // Dangling escape at end of partial JSON: escape the trailing
-            // backslash as a literal so we can close the string cleanly.
+            // backslashliteral so we can close the string cleanly.
             completed += JSON_BACKSLASH;
         }
         if (inString)

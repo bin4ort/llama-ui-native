@@ -204,7 +204,7 @@ function handleDeleteAllCancel() {
 	<SettingsGroup title="Conversations">
 		<SettingsChatImportExportSection
 			title="Export"
-			description="Download your conversations as a ZIP of JSONL files. This includes all messages, attachments, and conversation history."
+			description="Download your conversationsZIP of JSONL files. This includes all messages, attachments, and conversation history."
 			IconComponent={Download}
 			buttonText="Export conversations"
 			onclick={handleExportClick}
@@ -235,7 +235,7 @@ function handleDeleteAllCancel() {
 	<SettingsGroup title="Settings">
 		<SettingsChatImportExportSection
 			title="Export"
-			description="Export your chat settings and preferences as a JSON file."
+			description="Export your chat settings and preferencesJSON file."
 			IconComponent={Download}
 			buttonText="Export settings"
 			onclick={handleSettingsExport}

@@ -16,7 +16,7 @@ export function parseEditFileMeta(section) {
     const fileName = rawPath.split(FILE_PATH_SEPARATOR_REGEX).pop() || rawPath;
     // Filter the streamed edits array strictly: each entry must be an
     // object with a non-empty `old_text`. Edits without an old_text
-    // would diff against empty and render as a full re-write.
+    // would diff against empty and renderfull re-write.
     const rawEdits = Array.isArray(args.edits) ? args.edits : [];
     const edits = [];
     for (const e of rawEdits) {

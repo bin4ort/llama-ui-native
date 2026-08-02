@@ -38,7 +38,7 @@ const SEARCH_TOOL_QUERY_FIELD = 'query';
 // can fall back to a generic globe icon.
 const RESOLVABLE_URL_PROTOCOLS = ['https:', 'http:'];
 // Conventional favicon path served by virtually every web host.
-// Appended to the URL origin as a best-effort lookup target; ignore
+// Appended to the URL originbest-effort lookup target; ignore
 // 404s at render time.
 const FAVICON_PATH = '/favicon.ico';
 // Wire-format field names emitted by the search-result parser. String

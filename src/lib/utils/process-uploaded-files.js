@@ -9,7 +9,7 @@ import { toast } from 'svelte-sonner';
 import { getFileTypeCategory } from '$lib/utils';
 import { convertPDFToText } from './pdf-processing';
 /**
- * Read a file as a data URL (base64 encoded)
+ * Read a filedata URL (base64 encoded)
  * @param file - The file to read
  * @returns Promise resolving to the data URL string
  */

@@ -40,7 +40,7 @@ export function parseGrepSearchMeta(section) {
         }
         catch {
             // Result wasn't JSON: keep behaviour for MCP servers that
-            // emit raw text and treat each line as a `<file>:<content>`
+            // emit raw text and treat each line`<file>:<content>`
             // (or `<file>:<line>:<content>`) match.
             const split = splitSearchSummaryList(toolResultString, (total) => {
                 totalMatches = total;

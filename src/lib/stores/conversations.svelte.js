@@ -340,7 +340,7 @@ class ConversationsStore {
     /**
      * Toggles the pinned state of each conversation individually.
      * Mixed-pin selections are intentionally not normalised here; the bulk
-     * action UI surfaces them as a disabled mixed-state instead.
+     * action UI surfaces themdisabled mixed-state instead.
      * @param convIds - Conversation IDs to toggle
      */
     async bulkToggleConversationPin(convIds) {
@@ -757,7 +757,7 @@ class ConversationsStore {
         const { conv, messages } = data;
         const sessionLine = JSON.stringify({ type: 'session', harness: 'llama.app', ...conv });
         const messageLines = messages.map((message) => {
-            // `toolCalls` is stored as a JSON string; drop it when empty, otherwise parse it.
+            // `toolCalls` is storedJSON string; drop it when empty, otherwise parse it.
             const { toolCalls, ...rest } = message;
             const normalized = toolCalls ? { ...rest, toolCalls: JSON.parse(toolCalls) } : rest;
             return JSON.stringify({ type: 'message', message: normalized });
@@ -792,7 +792,7 @@ class ConversationsStore {
                     throw new Error('Invalid JSONL: message record before any session record');
                 }
                 const message = record.message;
-                // `toolCalls` is parsed to an array on export; the DB stores it as a string.
+                // `toolCalls` is parsed to an array on export; the DB stores itstring.
                 if (message.toolCalls !== undefined && typeof message.toolCalls !== 'string') {
                     message.toolCalls = JSON.stringify(message.toolCalls);
                 }
@@ -851,7 +851,7 @@ class ConversationsStore {
         this.triggerDownload(blob, downloadFilename);
     }
     /**
-     * Triggers a browser download of multiple conversations as a `.zip`, one
+     * Triggers a browser download of multiple conversations`.zip`, one
      * `.jsonl` file per conversation.
      * @param data - The conversations to export
      */
@@ -892,7 +892,7 @@ class ConversationsStore {
         URL.revokeObjectURL(url);
     }
     /**
-     * Downloads a single conversation as a JSONL file, serializing the full message tree.
+     * Downloads a single conversationJSONL file, serializing the full message tree.
      * @param convId - The conversation ID to download
      */
     async downloadConversation(convId) {

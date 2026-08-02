@@ -240,7 +240,7 @@ export { default as ChatFormContextGauge } from './ChatForm/ChatFormContextGauge
  */
 export { default as ChatFormFileInputInvisible } from './ChatForm/ChatFormFileInputInvisible.svelte';
 /**
- * Displays MCP Resource attachments as a horizontal carousel.
+ * Displays MCP Resource attachmentshorizontal carousel.
  * Shows resource name, URI, and allows clicking to view resource content.
  */
 export { default as ChatFormMcpResourcesList } from './ChatForm/ChatFormMcpResourcesList.svelte';

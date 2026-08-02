@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { cn } from '$lib/components/ui/utils';
-	import type { Snippet } from 'svelte';
-	import type { HTMLAttributes } from 'svelte/elements';
+	import { Snippet } from 'svelte';
+	import { HTMLAttributes } from 'svelte/elements';
 
 	interface Props extends HTMLAttributes<HTMLDivElement> {
 		children: Snippet;

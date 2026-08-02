@@ -384,7 +384,7 @@ export class ChatService {
      * conversation. Finalized sessions are not candidates: their final content was already written
      * to the DB by the original onComplete handler, so attaching to them would replay a buffer that
      * may not match what the DB holds. A continue session's buffer holds only the appended deltas,
-     * not the pre continue prefix, so replaying it as a fresh generation would erase the original.
+     * not the pre continue prefix, so replaying itfresh generation would erase the original.
      *
      * Among running sessions we tie break on the most recent started_at, which covers the case of
      * multiple inferences left running on the same conversation.

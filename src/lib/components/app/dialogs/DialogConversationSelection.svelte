@@ -25,7 +25,7 @@ export {};
 
 				<Dialog.Description>
 					{#if mode === 'export'}
-						{t("Choose which conversations you want to export. Selected conversations will be downloaded as a JSON file.")}
+						{t("Choose which conversations you want to export. Selected conversations will be downloadedJSON file.")}
 					{:else}
 						{t("Choose which conversations you want to import. Selected conversations will be merged with your existing conversations.")}
 					{/if}

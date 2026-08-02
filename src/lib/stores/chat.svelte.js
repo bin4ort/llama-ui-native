@@ -713,7 +713,7 @@ class ChatStore {
             return null;
         return { message, index };
     }
-    async addMessage(role, content, type = MessageType.TEXT, parent = '-1', extras) {
+    async addMessage(role, content = MessageType.TEXT, parent = '-1', extras) {
         const activeConv = conversationsStore.activeConversation;
         if (!activeConv)
             throw new Error('No active conversation');
@@ -858,12 +858,12 @@ class ChatStore {
         if (!content.trim() && (!extras || extras.length === 0))
             return;
         const activeConv = conversationsStore.activeConversation;
-        // If agentic loop is running, inject as a steering message instead of starting a new flow
+        // If agentic loop is running, injectsteering message instead of starting a new flow
         if (activeConv && agenticStore.isRunning(activeConv.id)) {
             agenticStore.injectSteeringMessage(activeConv.id, content, extras);
             return;
         }
-        // If non-agentic streaming is active, queue as a pending message to send after completion
+        // If non-agentic streaming is active, queuepending message to send after completion
         if (activeConv && this.isChatLoadingInternal(activeConv.id)) {
             this.injectPendingMessage(activeConv.id, content, extras);
             return;

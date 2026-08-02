@@ -199,7 +199,7 @@ export function parseToolResultWithImages(toolResult, extras) {
  *              fences, links, lists, blockquotes, tables) and should render
  *              through MarkdownContent for proper formatting.
  *   text     - everything else, rendered as plain text lines (with image
- *              attachment resolution as a side effect).
+ *              attachment resolutionside effect).
  */
 export function classifyToolResult(content) {
     if (!content)

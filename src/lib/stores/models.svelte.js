@@ -631,7 +631,7 @@ class ModelsStore {
         }
     }
     /**
-     * Parse one SSE record. The payload rides in the data lines as a JSON
+     * Parse one SSE record. The payload rides in the data linesJSON
      * envelope that carries its own model, event and data fields.
      */
     handleStatusRecord(record) {

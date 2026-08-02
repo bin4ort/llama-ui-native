@@ -51,7 +51,7 @@ else
     DESKTOP_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
     mkdir -p "$DESKTOP_DIR"
     cp "Llama UI Native.desktop" "$DESKTOP_DIR/llama-ui-native.desktop"
-    sed -i "s|Icon=icon-128.png|Icon=$PROJECT_DIR/icon-128.png|" "$DESKTOP_DIR/llama-ui-native.desktop"
+    sed -i "s|Icon=icon-128.png|Icon=$PROJECT_DIR/static/icon-128.png|" "$DESKTOP_DIR/llama-ui-native.desktop"
     sed -i "s|Exec=.*|Exec=$PROJECT_DIR/launch.sh|" "$DESKTOP_DIR/llama-ui-native.desktop"
     echo "  Installed to $DESKTOP_DIR/llama-ui-native.desktop"
 fi
