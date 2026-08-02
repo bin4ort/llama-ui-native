@@ -1,7 +1,22 @@
-<script>let { tools } = $props();
-let isExpanded = $state(false);
-let toolsCount = $derived(tools.length);
-export {};
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+	import { ChevronDown, ChevronRight } from '@lucide/svelte';
+	import * as Collapsible from '$lib/components/ui/collapsible';
+	import { Badge } from '$lib/components/ui/badge';
+
+	interface Tool {
+		name: string;
+		description?: string;
+	}
+
+	interface Props {
+		tools: Tool[];
+	}
+
+	let { tools }: Props = $props();
+
+	let isExpanded = $state(false);
+	let toolsCount = $derived(tools.length);
 </script>
 
 <Collapsible.Root bind:open={isExpanded}>

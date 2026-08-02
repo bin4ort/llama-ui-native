@@ -1,5 +1,36 @@
-<script>let { triggerIcon, triggerTooltip, triggerClass = '', actions, align = 'end', open = $bindable(false) } = $props();
-export {};
+<script lang="ts">
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+	import { KeyboardShortcutInfo } from '$lib/components/app';
+	import type { Component } from 'svelte';
+
+	interface ActionItem {
+		icon: Component;
+		label: string;
+		onclick: (event: Event) => void;
+		variant?: 'default' | 'destructive';
+		disabled?: boolean;
+		shortcut?: string[];
+		separator?: boolean;
+	}
+
+	interface Props {
+		triggerIcon: Component;
+		triggerTooltip?: string;
+		triggerClass?: string;
+		actions: ActionItem[];
+		align?: 'start' | 'center' | 'end';
+		open?: boolean;
+	}
+
+	let {
+		triggerIcon,
+		triggerTooltip,
+		triggerClass = '',
+		actions,
+		align = 'end',
+		open = $bindable(false)
+	}: Props = $props();
 </script>
 
 <DropdownMenu.Root bind:open>
@@ -54,6 +85,6 @@ export {};
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
 
-{#snippet iconComponent(IconComponent, className)}
+{#snippet iconComponent(IconComponent: Component, className: string)}
 	<IconComponent class={className} />
 {/snippet}

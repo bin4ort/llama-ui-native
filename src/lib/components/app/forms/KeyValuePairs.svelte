@@ -1,57 +1,101 @@
-<script>import { tick } from 'svelte';
-import { sanitizeKeyValuePairKey, sanitizeKeyValuePairValue } from '$lib/utils';
-let { class: className = '', pairs, onPairsChange, keyPlaceholder = 'Key', valuePlaceholder = 'Value', addButtonLabel = 'Add', emptyMessage = 'No items configured.', sectionLabel, sectionLabelOptional = true } = $props();
-// Pre-allocate the ref array so `bind:ref={keyInputRefs[index]}` never reads `undefined`
-// for in-range indices; the $effect below keeps it in sync when `pairs` grows.
-// svelte-ignore state_referenced_locally
-let keyInputRefs = $state(pairs.map(() => null));
-async function addPair() {
-    // Capture the target index before mutating so deletions earlier in the
-    // list can't make keyInputRefs.length drift past the newly-appended row.
-    const newIndex = pairs.length;
-    onPairsChange([...pairs, { key: '', value: '' }]);
-    await tick();
-    keyInputRefs[newIndex]?.focus();
-}
-function removePair(index) {
-    onPairsChange(pairs.filter((_, i) => i !== index));
-}
-function updatePairKey(index, rawKey) {
-    const key = sanitizeKeyValuePairKey(rawKey);
-    const newPairs = [...pairs];
-    newPairs[index] = { ...newPairs[index], key };
-    onPairsChange(newPairs);
-}
-function trimPairKey(index, key) {
-    const trimmed = key.trim();
-    if (trimmed === key)
-        return;
-    const newPairs = [...pairs];
-    newPairs[index] = { ...newPairs[index], key: trimmed };
-    onPairsChange(newPairs);
-}
-function updatePairValue(index, rawValue) {
-    const value = sanitizeKeyValuePairValue(rawValue);
-    const newPairs = [...pairs];
-    newPairs[index] = { ...newPairs[index], value };
-    onPairsChange(newPairs);
-}
-function trimPairValue(index, value) {
-    const trimmed = value.trim();
-    if (trimmed === value)
-        return;
-    const newPairs = [...pairs];
-    newPairs[index] = { ...newPairs[index], value: trimmed };
-    onPairsChange(newPairs);
-}
-// Keep keyInputRefs aligned with pairs length so bind:ref never sees `undefined`.
-// $effect.pre runs during traversal in tree order, before the {#each} block re-renders,
-// so newly-appended items always have a defined slot when their binding is set up.
-$effect.pre(() => {
-    while (keyInputRefs.length < pairs.length) {
-        keyInputRefs.push(null);
-    }
-});
+<script lang="ts">
+	import { tick } from 'svelte';
+	import { Plus, Trash2 } from '@lucide/svelte';
+	import { Input } from '$lib/components/ui/input';
+	import {
+		autoResizeTextarea,
+		sanitizeKeyValuePairKey,
+		sanitizeKeyValuePairValue
+	} from '$lib/utils';
+	import { KEY_VALUE_PAIR_KEY_MAX_LENGTH, KEY_VALUE_PAIR_VALUE_MAX_LENGTH } from '$lib/constants';
+	import type { KeyValuePair } from '$lib/types';
+
+	interface Props {
+		class?: string;
+		pairs: KeyValuePair[];
+		onPairsChange: (pairs: KeyValuePair[]) => void;
+		keyPlaceholder?: string;
+		valuePlaceholder?: string;
+		addButtonLabel?: string;
+		emptyMessage?: string;
+		sectionLabel?: string;
+		sectionLabelOptional?: boolean;
+	}
+
+	let {
+		class: className = '',
+		pairs,
+		onPairsChange,
+		keyPlaceholder = 'Key',
+		valuePlaceholder = 'Value',
+		addButtonLabel = 'Add',
+		emptyMessage = 'No items configured.',
+		sectionLabel,
+		sectionLabelOptional = true
+	}: Props = $props();
+
+	// Pre-allocate the ref array so `bind:ref={keyInputRefs[index]}` never reads `undefined`
+	// for in-range indices; the $effect below keeps it in sync when `pairs` grows.
+	// svelte-ignore state_referenced_locally
+	let keyInputRefs: (HTMLInputElement | null)[] = $state(pairs.map(() => null));
+
+	async function addPair() {
+		// Capture the target index before mutating so deletions earlier in the
+		// list can't make keyInputRefs.length drift past the newly-appended row.
+		const newIndex = pairs.length;
+		onPairsChange([...pairs, { key: '', value: '' }]);
+		await tick();
+		keyInputRefs[newIndex]?.focus();
+	}
+
+	function removePair(index: number) {
+		onPairsChange(pairs.filter((_, i) => i !== index));
+	}
+
+	function updatePairKey(index: number, rawKey: string) {
+		const key = sanitizeKeyValuePairKey(rawKey);
+		const newPairs = [...pairs];
+
+		newPairs[index] = { ...newPairs[index], key };
+		onPairsChange(newPairs);
+	}
+
+	function trimPairKey(index: number, key: string) {
+		const trimmed = key.trim();
+		if (trimmed === key) return;
+
+		const newPairs = [...pairs];
+
+		newPairs[index] = { ...newPairs[index], key: trimmed };
+		onPairsChange(newPairs);
+	}
+
+	function updatePairValue(index: number, rawValue: string) {
+		const value = sanitizeKeyValuePairValue(rawValue);
+		const newPairs = [...pairs];
+
+		newPairs[index] = { ...newPairs[index], value };
+		onPairsChange(newPairs);
+	}
+
+	function trimPairValue(index: number, value: string) {
+		const trimmed = value.trim();
+		if (trimmed === value) return;
+
+		const newPairs = [...pairs];
+
+		newPairs[index] = { ...newPairs[index], value: trimmed };
+		onPairsChange(newPairs);
+	}
+
+	// Keep keyInputRefs aligned with pairs length so bind:ref never sees `undefined`.
+	// $effect.pre runs during traversal in tree order, before the {#each} block re-renders,
+	// so newly-appended items always have a defined slot when their binding is set up.
+	$effect.pre(() => {
+		while (keyInputRefs.length < pairs.length) {
+			keyInputRefs.push(null);
+		}
+	});
 </script>
 
 <div class={className}>

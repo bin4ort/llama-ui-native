@@ -1,19 +1,32 @@
-<script>import { tr } from '$lib/stores/i18n.svelte';
-let { sections, isActive, getHref, onSectionChange } = $props();
-function tLabel(title) {
-    switch (title) {
-        case 'Settings': return tr.Settings;
-        case 'General': return tr.General;
-        case 'Display': return tr.Display;
-        case 'Sampling': return tr.Sampling;
-        case 'Penalties': return tr.Penalties;
-        case 'Tools': return tr.Tools;
-        case 'Agentic': return tr.Agentic;
-        case 'Developer': return tr.Developer;
-        case 'Import / Export': return tr.ImpExp;
-        default: return title;
-    }
-}
+<script lang="ts">
+	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
+	import { Settings as SettingsIcon } from '@lucide/svelte';
+	import type { SettingsSection, SettingsSectionTitle } from '$lib/types';
+	import { tr } from '$lib/stores/i18n.svelte';
+
+	interface Props {
+		sections: SettingsSection[];
+		isActive: (section: SettingsSection) => boolean;
+		getHref?: (section: SettingsSection) => string;
+		onSectionChange?: (section: SettingsSectionTitle) => void;
+	}
+
+	let { sections, isActive, getHref, onSectionChange }: Props = $props();
+
+	function tLabel(title: string): string {
+		switch(title) {
+			case 'Settings': return tr.Settings;
+			case 'General': return tr.General;
+			case 'Display': return tr.Display;
+			case 'Sampling': return tr.Sampling;
+			case 'Penalties': return tr.Penalties;
+			case 'Tools': return tr.Tools;
+			case 'Agentic': return tr.Agentic;
+			case 'Developer': return tr.Developer;
+			case 'Import / Export': return tr.ImpExp;
+			default: return title;
+		}
+	}
 </script>
 
 <div class="sticky top-2 hidden w-64 flex-col self-start bg-background py-4 md:flex gap-6">

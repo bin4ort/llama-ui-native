@@ -1,62 +1,86 @@
-<script>import { ICON_CLASS_DEFAULT, ICON_CLASS_SPIN } from '$lib/constants/css-classes';
-import { Loader2 } from '@lucide/svelte';
-import { AgenticSectionType } from '$lib/enums';
-import { mcpStore } from '$lib/stores/mcp.svelte';
-import { extractSearchResults, extractSearchQuery } from '$lib/utils';
-let { section, open = $bindable(false), isStreaming = false, onToggle } = $props();
-const isPending = $derived(section.type === AgenticSectionType.TOOL_CALL_PENDING);
-const isStreamingCall = $derived(section.type === AgenticSectionType.TOOL_CALL_STREAMING);
-const showSpinner = $derived(isPending || (isStreamingCall && isStreaming));
-const results = $derived(extractSearchResults(section.toolResult));
-const query = $derived(extractSearchQuery(section.toolArgs));
-// Same icon-resolution chain as ChatMessageToolCallBlockDefault so
-// MCP-server branding is consistent across both views. Spinner wins
-// while the call is in flight so the user sees execution status.
-const iconUrl = $derived(showSpinner ? null : mcpStore.getServerFaviconForTool(section.toolName));
-const icon = $derived(showSpinner ? Loader2 : undefined);
-const iconClass = $derived(showSpinner ? ICON_CLASS_SPIN : ICON_CLASS_DEFAULT);
-// Verb reflects state: "Searching" while the call is in flight, "Searched"
-// once results (or a definitive empty response) have arrived. Lets the
-// heading readlive progress indicator rather than a completed
-// retrospective.
-const title = $derived.by(() => {
-    const verb = showSpinner ? 'Searching' : 'Searched';
-    return query ? `${verb} web for "${query}"` : `${verb} web`;
-});
-function hideBrokenIcon(event) {
-    event.currentTarget.style.display = 'none';
-}
-function formatPublishDate(iso) {
-    if (!iso)
-        return null;
-    try {
-        const date = new Date(iso);
-        if (Number.isNaN(date.getTime()))
-            return iso;
-        return date.toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
-    }
-    catch {
-        return iso;
-    }
-}
-function hostFor(url) {
-    try {
-        return new URL(url).host;
-    }
-    catch {
-        return null;
-    }
-}
-function hasDetails(result) {
-    return Boolean(result.highlights || result.published || result.author);
-}
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { ICON_CLASS_DEFAULT, ICON_CLASS_SPIN } from '$lib/constants/css-classes';
+	import { Globe, Loader2 } from '@lucide/svelte';
+	import { CollapsibleContentBlock } from '$lib/components/app';
+	import * as HoverCard from '$lib/components/ui/hover-card';
+	import { AgenticSectionType } from '$lib/enums';
+	import { mcpStore } from '$lib/stores/mcp.svelte';
+	import {
+		extractSearchResults,
+		extractSearchQuery,
+		faviconForUrl,
+		sanitizeExternalUrl,
+		type SearchResult,
+		type AgenticSection
+	} from '$lib/utils';
+
+	interface Props {
+		section: AgenticSection;
+		open?: boolean;
+		isStreaming?: boolean;
+		onToggle?: () => void;
+	}
+
+	let { section, open = $bindable(false), isStreaming = false, onToggle }: Props = $props();
+
+	const isPending = $derived(section.type === AgenticSectionType.TOOL_CALL_PENDING);
+	const isStreamingCall = $derived(section.type === AgenticSectionType.TOOL_CALL_STREAMING);
+	const showSpinner = $derived(isPending || (isStreamingCall && isStreaming));
+
+	const results: SearchResult[] = $derived(extractSearchResults(section.toolResult));
+	const query = $derived(extractSearchQuery(section.toolArgs));
+
+	// Same icon-resolution chain as ChatMessageToolCallBlockDefault so
+	// MCP-server branding is consistent across both views. Spinner wins
+	// while the call is in flight so the user sees execution status.
+	const iconUrl = $derived(showSpinner ? null : mcpStore.getServerFaviconForTool(section.toolName));
+	const icon = $derived(showSpinner ? Loader2 : undefined);
+	const iconClass = $derived(showSpinner ? ICON_CLASS_SPIN : ICON_CLASS_DEFAULT);
+
+	// Verb reflects state: "Searching" while the call is in flight, "Searched"
+	// once results (or a definitive empty response) have arrived. Lets the
+	// heading read as a live progress indicator rather than a completed
+	// retrospective.
+	const title = $derived.by(() => {
+		const verb = showSpinner ? 'Searching' : 'Searched';
+		return query ? `${verb} web for "${query}"` : `${verb} web`;
+	});
+
+	function hideBrokenIcon(event: Event) {
+		(event.currentTarget as HTMLImageElement).style.display = 'none';
+	}
+
+	function formatPublishDate(iso: string | undefined): string | null {
+		if (!iso) return null;
+		try {
+			const date = new Date(iso);
+			if (Number.isNaN(date.getTime())) return iso;
+			return date.toLocaleDateString(undefined, {
+				year: 'numeric',
+				month: 'short',
+				day: 'numeric'
+			});
+		} catch {
+			return iso;
+		}
+	}
+
+	function hostFor(url: string): string | null {
+		try {
+			return new URL(url).host;
+		} catch {
+			return null;
+		}
+	}
+
+	function hasDetails(result: SearchResult): boolean {
+		return Boolean(result.highlights || result.published || result.author);
+	}
 </script>
 
-{#snippet pill(result)}
+{#snippet pill(result: SearchResult)}
 	{@const faviconUrl = faviconForUrl(result.url)}
 	{@const safeUrl = sanitizeExternalUrl(result.url)}
 	{@const showHoverCard = safeUrl !== null && hasDetails(result)}

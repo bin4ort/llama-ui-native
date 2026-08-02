@@ -1,5 +1,13 @@
-<script>let { modalities, class: className = '' } = $props();
-export {};
+<script lang="ts">
+	import { Eye, Mic, Video } from '@lucide/svelte';
+	import { ModelModality } from '$lib/enums';
+
+	interface Props {
+		modalities: ModelModality[];
+		class?: string;
+	}
+
+	let { modalities, class: className = '' }: Props = $props();
 </script>
 
 {#each modalities as modality (modality)}

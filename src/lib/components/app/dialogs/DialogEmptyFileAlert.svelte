@@ -1,9 +1,20 @@
-<script>let { open = $bindable(), emptyFiles, onOpenChange } = $props();
-function handleOpenChange(newOpen) {
-    open = newOpen;
-    onOpenChange?.(newOpen);
-}
-export {};
+<script lang="ts">
+	import * as AlertDialog from '$lib/components/ui/alert-dialog';
+	import { FileX } from '@lucide/svelte';
+	import { t } from '$lib/stores/i18n.svelte';
+
+	interface Props {
+		open: boolean;
+		emptyFiles: string[];
+		onOpenChange?: (open: boolean) => void;
+	}
+
+	let { open = $bindable(), emptyFiles, onOpenChange }: Props = $props();
+
+	function handleOpenChange(newOpen: boolean) {
+		open = newOpen;
+		onOpenChange?.(newOpen);
+	}
 </script>
 
 <AlertDialog.Root {open} onOpenChange={handleOpenChange}>

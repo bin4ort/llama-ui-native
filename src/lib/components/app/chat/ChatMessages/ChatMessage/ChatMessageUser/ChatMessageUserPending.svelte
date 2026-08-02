@@ -1,10 +1,33 @@
-<script>import { useMessageEditContext } from '$lib/hooks/use-message-edit-context.svelte';
-let { class: className = '', content, extras = [], onSendImmediately, onEdit, onDelete } = $props();
-const editCtx = useMessageEditContext({
-    getContent: () => content,
-    getExtras: () => extras,
-    onSave: (content, extras) => onEdit(content, extras)
-});
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { ActionIcon, ChatMessageEditForm, ChatMessageUserBubble } from '$lib/components/app';
+	import { ArrowUp, Edit, Trash2 } from '@lucide/svelte';
+	import { useMessageEditContext } from '$lib/hooks/use-message-edit-context.svelte';
+
+	interface Props {
+		class?: string;
+		content: string;
+		extras?: DatabaseMessageExtra[];
+		onSendImmediately: () => void;
+		onEdit: (newContent: string, extras?: DatabaseMessageExtra[]) => void;
+		onDelete: () => void;
+	}
+
+	let {
+		class: className = '',
+		content,
+		extras = [],
+		onSendImmediately,
+		onEdit,
+		onDelete
+	}: Props = $props();
+
+	const editCtx = useMessageEditContext({
+		getContent: () => content,
+		getExtras: () => extras,
+		onSave: (content, extras) => onEdit(content, extras)
+	});
 </script>
 
 <div

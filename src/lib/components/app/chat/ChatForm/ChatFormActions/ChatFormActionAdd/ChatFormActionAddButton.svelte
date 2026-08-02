@@ -1,5 +1,16 @@
-<script>let { disabled = false, onclick } = $props();
-export {};
+<script lang="ts">
+	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
+	import { Plus } from '@lucide/svelte';
+	import { Button } from '$lib/components/ui/button';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+	import { ATTACHMENT_TOOLTIP_TEXT } from '$lib/constants';
+
+	interface Props {
+		disabled?: boolean;
+		onclick?: (e: MouseEvent) => void;
+	}
+
+	let { disabled = false, onclick }: Props = $props();
 </script>
 
 <Tooltip.Root>

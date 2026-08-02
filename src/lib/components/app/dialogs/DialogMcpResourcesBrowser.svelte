@@ -1,196 +1,260 @@
-<script>import { toast } from 'svelte-sonner';
-import { mcpStore } from '$lib/stores/mcp.svelte';
-import { conversationsStore } from '$lib/stores/conversations.svelte';
-import { mcpResources, mcpTotalResourceCount, mcpResourceStore } from '$lib/stores/mcp-resources.svelte';
-import { getResourceDisplayName } from '$lib/utils';
-import { SvelteSet } from 'svelte/reactivity';
-let { open = $bindable(false), onOpenChange, onAttach, preSelectedUri } = $props();
-let selectedResources = new SvelteSet();
-let lastSelectedUri = $state(null);
-let isAttaching = $state(false);
-let selectedTemplate = $state(null);
-let templatePreviewUri = $state(null);
-let templatePreviewContent = $state(null);
-let templatePreviewLoading = $state(false);
-let templatePreviewError = $state(null);
-const totalCount = $derived(mcpTotalResourceCount());
-$effect(() => {
-    if (open) {
-        loadResources();
-        if (preSelectedUri) {
-            selectedResources.clear();
-            selectedResources.add(preSelectedUri);
-            lastSelectedUri = preSelectedUri;
-        }
-    }
-});
-async function loadResources() {
-    const perChatOverrides = conversationsStore.getAllMcpServerOverrides();
-    const initialized = await mcpStore.ensureInitialized(perChatOverrides);
-    if (initialized) {
-        await mcpStore.fetchAllResources();
-    }
-}
-function handleOpenChange(newOpen) {
-    open = newOpen;
-    onOpenChange?.(newOpen);
-    if (!newOpen) {
-        selectedResources.clear();
-        lastSelectedUri = null;
-        clearTemplateState();
-    }
-}
-function clearTemplateState() {
-    selectedTemplate = null;
-    templatePreviewUri = null;
-    templatePreviewContent = null;
-    templatePreviewLoading = false;
-    templatePreviewError = null;
-}
-function handleTemplateSelect(template) {
-    selectedResources.clear();
-    lastSelectedUri = null;
-    if (selectedTemplate?.uriTemplate === template.uriTemplate &&
-        selectedTemplate?.serverName === template.serverName) {
-        clearTemplateState();
-        return;
-    }
-    selectedTemplate = template;
-    templatePreviewUri = null;
-    templatePreviewContent = null;
-    templatePreviewLoading = false;
-    templatePreviewError = null;
-}
-async function handleTemplateResolve(uri, serverName) {
-    templatePreviewUri = uri;
-    templatePreviewContent = null;
-    templatePreviewLoading = true;
-    templatePreviewError = null;
-    try {
-        const content = await mcpStore.readResourceByUri(serverName, uri);
-        if (content) {
-            templatePreviewContent = content;
-        }
-        else {
-            templatePreviewError = 'Failed to read resource';
-        }
-    }
-    catch (error) {
-        templatePreviewError = error instanceof Error ? error.message : 'Unknown error';
-    }
-    finally {
-        templatePreviewLoading = false;
-    }
-}
-function handleTemplateCancelForm() {
-    clearTemplateState();
-}
-async function handleAttachTemplateResource() {
-    if (!templatePreviewUri || !selectedTemplate || !templatePreviewContent)
-        return;
-    isAttaching = true;
-    try {
-        const knownResource = mcpResourceStore.findResourceByUri(templatePreviewUri);
-        if (knownResource) {
-            if (!mcpResourceStore.isAttached(knownResource.uri)) {
-                await mcpStore.attachResource(knownResource.uri);
-            }
-            toast.success(`Resource attached: ${knownResource.title || knownResource.name}`);
-        }
-        else {
-            if (mcpResourceStore.isAttached(templatePreviewUri)) {
-                toast.info('Resource already attached');
-                handleOpenChange(false);
-                return;
-            }
-            const resourceInfo = {
-                uri: templatePreviewUri,
-                name: templatePreviewUri.split('/').pop() || templatePreviewUri,
-                serverName: selectedTemplate.serverName
-            };
-            const attachment = mcpResourceStore.addAttachment(resourceInfo);
-            mcpResourceStore.updateAttachmentContent(attachment.id, templatePreviewContent);
-            toast.success(`Resource attached: ${resourceInfo.name}`);
-        }
-        handleOpenChange(false);
-    }
-    catch (error) {
-        console.error('Failed to attach template resource:', error);
-    }
-    finally {
-        isAttaching = false;
-    }
-}
-function handleResourceSelect(resource, shiftKey = false) {
-    clearTemplateState();
-    if (shiftKey && lastSelectedUri) {
-        const allResources = getAllResourcesFlatInTreeOrder();
-        const lastIndex = allResources.findIndex((r) => r.uri === lastSelectedUri);
-        const currentIndex = allResources.findIndex((r) => r.uri === resource.uri);
-        if (lastIndex !== -1 && currentIndex !== -1) {
-            const start = Math.min(lastIndex, currentIndex);
-            const end = Math.max(lastIndex, currentIndex);
-            for (let i = start; i <= end; i++) {
-                selectedResources.add(allResources[i].uri);
-            }
-        }
-    }
-    else {
-        selectedResources.clear();
-        selectedResources.add(resource.uri);
-        lastSelectedUri = resource.uri;
-    }
-}
-function handleResourceToggle(resource, checked) {
-    clearTemplateState();
-    if (checked) {
-        selectedResources.add(resource.uri);
-    }
-    else {
-        selectedResources.delete(resource.uri);
-    }
-    lastSelectedUri = resource.uri;
-}
-function getAllResourcesFlatInTreeOrder() {
-    const allResources = [];
-    const resourcesMap = mcpResources();
-    for (const [serverName, serverRes] of resourcesMap.entries()) {
-        for (const resource of serverRes.resources) {
-            allResources.push({ ...resource, serverName });
-        }
-    }
-    return allResources.sort((a, b) => {
-        const aName = getResourceDisplayName(a);
-        const bName = getResourceDisplayName(b);
-        return aName.localeCompare(bName);
-    });
-}
-async function handleAttach() {
-    if (selectedResources.size === 0)
-        return;
-    isAttaching = true;
-    try {
-        const allResources = getAllResourcesFlatInTreeOrder();
-        const resourcesToAttach = allResources.filter((r) => selectedResources.has(r.uri));
-        for (const resource of resourcesToAttach) {
-            await mcpStore.attachResource(resource.uri);
-            onAttach?.(resource);
-        }
-        const count = resourcesToAttach.length;
-        toast.success(count === 1
-            ? `Resource attached: ${resourcesToAttach[0].name}`
-            : `${count} resources attached`);
-        handleOpenChange(false);
-    }
-    catch (error) {
-        console.error('Failed to attach resources:', error);
-    }
-    finally {
-        isAttaching = false;
-    }
-}
-const selectedTemplateUri = $derived(selectedTemplate?.uriTemplate ?? null);
-const hasTemplateResult = $derived(!!selectedTemplate && !!templatePreviewContent && !!templatePreviewUri);
+<script lang="ts">
+	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
+	import { FolderOpen, Plus, Loader2, Braces } from '@lucide/svelte';
+	import { toast } from 'svelte-sonner';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import { Button } from '$lib/components/ui/button';
+	import { mcpStore } from '$lib/stores/mcp.svelte';
+	import { conversationsStore } from '$lib/stores/conversations.svelte';
+	import { t } from '$lib/stores/i18n.svelte';
+	import {
+		mcpResources,
+		mcpTotalResourceCount,
+		mcpResourceStore
+	} from '$lib/stores/mcp-resources.svelte';
+	import {
+		McpResourcesBrowser,
+		McpResourcePreview,
+		McpResourceTemplateForm
+	} from '$lib/components/app';
+	import { getResourceDisplayName } from '$lib/utils';
+	import type { MCPResourceInfo, MCPResourceContent, MCPResourceTemplateInfo } from '$lib/types';
+	import { SvelteSet } from 'svelte/reactivity';
+
+	interface Props {
+		open?: boolean;
+		onOpenChange?: (open: boolean) => void;
+		onAttach?: (resource: MCPResourceInfo) => void;
+		preSelectedUri?: string;
+	}
+
+	let { open = $bindable(false), onOpenChange, onAttach, preSelectedUri }: Props = $props();
+
+	let selectedResources = new SvelteSet<string>();
+	let lastSelectedUri = $state<string | null>(null);
+	let isAttaching = $state(false);
+
+	let selectedTemplate = $state<MCPResourceTemplateInfo | null>(null);
+	let templatePreviewUri = $state<string | null>(null);
+	let templatePreviewContent = $state<MCPResourceContent[] | null>(null);
+	let templatePreviewLoading = $state(false);
+	let templatePreviewError = $state<string | null>(null);
+
+	const totalCount = $derived(mcpTotalResourceCount());
+
+	$effect(() => {
+		if (open) {
+			loadResources();
+
+			if (preSelectedUri) {
+				selectedResources.clear();
+				selectedResources.add(preSelectedUri);
+				lastSelectedUri = preSelectedUri;
+			}
+		}
+	});
+
+	async function loadResources() {
+		const perChatOverrides = conversationsStore.getAllMcpServerOverrides();
+		const initialized = await mcpStore.ensureInitialized(perChatOverrides);
+
+		if (initialized) {
+			await mcpStore.fetchAllResources();
+		}
+	}
+
+	function handleOpenChange(newOpen: boolean) {
+		open = newOpen;
+		onOpenChange?.(newOpen);
+
+		if (!newOpen) {
+			selectedResources.clear();
+			lastSelectedUri = null;
+			clearTemplateState();
+		}
+	}
+
+	function clearTemplateState() {
+		selectedTemplate = null;
+		templatePreviewUri = null;
+		templatePreviewContent = null;
+		templatePreviewLoading = false;
+		templatePreviewError = null;
+	}
+
+	function handleTemplateSelect(template: MCPResourceTemplateInfo) {
+		selectedResources.clear();
+		lastSelectedUri = null;
+
+		if (
+			selectedTemplate?.uriTemplate === template.uriTemplate &&
+			selectedTemplate?.serverName === template.serverName
+		) {
+			clearTemplateState();
+
+			return;
+		}
+
+		selectedTemplate = template;
+		templatePreviewUri = null;
+		templatePreviewContent = null;
+		templatePreviewLoading = false;
+		templatePreviewError = null;
+	}
+
+	async function handleTemplateResolve(uri: string, serverName: string) {
+		templatePreviewUri = uri;
+		templatePreviewContent = null;
+		templatePreviewLoading = true;
+		templatePreviewError = null;
+
+		try {
+			const content = await mcpStore.readResourceByUri(serverName, uri);
+
+			if (content) {
+				templatePreviewContent = content;
+			} else {
+				templatePreviewError = 'Failed to read resource';
+			}
+		} catch (error) {
+			templatePreviewError = error instanceof Error ? error.message : 'Unknown error';
+		} finally {
+			templatePreviewLoading = false;
+		}
+	}
+
+	function handleTemplateCancelForm() {
+		clearTemplateState();
+	}
+
+	async function handleAttachTemplateResource() {
+		if (!templatePreviewUri || !selectedTemplate || !templatePreviewContent) return;
+
+		isAttaching = true;
+
+		try {
+			const knownResource = mcpResourceStore.findResourceByUri(templatePreviewUri);
+
+			if (knownResource) {
+				if (!mcpResourceStore.isAttached(knownResource.uri)) {
+					await mcpStore.attachResource(knownResource.uri);
+				}
+
+				toast.success(`Resource attached: ${knownResource.title || knownResource.name}`);
+			} else {
+				if (mcpResourceStore.isAttached(templatePreviewUri)) {
+					toast.info('Resource already attached');
+					handleOpenChange(false);
+					return;
+				}
+
+				const resourceInfo: MCPResourceInfo = {
+					uri: templatePreviewUri,
+					name: templatePreviewUri.split('/').pop() || templatePreviewUri,
+					serverName: selectedTemplate.serverName
+				};
+
+				const attachment = mcpResourceStore.addAttachment(resourceInfo);
+				mcpResourceStore.updateAttachmentContent(attachment.id, templatePreviewContent);
+
+				toast.success(`Resource attached: ${resourceInfo.name}`);
+			}
+
+			handleOpenChange(false);
+		} catch (error) {
+			console.error('Failed to attach template resource:', error);
+		} finally {
+			isAttaching = false;
+		}
+	}
+
+	function handleResourceSelect(resource: MCPResourceInfo, shiftKey: boolean = false) {
+		clearTemplateState();
+
+		if (shiftKey && lastSelectedUri) {
+			const allResources = getAllResourcesFlatInTreeOrder();
+			const lastIndex = allResources.findIndex((r) => r.uri === lastSelectedUri);
+			const currentIndex = allResources.findIndex((r) => r.uri === resource.uri);
+
+			if (lastIndex !== -1 && currentIndex !== -1) {
+				const start = Math.min(lastIndex, currentIndex);
+				const end = Math.max(lastIndex, currentIndex);
+
+				for (let i = start; i <= end; i++) {
+					selectedResources.add(allResources[i].uri);
+				}
+			}
+		} else {
+			selectedResources.clear();
+			selectedResources.add(resource.uri);
+			lastSelectedUri = resource.uri;
+		}
+	}
+
+	function handleResourceToggle(resource: MCPResourceInfo, checked: boolean) {
+		clearTemplateState();
+
+		if (checked) {
+			selectedResources.add(resource.uri);
+		} else {
+			selectedResources.delete(resource.uri);
+		}
+
+		lastSelectedUri = resource.uri;
+	}
+
+	function getAllResourcesFlatInTreeOrder(): MCPResourceInfo[] {
+		const allResources: MCPResourceInfo[] = [];
+		const resourcesMap = mcpResources();
+
+		for (const [serverName, serverRes] of resourcesMap.entries()) {
+			for (const resource of serverRes.resources) {
+				allResources.push({ ...resource, serverName });
+			}
+		}
+
+		return allResources.sort((a, b) => {
+			const aName = getResourceDisplayName(a);
+			const bName = getResourceDisplayName(b);
+			return aName.localeCompare(bName);
+		});
+	}
+
+	async function handleAttach() {
+		if (selectedResources.size === 0) return;
+
+		isAttaching = true;
+
+		try {
+			const allResources = getAllResourcesFlatInTreeOrder();
+			const resourcesToAttach = allResources.filter((r) => selectedResources.has(r.uri));
+
+			for (const resource of resourcesToAttach) {
+				await mcpStore.attachResource(resource.uri);
+				onAttach?.(resource);
+			}
+
+			const count = resourcesToAttach.length;
+
+			toast.success(
+				count === 1
+					? `Resource attached: ${resourcesToAttach[0].name}`
+					: `${count} resources attached`
+			);
+
+			handleOpenChange(false);
+		} catch (error) {
+			console.error('Failed to attach resources:', error);
+		} finally {
+			isAttaching = false;
+		}
+	}
+
+	const selectedTemplateUri = $derived(selectedTemplate?.uriTemplate ?? null);
+
+	const hasTemplateResult = $derived(
+		!!selectedTemplate && !!templatePreviewContent && !!templatePreviewUri
+	);
 </script>
 
 <Dialog.Root {open} onOpenChange={handleOpenChange}>

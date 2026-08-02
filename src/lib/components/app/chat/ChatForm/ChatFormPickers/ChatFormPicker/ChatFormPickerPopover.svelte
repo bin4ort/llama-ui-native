@@ -1,5 +1,26 @@
-<script>import { t } from '$lib/stores/i18n.svelte';
-let { class: className = '', isOpen = $bindable(false), srLabel = t('Open picker'), onClose, onKeydown, children } = $props();
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import type { Snippet } from 'svelte';
+	import * as Popover from '$lib/components/ui/popover';
+
+	interface Props {
+		class?: string;
+		isOpen?: boolean;
+		srLabel?: string;
+		onClose?: () => void;
+		onKeydown?: (event: KeyboardEvent) => void;
+		children: Snippet;
+	}
+
+	let {
+		class: className = '',
+		isOpen = $bindable(false),
+		srLabel = t('Open picker'),
+		onClose,
+		onKeydown,
+		children
+	}: Props = $props();
 </script>
 
 <Popover.Root

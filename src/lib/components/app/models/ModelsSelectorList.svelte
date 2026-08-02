@@ -1,9 +1,33 @@
-<script>let { groups, currentModel, activeId, sectionHeaderClass = 'my-1 px-2 py-2 text-[13px] font-semibold text-muted-foreground/70 select-none', orgHeaderClass = 'px-2 py-2 text-[11px] font-semibold text-muted-foreground/50 select-none [&:not(:first-child)]:mt-1', onSelect, onInfoClick, renderOption } = $props();
-let render = $derived(renderOption ?? defaultOption);
-export {};
+<script lang="ts">
+	import { modelsStore } from '$lib/stores/models.svelte';
+	import { ModelsSelectorOption } from '$lib/components/app';
+	import type { GroupedModelOptions, ModelItem } from './utils';
+
+	interface Props {
+		groups: GroupedModelOptions;
+		currentModel: string | null;
+		activeId: string | null;
+		sectionHeaderClass?: string;
+		orgHeaderClass?: string;
+		onSelect: (modelId: string) => void;
+		onInfoClick: (modelName: string) => void;
+		renderOption?: import('svelte').Snippet<[ModelItem, boolean]>;
+	}
+
+	let {
+		groups,
+		currentModel,
+		activeId,
+		sectionHeaderClass = 'my-1 px-2 py-2 text-[13px] font-semibold text-muted-foreground/70 select-none',
+		orgHeaderClass = 'px-2 py-2 text-[11px] font-semibold text-muted-foreground/50 select-none [&:not(:first-child)]:mt-1',
+		onSelect,
+		onInfoClick,
+		renderOption
+	}: Props = $props();
+	let render = $derived(renderOption ?? defaultOption);
 </script>
 
-{#snippet defaultOption(item, hideOrgName)}
+{#snippet defaultOption(item: ModelItem, hideOrgName: boolean)}
 	{@const { option } = item}
 	{@const isSelected = currentModel === option.model || activeId === option.id}
 	{@const isFav = modelsStore.favoriteModelIds.has(option.model)}

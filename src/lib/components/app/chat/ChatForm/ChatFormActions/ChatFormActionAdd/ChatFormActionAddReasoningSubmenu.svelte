@@ -1,5 +1,13 @@
-<script>import { useReasoningMenu } from '$lib/hooks/use-reasoning-menu.svelte';
-const reasoning = useReasoningMenu();
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
+	import { Lightbulb, LightbulbOff, Check, Info } from '@lucide/svelte';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+	import { useReasoningMenu } from '$lib/hooks/use-reasoning-menu.svelte';
+
+	const reasoning = useReasoningMenu();
 </script>
 
 {#if reasoning.modelSupportsThinking}

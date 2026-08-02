@@ -1,5 +1,32 @@
-<script>let { class: className = '', height = 'h-16', id, imageClass = '', onclick, onRemove, name, preview, readonly = false, width = 'w-auto' } = $props();
-export {};
+<script lang="ts">
+	import { ActionIcon } from '$lib/components/app';
+	import { X } from '@lucide/svelte';
+
+	interface Props {
+		class?: string;
+		height?: string;
+		id: string;
+		imageClass?: string;
+		onclick?: (event?: MouseEvent) => void;
+		onRemove?: (id: string) => void;
+		name: string;
+		preview: string;
+		readonly?: boolean;
+		width?: string;
+	}
+
+	let {
+		class: className = '',
+		height = 'h-16',
+		id,
+		imageClass = '',
+		onclick,
+		onRemove,
+		name,
+		preview,
+		readonly = false,
+		width = 'w-auto'
+	}: Props = $props();
 </script>
 
 {#snippet image()}

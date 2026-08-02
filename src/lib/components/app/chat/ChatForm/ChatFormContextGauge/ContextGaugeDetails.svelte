@@ -1,8 +1,41 @@
-<script>let { currentRead, currentFresh, currentCache, currentOutput, kvTotal, cumulativeRead, cumulativeOutput, cumulativeCacheTotal, averageTokensPerSecond, transientDetails } = $props();
-let open = $state(false);
-const hasCumulative = $derived(cumulativeRead > 0 || cumulativeOutput > 0);
-const hasCurrent = $derived(currentRead > 0 || currentOutput > 0);
-export {};
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { ChevronDown } from '@lucide/svelte';
+	import * as Collapsible from '$lib/components/ui/collapsible';
+	import { STATS_UNITS } from '$lib/constants';
+	import ContextGaugeDetailRow from './ContextGaugeDetailRow.svelte';
+
+	interface Props {
+		currentRead: number;
+		currentFresh: number;
+		currentCache: number;
+		currentOutput: number;
+		kvTotal: number;
+		cumulativeRead: number;
+		cumulativeOutput: number;
+		cumulativeCacheTotal: number;
+		averageTokensPerSecond: number | null;
+		transientDetails: string[];
+	}
+
+	let {
+		currentRead,
+		currentFresh,
+		currentCache,
+		currentOutput,
+		kvTotal,
+		cumulativeRead,
+		cumulativeOutput,
+		cumulativeCacheTotal,
+		averageTokensPerSecond,
+		transientDetails
+	}: Props = $props();
+
+	let open = $state(false);
+
+	const hasCumulative = $derived(cumulativeRead > 0 || cumulativeOutput > 0);
+	const hasCurrent = $derived(currentRead > 0 || currentOutput > 0);
 </script>
 
 <Collapsible.Root bind:open class="mt-3 border-t border-border/50 pt-4">

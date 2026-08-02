@@ -1,18 +1,56 @@
-<script>import { t } from '$lib/stores/i18n.svelte';
-let { items, isLoading, selectedIndex, searchQuery = $bindable(), showSearchInput, searchPlaceholder = t('Search...'), emptyMessage = t('No items available'), itemKey, item, skeleton, footer } = $props();
-let listContainer = $state(null);
-$effect(() => {
-    if (listContainer && selectedIndex >= 0 && selectedIndex < items.length) {
-        const selectedElement = listContainer.querySelector(`[data-picker-index="${selectedIndex}"]`);
-        if (selectedElement) {
-            selectedElement.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center',
-                inline: 'nearest'
-            });
-        }
-    }
-});
+<script lang="ts" generics="T">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import type { Snippet } from 'svelte';
+	import { SearchInput } from '$lib/components/app';
+	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
+	import { CHAT_FORM_POPOVER_MAX_HEIGHT } from '$lib/constants';
+
+	interface Props {
+		items: T[];
+		isLoading: boolean;
+		selectedIndex: number;
+		searchQuery: string;
+		showSearchInput: boolean;
+		searchPlaceholder?: string;
+		emptyMessage?: string;
+		itemKey: (item: T, index: number) => string;
+		item: Snippet<[T, number, boolean]>;
+		skeleton?: Snippet;
+		footer?: Snippet;
+	}
+
+	let {
+		items,
+		isLoading,
+		selectedIndex,
+		searchQuery = $bindable(),
+		showSearchInput,
+		searchPlaceholder = t('Search...'),
+		emptyMessage = t('No items available'),
+		itemKey,
+		item,
+		skeleton,
+		footer
+	}: Props = $props();
+
+	let listContainer = $state<HTMLDivElement | null>(null);
+
+	$effect(() => {
+		if (listContainer && selectedIndex >= 0 && selectedIndex < items.length) {
+			const selectedElement = listContainer.querySelector(
+				`[data-picker-index="${selectedIndex}"]`
+			) as HTMLElement;
+
+			if (selectedElement) {
+				selectedElement.scrollIntoView({
+					behavior: 'smooth',
+					block: 'center',
+					inline: 'nearest'
+				});
+			}
+		}
+	});
 </script>
 
 <ScrollArea>

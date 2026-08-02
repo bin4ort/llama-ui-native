@@ -1,5 +1,11 @@
-<script>let { isLoading } = $props();
-export {};
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	interface Props {
+		isLoading: boolean;
+	}
+
+	let { isLoading }: Props = $props();
 </script>
 
 <div class="py-4 text-center text-sm text-muted-foreground">

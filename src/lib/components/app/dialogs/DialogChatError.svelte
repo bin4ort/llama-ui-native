@@ -1,18 +1,37 @@
-<script>import { ErrorDialogType } from '$lib/enums';
-let { open = $bindable(), type, message, contextInfo, onOpenChange } = $props();
-const isTimeout = $derived(type === ErrorDialogType.TIMEOUT);
-const title = $derived(isTimeout ? 'TCP Timeout' : 'Server Error');
-const description = $derived(isTimeout
-    ? 'The request did not receive a response from the server before timing out.'
-    : 'The server responded with an error message. Review the details below.');
-const iconClass = $derived(isTimeout ? 'text-destructive' : 'text-amber-500');
-const badgeClass = $derived(isTimeout
-    ? 'border-destructive/40 bg-destructive/10 text-destructive'
-    : 'border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400');
-function handleOpenChange(newOpen) {
-    open = newOpen;
-    onOpenChange?.(newOpen);
-}
+<script lang="ts">
+	import * as AlertDialog from '$lib/components/ui/alert-dialog';
+	import { AlertTriangle, TimerOff } from '@lucide/svelte';
+	import { ErrorDialogType } from '$lib/enums';
+	import { t } from '$lib/stores/i18n.svelte';
+
+	interface Props {
+		open: boolean;
+		type: ErrorDialogType;
+		message: string;
+		contextInfo?: { n_prompt_tokens: number; n_ctx: number };
+		onOpenChange?: (open: boolean) => void;
+	}
+
+	let { open = $bindable(), type, message, contextInfo, onOpenChange }: Props = $props();
+
+	const isTimeout = $derived(type === ErrorDialogType.TIMEOUT);
+	const title = $derived(isTimeout ? 'TCP Timeout' : 'Server Error');
+	const description = $derived(
+		isTimeout
+			? 'The request did not receive a response from the server before timing out.'
+			: 'The server responded with an error message. Review the details below.'
+	);
+	const iconClass = $derived(isTimeout ? 'text-destructive' : 'text-amber-500');
+	const badgeClass = $derived(
+		isTimeout
+			? 'border-destructive/40 bg-destructive/10 text-destructive'
+			: 'border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400'
+	);
+
+	function handleOpenChange(newOpen: boolean) {
+		open = newOpen;
+		onOpenChange?.(newOpen);
+	}
 </script>
 
 <AlertDialog.Root {open} onOpenChange={handleOpenChange}>

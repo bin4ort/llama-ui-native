@@ -1,48 +1,102 @@
-<script>import { getMessageEditContext } from '$lib/contexts';
-import { KeyboardKey } from '$lib/enums';
-import { config } from '$lib/stores/settings.svelte';
-import { isIMEComposing } from '$lib/utils';
-let { class: className = '', message, siblingInfo = null, showDeleteDialog, deletionInfo, onCopy, onEdit, onDelete, onConfirmDelete, onNavigateToSibling, onShowDeleteDialogChange, textareaElement = $bindable() } = $props();
-const editCtx = getMessageEditContext();
-function handleEditKeydown(event) {
-    if (event.key === KeyboardKey.ENTER && !event.shiftKey && !isIMEComposing(event)) {
-        event.preventDefault();
-        editCtx.save();
-    }
-    else if (event.key === KeyboardKey.ESCAPE) {
-        event.preventDefault();
-        editCtx.cancel();
-    }
-}
-let isMultiline = $state(false);
-let messageElement = $state();
-let isExpanded = $state(false);
-let contentHeight = $state(0);
-const MAX_HEIGHT = 200; // pixels
-const currentConfig = config();
-let showExpandButton = $derived(contentHeight > MAX_HEIGHT);
-$effect(() => {
-    if (!messageElement || !message.content.trim())
-        return;
-    if (message.content.includes('\n')) {
-        isMultiline = true;
-    }
-    const resizeObserver = new ResizeObserver((entries) => {
-        for (const entry of entries) {
-            const element = entry.target;
-            const estimatedSingleLineHeight = 24;
-            isMultiline = element.offsetHeight > estimatedSingleLineHeight * 1.5;
-            contentHeight = element.scrollHeight;
-        }
-    });
-    resizeObserver.observe(messageElement);
-    return () => {
-        resizeObserver.disconnect();
-    };
-});
-function toggleExpand() {
-    isExpanded = !isExpanded;
-}
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { Check, X } from '@lucide/svelte';
+	import { ChatMessageActionIcons, MarkdownContent } from '$lib/components/app';
+	import { Button } from '$lib/components/ui/button';
+	import { Card } from '$lib/components/ui/card';
+	import { INPUT_CLASSES } from '$lib/constants';
+	import { getMessageEditContext } from '$lib/contexts';
+	import { KeyboardKey, MessageRole } from '$lib/enums';
+	import { config } from '$lib/stores/settings.svelte';
+	import { isIMEComposing } from '$lib/utils';
+
+	interface Props {
+		class?: string;
+		message: DatabaseMessage;
+		siblingInfo?: ChatMessageSiblingInfo | null;
+		showDeleteDialog: boolean;
+		deletionInfo: {
+			totalCount: number;
+			userMessages: number;
+			assistantMessages: number;
+			messageTypes: string[];
+		} | null;
+		onCopy: () => void;
+		onEdit: () => void;
+		onDelete: () => void;
+		onConfirmDelete: () => void;
+		onNavigateToSibling?: (siblingId: string) => void;
+		onShowDeleteDialogChange: (show: boolean) => void;
+		textareaElement?: HTMLTextAreaElement;
+	}
+
+	let {
+		class: className = '',
+		message,
+		siblingInfo = null,
+		showDeleteDialog,
+		deletionInfo,
+		onCopy,
+		onEdit,
+		onDelete,
+		onConfirmDelete,
+		onNavigateToSibling,
+		onShowDeleteDialogChange,
+		textareaElement = $bindable()
+	}: Props = $props();
+
+	const editCtx = getMessageEditContext();
+
+	function handleEditKeydown(event: KeyboardEvent) {
+		if (event.key === KeyboardKey.ENTER && !event.shiftKey && !isIMEComposing(event)) {
+			event.preventDefault();
+
+			editCtx.save();
+		} else if (event.key === KeyboardKey.ESCAPE) {
+			event.preventDefault();
+
+			editCtx.cancel();
+		}
+	}
+
+	let isMultiline = $state(false);
+	let messageElement: HTMLElement | undefined = $state();
+	let isExpanded = $state(false);
+	let contentHeight = $state(0);
+
+	const MAX_HEIGHT = 200; // pixels
+	const currentConfig = config();
+
+	let showExpandButton = $derived(contentHeight > MAX_HEIGHT);
+
+	$effect(() => {
+		if (!messageElement || !message.content.trim()) return;
+
+		if (message.content.includes('\n')) {
+			isMultiline = true;
+		}
+
+		const resizeObserver = new ResizeObserver((entries) => {
+			for (const entry of entries) {
+				const element = entry.target as HTMLElement;
+				const estimatedSingleLineHeight = 24;
+
+				isMultiline = element.offsetHeight > estimatedSingleLineHeight * 1.5;
+				contentHeight = element.scrollHeight;
+			}
+		});
+
+		resizeObserver.observe(messageElement);
+
+		return () => {
+			resizeObserver.disconnect();
+		};
+	});
+
+	function toggleExpand() {
+		isExpanded = !isExpanded;
+	}
 </script>
 
 <div

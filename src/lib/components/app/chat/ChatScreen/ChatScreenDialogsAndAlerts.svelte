@@ -1,5 +1,24 @@
-<script>let { showDeleteDialog, handleDeleteConfirm, showEmptyFileDialog, emptyFileNames, activeErrorDialog, handleErrorDialogOpenChange, fileUpload } = $props();
-export {};
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { Trash2 } from '@lucide/svelte';
+	import { ErrorDialogType } from '$lib/enums';
+	import {
+		DialogChatError,
+		DialogConfirmation,
+		DialogEmptyFileAlert,
+		DialogFileUploadError
+	} from '$lib/components/app';
+
+	let {
+		showDeleteDialog,
+		handleDeleteConfirm,
+		showEmptyFileDialog,
+		emptyFileNames,
+		activeErrorDialog,
+		handleErrorDialogOpenChange,
+		fileUpload
+	} = $props();
 </script>
 
 <DialogFileUploadError

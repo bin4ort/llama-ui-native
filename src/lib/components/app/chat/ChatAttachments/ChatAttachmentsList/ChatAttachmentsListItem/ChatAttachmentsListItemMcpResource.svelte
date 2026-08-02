@@ -1,16 +1,33 @@
-<script>import { mcpStore } from '$lib/stores/mcp.svelte';
-import { getResourceIcon } from '$lib/utils';
-let { attachment, class: className, onclick, onRemove } = $props();
-const ResourceIcon = $derived(getResourceIcon(attachment.resource.mimeType, attachment.resource.uri));
-const serverName = $derived(mcpStore.getServerDisplayName(attachment.resource.serverName));
-const favicon = $derived(mcpStore.getServerFavicon(attachment.resource.serverName));
-function getStatusClass(attachment) {
-    if (attachment.error)
-        return 'border-red-500/50 bg-red-500/10';
-    if (attachment.loading)
-        return 'border-border/50 bg-muted/30';
-    return 'border-border/50 bg-muted/30';
-}
+<script lang="ts">
+	import { Loader2, AlertCircle } from '@lucide/svelte';
+	import { mcpStore } from '$lib/stores/mcp.svelte';
+	import type { MCPResourceAttachment } from '$lib/types';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+	import { ActionIcon } from '$lib/components/app';
+	import { X } from '@lucide/svelte';
+	import { getResourceIcon, getResourceDisplayName } from '$lib/utils';
+
+	interface Props {
+		attachment: MCPResourceAttachment;
+		class?: string;
+		onclick?: () => void;
+		onRemove?: (attachmentId: string) => void;
+	}
+
+	let { attachment, class: className, onclick, onRemove }: Props = $props();
+
+	const ResourceIcon = $derived(
+		getResourceIcon(attachment.resource.mimeType, attachment.resource.uri)
+	);
+	const serverName = $derived(mcpStore.getServerDisplayName(attachment.resource.serverName));
+	const favicon = $derived(mcpStore.getServerFavicon(attachment.resource.serverName));
+
+	function getStatusClass(attachment: MCPResourceAttachment): string {
+		if (attachment.error) return 'border-red-500/50 bg-red-500/10';
+		if (attachment.loading) return 'border-border/50 bg-muted/30';
+
+		return 'border-border/50 bg-muted/30';
+	}
 </script>
 
 <Tooltip.Root>
@@ -58,7 +75,7 @@ function getStatusClass(attachment) {
 					alt={attachment.resource.serverName}
 					class="h-3 w-3 shrink-0 rounded-sm"
 					onerror={(e) => {
-						(e.currentTarget).style.display = 'none';
+						(e.currentTarget as HTMLImageElement).style.display = 'none';
 					}}
 					src={favicon}
 				/>

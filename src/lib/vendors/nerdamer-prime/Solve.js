@@ -534,7 +534,7 @@ if (typeof module !== 'undefined' && nerdamer === undefined) {
 
             // Only solve it's truly a circle
             if (deg[0][0] === 1 && deg[0][2] === 2 && deg[1][0] === 2 && deg[1][2] === 4) {
-                // For clarity we'll refer to the variablesand y
+                // For clarity we'll refer to the variables as x and y
                 const x = vars[0];
                 const y = vars[1];
 
@@ -1747,7 +1747,7 @@ if (typeof module !== 'undefined' && nerdamer === undefined) {
         if (eqns instanceof core.Vector) {
             eqns = /** @type {SolveEquationArray} */ (eqns.elements);
         }
-        // If it's an array then solve itsystem of equations
+        // If it's an array then solve it as a system of equations
         // Must check BEFORE the default assignment to preserve original solveFor value
         if (isArray(eqns)) {
             return __.solveSystem(/** @type {SolveEquationArray} */ (eqns), solveFor);

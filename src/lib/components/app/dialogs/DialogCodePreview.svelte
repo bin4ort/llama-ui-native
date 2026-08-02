@@ -1,20 +1,34 @@
-<script>let { open = $bindable(), code, language, onOpenChange } = $props();
-let iframeRef = $state(null);
-$effect(() => {
-    if (!iframeRef)
-        return;
-    if (open) {
-        iframeRef.srcdoc = code;
-    }
-    else {
-        iframeRef.srcdoc = '';
-    }
-});
-function handleOpenChange(nextOpen) {
-    open = nextOpen;
-    onOpenChange?.(nextOpen);
-}
-export {};
+<script lang="ts">
+	import { Dialog as DialogPrimitive } from 'bits-ui';
+	import XIcon from '@lucide/svelte/icons/x';
+	import { t } from '$lib/stores/i18n.svelte';
+
+	interface Props {
+		open: boolean;
+		code: string;
+		language: string;
+		onOpenChange?: (open: boolean) => void;
+	}
+
+	let { open = $bindable(), code, language, onOpenChange }: Props = $props();
+
+	let iframeRef = $state<HTMLIFrameElement | null>(null);
+
+	$effect(() => {
+		if (!iframeRef) return;
+
+		if (open) {
+			iframeRef.srcdoc = code;
+		} else {
+			iframeRef.srcdoc = '';
+		}
+	});
+
+	function handleOpenChange(nextOpen: boolean) {
+		open = nextOpen;
+
+		onOpenChange?.(nextOpen);
+	}
 </script>
 
 <DialogPrimitive.Root {open} onOpenChange={handleOpenChange}>

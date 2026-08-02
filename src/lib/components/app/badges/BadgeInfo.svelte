@@ -1,5 +1,14 @@
-<script>let { children, class: className = '', icon, ...rest } = $props();
-export {};
+<script lang="ts">
+	import type { Snippet } from 'svelte';
+	import type { HTMLButtonAttributes } from 'svelte/elements';
+
+	interface Props extends HTMLButtonAttributes {
+		children: Snippet;
+		class?: string;
+		icon?: Snippet;
+	}
+
+	let { children, class: className = '', icon, ...rest }: Props = $props();
 </script>
 
 <button

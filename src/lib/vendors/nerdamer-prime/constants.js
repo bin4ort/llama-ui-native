@@ -5,7 +5,7 @@
  */
 
 /**
- * Container of pregenerated prime numbers up to 2083 This array is usedcache and can be extended at runtime by
+ * Container of pregenerated prime numbers up to 2083 This array is used as a cache and can be extended at runtime by
  * functions like generatePrimes()
  */
 const PRIMES = [
@@ -26,7 +26,7 @@ const PRIMES = [
     1993, 1997, 1999, 2003, 2011, 2017, 2027, 2029, 2039, 2053, 2063, 2069, 2081, 2083,
 ];
 
-/** Set representation of PRIMES for O(1) lookup This object is usedcache and can be extended at runtime */
+/** Set representation of PRIMES for O(1) lookup This object is used as a cache and can be extended at runtime */
 /** @type {Record<number, boolean>} */
 const PRIMES_SET = {};
 for (const p of PRIMES) {

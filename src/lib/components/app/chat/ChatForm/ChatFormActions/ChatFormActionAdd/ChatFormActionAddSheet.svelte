@@ -1,27 +1,93 @@
-<script>import { useAttachmentMenu } from '$lib/hooks/use-attachment-menu.svelte';
-import { useToolsPanel } from '$lib/hooks/use-tools-panel.svelte';
-import { useReasoningMenu } from '$lib/hooks/use-reasoning-menu.svelte';
-import { mcpStore } from '$lib/stores/mcp.svelte';
-let { class: className = '', disabled = false, hasAudioModality = false, hasVisionModality = false, hasVideoModality = false, hasMcpPromptsSupport = false, hasMcpResourcesSupport = false, onFileUpload, onSystemPromptClick, onMcpPromptClick, onMcpResourcesClick, trigger } = $props();
-let sheetOpen = $state(false);
-let reasoningExpanded = $state(false);
-let filesExpanded = $state(true);
-let toolsExpanded = $state(false);
-let mcpExpanded = $state(false);
-const attachmentMenu = useAttachmentMenu(() => ({
-    hasVisionModality,
-    hasAudioModality,
-    hasVideoModality,
-    hasMcpPromptsSupport,
-    hasMcpResourcesSupport
-}), () => ({ onFileUpload, onSystemPromptClick, onMcpPromptClick, onMcpResourcesClick }), () => {
-    sheetOpen = false;
-});
-const toolsPanel = useToolsPanel();
-const reasoning = useReasoningMenu();
-const sheetItemClass = 'flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm transition-colors hover:bg-accent active:bg-accent disabled:cursor-not-allowed disabled:opacity-50';
-const sheetItemRowClass = 'flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent';
-let mcpServers = $derived(mcpStore.getServers());
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
+	import type { Snippet } from 'svelte';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+	import * as Sheet from '$lib/components/ui/sheet';
+	import * as Collapsible from '$lib/components/ui/collapsible';
+	import { File, MessageSquare, Zap, FolderOpen } from '@lucide/svelte';
+	import { Switch } from '$lib/components/ui/switch';
+	import { Checkbox } from '$lib/components/ui/checkbox';
+	import { TOOLTIP_DELAY_DURATION } from '$lib/constants';
+	import { ATTACHMENT_FILE_ITEMS } from '$lib/constants/attachment-menu';
+	import { useAttachmentMenu } from '$lib/hooks/use-attachment-menu.svelte';
+	import { useToolsPanel } from '$lib/hooks/use-tools-panel.svelte';
+	import { useReasoningMenu } from '$lib/hooks/use-reasoning-menu.svelte';
+	import { conversationsStore } from '$lib/stores/conversations.svelte';
+	import { mcpStore } from '$lib/stores/mcp.svelte';
+	import { McpLogo } from '$lib/components/app';
+	import {
+		PencilRuler,
+		ChevronDown,
+		ChevronRight,
+		Lightbulb,
+		LightbulbOff,
+		Check
+	} from '@lucide/svelte';
+	import { HealthCheckStatus } from '$lib/enums';
+	import { AttachmentAction } from '$lib/enums/attachment.enums';
+
+	interface Props {
+		class?: string;
+		disabled?: boolean;
+		hasAudioModality?: boolean;
+		hasVideoModality?: boolean;
+		hasVisionModality?: boolean;
+		hasMcpPromptsSupport?: boolean;
+		hasMcpResourcesSupport?: boolean;
+		onFileUpload?: () => void;
+		onSystemPromptClick?: () => void;
+		onMcpPromptClick?: () => void;
+		onMcpResourcesClick?: () => void;
+		trigger: Snippet<[{ disabled: boolean; onclick?: () => void }]>;
+	}
+
+	let {
+		class: className = '',
+		disabled = false,
+		hasAudioModality = false,
+		hasVisionModality = false,
+		hasVideoModality = false,
+		hasMcpPromptsSupport = false,
+		hasMcpResourcesSupport = false,
+		onFileUpload,
+		onSystemPromptClick,
+		onMcpPromptClick,
+		onMcpResourcesClick,
+		trigger
+	}: Props = $props();
+
+	let sheetOpen = $state(false);
+	let reasoningExpanded = $state(false);
+	let filesExpanded = $state(true);
+	let toolsExpanded = $state(false);
+	let mcpExpanded = $state(false);
+
+	const attachmentMenu = useAttachmentMenu(
+		() => ({
+			hasVisionModality,
+			hasAudioModality,
+			hasVideoModality,
+			hasMcpPromptsSupport,
+			hasMcpResourcesSupport
+		}),
+		() => ({ onFileUpload, onSystemPromptClick, onMcpPromptClick, onMcpResourcesClick }),
+		() => {
+			sheetOpen = false;
+		}
+	);
+
+	const toolsPanel = useToolsPanel();
+	const reasoning = useReasoningMenu();
+
+	const sheetItemClass =
+		'flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left text-sm transition-colors hover:bg-accent active:bg-accent disabled:cursor-not-allowed disabled:opacity-50';
+
+	const sheetItemRowClass =
+		'flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent';
+
+	let mcpServers = $derived(mcpStore.getServers());
 </script>
 
 <div class="flex items-center gap-1 {className}">
@@ -183,7 +249,7 @@ let mcpServers = $derived(mcpStore.getServers());
 												alt=""
 												class="{ICON_CLASS_DEFAULT} shrink-0 rounded-sm"
 												onerror={(e) => {
-													(e.currentTarget).style.display = 'none';
+													(e.currentTarget as HTMLImageElement).style.display = 'none';
 												}}
 											/>
 										{/if}
@@ -251,7 +317,7 @@ let mcpServers = $derived(mcpStore.getServers());
 												alt=""
 												class="{ICON_CLASS_DEFAULT} shrink-0 rounded-sm"
 												onerror={(e) => {
-													(e.currentTarget).style.display = 'none';
+													(e.currentTarget as HTMLImageElement).style.display = 'none';
 												}}
 											/>
 										{/if}

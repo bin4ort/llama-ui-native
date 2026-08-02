@@ -1,67 +1,111 @@
-<script>import { tick } from 'svelte';
-import { HealthCheckStatus } from '$lib/enums';
-import { mcpStore } from '$lib/stores/mcp.svelte';
-let { server, enabled, onToggle, onUpdate, onDelete } = $props();
-let healthState = $derived(mcpStore.getHealthCheckState(server.id));
-let displayName = $derived(mcpStore.getServerLabel(server));
-let faviconUrl = $derived(mcpStore.getServerFavicon(server.id));
-let isIdle = $derived(healthState.status === HealthCheckStatus.IDLE);
-let isHealthChecking = $derived(healthState.status === HealthCheckStatus.CONNECTING);
-let isConnected = $derived(healthState.status === HealthCheckStatus.SUCCESS);
-let isError = $derived(healthState.status === HealthCheckStatus.ERROR);
-// Disabled servers stay IDLE (no startup health check), so the body
-// skeleton only applies while a check is running or expected to run.
-let showSkeleton = $derived(isHealthChecking || (isIdle && server.enabled));
-let errorMessage = $derived(healthState.status === HealthCheckStatus.ERROR ? healthState.message : undefined);
-let tools = $derived(healthState.status === HealthCheckStatus.SUCCESS ? healthState.tools : []);
-let connectionLogs = $derived(healthState.status === HealthCheckStatus.CONNECTING ||
-    healthState.status === HealthCheckStatus.SUCCESS ||
-    healthState.status === HealthCheckStatus.ERROR
-    ? healthState.logs
-    : []);
-let successState = $derived(healthState.status === HealthCheckStatus.SUCCESS ? healthState : null);
-let serverInfo = $derived(successState?.serverInfo);
-let capabilities = $derived(successState?.capabilities);
-let transportType = $derived(successState?.transportType);
-let protocolVersion = $derived(successState?.protocolVersion);
-let connectionTimeMs = $derived(successState?.connectionTimeMs);
-let instructions = $derived(successState?.instructions);
-let isEditing = $derived(!server.url.trim());
-let showDeleteDialog = $state(false);
-let editFormRef = $state(null);
-function handleHealthCheck() {
-    mcpStore.runHealthCheck(server);
-}
-async function startEditing() {
-    isEditing = true;
-    await tick();
-    editFormRef?.setInitialValues(server.url, server.headers || '', server.useProxy || false, displayName);
-}
-function cancelEditing() {
-    if (server.url.trim()) {
-        isEditing = false;
-    }
-    else {
-        onDelete();
-    }
-}
-function saveEditing(url, headers, useProxy, name) {
-    onUpdate({
-        url: url,
-        // undefined = prefill untouched, keep any existing custom name;
-        // empty string = field cleared, back to the automatic label
-        displayName: name === undefined ? server.displayName : name.trim() || undefined,
-        headers: headers || undefined,
-        useProxy: useProxy
-    });
-    isEditing = false;
-    if (server.enabled && url) {
-        setTimeout(() => mcpStore.runHealthCheck({ ...server, url, useProxy }), 100);
-    }
-}
-function handleDeleteClick() {
-    showDeleteDialog = true;
-}
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
+	import { tick } from 'svelte';
+	import * as Card from '$lib/components/ui/card';
+	import { Skeleton } from '$lib/components/ui/skeleton';
+	import type { MCPServerSettingsEntry, HealthCheckState } from '$lib/types';
+	import { HealthCheckStatus } from '$lib/enums';
+	import { mcpStore } from '$lib/stores/mcp.svelte';
+	import {
+		McpServerCardActions,
+		McpServerCardDeleteDialog,
+		McpServerCardEditForm,
+		McpServerCardHeader,
+		McpServerCardToolsList,
+		McpConnectionLogs,
+		McpServerInfo
+	} from '$lib/components/app/mcp';
+
+	interface Props {
+		server: MCPServerSettingsEntry;
+		enabled?: boolean;
+		onToggle: (enabled: boolean) => void;
+		onUpdate: (updates: Partial<MCPServerSettingsEntry>) => void;
+		onDelete: () => void;
+	}
+
+	let { server, enabled, onToggle, onUpdate, onDelete }: Props = $props();
+
+	let healthState = $derived<HealthCheckState>(mcpStore.getHealthCheckState(server.id));
+	let displayName = $derived(mcpStore.getServerLabel(server));
+	let faviconUrl = $derived(mcpStore.getServerFavicon(server.id));
+	let isIdle = $derived(healthState.status === HealthCheckStatus.IDLE);
+	let isHealthChecking = $derived(healthState.status === HealthCheckStatus.CONNECTING);
+	let isConnected = $derived(healthState.status === HealthCheckStatus.SUCCESS);
+	let isError = $derived(healthState.status === HealthCheckStatus.ERROR);
+	// Disabled servers stay IDLE (no startup health check), so the body
+	// skeleton only applies while a check is running or expected to run.
+	let showSkeleton = $derived(isHealthChecking || (isIdle && server.enabled));
+	let errorMessage = $derived(
+		healthState.status === HealthCheckStatus.ERROR ? healthState.message : undefined
+	);
+	let tools = $derived(healthState.status === HealthCheckStatus.SUCCESS ? healthState.tools : []);
+
+	let connectionLogs = $derived(
+		healthState.status === HealthCheckStatus.CONNECTING ||
+			healthState.status === HealthCheckStatus.SUCCESS ||
+			healthState.status === HealthCheckStatus.ERROR
+			? healthState.logs
+			: []
+	);
+
+	let successState = $derived(
+		healthState.status === HealthCheckStatus.SUCCESS ? healthState : null
+	);
+	let serverInfo = $derived(successState?.serverInfo);
+	let capabilities = $derived(successState?.capabilities);
+	let transportType = $derived(successState?.transportType);
+	let protocolVersion = $derived(successState?.protocolVersion);
+	let connectionTimeMs = $derived(successState?.connectionTimeMs);
+	let instructions = $derived(successState?.instructions);
+
+	let isEditing = $derived(!server.url.trim());
+	let showDeleteDialog = $state(false);
+	let editFormRef: McpServerCardEditForm | null = $state(null);
+
+	function handleHealthCheck() {
+		mcpStore.runHealthCheck(server);
+	}
+
+	async function startEditing() {
+		isEditing = true;
+		await tick();
+		editFormRef?.setInitialValues(
+			server.url,
+			server.headers || '',
+			server.useProxy || false,
+			displayName
+		);
+	}
+
+	function cancelEditing() {
+		if (server.url.trim()) {
+			isEditing = false;
+		} else {
+			onDelete();
+		}
+	}
+
+	function saveEditing(url: string, headers: string, useProxy: boolean, name?: string) {
+		onUpdate({
+			url: url,
+			// undefined = prefill untouched, keep any existing custom name;
+			// empty string = field cleared, back to the automatic label
+			displayName: name === undefined ? server.displayName : name.trim() || undefined,
+			headers: headers || undefined,
+			useProxy: useProxy
+		});
+		isEditing = false;
+
+		if (server.enabled && url) {
+			setTimeout(() => mcpStore.runHealthCheck({ ...server, url, useProxy }), 100);
+		}
+	}
+
+	function handleDeleteClick() {
+		showDeleteDialog = true;
+	}
 </script>
 
 <Card.Root class="!gap-3 bg-muted/30 p-4">

@@ -1,9 +1,17 @@
-<script>import { deriveAgenticSections, buildAssistantRawOutput } from '$lib/utils';
-let { message, toolMessages = [] } = $props();
-let rawOutputContent = $derived.by(() => {
-    const sections = deriveAgenticSections(message, toolMessages, [], false);
-    return buildAssistantRawOutput(sections);
-});
+<script lang="ts">
+	import { deriveAgenticSections, buildAssistantRawOutput } from '$lib/utils';
+
+	interface Props {
+		message: DatabaseMessage;
+		toolMessages?: DatabaseMessage[];
+	}
+
+	let { message, toolMessages = [] }: Props = $props();
+
+	let rawOutputContent = $derived.by(() => {
+		const sections = deriveAgenticSections(message, toolMessages, [], false);
+		return buildAssistantRawOutput(sections);
+	});
 </script>
 
 <pre class="raw-output">{rawOutputContent || ''}</pre>

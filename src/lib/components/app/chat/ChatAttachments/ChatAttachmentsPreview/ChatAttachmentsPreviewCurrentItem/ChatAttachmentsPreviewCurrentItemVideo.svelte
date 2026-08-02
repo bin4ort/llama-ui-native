@@ -1,5 +1,14 @@
-<script>let { currentItem, videoSrc } = $props();
-export {};
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { Video } from '@lucide/svelte';
+
+	interface Props {
+		currentItem: { name?: string } | null;
+		videoSrc: string | null;
+	}
+
+	let { currentItem, videoSrc }: Props = $props();
 </script>
 
 <div class="flex flex-1 items-center justify-center p-8">

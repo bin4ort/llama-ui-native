@@ -1,5 +1,15 @@
-<script>let { onDecision } = $props();
-export {};
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { RotateCw } from '@lucide/svelte';
+	import { Button } from '$lib/components/ui/button';
+	import ChatMessageActionCard from './ChatMessageActionCard.svelte';
+
+	interface Props {
+		onDecision: (shouldContinue: boolean) => void;
+	}
+
+	let { onDecision }: Props = $props();
 </script>
 
 <ChatMessageActionCard icon={RotateCw}>

@@ -1,17 +1,32 @@
-<script>import { settingsStore } from '$lib/stores/settings.svelte';
-let { onReset, onSave } = $props();
-let showResetDialog = $state(false);
-function handleResetClick() {
-    showResetDialog = true;
-}
-function handleConfirmReset() {
-    settingsStore.forceSyncWithServerDefaults();
-    onReset?.();
-    showResetDialog = false;
-}
-function handleSave() {
-    onSave?.();
-}
+<script lang="ts">
+	import { Button } from '$lib/components/ui/button';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog';
+	import { settingsStore } from '$lib/stores/settings.svelte';
+	import { RotateCcw } from '@lucide/svelte';
+
+	interface Props {
+		onReset?: () => void;
+		onSave?: () => void;
+	}
+
+	let { onReset, onSave }: Props = $props();
+
+	let showResetDialog = $state(false);
+
+	function handleResetClick() {
+		showResetDialog = true;
+	}
+
+	function handleConfirmReset() {
+		settingsStore.forceSyncWithServerDefaults();
+		onReset?.();
+
+		showResetDialog = false;
+	}
+
+	function handleSave() {
+		onSave?.();
+	}
 </script>
 
 <div class="sticky bottom-0 mx-auto mt-4 flex w-full justify-between p-6">

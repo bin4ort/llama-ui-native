@@ -1,22 +1,58 @@
-<script>import { useModelsSelector } from '$lib/hooks/use-models-selector.svelte';
-let { class: className = '', currentModel = null, onModelChange, disabled = false, forceForegroundText = false, useGlobalSelection = false } = $props();
-let sheetOpen = $state(false);
-const ms = useModelsSelector({
-    currentModel: () => currentModel,
-    useGlobalSelection: () => useGlobalSelection,
-    onModelChange: () => onModelChange,
-    onOpenChange: (open) => {
-        sheetOpen = open;
-    }
-});
-export function open() {
-    ms.handleOpenChange(true);
-}
-function handleSheetOpenChange(open) {
-    if (!open) {
-        ms.handleOpenChange(false);
-    }
-}
+<script lang="ts">
+	import { ChevronDown, Loader2, Package } from '@lucide/svelte';
+	import * as Sheet from '$lib/components/ui/sheet';
+	import { useModelsSelector } from '$lib/hooks/use-models-selector.svelte';
+	import {
+		DialogModelInformation,
+		ModelId,
+		ModelsSelectorList,
+		SearchInput
+	} from '$lib/components/app';
+	import ModelLoadHighlight from './ModelLoadHighlight.svelte';
+	import { ServerModelStatus } from '$lib/enums';
+	import { modelsStore, routerModels } from '$lib/stores/models.svelte';
+	import { modelLoadFraction } from '$lib/utils';
+
+	interface Props {
+		class?: string;
+		currentModel?: string | null;
+		/** Callback when model changes. Return false to keep menu open (e.g., for validation failures) */
+		onModelChange?: (modelId: string, modelName: string) => Promise<boolean> | boolean | void;
+		disabled?: boolean;
+		forceForegroundText?: boolean;
+		/** When true, user's global selection takes priority over currentModel (for form selector) */
+		useGlobalSelection?: boolean;
+	}
+
+	let {
+		class: className = '',
+		currentModel = null,
+		onModelChange,
+		disabled = false,
+		forceForegroundText = false,
+		useGlobalSelection = false
+	}: Props = $props();
+
+	let sheetOpen = $state(false);
+
+	const ms = useModelsSelector({
+		currentModel: () => currentModel,
+		useGlobalSelection: () => useGlobalSelection,
+		onModelChange: () => onModelChange,
+		onOpenChange: (open) => {
+			sheetOpen = open;
+		}
+	});
+
+	export function open() {
+		ms.handleOpenChange(true);
+	}
+
+	function handleSheetOpenChange(open: boolean) {
+		if (!open) {
+			ms.handleOpenChange(false);
+		}
+	}
 </script>
 
 <div class={['relative inline-flex flex-col items-end gap-1', className]}>

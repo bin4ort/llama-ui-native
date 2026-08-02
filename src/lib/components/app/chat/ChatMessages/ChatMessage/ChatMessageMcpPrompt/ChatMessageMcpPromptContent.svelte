@@ -1,53 +1,92 @@
-<script>import { mcpStore } from '$lib/stores/mcp.svelte';
-import { SvelteMap } from 'svelte/reactivity';
-import { McpPromptVariant } from '$lib/enums';
-let { class: className = '', prompt, variant = McpPromptVariant.MESSAGE, isLoading = false, loadError } = $props();
-let hoveredArgKey = $state(null);
-let argumentEntries = $derived(Object.entries(prompt.arguments ?? {}));
-let hasArguments = $derived(prompt.arguments && Object.keys(prompt.arguments).length > 0);
-let hasContent = $derived(prompt.content && prompt.content.trim().length > 0);
-let contentParts = $derived.by(() => {
-    if (!prompt.content || !hasArguments) {
-        return [{ text: prompt.content || '', argKey: null }];
-    }
-    const parts = [];
-    let remaining = prompt.content;
-    const valueToKey = new SvelteMap();
-    for (const [key, value] of argumentEntries) {
-        if (value && value.trim()) {
-            valueToKey.set(value, key);
-        }
-    }
-    const sortedValues = [...valueToKey.keys()].sort((a, b) => b.length - a.length);
-    while (remaining.length > 0) {
-        let earliestMatch = null;
-        for (const value of sortedValues) {
-            const index = remaining.indexOf(value);
-            if (index !== -1 && (earliestMatch === null || index < earliestMatch.index)) {
-                earliestMatch = { index, value, key: valueToKey.get(value) };
-            }
-        }
-        if (earliestMatch) {
-            if (earliestMatch.index > 0) {
-                parts.push({ text: remaining.slice(0, earliestMatch.index), argKey: null });
-            }
-            parts.push({ text: earliestMatch.value, argKey: earliestMatch.key });
-            remaining = remaining.slice(earliestMatch.index + earliestMatch.value.length);
-        }
-        else {
-            parts.push({ text: remaining, argKey: null });
-            break;
-        }
-    }
-    return parts;
-});
-let showArgBadges = $derived(hasArguments && !isLoading && !loadError);
-let isAttachment = $derived(variant === McpPromptVariant.ATTACHMENT);
-let textSizeClass = $derived(isAttachment ? 'text-xs' : 'text-md');
-let paddingClass = $derived(isAttachment ? 'px-3 py-2' : 'px-3.75 py-2.5');
-let maxHeightStyle = $derived(isAttachment ? 'max-height: 6rem;' : 'max-height: var(--max-message-height);');
-const serverFavicon = $derived(mcpStore.getServerFavicon(prompt.serverName));
-const serverDisplayName = $derived(mcpStore.getServerDisplayName(prompt.serverName));
+<script lang="ts">
+	import { Card } from '$lib/components/ui/card';
+	import type { DatabaseMessageExtraMcpPrompt } from '$lib/types';
+	import { mcpStore } from '$lib/stores/mcp.svelte';
+	import { SvelteMap } from 'svelte/reactivity';
+	import { McpPromptVariant } from '$lib/enums';
+	import { TruncatedText } from '$lib/components/app/misc';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+
+	interface ContentPart {
+		text: string;
+		argKey: string | null;
+	}
+
+	interface Props {
+		class?: string;
+		prompt: DatabaseMessageExtraMcpPrompt;
+		variant?: McpPromptVariant;
+		isLoading?: boolean;
+		loadError?: string;
+	}
+
+	let {
+		class: className = '',
+		prompt,
+		variant = McpPromptVariant.MESSAGE,
+		isLoading = false,
+		loadError
+	}: Props = $props();
+
+	let hoveredArgKey = $state<string | null>(null);
+	let argumentEntries = $derived(Object.entries(prompt.arguments ?? {}));
+	let hasArguments = $derived(prompt.arguments && Object.keys(prompt.arguments).length > 0);
+	let hasContent = $derived(prompt.content && prompt.content.trim().length > 0);
+
+	let contentParts = $derived.by((): ContentPart[] => {
+		if (!prompt.content || !hasArguments) {
+			return [{ text: prompt.content || '', argKey: null }];
+		}
+
+		const parts: ContentPart[] = [];
+		let remaining = prompt.content;
+
+		const valueToKey = new SvelteMap<string, string>();
+		for (const [key, value] of argumentEntries) {
+			if (value && value.trim()) {
+				valueToKey.set(value, key);
+			}
+		}
+
+		const sortedValues = [...valueToKey.keys()].sort((a, b) => b.length - a.length);
+
+		while (remaining.length > 0) {
+			let earliestMatch: { index: number; value: string; key: string } | null = null;
+
+			for (const value of sortedValues) {
+				const index = remaining.indexOf(value);
+				if (index !== -1 && (earliestMatch === null || index < earliestMatch.index)) {
+					earliestMatch = { index, value, key: valueToKey.get(value)! };
+				}
+			}
+
+			if (earliestMatch) {
+				if (earliestMatch.index > 0) {
+					parts.push({ text: remaining.slice(0, earliestMatch.index), argKey: null });
+				}
+
+				parts.push({ text: earliestMatch.value, argKey: earliestMatch.key });
+				remaining = remaining.slice(earliestMatch.index + earliestMatch.value.length);
+			} else {
+				parts.push({ text: remaining, argKey: null });
+
+				break;
+			}
+		}
+
+		return parts;
+	});
+
+	let showArgBadges = $derived(hasArguments && !isLoading && !loadError);
+	let isAttachment = $derived(variant === McpPromptVariant.ATTACHMENT);
+	let textSizeClass = $derived(isAttachment ? 'text-xs' : 'text-md');
+	let paddingClass = $derived(isAttachment ? 'px-3 py-2' : 'px-3.75 py-2.5');
+	let maxHeightStyle = $derived(
+		isAttachment ? 'max-height: 6rem;' : 'max-height: var(--max-message-height);'
+	);
+
+	const serverFavicon = $derived(mcpStore.getServerFavicon(prompt.serverName));
+	const serverDisplayName = $derived(mcpStore.getServerDisplayName(prompt.serverName));
 </script>
 
 <div class="flex flex-col gap-2 {className}">
@@ -61,7 +100,7 @@ const serverDisplayName = $derived(mcpStore.getServerDisplayName(prompt.serverNa
 							alt=""
 							class="h-3.5 w-3.5 shrink-0 rounded-sm"
 							onerror={(e) => {
-								(e.currentTarget).style.display = 'none';
+								(e.currentTarget as HTMLImageElement).style.display = 'none';
 							}}
 						/>
 					{/if}

@@ -1,43 +1,92 @@
-<script>import { page } from '$app/state';
-import { ICON_STRIP_TRANSITION_DELAY_MULTIPLIER, SIDEBAR_ACTIONS_ITEMS } from '$lib/constants';
-import { isMobile } from '$lib/stores/viewport.svelte';
-import { onMount } from 'svelte';
-let { class: className, isExpandedMode = false, isSearchModeActive = $bindable(false), searchQuery = $bindable(''), onSearchDeactivated, onSearchClick, onNewChat } = $props();
-let initialized = $state(false);
-let showIcons = $state(false);
-let searchInputRef = $state(null);
-const isOnMobile = $derived(isMobile.current);
-$effect(() => {
-    if (isSearchModeActive && searchInputRef) {
-        searchInputRef.focus();
-    }
-});
-onMount(() => {
-    showIcons = true;
-    setTimeout(() => {
-        initialized = true;
-    }, ICON_STRIP_TRANSITION_DELAY_MULTIPLIER * SIDEBAR_ACTIONS_ITEMS.length);
-});
-function handleSearchModeDeactivate() {
-    isSearchModeActive = false;
-    searchQuery = '';
-    onSearchDeactivated?.();
-}
-function isItemActive(item) {
-    if (item.activeRouteId) {
-        return page.route.id === item.activeRouteId;
-    }
-    if (item.activeRoutePrefix) {
-        return !!page.route.id?.startsWith(item.activeRoutePrefix);
-    }
-    if (item.activeUrlIncludes) {
-        return page.url?.hash?.includes(item.activeUrlIncludes) ?? false;
-    }
-    return false;
-}
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
+	import { Search } from '@lucide/svelte';
+	import { ActionIcon, KeyboardShortcutInfo, SearchInput } from '$lib/components/app';
+	import { Button } from '$lib/components/ui/button';
+	import {
+		ICON_STRIP_TRANSITION_DURATION,
+		ICON_STRIP_TRANSITION_DELAY_MULTIPLIER,
+		ROUTES,
+		SIDEBAR_ACTIONS_ITEMS
+	} from '$lib/constants';
+	import { isMobile } from '$lib/stores/viewport.svelte';
+	import { TooltipSide } from '$lib/enums';
+	import { fade } from 'svelte/transition';
+	import { circIn } from 'svelte/easing';
+	import { onMount } from 'svelte';
+	import type { Component } from 'svelte';
+
+	interface Props {
+		class: string;
+		isExpandedMode: boolean;
+		isSearchModeActive: boolean;
+		searchQuery: string;
+		onSearchDeactivated?: () => void;
+		onSearchClick?: () => void;
+		onNewChat?: () => void;
+	}
+
+	let {
+		class: className,
+		isExpandedMode = false,
+		isSearchModeActive = $bindable(false),
+		searchQuery = $bindable(''),
+		onSearchDeactivated,
+		onSearchClick,
+		onNewChat
+	}: Props = $props();
+
+	let initialized = $state(false);
+	let showIcons = $state(false);
+	let searchInputRef = $state<HTMLInputElement | null>(null);
+
+	const isOnMobile = $derived(isMobile.current);
+
+	$effect(() => {
+		if (isSearchModeActive && searchInputRef) {
+			searchInputRef.focus();
+		}
+	});
+
+	onMount(() => {
+		showIcons = true;
+
+		setTimeout(() => {
+			initialized = true;
+		}, ICON_STRIP_TRANSITION_DELAY_MULTIPLIER * SIDEBAR_ACTIONS_ITEMS.length);
+	});
+
+	function handleSearchModeDeactivate() {
+		isSearchModeActive = false;
+		searchQuery = '';
+		onSearchDeactivated?.();
+	}
+
+	function isItemActive(item: {
+		activeRouteId?: string;
+		activeRoutePrefix?: string;
+		activeUrlIncludes?: string;
+	}): boolean {
+		if (item.activeRouteId) {
+			return page.route.id === item.activeRouteId;
+		}
+
+		if (item.activeRoutePrefix) {
+			return !!page.route.id?.startsWith(item.activeRoutePrefix);
+		}
+
+		if (item.activeUrlIncludes) {
+			return page.url?.hash?.includes(item.activeUrlIncludes) ?? false;
+		}
+
+		return false;
+	}
 </script>
 
-{#snippet itemIcon(IconComponent)}
+{#snippet itemIcon(IconComponent: Component)}
 	<IconComponent class={ICON_CLASS_DEFAULT} />
 {/snippet}
 
@@ -64,7 +113,7 @@ function isItemActive(item) {
 			{@const itemOnClick = item.route
 				? () => {
 						onNewChat?.();
-						goto(item.route);
+						goto(item.route!);
 					}
 				: isSearchOnMobile
 					? undefined
@@ -112,7 +161,7 @@ function isItemActive(item) {
 			{@const itemOnClick = item.route
 				? () => {
 						onNewChat?.();
-						goto(item.route);
+						goto(item.route!);
 					}
 				: isSearchOnMobile
 					? undefined

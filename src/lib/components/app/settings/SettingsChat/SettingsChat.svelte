@@ -1,89 +1,130 @@
-<script>import { config, settingsStore } from '$lib/stores/settings.svelte';
-import { NUMERIC_FIELDS, POSITIVE_INTEGER_FIELDS, SETTINGS_CHAT_SECTIONS } from '$lib/constants';
-import { setMode } from 'mode-watcher';
-import { goto } from '$app/navigation';
-import { page } from '$app/state';
-import { setChatSettingsConfigContext } from '$lib/contexts';
-import { settingsReferrer } from '$lib/stores/settings-referrer.svelte';
-import { modelsStore } from '$lib/stores/models.svelte';
-import { isRouterMode } from '$lib/stores/server.svelte';
-import { applyLang } from '$lib/stores/i18n.svelte';
-let { initialSection, getSectionHref } = $props();
-let activeSlug = $derived(initialSection ?? (page.params).section ?? 'general');
-let currentSection = $derived(SETTINGS_CHAT_SECTIONS.find((section) => section.slug === activeSlug) ||
-    SETTINGS_CHAT_SECTIONS[0]);
-let localConfig = $state({ ...config() });
-let mobileHeader;
-let fetchInitiated = false;
-$effect(() => {
-    if (isRouterMode() && currentSection.fields && !fetchInitiated) {
-        fetchInitiated = true;
-        void modelsStore
-            .fetch()
-            .then(() => modelsStore.fetchRouterModels())
-            .then(() => modelsStore.fetchModalitiesForLoadedModels())
-            .then(() => modelsStore.ensureFirstModelSelected());
-    }
-});
-function handleThemeChange(newTheme) {
-    localConfig.theme = newTheme;
-    setMode(newTheme);
-}
-function handleConfigChange(key, value) {
-    localConfig[key] = value;
-    if (key === 'language') {
-        applyLang(value);
-    }
-}
-function handleReset() {
-    localConfig = { ...config() };
-    setMode(localConfig.theme);
-    mobileHeader?.updateCarousel();
-}
-function handleSave() {
-    if (localConfig.customJson &&
-        typeof localConfig.customJson === 'string' &&
-        localConfig.customJson.trim()) {
-        try {
-            JSON.parse(localConfig.customJson);
-        }
-        catch (error) {
-            alert('Invalid JSON in custom parameters. Please check the format and try again.');
-            console.error(error);
-            return;
-        }
-    }
-    const processedConfig = { ...localConfig };
-    for (const field of NUMERIC_FIELDS) {
-        if (processedConfig[field] !== undefined && processedConfig[field] !== '') {
-            const numValue = Number(processedConfig[field]);
-            if (!isNaN(numValue)) {
-                if (POSITIVE_INTEGER_FIELDS.includes(field)) {
-                    processedConfig[field] = Math.max(1, Math.round(numValue));
-                }
-                else {
-                    processedConfig[field] = numValue;
-                }
-            }
-            else {
-                alert(`Invalid numeric value for ${field}. Please enter a valid number.`);
-                return;
-            }
-        }
-    }
-    settingsStore.updateMultipleConfig(processedConfig);
-    goto(settingsReferrer.url);
-}
-export function reset() {
-    localConfig = { ...config() };
-}
-setChatSettingsConfigContext({
-    get localConfig() {
-        return localConfig;
-    },
-    handleConfigChange,
-    handleThemeChange
-});
+<script lang="ts">
+	// MIT License — Copyright (c) 2025 Llama UI Native
+	// See LICENSE file in the project root.
+	import {
+		SettingsChatDesktopSidebar,
+		SettingsChatFields,
+		SettingsChatImportExportTab,
+		SettingsChatMobileHeader,
+		SettingsChatToolsTab,
+		SettingsFooter
+	} from '$lib/components/app/settings';
+	import { config, settingsStore } from '$lib/stores/settings.svelte';
+	import {
+		NUMERIC_FIELDS,
+		POSITIVE_INTEGER_FIELDS,
+		SETTINGS_CHAT_SECTIONS,
+		SETTINGS_SECTION_TITLES
+	} from '$lib/constants';
+
+	import { RouterService } from '$lib/services/router.service';
+	import { setMode } from 'mode-watcher';
+	import { ColorMode } from '$lib/enums/ui.enums';
+	import { fade } from 'svelte/transition';
+	import { goto } from '$app/navigation';
+	import { Button } from '$lib/components/ui/button';
+	import { RefreshCw } from '@lucide/svelte';
+	import { page } from '$app/state';
+	import { setChatSettingsConfigContext } from '$lib/contexts';
+	import { settingsReferrer } from '$lib/stores/settings-referrer.svelte';
+	import { modelsStore } from '$lib/stores/models.svelte';
+	import { isRouterMode } from '$lib/stores/server.svelte';
+	import { applyLang } from '$lib/stores/i18n.svelte';
+	let { initialSection, getSectionHref } = $props();
+
+	let activeSlug = $derived(
+		initialSection ?? (page.params).section ?? 'general'
+	);
+
+	let currentSection = $derived(
+		SETTINGS_CHAT_SECTIONS.find((section) => section.slug === activeSlug) ||
+			SETTINGS_CHAT_SECTIONS[0]
+	);
+
+	let localConfig = $state({ ...config() });
+
+	let mobileHeader;
+
+	let fetchInitiated = false;
+
+	$effect(() => {
+		if (isRouterMode() && currentSection.fields && !fetchInitiated) {
+			fetchInitiated = true;
+
+			void modelsStore
+				.fetch()
+				.then(() => modelsStore.fetchRouterModels())
+				.then(() => modelsStore.fetchModalitiesForLoadedModels())
+				.then(() => modelsStore.ensureFirstModelSelected());
+		}
+	});
+
+	function handleThemeChange(newTheme) {
+		localConfig.theme = newTheme;
+		setMode(newTheme);
+	}
+
+	function handleConfigChange(key, value) {
+		localConfig[key] = value;
+		if (key === 'language') {
+			applyLang(value);
+		}
+	}
+
+	function handleReset() {
+		localConfig = { ...config() };
+		setMode(localConfig.theme);
+		mobileHeader?.updateCarousel();
+	}
+
+	function handleSave() {
+		if (
+			localConfig.customJson &&
+			typeof localConfig.customJson === 'string' &&
+			localConfig.customJson.trim()
+		) {
+			try {
+				JSON.parse(localConfig.customJson);
+			} catch (error) {
+				alert('Invalid JSON in custom parameters. Please check the format and try again.');
+				console.error(error);
+				return;
+			}
+		}
+
+		const processedConfig = { ...localConfig };
+
+		for (const field of NUMERIC_FIELDS) {
+			if (processedConfig[field] !== undefined && processedConfig[field] !== '') {
+				const numValue = Number(processedConfig[field]);
+				if (!isNaN(numValue)) {
+					if (POSITIVE_INTEGER_FIELDS.includes(field)) {
+						processedConfig[field] = Math.max(1, Math.round(numValue));
+					} else {
+						processedConfig[field] = numValue;
+					}
+				} else {
+					alert(`Invalid numeric value for ${field}. Please enter a valid number.`);
+					return;
+				}
+			}
+		}
+
+		settingsStore.updateMultipleConfig(processedConfig);
+		goto(settingsReferrer.url);
+	}
+
+	export function reset() {
+		localConfig = { ...config() };
+	}
+
+	setChatSettingsConfigContext({
+		get localConfig() {
+			return localConfig;
+		},
+		handleConfigChange,
+		handleThemeChange
+	});
 </script>
 
 <div class="mx-auto flex h-full w-full flex-col md:pl-8" in:fade={{ duration: 150 }}>

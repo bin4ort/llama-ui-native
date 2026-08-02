@@ -1,5 +1,16 @@
-<script>let { modelId, isLoading, onLoad } = $props();
-export {};
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { Loader2 } from '@lucide/svelte';
+	import { Button } from '$lib/components/ui/button';
+
+	interface Props {
+		modelId: string | null;
+		isLoading: boolean;
+		onLoad: () => void;
+	}
+
+	let { modelId, isLoading, onLoad }: Props = $props();
 </script>
 
 {#if modelId !== null && !isLoading}

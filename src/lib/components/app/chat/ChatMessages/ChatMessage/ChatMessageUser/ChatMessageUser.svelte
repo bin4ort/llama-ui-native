@@ -1,31 +1,90 @@
-<script>import { getMessageEditContext } from '$lib/contexts';
-import { useProcessingState } from '$lib/hooks/use-processing-state.svelte';
-import { isLoading } from '$lib/stores/chat.svelte';
-import { config } from '$lib/stores/settings.svelte';
-let { class: className = '', message, siblingInfo = null, deletionInfo, isLastUserMessage = false, nextAssistantMessage = null, showDeleteDialog, onEdit, onDelete, onConfirmDelete, onForkConversation, onShowDeleteDialogChange, onNavigateToSibling, onCopy } = $props();
-// Get contexts
-const editCtx = getMessageEditContext();
-const processingState = useProcessingState();
-const currentConfig = $derived(config());
-const isActivelyProcessing = $derived(isLastUserMessage && isLoading());
-// For agentic turns, prefer the cumulative agentic.llm totals over per-call timings.
-let storedReadingStats = $derived.by(() => {
-    const timings = nextAssistantMessage?.timings;
-    if (!timings?.prompt_n || !timings?.prompt_ms)
-        return null;
-    const agentic = timings.agentic;
-    return {
-        promptTokens: agentic ? agentic.llm.prompt_n : timings.prompt_n,
-        promptMs: agentic ? agentic.llm.prompt_ms : timings.prompt_ms
-    };
-});
-let showStoredReadingStats = $derived(Boolean(currentConfig.showMessageStats) && storedReadingStats !== null);
-let showLiveReadingStats = $derived(Boolean(currentConfig.showMessageStats) && isActivelyProcessing && storedReadingStats === null);
-$effect(() => {
-    if (showLiveReadingStats) {
-        processingState.startMonitoring();
-    }
-});
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import {
+		ChatMessageActionIcons,
+		ChatMessageEditForm,
+		ChatMessageStatistics,
+		ChatMessageUserBubble
+	} from '$lib/components/app/chat';
+	import { getMessageEditContext } from '$lib/contexts';
+	import { useProcessingState } from '$lib/hooks/use-processing-state.svelte';
+	import { isLoading } from '$lib/stores/chat.svelte';
+	import { MessageRole, ChatMessageStatisticsMode } from '$lib/enums';
+	import { config } from '$lib/stores/settings.svelte';
+
+	interface Props {
+		class?: string;
+		message: DatabaseMessage;
+		siblingInfo?: ChatMessageSiblingInfo | null;
+		deletionInfo: {
+			totalCount: number;
+			userMessages: number;
+			assistantMessages: number;
+			messageTypes: string[];
+		} | null;
+		isLastUserMessage?: boolean;
+		nextAssistantMessage?: DatabaseMessage | null;
+		showDeleteDialog: boolean;
+		onEdit: () => void;
+		onDelete: () => void;
+		onConfirmDelete: () => void;
+		onForkConversation?: (options: { name: string; includeAttachments: boolean }) => void;
+		onShowDeleteDialogChange: (show: boolean) => void;
+		onNavigateToSibling?: (siblingId: string) => void;
+		onCopy: () => void;
+	}
+
+	let {
+		class: className = '',
+		message,
+		siblingInfo = null,
+		deletionInfo,
+		isLastUserMessage = false,
+		nextAssistantMessage = null,
+		showDeleteDialog,
+		onEdit,
+		onDelete,
+		onConfirmDelete,
+		onForkConversation,
+		onShowDeleteDialogChange,
+		onNavigateToSibling,
+		onCopy
+	}: Props = $props();
+
+	// Get contexts
+	const editCtx = getMessageEditContext();
+	const processingState = useProcessingState();
+
+	const currentConfig = $derived(config());
+	const isActivelyProcessing = $derived(isLastUserMessage && isLoading());
+
+	// For agentic turns, prefer the cumulative agentic.llm totals over per-call timings.
+	let storedReadingStats = $derived.by(() => {
+		const timings = nextAssistantMessage?.timings;
+		if (!timings?.prompt_n || !timings?.prompt_ms) return null;
+
+		const agentic = timings.agentic;
+
+		return {
+			promptTokens: agentic ? agentic.llm.prompt_n : timings.prompt_n,
+			promptMs: agentic ? agentic.llm.prompt_ms : timings.prompt_ms
+		};
+	});
+
+	let showStoredReadingStats = $derived(
+		Boolean(currentConfig.showMessageStats) && storedReadingStats !== null
+	);
+
+	let showLiveReadingStats = $derived(
+		Boolean(currentConfig.showMessageStats) && isActivelyProcessing && storedReadingStats === null
+	);
+
+	$effect(() => {
+		if (showLiveReadingStats) {
+			processingState.startMonitoring();
+		}
+	});
 </script>
 
 <div
@@ -50,8 +109,8 @@ $effect(() => {
 				>
 					<ChatMessageStatistics
 						mode={ChatMessageStatisticsMode.READING}
-						promptTokens={storedReadingStats.promptTokens}
-						promptMs={storedReadingStats.promptMs}
+						promptTokens={storedReadingStats!.promptTokens}
+						promptMs={storedReadingStats!.promptMs}
 					/>
 				</div>
 			</div>

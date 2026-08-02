@@ -1,6 +1,23 @@
-<script>import { parseWriteFileMeta } from './parsers/write-file';
-let { section, open, isStreaming, onToggle } = $props();
-const writeFileMeta = $derived(parseWriteFileMeta(section));
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { XCircle } from '@lucide/svelte';
+	import { SyntaxHighlightedCode } from '$lib/components/app';
+	import { MAX_HEIGHT_CODE_BLOCK, RESULT_STAT_SEPARATOR } from '$lib/constants';
+	import { type AgenticSection } from '$lib/utils';
+	import { parseWriteFileMeta } from './parsers/write-file';
+	import ToolCallBlock from './ToolCallBlock.svelte';
+
+	interface Props {
+		section: AgenticSection;
+		open: boolean;
+		isStreaming: boolean;
+		onToggle?: () => void;
+	}
+
+	let { section, open, isStreaming, onToggle }: Props = $props();
+
+	const writeFileMeta = $derived(parseWriteFileMeta(section));
 </script>
 
 <ToolCallBlock {section} {open} {isStreaming} meta={writeFileMeta} {onToggle}>

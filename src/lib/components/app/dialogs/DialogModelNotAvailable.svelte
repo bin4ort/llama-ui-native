@@ -1,17 +1,33 @@
-<script>import { goto } from '$app/navigation';
-import { page } from '$app/state';
-let { open = $bindable(), modelName, availableModels = [], onOpenChange } = $props();
-function handleOpenChange(newOpen) {
-    open = newOpen;
-    onOpenChange?.(newOpen);
-}
-function handleSelectModel(model) {
-    // Build URL with selected model, preserving other params
-    const url = new URL(page.url);
-    url.searchParams.set('model', model);
-    handleOpenChange(false);
-    goto(url.toString());
-}
+<script lang="ts">
+	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog';
+	import { AlertTriangle, ArrowRight } from '@lucide/svelte';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
+	import { t } from '$lib/stores/i18n.svelte';
+
+	interface Props {
+		open: boolean;
+		modelName: string;
+		availableModels?: string[];
+		onOpenChange?: (open: boolean) => void;
+	}
+
+	let { open = $bindable(), modelName, availableModels = [], onOpenChange }: Props = $props();
+
+	function handleOpenChange(newOpen: boolean) {
+		open = newOpen;
+		onOpenChange?.(newOpen);
+	}
+
+	function handleSelectModel(model: string) {
+		// Build URL with selected model, preserving other params
+		const url = new URL(page.url);
+		url.searchParams.set('model', model);
+
+		handleOpenChange(false);
+		goto(url.toString());
+	}
 </script>
 
 <AlertDialog.Root {open} onOpenChange={handleOpenChange}>

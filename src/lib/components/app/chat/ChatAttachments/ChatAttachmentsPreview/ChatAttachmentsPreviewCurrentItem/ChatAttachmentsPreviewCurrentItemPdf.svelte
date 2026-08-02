@@ -1,62 +1,87 @@
-<script>import { getLanguageFromFilename } from '$lib/utils';
-import { convertPDFToImage } from '$lib/utils/browser-only';
-import { PdfViewMode } from '$lib/enums';
-let { currentItem, displayName, displayTextContent, hasVisionModality, activeModelId } = $props();
-let pdfViewMode = $state(PdfViewMode.PAGES);
-let pdfImages = $state([]);
-let pdfImagesLoading = $state(false);
-let pdfImagesError = $state(null);
-let language = $derived(getLanguageFromFilename(displayName));
-async function loadPdfImages() {
-    if (pdfImages.length > 0 || pdfImagesLoading || !currentItem)
-        return;
-    pdfImagesLoading = true;
-    pdfImagesError = null;
-    try {
-        let file = null;
-        if (currentItem.uploadedFile?.file) {
-            file = currentItem.uploadedFile.file;
-        }
-        else if (currentItem.attachment) {
-            // Check if we have pre-processed images
-            if ('images' in currentItem.attachment &&
-                currentItem.attachment.images &&
-                Array.isArray(currentItem.attachment.images) &&
-                currentItem.attachment.images.length > 0) {
-                pdfImages = currentItem.attachment.images;
-                return;
-            }
-            // Convert base64 back to File for processing
-            if ('base64Data' in currentItem.attachment && currentItem.attachment.base64Data) {
-                const base64Data = currentItem.attachment.base64Data;
-                const byteCharacters = atob(base64Data);
-                const byteNumbers = new Array(byteCharacters.length);
-                for (let i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i);
-                }
-                const byteArray = new Uint8Array(byteNumbers);
-                file = new File([byteArray], displayName, { type: 'application/pdf' });
-            }
-        }
-        if (file) {
-            pdfImages = await convertPDFToImage(file);
-        }
-        else {
-            throw new Error('No PDF file available for conversion');
-        }
-    }
-    catch (error) {
-        pdfImagesError = error instanceof Error ? error.message : 'Failed to load PDF images';
-    }
-    finally {
-        pdfImagesLoading = false;
-    }
-}
-$effect(() => {
-    if (pdfViewMode === PdfViewMode.PAGES) {
-        loadPdfImages();
-    }
-});
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
+	import type { ChatAttachmentDisplayItem } from '$lib/types';
+	import { FileText, Eye, Info } from '@lucide/svelte';
+	import { Button } from '$lib/components/ui/button';
+	import * as Alert from '$lib/components/ui/alert';
+	import { SyntaxHighlightedCode } from '$lib/components/app';
+	import { getLanguageFromFilename } from '$lib/utils';
+	import { convertPDFToImage } from '$lib/utils/browser-only';
+	import { PdfViewMode } from '$lib/enums';
+
+	interface Props {
+		currentItem: ChatAttachmentDisplayItem | null;
+		displayName: string;
+		displayTextContent: string | undefined;
+		hasVisionModality: boolean;
+		activeModelId?: string;
+	}
+
+	let { currentItem, displayName, displayTextContent, hasVisionModality, activeModelId }: Props =
+		$props();
+
+	let pdfViewMode = $state<PdfViewMode>(PdfViewMode.PAGES);
+	let pdfImages = $state<string[]>([]);
+	let pdfImagesLoading = $state(false);
+	let pdfImagesError = $state<string | null>(null);
+
+	let language = $derived(getLanguageFromFilename(displayName));
+
+	async function loadPdfImages() {
+		if (pdfImages.length > 0 || pdfImagesLoading || !currentItem) return;
+
+		pdfImagesLoading = true;
+		pdfImagesError = null;
+
+		try {
+			let file: File | null = null;
+
+			if (currentItem.uploadedFile?.file) {
+				file = currentItem.uploadedFile.file;
+			} else if (currentItem.attachment) {
+				// Check if we have pre-processed images
+				if (
+					'images' in currentItem.attachment &&
+					currentItem.attachment.images &&
+					Array.isArray(currentItem.attachment.images) &&
+					currentItem.attachment.images.length > 0
+				) {
+					pdfImages = currentItem.attachment.images;
+					return;
+				}
+
+				// Convert base64 back to File for processing
+				if ('base64Data' in currentItem.attachment && currentItem.attachment.base64Data) {
+					const base64Data = currentItem.attachment.base64Data;
+					const byteCharacters = atob(base64Data);
+					const byteNumbers = new Array(byteCharacters.length);
+					for (let i = 0; i < byteCharacters.length; i++) {
+						byteNumbers[i] = byteCharacters.charCodeAt(i);
+					}
+					const byteArray = new Uint8Array(byteNumbers);
+					file = new File([byteArray], displayName, { type: 'application/pdf' });
+				}
+			}
+
+			if (file) {
+				pdfImages = await convertPDFToImage(file);
+			} else {
+				throw new Error('No PDF file available for conversion');
+			}
+		} catch (error) {
+			pdfImagesError = error instanceof Error ? error.message : 'Failed to load PDF images';
+		} finally {
+			pdfImagesLoading = false;
+		}
+	}
+
+	$effect(() => {
+		if (pdfViewMode === PdfViewMode.PAGES) {
+			loadPdfImages();
+		}
+	});
 </script>
 
 <div class="mb-4 flex items-center justify-end gap-2">

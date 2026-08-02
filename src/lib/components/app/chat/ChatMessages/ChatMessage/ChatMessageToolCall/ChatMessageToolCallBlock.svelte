@@ -1,8 +1,39 @@
-<script>import { extractSearchQuery, extractSearchResults, isWebSearchToolName } from '$lib/utils';
-let { section, attachments, open, isStreaming, isExecuting, onToggle } = $props();
-const searchResults = $derived(extractSearchResults(section.toolResult));
-const searchQuery = $derived(extractSearchQuery(section.toolArgs));
-const isSearchCall = $derived(searchResults.length > 0 || (searchQuery.length > 0 && isWebSearchToolName(section.toolName)));
+<script lang="ts">
+	import { BuiltInTool } from '$lib/enums';
+	import {
+		extractSearchQuery,
+		extractSearchResults,
+		isWebSearchToolName,
+		type AgenticSection
+	} from '$lib/utils';
+	import type { DatabaseMessageExtra } from '$lib/types';
+	import ChatMessageToolCallBlockDefault from './ChatMessageToolCallBlockDefault.svelte';
+	import ChatMessageToolCallBlockEditFile from './ChatMessageToolCallBlockEditFile.svelte';
+	import ChatMessageToolCallBlockExecShellCommand from './ChatMessageToolCallBlockExecShellCommand.svelte';
+	import ChatMessageToolCallBlockFileGlobSearch from './ChatMessageToolCallBlockFileGlobSearch.svelte';
+	import ChatMessageToolCallBlockGetDatetime from './ChatMessageToolCallBlockGetDatetime.svelte';
+	import ChatMessageToolCallBlockGrepSearch from './ChatMessageToolCallBlockGrepSearch.svelte';
+	import ChatMessageToolCallBlockReadFile from './ChatMessageToolCallBlockReadFile.svelte';
+	import ChatMessageToolCallBlockRunJavascript from './ChatMessageToolCallBlockRunJavascript.svelte';
+	import ChatMessageToolCallBlockSearchResults from './ChatMessageToolCallBlockSearchResults.svelte';
+	import ChatMessageToolCallBlockWriteFile from './ChatMessageToolCallBlockWriteFile.svelte';
+
+	interface Props {
+		section: AgenticSection;
+		attachments?: DatabaseMessageExtra[];
+		open: boolean;
+		isStreaming: boolean;
+		isExecuting?: boolean;
+		onToggle?: () => void;
+	}
+
+	let { section, attachments, open, isStreaming, isExecuting, onToggle }: Props = $props();
+
+	const searchResults = $derived(extractSearchResults(section.toolResult));
+	const searchQuery = $derived(extractSearchQuery(section.toolArgs));
+	const isSearchCall = $derived(
+		searchResults.length > 0 || (searchQuery.length > 0 && isWebSearchToolName(section.toolName))
+	);
 </script>
 
 {#if isSearchCall}

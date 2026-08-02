@@ -1,6 +1,21 @@
-<script>import { parseGrepSearchMeta } from './parsers/grep-search';
-let { section, open, isStreaming, onToggle } = $props();
-const grepMeta = $derived(parseGrepSearchMeta(section));
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { XCircle } from '@lucide/svelte';
+	import { type AgenticSection } from '$lib/utils';
+	import { parseGrepSearchMeta } from './parsers/grep-search';
+	import ToolCallBlock from './ToolCallBlock.svelte';
+
+	interface Props {
+		section: AgenticSection;
+		open: boolean;
+		isStreaming: boolean;
+		onToggle?: () => void;
+	}
+
+	let { section, open, isStreaming, onToggle }: Props = $props();
+
+	const grepMeta = $derived(parseGrepSearchMeta(section));
 </script>
 
 <ToolCallBlock {section} {open} {isStreaming} meta={grepMeta} {onToggle}>

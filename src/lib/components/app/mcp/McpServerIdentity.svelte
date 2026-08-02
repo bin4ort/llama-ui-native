@@ -1,6 +1,37 @@
-<script>import { sanitizeExternalUrl } from '$lib/utils';
-let { displayName, faviconUrl = null, serverInfo, iconClass = 'h-5 w-5', iconRounded = 'rounded-sm', showVersion = true, showWebsite = true, nameClass } = $props();
-let safeWebsiteUrl = $derived(serverInfo?.websiteUrl ? sanitizeExternalUrl(serverInfo.websiteUrl) : null);
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+	import { ExternalLink } from '@lucide/svelte';
+	import { Badge } from '$lib/components/ui/badge';
+	import { McpLogo } from '$lib/components/app/mcp';
+	import { TruncatedText } from '$lib/components/app/misc';
+	import { sanitizeExternalUrl } from '$lib/utils';
+	import type { MCPServerInfo } from '$lib/types';
+
+	interface Props {
+		displayName?: string;
+		faviconUrl?: string | null;
+		serverInfo?: MCPServerInfo;
+		iconClass?: string;
+		iconRounded?: string;
+		showVersion?: boolean;
+		showWebsite?: boolean;
+		nameClass?: string;
+	}
+
+	let {
+		displayName,
+		faviconUrl = null,
+		serverInfo,
+		iconClass = 'h-5 w-5',
+		iconRounded = 'rounded-sm',
+		showVersion = true,
+		showWebsite = true,
+		nameClass
+	}: Props = $props();
+
+	let safeWebsiteUrl = $derived(
+		serverInfo?.websiteUrl ? sanitizeExternalUrl(serverInfo.websiteUrl) : null
+	);
 </script>
 
 <span class="flex min-w-0 items-center gap-1.5">

@@ -1,8 +1,25 @@
-<script>import { getBuiltinToolUi } from '$lib/utils';
-import { parseRunJavascriptMeta } from './parsers/run-javascript';
-let { section, open, isStreaming, onToggle } = $props();
-const runJsMeta = $derived(parseRunJavascriptMeta(section));
-const title = $derived(getBuiltinToolUi(section.toolName)?.label ?? section.toolName ?? '');
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { XCircle, Terminal } from '@lucide/svelte';
+	import { SyntaxHighlightedCode } from '$lib/components/app';
+	import { FileTypeText } from '$lib/enums';
+	import { MAX_HEIGHT_CODE_BLOCK } from '$lib/constants';
+	import { getBuiltinToolUi, type AgenticSection } from '$lib/utils';
+	import { parseRunJavascriptMeta } from './parsers/run-javascript';
+	import ToolCallBlock from './ToolCallBlock.svelte';
+
+	interface Props {
+		section: AgenticSection;
+		open: boolean;
+		isStreaming: boolean;
+		onToggle?: () => void;
+	}
+
+	let { section, open, isStreaming, onToggle }: Props = $props();
+
+	const runJsMeta = $derived(parseRunJavascriptMeta(section));
+	const title = $derived(getBuiltinToolUi(section.toolName)?.label ?? section.toolName ?? '');
 </script>
 
 <ToolCallBlock {section} {open} {isStreaming} meta={runJsMeta} {title} {onToggle}>

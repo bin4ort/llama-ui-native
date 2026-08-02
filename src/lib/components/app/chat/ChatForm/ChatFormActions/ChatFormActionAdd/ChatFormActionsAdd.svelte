@@ -1,5 +1,36 @@
-<script>let { disabled = false, hasAudioModality = false, hasVideoModality = false, hasMcpPromptsSupport = false, hasMcpResourcesSupport = false, hasVisionModality = false, onFileUpload, onMcpPromptClick, onMcpResourcesClick, onMcpSettingsClick, onSystemPromptClick } = $props();
-export {};
+<script lang="ts">
+	import { isMobile } from '$lib/stores/viewport.svelte';
+	import ChatFormActionAddDropdown from './ChatFormActionAddDropdown.svelte';
+	import ChatFormActionAddSheet from './ChatFormActionAddSheet.svelte';
+	import ChatFormActionAddButton from './ChatFormActionAddButton.svelte';
+
+	interface Props {
+		disabled?: boolean;
+		hasAudioModality?: boolean;
+		hasVideoModality?: boolean;
+		hasMcpPromptsSupport?: boolean;
+		hasMcpResourcesSupport?: boolean;
+		hasVisionModality?: boolean;
+		onFileUpload?: () => void;
+		onMcpPromptClick?: () => void;
+		onMcpResourcesClick?: () => void;
+		onMcpSettingsClick?: () => void;
+		onSystemPromptClick?: () => void;
+	}
+
+	let {
+		disabled = false,
+		hasAudioModality = false,
+		hasVideoModality = false,
+		hasMcpPromptsSupport = false,
+		hasMcpResourcesSupport = false,
+		hasVisionModality = false,
+		onFileUpload,
+		onMcpPromptClick,
+		onMcpResourcesClick,
+		onMcpSettingsClick,
+		onSystemPromptClick
+	}: Props = $props();
 </script>
 
 {#if isMobile.current}

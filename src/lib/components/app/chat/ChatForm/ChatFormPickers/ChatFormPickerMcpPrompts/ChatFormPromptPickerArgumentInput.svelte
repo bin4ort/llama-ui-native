@@ -1,5 +1,38 @@
-<script>let { argument, value = '', suggestions = [], isLoadingSuggestions = false, isAutocompleteActive = false, autocompleteIndex = 0, onInput, onKeydown, onBlur, onFocus, onSelectSuggestion } = $props();
-export {};
+<script lang="ts">
+	import type { MCPPromptInfo } from '$lib/types';
+	import { fly } from 'svelte/transition';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+
+	type PromptArgument = NonNullable<MCPPromptInfo['arguments']>[number];
+
+	interface Props {
+		argument: PromptArgument;
+		value: string;
+		suggestions?: string[];
+		isLoadingSuggestions?: boolean;
+		isAutocompleteActive?: boolean;
+		autocompleteIndex?: number;
+		onInput: (value: string) => void;
+		onKeydown: (event: KeyboardEvent) => void;
+		onBlur: () => void;
+		onFocus: () => void;
+		onSelectSuggestion: (value: string) => void;
+	}
+
+	let {
+		argument,
+		value = '',
+		suggestions = [],
+		isLoadingSuggestions = false,
+		isAutocompleteActive = false,
+		autocompleteIndex = 0,
+		onInput,
+		onKeydown,
+		onBlur,
+		onFocus,
+		onSelectSuggestion
+	}: Props = $props();
 </script>
 
 <div class="relative grid gap-1">

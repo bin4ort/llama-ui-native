@@ -1,36 +1,83 @@
-<script>import { getFileTypeLabel, isPdfFile, isAudioFile, isVideoFile, isTextFile } from '$lib/utils';
-import { AttachmentType } from '$lib/enums';
-let { attachment, class: className = '', id, onclick, onRemove, name, readonly = false, size, textContent, uploadedFile } = $props();
-let isPdf = $derived(isPdfFile(attachment, uploadedFile));
-let isAudio = $derived(isAudioFile(attachment, uploadedFile));
-let isVideo = $derived(isVideoFile(attachment, uploadedFile));
-let isPdfWithContent = $derived(isPdf && !!textContent);
-let isText = $derived(isTextFile(attachment, uploadedFile));
-let isTextWithContent = $derived(isText && !!textContent);
-let fileTypeLabel = $derived.by(() => {
-    if (uploadedFile?.type) {
-        return getFileTypeLabel(uploadedFile.type);
-    }
-    if (attachment) {
-        if ('mimeType' in attachment && attachment.mimeType) {
-            return getFileTypeLabel(attachment.mimeType);
-        }
-        if (attachment.type) {
-            return getFileTypeLabel(attachment.type);
-        }
-    }
-    return getFileTypeLabel(name);
-});
-let pdfProcessingMode = $derived.by(() => {
-    if (attachment?.type === AttachmentType.PDF) {
-        const pdfAttachment = attachment;
-        return pdfAttachment.processedAsImages ? 'Sent as Image' : 'Sent as Text';
-    }
-    return null;
-});
+<script lang="ts">
+	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
+	import { X, Music, Video } from '@lucide/svelte';
+	import {
+		formatFileSize,
+		getFileTypeLabel,
+		getPreviewText,
+		isPdfFile,
+		isAudioFile,
+		isVideoFile,
+		isTextFile
+	} from '$lib/utils';
+	import { ActionIcon } from '$lib/components/app';
+	import { AttachmentType } from '$lib/enums';
+
+	interface Props {
+		attachment?: DatabaseMessageExtra;
+		class?: string;
+		id: string;
+		onclick?: (event: MouseEvent) => void;
+		onRemove?: (id: string) => void;
+		name: string;
+		readonly?: boolean;
+		size?: number;
+		textContent?: string;
+		// Either uploaded file or stored attachment
+		uploadedFile?: ChatUploadedFile;
+	}
+
+	let {
+		attachment,
+		class: className = '',
+		id,
+		onclick,
+		onRemove,
+		name,
+		readonly = false,
+		size,
+		textContent,
+		uploadedFile
+	}: Props = $props();
+
+	let isPdf = $derived(isPdfFile(attachment, uploadedFile));
+	let isAudio = $derived(isAudioFile(attachment, uploadedFile));
+	let isVideo = $derived(isVideoFile(attachment, uploadedFile));
+	let isPdfWithContent = $derived(isPdf && !!textContent);
+
+	let isText = $derived(isTextFile(attachment, uploadedFile));
+	let isTextWithContent = $derived(isText && !!textContent);
+
+	let fileTypeLabel = $derived.by(() => {
+		if (uploadedFile?.type) {
+			return getFileTypeLabel(uploadedFile.type);
+		}
+
+		if (attachment) {
+			if ('mimeType' in attachment && attachment.mimeType) {
+				return getFileTypeLabel(attachment.mimeType);
+			}
+
+			if (attachment.type) {
+				return getFileTypeLabel(attachment.type);
+			}
+		}
+
+		return getFileTypeLabel(name);
+	});
+
+	let pdfProcessingMode = $derived.by(() => {
+		if (attachment?.type === AttachmentType.PDF) {
+			const pdfAttachment = attachment as DatabaseMessageExtraPdfFile;
+
+			return pdfAttachment.processedAsImages ? 'Sent as Image' : 'Sent as Text';
+		}
+
+		return null;
+	});
 </script>
 
-{#snippet textPreview(content)}
+{#snippet textPreview(content: string)}
 	<div class="relative">
 		<div
 			class="font-mono text-xs leading-relaxed break-words whitespace-pre-wrap text-muted-foreground {!readonly
@@ -72,7 +119,7 @@ let pdfProcessingMode = $derived.by(() => {
 	</div>
 {/snippet}
 
-{#snippet info(text)}
+{#snippet info(text: string | undefined)}
 	{#if text}
 		<span class="text-xs text-muted-foreground">{text}</span>
 	{/if}

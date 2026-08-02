@@ -1,22 +1,87 @@
-<script>import { activeConversation } from '$lib/stores/conversations.svelte';
-let { actionsPosition, deletionInfo, justify, onCopy, onEdit, onConfirmDelete, onContinue, onDelete, onForkConversation, onNavigateToSibling, onShowDeleteDialogChange, onRegenerate, role, siblingInfo = null, showDeleteDialog, showRawOutputSwitch = false, rawOutputEnabled = false, onRawOutputToggle } = $props();
-let showForkDialog = $state(false);
-let forkName = $state('');
-let forkIncludeAttachments = $state(true);
-function handleConfirmDelete() {
-    onConfirmDelete();
-    onShowDeleteDialogChange(false);
-}
-function handleOpenForkDialog() {
-    const conv = activeConversation();
-    forkName = `Fork of ${conv?.name ?? 'Conversation'}`;
-    forkIncludeAttachments = true;
-    showForkDialog = true;
-}
-function handleConfirmFork() {
-    onForkConversation?.({ name: forkName.trim(), includeAttachments: forkIncludeAttachments });
-    showForkDialog = false;
-}
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { Edit, Copy, RefreshCw, Trash2, ArrowRight, GitBranch } from '@lucide/svelte';
+	import {
+		ActionIcon,
+		ChatMessageActionIconsBranchingControls,
+		DialogConfirmation
+	} from '$lib/components/app';
+	import { Switch } from '$lib/components/ui/switch';
+	import { Checkbox } from '$lib/components/ui/checkbox';
+	import Input from '$lib/components/ui/input/input.svelte';
+	import Label from '$lib/components/ui/label/label.svelte';
+	import { MessageRole } from '$lib/enums';
+	import { activeConversation } from '$lib/stores/conversations.svelte';
+
+	interface Props {
+		role: MessageRole.USER | MessageRole.ASSISTANT;
+		justify: 'start' | 'end';
+		actionsPosition: 'left' | 'right';
+		siblingInfo?: ChatMessageSiblingInfo | null;
+		showDeleteDialog: boolean;
+		deletionInfo: {
+			totalCount: number;
+			userMessages: number;
+			assistantMessages: number;
+			messageTypes: string[];
+		} | null;
+		onCopy: () => void;
+		onEdit?: () => void;
+		onRegenerate?: () => void;
+		onContinue?: () => void;
+		onForkConversation?: (options: { name: string; includeAttachments: boolean }) => void;
+		onDelete: () => void;
+		onConfirmDelete: () => void;
+		onNavigateToSibling?: (siblingId: string) => void;
+		onShowDeleteDialogChange: (show: boolean) => void;
+		showRawOutputSwitch?: boolean;
+		rawOutputEnabled?: boolean;
+		onRawOutputToggle?: (enabled: boolean) => void;
+	}
+
+	let {
+		actionsPosition,
+		deletionInfo,
+		justify,
+		onCopy,
+		onEdit,
+		onConfirmDelete,
+		onContinue,
+		onDelete,
+		onForkConversation,
+		onNavigateToSibling,
+		onShowDeleteDialogChange,
+		onRegenerate,
+		role,
+		siblingInfo = null,
+		showDeleteDialog,
+		showRawOutputSwitch = false,
+		rawOutputEnabled = false,
+		onRawOutputToggle
+	}: Props = $props();
+
+	let showForkDialog = $state(false);
+	let forkName = $state('');
+	let forkIncludeAttachments = $state(true);
+
+	function handleConfirmDelete() {
+		onConfirmDelete();
+		onShowDeleteDialogChange(false);
+	}
+
+	function handleOpenForkDialog() {
+		const conv = activeConversation();
+
+		forkName = `Fork of ${conv?.name ?? 'Conversation'}`;
+		forkIncludeAttachments = true;
+		showForkDialog = true;
+	}
+
+	function handleConfirmFork() {
+		onForkConversation?.({ name: forkName.trim(), includeAttachments: forkIncludeAttachments });
+		showForkDialog = false;
+	}
 </script>
 
 <div class="relative {justify === 'start' ? 'mt-2' : ''} flex h-6 items-center justify-between">

@@ -1,25 +1,50 @@
-<script>import { mcpStore } from '$lib/stores/mcp.svelte';
-import { getLanguageFromFilename, downloadResourceContent } from '$lib/utils';
-import { MimeTypeIncludes, MimeTypeText } from '$lib/enums';
-import { DEFAULT_RESOURCE_FILENAME } from '$lib/constants';
-let { open = $bindable(), onOpenChange, extra } = $props();
-const serverName = $derived(mcpStore.getServerDisplayName(extra.serverName));
-const favicon = $derived(mcpStore.getServerFavicon(extra.serverName));
-function getLanguage() {
-    if (extra.mimeType?.includes(MimeTypeIncludes.JSON))
-        return MimeTypeIncludes.JSON;
-    if (extra.mimeType?.includes(MimeTypeIncludes.JAVASCRIPT))
-        return MimeTypeIncludes.JAVASCRIPT;
-    if (extra.mimeType?.includes(MimeTypeIncludes.TYPESCRIPT))
-        return MimeTypeIncludes.TYPESCRIPT;
-    const name = extra.name || extra.uri || '';
-    return getLanguageFromFilename(name) || 'plaintext';
-}
-function handleDownload() {
-    if (!extra.content)
-        return;
-    downloadResourceContent(extra.content, extra.mimeType || MimeTypeText.PLAIN, extra.name || DEFAULT_RESOURCE_FILENAME);
-}
+<script lang="ts">
+	import * as Dialog from '$lib/components/ui/dialog';
+	import { Download } from '@lucide/svelte';
+	import { Button } from '$lib/components/ui/button';
+	import { mcpStore } from '$lib/stores/mcp.svelte';
+	import { SyntaxHighlightedCode, ActionIconCopyToClipboard } from '$lib/components/app';
+	import { t } from '$lib/stores/i18n.svelte';
+	import {
+		getLanguageFromFilename,
+		isCodeResource,
+		isImageResource,
+		downloadResourceContent
+	} from '$lib/utils';
+	import { MimeTypeIncludes, MimeTypeText } from '$lib/enums';
+	import { DEFAULT_RESOURCE_FILENAME } from '$lib/constants';
+	import type { DatabaseMessageExtraMcpResource } from '$lib/types';
+
+	interface Props {
+		open: boolean;
+		onOpenChange?: (open: boolean) => void;
+		extra: DatabaseMessageExtraMcpResource;
+	}
+
+	let { open = $bindable(), onOpenChange, extra }: Props = $props();
+
+	const serverName = $derived(mcpStore.getServerDisplayName(extra.serverName));
+	const favicon = $derived(mcpStore.getServerFavicon(extra.serverName));
+
+	function getLanguage(): string {
+		if (extra.mimeType?.includes(MimeTypeIncludes.JSON)) return MimeTypeIncludes.JSON;
+		if (extra.mimeType?.includes(MimeTypeIncludes.JAVASCRIPT)) return MimeTypeIncludes.JAVASCRIPT;
+		if (extra.mimeType?.includes(MimeTypeIncludes.TYPESCRIPT)) return MimeTypeIncludes.TYPESCRIPT;
+
+		const name = extra.name || extra.uri || '';
+
+		return getLanguageFromFilename(name) || 'plaintext';
+	}
+
+	function handleDownload() {
+		if (!extra.content) return;
+
+		downloadResourceContent(
+			extra.content,
+			extra.mimeType || MimeTypeText.PLAIN,
+			extra.name || DEFAULT_RESOURCE_FILENAME
+		);
+	}
 </script>
 
 <Dialog.Root bind:open {onOpenChange}>
@@ -40,7 +65,7 @@ function handleDownload() {
 									alt=""
 									class="h-3 w-3 shrink-0 rounded-sm"
 									onerror={(e) => {
-										(e.currentTarget).style.display = 'none';
+										(e.currentTarget as HTMLImageElement).style.display = 'none';
 									}}
 								/>
 							{/if}

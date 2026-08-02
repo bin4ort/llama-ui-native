@@ -1,5 +1,23 @@
-<script>let { toolName, serverLabel, onDecision } = $props();
-export {};
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { ChevronDown, ShieldQuestion } from '@lucide/svelte';
+	import { ChatMessageActionCard } from '$lib/components/app';
+	import { Button, buttonVariants } from '$lib/components/ui/button';
+	import * as ButtonGroup from '$lib/components/ui/button-group';
+	import { cn } from '$lib/components/ui/utils';
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { ToolSource, ToolPermissionDecision } from '$lib/enums';
+	import { TOOL_SERVER_LABELS } from '$lib/constants';
+	import { toolsStore } from '$lib/stores/tools.svelte';
+
+	interface Props {
+		toolName: string;
+		serverLabel: string;
+		onDecision: (decision: ToolPermissionDecision) => void;
+	}
+
+	let { toolName, serverLabel, onDecision }: Props = $props();
 </script>
 
 <ChatMessageActionCard icon={ShieldQuestion}>

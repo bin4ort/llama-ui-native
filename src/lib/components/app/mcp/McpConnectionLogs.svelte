@@ -1,17 +1,32 @@
-<script>let { logs, connectionTimeMs, defaultExpanded = false, class: className } = $props();
-let isExpanded = $derived(defaultExpanded);
-function formatLogDetails(details) {
-    if (details == null) {
-        return '';
-    }
-    try {
-        return JSON.stringify(details, null, 2);
-    }
-    catch {
-        return String(details);
-    }
-}
-export {};
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+	import { ChevronDown, ChevronRight } from '@lucide/svelte';
+	import * as Collapsible from '$lib/components/ui/collapsible';
+	import type { MCPConnectionLog } from '$lib/types';
+	import { formatTime, getMcpLogLevelIcon, getMcpLogLevelClass } from '$lib/utils';
+
+	interface Props {
+		logs: MCPConnectionLog[];
+		connectionTimeMs?: number;
+		defaultExpanded?: boolean;
+		class?: string;
+	}
+
+	let { logs, connectionTimeMs, defaultExpanded = false, class: className }: Props = $props();
+
+	let isExpanded = $derived(defaultExpanded);
+
+	function formatLogDetails(details: unknown): string {
+		if (details == null) {
+			return '';
+		}
+
+		try {
+			return JSON.stringify(details, null, 2);
+		} catch {
+			return String(details);
+		}
+	}
 </script>
 
 {#if logs.length > 0}

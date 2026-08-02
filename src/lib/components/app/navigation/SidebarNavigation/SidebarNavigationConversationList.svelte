@@ -1,10 +1,80 @@
-<script>import { t } from '$lib/stores/i18n.svelte';
-import { buildConversationTree } from '$lib/stores/conversations.svelte';
-let { class: className, filteredConversations, currentChatId, isSearchModeActive, searchQuery, isSelectionMode = false, selectedIds = new Set(), onSelect, onEdit, onDelete, onStop, onToggleSelect, onEnterSelectionMode, onSelectionClick, onRowMouseDown, visibleCount, allVisibleSelected, someVisibleSelected, allSelectedArePinned, pinStateIsMixed, onSelectAllToggle, onBulkPinToggle, onBulkExport, onBulkDelete, onCloseSelection } = $props();
-let conversationTree = $derived(buildConversationTree(filteredConversations));
-let pinnedConversations = $derived(conversationTree.filter(({ conversation }) => conversation.pinned));
-let unpinnedConversations = $derived(conversationTree.filter(({ conversation }) => !conversation.pinned));
-const recentEmptyMessage = $derived(searchQuery.length > 0 ? t("No results found") : t("No conversations yet"));
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+	import { Pin } from '@lucide/svelte';
+	import { buildConversationTree } from '$lib/stores/conversations.svelte';
+	import SidebarNavigationConversationItem from './SidebarNavigationConversationItem.svelte';
+	import SidebarNavigationSearchResults from './SidebarNavigationSearchResults.svelte';
+	import SidebarNavigationSelectionBar from './SidebarNavigationSelectionBar.svelte';
+
+	interface Props {
+		class: string;
+		filteredConversations: DatabaseConversation[];
+		currentChatId: string | undefined;
+		isSearchModeActive: boolean;
+		searchQuery: string;
+		isSelectionMode?: boolean;
+		selectedIds?: Set<string>;
+		onSelect: (id: string) => void;
+		onEdit: (id: string) => void;
+		onDelete: (id: string) => void;
+		onStop: (id: string) => void;
+		onToggleSelect?: (id: string) => void;
+		onEnterSelectionMode?: (id: string) => void;
+		onSelectionClick?: (id: string, options: { shiftKey: boolean }) => void;
+		onRowMouseDown?: (id: string, event: MouseEvent) => void;
+		visibleCount: number;
+		allVisibleSelected: boolean;
+		someVisibleSelected: boolean;
+		allSelectedArePinned: boolean;
+		pinStateIsMixed: boolean;
+		onSelectAllToggle: () => void;
+		onBulkPinToggle: () => void;
+		onBulkExport: () => void;
+		onBulkDelete: () => void;
+		onCloseSelection: () => void;
+	}
+
+	let {
+		class: className,
+		filteredConversations,
+		currentChatId,
+		isSearchModeActive,
+		searchQuery,
+		isSelectionMode = false,
+		selectedIds = new Set<string>(),
+		onSelect,
+		onEdit,
+		onDelete,
+		onStop,
+		onToggleSelect,
+		onEnterSelectionMode,
+		onSelectionClick,
+		onRowMouseDown,
+		visibleCount,
+		allVisibleSelected,
+		someVisibleSelected,
+		allSelectedArePinned,
+		pinStateIsMixed,
+		onSelectAllToggle,
+		onBulkPinToggle,
+		onBulkExport,
+		onBulkDelete,
+		onCloseSelection
+	}: Props = $props();
+
+	let conversationTree = $derived(buildConversationTree(filteredConversations));
+
+	let pinnedConversations = $derived(
+		conversationTree.filter(({ conversation }) => conversation.pinned)
+	);
+
+	let unpinnedConversations = $derived(
+		conversationTree.filter(({ conversation }) => !conversation.pinned)
+	);
+
+	const recentEmptyMessage = $derived(
+		searchQuery.length > 0 ? t("No results found") : t("No conversations yet")
+	);
 </script>
 
 <div class="flex min-h-0 flex-1 flex-col">

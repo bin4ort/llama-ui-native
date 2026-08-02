@@ -1,5 +1,14 @@
-<script>let { open = $bindable(), svgHtml, onOpenChange } = $props();
-export {};
+<script lang="ts">
+	import * as Dialog from '$lib/components/ui/dialog/index.js';
+	import { MermaidPreview } from '$lib/components/app/content';
+
+	interface Props {
+		open: boolean;
+		svgHtml: string;
+		onOpenChange?: (open: boolean) => void;
+	}
+
+	let { open = $bindable(), svgHtml, onOpenChange }: Props = $props();
 </script>
 
 <Dialog.Root bind:open {onOpenChange}>

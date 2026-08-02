@@ -1,17 +1,50 @@
-<script>import { KeyboardKey } from '$lib/enums';
-let { open = $bindable(), title, description, confirmText = 'Confirm', cancelText = 'Cancel', variant = 'default', icon, onConfirm, onCancel, onKeydown, children } = $props();
-function handleKeydown(event) {
-    if (event.key === KeyboardKey.ENTER) {
-        event.preventDefault();
-        onConfirm();
-    }
-    onKeydown?.(event);
-}
-function handleOpenChange(newOpen) {
-    if (!newOpen) {
-        onCancel();
-    }
-}
+<script lang="ts">
+	import * as AlertDialog from '$lib/components/ui/alert-dialog';
+	import type { Component, Snippet } from 'svelte';
+	import { KeyboardKey } from '$lib/enums';
+
+	interface Props {
+		open: boolean;
+		title: string;
+		description: string;
+		confirmText?: string;
+		cancelText?: string;
+		variant?: 'default' | 'destructive';
+		icon?: Component;
+		onConfirm: () => void;
+		onCancel: () => void;
+		onKeydown?: (event: KeyboardEvent) => void;
+		children?: Snippet;
+	}
+
+	let {
+		open = $bindable(),
+		title,
+		description,
+		confirmText = 'Confirm',
+		cancelText = 'Cancel',
+		variant = 'default',
+		icon,
+		onConfirm,
+		onCancel,
+		onKeydown,
+		children
+	}: Props = $props();
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === KeyboardKey.ENTER) {
+			event.preventDefault();
+
+			onConfirm();
+		}
+		onKeydown?.(event);
+	}
+
+	function handleOpenChange(newOpen: boolean) {
+		if (!newOpen) {
+			onCancel();
+		}
+	}
 </script>
 
 <AlertDialog.Root {open} onOpenChange={handleOpenChange}>

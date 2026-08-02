@@ -1,88 +1,156 @@
-<script>import { getAllLoadingChats } from '$lib/stores/chat.svelte';
-import { conversationsStore } from '$lib/stores/conversations.svelte';
-import { onMount } from 'svelte';
-let { conversation, onDelete, onEdit, onSelect, onStop, onToggleSelect, onEnterSelectionMode, onSelectionClick, onRowMouseDown, isActive = false, isSelectionMode = false, isSelected = false, depth = 0 } = $props();
-let renderActionsDropdown = $state(false);
-let dropdownOpen = $state(false);
-let isLoading = $derived(getAllLoadingChats().includes(conversation.id));
-function handleEdit(event) {
-    event.stopPropagation();
-    onEdit?.(conversation.id);
-}
-function handleDelete(event) {
-    event.stopPropagation();
-    onDelete?.(conversation.id);
-}
-function handleStop(event) {
-    event.stopPropagation();
-    onStop?.(conversation.id);
-}
-function handleTogglePin() {
-    conversationsStore.toggleConversationPin(conversation.id);
-}
-function handleEnterSelectionMode(event) {
-    event.stopPropagation();
-    onEnterSelectionMode?.(conversation.id);
-}
-function handleGlobalEditEvent(event) {
-    const customEvent = event;
-    if (customEvent.detail.conversationId === conversation.id && isActive) {
-        handleEdit(event);
-    }
-}
-function handleMouseLeave() {
-    if (!dropdownOpen) {
-        renderActionsDropdown = false;
-    }
-}
-function handleMouseOver() {
-    if (isSelectionMode)
-        return;
-    renderActionsDropdown = true;
-}
-function handleSelect(event) {
-    if (isSelectionMode) {
-        onSelectionClick?.(conversation.id, { shiftKey: event.shiftKey });
-    }
-    else {
-        onSelect?.(conversation.id);
-    }
-}
-function handleCheckboxClick(event) {
-    event.stopPropagation();
-    if (isSelectionMode) {
-        onSelectionClick?.(conversation.id, { shiftKey: event.shiftKey });
-    }
-    else {
-        onToggleSelect?.(conversation.id);
-    }
-}
-function handleRowMouseDown(event) {
-    onRowMouseDown?.(conversation.id, event);
-}
-function handleCheckboxKeydown(event) {
-    if (event.key !== ' ' && event.key !== 'Enter')
-        return;
-    event.stopPropagation();
-    event.preventDefault();
-    if (isSelectionMode) {
-        onSelectionClick?.(conversation.id, { shiftKey: event.shiftKey });
-    }
-    else {
-        onToggleSelect?.(conversation.id);
-    }
-}
-$effect(() => {
-    if (!dropdownOpen) {
-        renderActionsDropdown = false;
-    }
-});
-onMount(() => {
-    document.addEventListener('edit-active-conversation', handleGlobalEditEvent);
-    return () => {
-        document.removeEventListener('edit-active-conversation', handleGlobalEditEvent);
-    };
-});
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
+	import {
+		Trash2,
+		Pencil,
+		MoreHorizontal,
+		Download,
+		Loader2,
+		Square,
+		GitBranch,
+		Pin,
+		PinOff,
+		ListChecks
+	} from '@lucide/svelte';
+	import { DropdownMenuActions } from '$lib/components/app';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+	import { Checkbox } from '$lib/components/ui/checkbox';
+	import { FORK_TREE_DEPTH_PADDING } from '$lib/constants';
+	import { RouterService } from '$lib/services/router.service';
+	import { getAllLoadingChats } from '$lib/stores/chat.svelte';
+	import { conversationsStore } from '$lib/stores/conversations.svelte';
+	import { TruncatedText } from '$lib/components/app';
+	import { onMount } from 'svelte';
+
+	interface Props {
+		isActive?: boolean;
+		depth?: number;
+		conversation: DatabaseConversation;
+		isSelectionMode?: boolean;
+		isSelected?: boolean;
+		onDelete?: (id: string) => void;
+		onEdit?: (id: string) => void;
+		onSelect?: (id: string) => void;
+		onStop?: (id: string) => void;
+		onToggleSelect?: (id: string) => void;
+		onEnterSelectionMode?: (id: string) => void;
+		onSelectionClick?: (id: string, options: { shiftKey: boolean }) => void;
+		onRowMouseDown?: (id: string, event: MouseEvent) => void;
+	}
+
+	let {
+		conversation,
+		onDelete,
+		onEdit,
+		onSelect,
+		onStop,
+		onToggleSelect,
+		onEnterSelectionMode,
+		onSelectionClick,
+		onRowMouseDown,
+		isActive = false,
+		isSelectionMode = false,
+		isSelected = false,
+		depth = 0
+	}: Props = $props();
+
+	let renderActionsDropdown = $state(false);
+	let dropdownOpen = $state(false);
+
+	let isLoading = $derived(getAllLoadingChats().includes(conversation.id));
+
+	function handleEdit(event: Event) {
+		event.stopPropagation();
+		onEdit?.(conversation.id);
+	}
+
+	function handleDelete(event: Event) {
+		event.stopPropagation();
+		onDelete?.(conversation.id);
+	}
+
+	function handleStop(event: Event) {
+		event.stopPropagation();
+		onStop?.(conversation.id);
+	}
+
+	function handleTogglePin() {
+		conversationsStore.toggleConversationPin(conversation.id);
+	}
+
+	function handleEnterSelectionMode(event: Event) {
+		event.stopPropagation();
+		onEnterSelectionMode?.(conversation.id);
+	}
+
+	function handleGlobalEditEvent(event: Event) {
+		const customEvent = event as CustomEvent<{ conversationId: string }>;
+
+		if (customEvent.detail.conversationId === conversation.id && isActive) {
+			handleEdit(event);
+		}
+	}
+
+	function handleMouseLeave() {
+		if (!dropdownOpen) {
+			renderActionsDropdown = false;
+		}
+	}
+
+	function handleMouseOver() {
+		if (isSelectionMode) return;
+		renderActionsDropdown = true;
+	}
+
+	function handleSelect(event: MouseEvent) {
+		if (isSelectionMode) {
+			onSelectionClick?.(conversation.id, { shiftKey: event.shiftKey });
+		} else {
+			onSelect?.(conversation.id);
+		}
+	}
+
+	function handleCheckboxClick(event: MouseEvent) {
+		event.stopPropagation();
+		if (isSelectionMode) {
+			onSelectionClick?.(conversation.id, { shiftKey: event.shiftKey });
+		} else {
+			onToggleSelect?.(conversation.id);
+		}
+	}
+
+	function handleRowMouseDown(event: MouseEvent) {
+		onRowMouseDown?.(conversation.id, event);
+	}
+
+	function handleCheckboxKeydown(event: KeyboardEvent) {
+		if (event.key !== ' ' && event.key !== 'Enter') return;
+		event.stopPropagation();
+		event.preventDefault();
+		if (isSelectionMode) {
+			onSelectionClick?.(conversation.id, { shiftKey: event.shiftKey });
+		} else {
+			onToggleSelect?.(conversation.id);
+		}
+	}
+
+	$effect(() => {
+		if (!dropdownOpen) {
+			renderActionsDropdown = false;
+		}
+	});
+
+	onMount(() => {
+		document.addEventListener('edit-active-conversation', handleGlobalEditEvent as EventListener);
+
+		return () => {
+			document.removeEventListener(
+				'edit-active-conversation',
+				handleGlobalEditEvent as EventListener
+			);
+		};
+	});
 </script>
 
 <!-- svelte-ignore a11y_mouse_events_have_key_events -->
@@ -99,7 +167,7 @@ onMount(() => {
 	onmousedown={(e) => handleRowMouseDown(e)}
 	onfocusin={handleMouseOver}
 	onfocusout={(e) => {
-		if (!e.currentTarget.contains(e.relatedTarget)) {
+		if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
 			handleMouseLeave();
 		}
 	}}
@@ -182,7 +250,7 @@ onMount(() => {
 					{
 						icon: conversation.pinned ? PinOff : Pin,
 						label: conversation.pinned ? t("Unpin") : t("Pin"),
-						onclick: (e) => {
+						onclick: (e: Event) => {
 							e.stopPropagation();
 							handleTogglePin();
 						}
@@ -196,7 +264,7 @@ onMount(() => {
 					{
 						icon: Download,
 						label: t("Export"),
-						onclick: (e) => {
+						onclick: (e: Event) => {
 							e.stopPropagation();
 							conversationsStore.downloadConversation(conversation.id);
 						},

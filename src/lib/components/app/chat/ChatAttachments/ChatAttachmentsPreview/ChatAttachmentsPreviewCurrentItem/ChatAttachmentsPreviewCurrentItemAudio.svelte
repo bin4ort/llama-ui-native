@@ -1,5 +1,14 @@
-<script>let { currentItem, audioSrc } = $props();
-export {};
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { Music } from '@lucide/svelte';
+
+	interface Props {
+		currentItem: { name?: string } | null;
+		audioSrc: string | null;
+	}
+
+	let { currentItem, audioSrc }: Props = $props();
 </script>
 
 <div class="flex flex-1 items-center justify-center p-8">

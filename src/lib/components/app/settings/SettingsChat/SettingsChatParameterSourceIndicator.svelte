@@ -1,5 +1,12 @@
-<script>let { class: className = '' } = $props();
-export {};
+<script lang="ts">
+	import { Wrench } from '@lucide/svelte';
+	import { Badge } from '$lib/components/ui/badge';
+
+	interface Props {
+		class?: string;
+	}
+
+	let { class: className = '' }: Props = $props();
 </script>
 
 <Badge

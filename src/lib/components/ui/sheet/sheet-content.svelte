@@ -1,5 +1,5 @@
 <script lang="ts" module>
-	import { tv, VariantProps } from 'tailwind-variants';
+	import { tv, type VariantProps } from 'tailwind-variants';
 	export const sheetVariants = tv({
 		base: `border-border/30 dark:border-border/20 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fill-mode-forwards fixed z-50 flex flex-col gap-4 shadow-sm transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 ${PANEL_CLASSES}`,
 		variants: {
@@ -23,9 +23,9 @@
 <script lang="ts">
 	import { Dialog as SheetPrimitive } from 'bits-ui';
 	import XIcon from '@lucide/svelte/icons/x';
-	import { Snippet } from 'svelte';
+	import type { Snippet } from 'svelte';
 	import SheetOverlay from './sheet-overlay.svelte';
-	import { cn, WithoutChildrenOrChild } from '$lib/components/ui/utils.js';
+	import { cn, type WithoutChildrenOrChild } from '$lib/components/ui/utils.js';
 	import { PANEL_CLASSES } from '$lib/constants';
 
 	let {

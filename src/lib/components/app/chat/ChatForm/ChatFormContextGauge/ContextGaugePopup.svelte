@@ -1,35 +1,52 @@
-<script>import { useContextGauge } from '$lib/hooks/use-context-gauge.svelte';
-import { gaugePopup, gaugePopupClose } from '$lib/stores/context-gauge-popup.svelte';
-const gauge = useContextGauge();
-// The gauge hook wraps a processing state instance that only follows the
-// live stream while its own monitoring flag is set, so the card instance
-// starts monitoring like the dial does.
-$effect(() => {
-    gauge.startMonitoring();
-});
-let cardEl = $state(null);
-// Any press outside the card and outside the dial closes the card.
-// Presses on the dial are excluded because the dial handles its own
-// toggle; the listener only exists while the card is open.
-$effect(() => {
-    if (!gaugePopup.open)
-        return;
-    const onPointerDown = (event) => {
-        const target = event.target;
-        if (!(target instanceof Node))
-            return;
-        if (cardEl?.contains(target))
-            return;
-        if (target instanceof Element && target.closest('[data-context-gauge-trigger]'))
-            return;
-        gaugePopupClose();
-    };
-    document.addEventListener('pointerdown', onPointerDown, true);
-    return () => document.removeEventListener('pointerdown', onPointerDown, true);
-});
-const showProgressBar = $derived(gauge.contextTotal !== null &&
-    gauge.contextTotal > 0 &&
-    (gauge.activeModelId !== null || gauge.isActiveModelLoaded));
+<script lang="ts">
+	import { t } from '$lib/stores/i18n.svelte';
+
+	import { formatParameters } from '$lib/utils/formatters';
+	import { useContextGauge } from '$lib/hooks/use-context-gauge.svelte';
+	import ContextGaugeDetails from './ContextGaugeDetails.svelte';
+	import ContextGaugeLoadModel from './ContextGaugeLoadModel.svelte';
+	import { colorLevelBgClass, colorLevelTextClass } from './context-gauge';
+	import {
+		gaugePopup,
+		gaugeCardEnter,
+		gaugeCardLeave,
+		gaugePopupClose
+	} from '$lib/stores/context-gauge-popup.svelte';
+
+	const gauge = useContextGauge();
+
+	// The gauge hook wraps a processing state instance that only follows the
+	// live stream while its own monitoring flag is set, so the card instance
+	// starts monitoring like the dial does.
+	$effect(() => {
+		gauge.startMonitoring();
+	});
+
+	let cardEl = $state<HTMLElement | null>(null);
+
+	// Any press outside the card and outside the dial closes the card.
+	// Presses on the dial are excluded because the dial handles its own
+	// toggle; the listener only exists while the card is open.
+	$effect(() => {
+		if (!gaugePopup.open) return;
+
+		const onPointerDown = (event: PointerEvent) => {
+			const target = event.target;
+			if (!(target instanceof Node)) return;
+			if (cardEl?.contains(target)) return;
+			if (target instanceof Element && target.closest('[data-context-gauge-trigger]')) return;
+			gaugePopupClose();
+		};
+
+		document.addEventListener('pointerdown', onPointerDown, true);
+		return () => document.removeEventListener('pointerdown', onPointerDown, true);
+	});
+
+	const showProgressBar = $derived(
+		gauge.contextTotal !== null &&
+			gauge.contextTotal > 0 &&
+			(gauge.activeModelId !== null || gauge.isActiveModelLoaded)
+	);
 </script>
 
 {#if gaugePopup.open}

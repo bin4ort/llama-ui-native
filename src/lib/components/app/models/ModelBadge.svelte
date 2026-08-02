@@ -1,12 +1,33 @@
-<script>import { modelsStore } from '$lib/stores/models.svelte';
-import { serverStore } from '$lib/stores/server.svelte';
-let { class: className = '', model: modelProp, onclick, showCopyIcon = false, showTooltip = false } = $props();
-let model = $derived(modelProp || modelsStore.singleModelName);
-let isModelMode = $derived(serverStore.isModelMode);
-let shouldShow = $derived(model && (modelProp !== undefined || isModelMode));
+<script lang="ts">
+	import { Package } from '@lucide/svelte';
+	import { BadgeInfo, ActionIconCopyToClipboard } from '$lib/components/app';
+	import ModelId from './ModelId.svelte';
+	import { modelsStore } from '$lib/stores/models.svelte';
+	import { serverStore } from '$lib/stores/server.svelte';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+
+	interface Props {
+		class?: string;
+		model?: string;
+		onclick?: () => void;
+		showCopyIcon?: boolean;
+		showTooltip?: boolean;
+	}
+
+	let {
+		class: className = '',
+		model: modelProp,
+		onclick,
+		showCopyIcon = false,
+		showTooltip = false
+	}: Props = $props();
+
+	let model = $derived(modelProp || modelsStore.singleModelName);
+	let isModelMode = $derived(serverStore.isModelMode);
+	let shouldShow = $derived(model && (modelProp !== undefined || isModelMode));
 </script>
 
-{#snippet badgeContent(triggerProps)}
+{#snippet badgeContent(triggerProps?: Record<string, unknown>)}
 	<BadgeInfo {...triggerProps ?? {}} class={className} {onclick}>
 		{#snippet icon()}
 			<Package class="h-3 w-3" />

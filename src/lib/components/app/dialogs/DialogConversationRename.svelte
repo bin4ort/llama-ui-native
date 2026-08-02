@@ -1,28 +1,52 @@
-<script>let { open = $bindable(), currentTitle, value = $bindable(''), onConfirm, onCancel } = $props();
-let inputRef = $state(null);
-const canSubmit = $derived(value.trim().length > 0 && value.trim() !== currentTitle.trim());
-$effect(() => {
-    if (open) {
-        value = currentTitle;
-        queueMicrotask(() => {
-            inputRef?.focus();
-            inputRef?.select();
-        });
-    }
-});
-function handleOpenChange(newOpen) {
-    if (!newOpen) {
-        onCancel();
-    }
-}
-function handleSubmit(event) {
-    event.preventDefault();
-    if (!canSubmit)
-        return;
-    value = value.trim();
-    onConfirm();
-}
-export {};
+<script lang="ts">
+	import * as AlertDialog from '$lib/components/ui/alert-dialog';
+	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
+	import { Pencil } from '@lucide/svelte';
+	import { t } from '$lib/stores/i18n.svelte';
+
+	interface Props {
+		open: boolean;
+		currentTitle: string;
+		value: string;
+		onConfirm: () => void;
+		onCancel: () => void;
+	}
+
+	let {
+		open = $bindable(),
+		currentTitle,
+		value = $bindable(''),
+		onConfirm,
+		onCancel
+	}: Props = $props();
+
+	let inputRef = $state<HTMLInputElement | null>(null);
+
+	const canSubmit = $derived(value.trim().length > 0 && value.trim() !== currentTitle.trim());
+
+	$effect(() => {
+		if (open) {
+			value = currentTitle;
+			queueMicrotask(() => {
+				inputRef?.focus();
+				inputRef?.select();
+			});
+		}
+	});
+
+	function handleOpenChange(newOpen: boolean) {
+		if (!newOpen) {
+			onCancel();
+		}
+	}
+
+	function handleSubmit(event: Event) {
+		event.preventDefault();
+		if (!canSubmit) return;
+		value = value.trim();
+		onConfirm();
+	}
 </script>
 
 <AlertDialog.Root bind:open onOpenChange={handleOpenChange}>

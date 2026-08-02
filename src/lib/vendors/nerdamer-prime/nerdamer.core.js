@@ -4098,7 +4098,7 @@ function primeFactors(num) {
 
         if (remainder <= epsilon && i > 1) {
             // If the prime wasn't found but calculated then save it and
-            // add itfactor.
+            // add it as a factor.
             if (isPrime(i)) {
                 if (!PrimeFactorsDeps.PRIMES_SET[i]) {
                     PrimeFactorsDeps.PRIMES.push(i);
@@ -4426,7 +4426,7 @@ class Expression {
     }
 
     /**
-     * Forces the symbol to be returneddecimal
+     * Forces the symbol to be returned as a decimal
      *
      * @param {number} [prec]
      * @returns {string}
@@ -6426,7 +6426,7 @@ const LaTeX = {
         } else {
             mArray = [symbol.multiplier.num, symbol.multiplier.den];
         }
-        // Get the valuetwo part array
+        // Get the value as a two part array
         const vArray = this.value(symbol, invert, option, negative);
         let p;
         // Make it all positive since we know whether to push the power to the numerator or denominator already.
@@ -6445,7 +6445,7 @@ const LaTeX = {
         else if (isSymbol(power)) {
             p = this.latex(power, option);
         }
-        // Get itfraction
+        // Get it as a fraction
         else {
             p = this.formatFrac(power, true);
         }
@@ -9295,7 +9295,7 @@ function text(obj, option = undefined, useGroup = undefined, decp = undefined) {
         const group = obj.group || useGroup;
         let { value } = obj;
 
-        // If the value is to be usedhash then the power and multiplier need to be suppressed
+        // If the value is to be used as a hash then the power and multiplier need to be suppressed
         if (!asHash) {
             // Get multiplier as string. Don't pass decp here to preserve precision
             // for internal operations - decp is only applied in the TextDeps.N case below.
@@ -9308,7 +9308,7 @@ function text(obj, option = undefined, useGroup = undefined, decp = undefined) {
             if (String(om) !== '1') {
                 multiplier = om;
             }
-            // Use asDecimal to get the object backdecimal
+            // Use asDecimal to get the object back as a decimal
             const p = obj.power ? toString(obj.power) : '';
             // Only add the multiplier
             if (String(p) !== '1') {
@@ -13556,7 +13556,7 @@ class Parser {
                                 if (!next.prefix) {
                                     throw new OperatorError(`A prefix operator was expected at ${next.column}`);
                                 }
-                                // Mark itconfirmed prefix
+                                // Mark it as a confirmed prefix
                                 next.is_prefix = true;
                                 // Add it to the prefixes
                                 prefixes.push(next);
@@ -14664,7 +14664,7 @@ class Parser {
                 symbol.power = symbol.power.abs();
 
                 // If the symbols is imagary then we place in the imaginary part. We'll return it
-                //product
+                // as a product
                 if (isConstant && symbol.multiplier.lessThan(0)) {
                     img = NerdamerSymbol.imaginary();
                     symbol.multiplier = symbol.multiplier.abs();
@@ -15324,7 +15324,7 @@ class Parser {
         }
 
         /*
-         * Servesbridge between numbers and bigNumbers
+         * Serves as a bridge between numbers and bigNumbers
          * @param {FracType|number} n
          * @returns {NerdamerSymbolType}
          */
@@ -15576,7 +15576,7 @@ class Parser {
                         ).distributeMultiplier();
                     }
 
-                    // TODO: This exists solelyquick fix for sqrt(11)*sqrt(33) not simplifying.
+                    // TODO: This exists solely as a quick fix for sqrt(11)*sqrt(33) not simplifying.
                     if (retval.group === CB) {
                         retval = _.parse(retval);
                     }
