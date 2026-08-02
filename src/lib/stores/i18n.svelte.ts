@@ -3002,9 +3002,7 @@ const FR_FULL: Record<string,string> = {
 
 
 function applyDict(dict: Record<string,string>) {
-  for (const k in dict) {
-    if (dict.hasOwnProperty(k)) tr.dict[k] = dict[k];
-  }
+  tr.dict = dict;
   tr.dict["Русский"] = "Русский";
 }
 
