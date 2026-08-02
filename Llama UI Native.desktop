@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Llama UI Native
+Comment=llama.cpp web UI in a native GTK window
+Exec=bash -c 'cd "$0" && exec ./launch.sh' "$(dirname %k)"
+Icon=icon-128.png
+Terminal=false
+Type=Application
+Categories=Office;ArtificialIntelligence;
+StartupNotify=false
