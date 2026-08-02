@@ -584,5 +584,6 @@
   "used": "использовано",
   "virtual:nerdamer": "virtual:nerdamer",
   "with": "с",
-  "Русский": "Русский"
+  "Русский": "Русский",
+  "Set the API Key if you are using <code> --api-key </code> option for the server.": "Укажите API-ключ, если вы используете опцию --api-key для сервера."
 }
