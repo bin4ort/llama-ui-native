@@ -69,17 +69,26 @@
 		editingId = null;
 	}
 
-	function applyPreset(preset: SystemPromptPreset | null) {
+	async function ensureConversation(): Promise<boolean> {
+		if (!conversationsStore.activeConversation) {
+			await conversationsStore.createConversation();
+		}
+		return !!conversationsStore.activeConversation;
+	}
+
+	async function applyPreset(preset: SystemPromptPreset | null) {
+		if (!(await ensureConversation())) return;
 		const conv = conversationsStore.activeConversation;
 		if (!conv) return;
-		void chatStore.applySystemPromptContent(conv.id, preset ? preset.content : '');
+		await chatStore.applySystemPromptContent(conv.id, preset ? preset.content : '');
 		open = false;
 	}
 
-	function applyDefault() {
+	async function applyDefault() {
+		if (!(await ensureConversation())) return;
 		const conv = conversationsStore.activeConversation;
 		if (!conv) return;
-		void chatStore.applySystemPromptContent(conv.id, '');
+		await chatStore.applySystemPromptContent(conv.id, '');
 		open = false;
 	}
 </script>
@@ -87,7 +96,7 @@
 <Dialog.Root bind:open onOpenChange={(o) => { if (!o) { searchQuery = ''; showWizard = false; editingId = null; } onOpenChange?.(o); }}>
 	<Dialog.Portal>
 		<Dialog.Overlay class="z-9999" />
-		<Dialog.Content class="z-9999 !max-h-[85dvh] max-w-xl overflow-y-auto">
+		<Dialog.Content class="z-9999 !max-h-[85dvh] !max-w-xl overflow-x-hidden overflow-y-auto">
 			<Dialog.Header>
 				<Dialog.Title>{t('Prompt presets')}</Dialog.Title>
 				<Dialog.Description>{t('Pick a prompt preset for this conversation. It applies from the next message.')}</Dialog.Description>

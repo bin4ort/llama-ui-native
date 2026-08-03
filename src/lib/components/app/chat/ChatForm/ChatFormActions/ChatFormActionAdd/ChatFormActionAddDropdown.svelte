@@ -18,6 +18,8 @@
 		ChatFormActionAddReasoningSubmenu
 	} from '$lib/components/app';
 	import { useAttachmentMenu } from '$lib/hooks/use-attachment-menu.svelte';
+	import { onMount } from 'svelte';
+	import { closeOtherMenus, registerMenuClose } from '$lib/stores/menu-exclusivity.svelte';
 
 	interface Props {
 		class?: string;
@@ -51,6 +53,15 @@
 
 	let dropdownOpen = $state(false);
 
+	const ADD_MENU_KEY = 'chat-add';
+
+	onMount(() => registerMenuClose(ADD_MENU_KEY, () => (dropdownOpen = false)));
+
+	function handleMenuOpenChange(open: boolean) {
+		if (open) closeOtherMenus(ADD_MENU_KEY);
+		dropdownOpen = open;
+	}
+
 	function handleMcpSettingsClick() {
 		dropdownOpen = false;
 		onMcpSettingsClick?.();
@@ -72,7 +83,7 @@
 </script>
 
 <div class="flex items-center gap-1 {className}">
-	<DropdownMenu.Root bind:open={dropdownOpen}>
+	<DropdownMenu.Root open={dropdownOpen} onOpenChange={handleMenuOpenChange}>
 		<!-- ignoreNonKeyboardFocus prevents the tooltip from flashing when the
 		     menu closes and focus returns to the trigger -->
 		<Tooltip.Root ignoreNonKeyboardFocus>

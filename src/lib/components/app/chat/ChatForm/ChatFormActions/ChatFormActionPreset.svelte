@@ -10,6 +10,8 @@
 	import { cn } from '$lib/components/ui/utils';
 	import { BadgeCheck, Sparkles, Check, ChevronDown } from '@lucide/svelte';
 	import DialogPresetPicker from '$lib/components/app/dialogs/DialogPresetPicker.svelte';
+	import { onMount } from 'svelte';
+	import { closeOtherMenus, registerMenuClose } from '$lib/stores/menu-exclusivity.svelte';
 
 	interface Props {
 		disabled?: boolean;
@@ -18,6 +20,16 @@
 	let { disabled = false }: Props = $props();
 
 	let pickerOpen = $state(false);
+	let quickMenuOpen = $state(false);
+
+	const PRESET_MENU_KEY = 'chat-preset';
+
+	onMount(() => registerMenuClose(PRESET_MENU_KEY, () => (quickMenuOpen = false)));
+
+	function handleMenuOpenChange(open: boolean) {
+		if (open) closeOtherMenus(PRESET_MENU_KEY);
+		quickMenuOpen = open;
+	}
 
 	const activePreset = $derived.by(() => {
 		const am = conversationsStore.activeMessages;
@@ -29,20 +41,29 @@
 
 	const favorites = $derived(presetsStore.favorites.slice(0, PRESETS_FAVORITES_MAX));
 
-	function apply(preset: SystemPromptPreset | null) {
-		const conv = conversationsStore.activeConversation;
-		if (!conv) return;
-		void chatStore.applySystemPromptContent(conv.id, preset ? preset.content : '');
+	async function ensureConversation(): Promise<boolean> {
+		if (!conversationsStore.activeConversation) {
+			await conversationsStore.createConversation();
+		}
+		return !!conversationsStore.activeConversation;
 	}
 
-	function applyDefault() {
+	async function apply(preset: SystemPromptPreset | null) {
+		if (!(await ensureConversation())) return;
 		const conv = conversationsStore.activeConversation;
 		if (!conv) return;
-		void chatStore.applySystemPromptContent(conv.id, '');
+		await chatStore.applySystemPromptContent(conv.id, preset ? preset.content : '');
+	}
+
+	async function applyDefault() {
+		if (!(await ensureConversation())) return;
+		const conv = conversationsStore.activeConversation;
+		if (!conv) return;
+		await chatStore.applySystemPromptContent(conv.id, '');
 	}
 </script>
 
-<DropdownMenu.Root>
+<DropdownMenu.Root open={quickMenuOpen} onOpenChange={handleMenuOpenChange}>
 	<DropdownMenu.Trigger
 		{disabled}
 		class={cn(

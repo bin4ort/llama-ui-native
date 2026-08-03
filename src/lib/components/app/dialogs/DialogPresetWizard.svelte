@@ -106,7 +106,7 @@
 <Dialog.Root bind:open onOpenChange={(o) => { if (!o) reset(); onOpenChange?.(o); }}>
 	<Dialog.Portal>
 		<Dialog.Overlay class="z-9999" />
-		<Dialog.Content class="z-9999 !max-h-[85dvh] max-w-2xl overflow-y-auto">
+		<Dialog.Content class="z-9999 !max-h-[85dvh] !max-w-2xl overflow-x-hidden overflow-y-auto">
 			<Dialog.Header>
 				<Dialog.Title>{t('Create a prompt preset')}</Dialog.Title>
 				<Dialog.Description>{t('Describe the personality or expert role — the model drafts the system prompt for you to review.')}</Dialog.Description>
