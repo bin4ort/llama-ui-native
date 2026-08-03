@@ -9,8 +9,9 @@
 #define FRONTEND_DIR   "frontend/v2"
 #define BACKEND_URL    "http://localhost:8080"
 
-#define VERSION        "0.3.0"
-#define BUILD          "0x07D1E"  /* hex build number — update each build */
+/* Keep VERSION/BUILD in sync with src/lib/constants/app.ts and package.json */
+#define VERSION        "0.4.0"
+#define BUILD          "0x07D1F"  /* hex build number — bump each release */
 
 int server_start(void);
 void server_stop(void);

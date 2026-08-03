@@ -119,7 +119,7 @@ const SETTINGS_REGISTRY: Record<string, SettingsSectionEntry> = {
 					{
 						key: SETTINGS_KEYS.THEME,
 				label: 'Theme',
-				help: 'Choose the color theme for the interface. You can choose between System (follows your device settings), Light, or Dark.',
+				help: 'Choose the color theme for the interface.',
 				defaultValue: ColorMode.SYSTEM,
 				type: SettingsFieldType.SELECT,
 				section: SETTINGS_SECTION_SLUGS.GENERAL,
