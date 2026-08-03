@@ -856,7 +856,7 @@ class ChatStore {
 		return message;
 	}
 
-	async addSystemPrompt(): Promise<void> {
+	async addSystemPrompt(initialContent?: string, openEditor: boolean = true): Promise<void> {
 		let activeConv = conversationsStore.activeConversation;
 		if (!activeConv) {
 			await conversationsStore.createConversation();
@@ -882,7 +882,7 @@ class ChatStore {
 			const firstActiveMessage = am.find((m) => m.parent === rootId);
 			const systemMessage = await DatabaseService.createSystemMessage(
 				activeConv.id,
-				SYSTEM_MESSAGE_PLACEHOLDER,
+				initialContent?.trim() || SYSTEM_MESSAGE_PLACEHOLDER,
 				rootId
 			);
 			if (firstActiveMessage) {
@@ -908,10 +908,54 @@ class ChatStore {
 					});
 			}
 			conversationsStore.activeMessages.unshift(systemMessage);
-			this.pendingEditMessageId = systemMessage.id;
+			if (openEditor) this.pendingEditMessageId = systemMessage.id;
 			conversationsStore.updateConversationTimestamp();
 		} catch (error) {
 			console.error('Failed to add system prompt:', error);
+		}
+	}
+
+	/**
+	 * Apply a system prompt (persona) to a conversation: updates the existing
+	 * system message row in place, or creates one if the conversation has none.
+	 * Used by the persona picker and the change_preset tool.
+	 */
+	async applySystemPromptContent(conversationId: string, content: string): Promise<void> {
+		const trimmed = content.trim();
+		try {
+			const allMessages = await conversationsStore.getConversationMessages(conversationId);
+			const rootMessage = allMessages.find((m) => m.type === 'root' && m.parent === null);
+			const rootId = rootMessage
+				? rootMessage.id
+				: await DatabaseService.createRootMessage(conversationId);
+
+			const existingSystemMessage = allMessages.find(
+				(m) => m.role === MessageRole.SYSTEM && m.parent === rootId
+			);
+
+			if (existingSystemMessage) {
+				await DatabaseService.updateMessage(existingSystemMessage.id, {
+					content: trimmed
+				});
+				const idx = conversationsStore.activeMessages.findIndex(
+					(m) => m.id === existingSystemMessage.id
+				);
+				if (idx !== -1) {
+					conversationsStore.updateMessageAtIndex(idx, { content: trimmed });
+				}
+				return;
+			}
+
+			if (conversationsStore.activeConversation?.id === conversationId) {
+				// Active conversation: reuse the tested addSystemPrompt path
+				// (re-parenting + in-memory list), but with real content and no
+				// auto-opened editor.
+				await this.addSystemPrompt(trimmed, false);
+			} else {
+				await DatabaseService.createSystemMessage(conversationId, trimmed, rootId);
+			}
+		} catch (error) {
+			console.error('Failed to apply system prompt content:', error);
 		}
 	}
 
@@ -1335,6 +1379,8 @@ class ChatStore {
 					);
 				}
 			},
+			onPresetChange: (conversationId: string, content: string) =>
+				this.applySystemPromptContent(conversationId, content),
 			onError: async (error: Error) => {
 				this.setStreamingActive(false);
 				if (isAbortError(error)) {

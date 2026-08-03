@@ -169,8 +169,8 @@ const SETTINGS_REGISTRY: Record<string, SettingsSectionEntry> = {
 			},
 			{
 				key: SETTINGS_KEYS.SYSTEM_MESSAGE,
-				label: 'System Message',
-				help: 'The starting message that defines how model should behave.',
+				label: 'Default system prompt',
+				help: 'The default system prompt — the starting message that defines how the model should behave. Used as the base persona unless a preset is applied.',
 				defaultValue: '',
 				type: SettingsFieldType.TEXTAREA,
 				section: SETTINGS_SECTION_SLUGS.GENERAL
@@ -700,6 +700,20 @@ const NON_UI_SETTINGS: SettingsEntry[] = [
 		help: 'Configure MCP servers as a JSON list. Use the form in the MCP Client settings section to edit.',
 		defaultValue: '[]',
 		type: SettingsFieldType.INPUT
+	},
+	{
+		key: SETTINGS_KEYS.SYSTEM_PROMPT_PRESETS,
+		label: 'System prompt presets',
+		help: 'Personality preset library (JSON). Managed from the settings UI and the chat persona picker.',
+		defaultValue: '[]',
+		type: SettingsFieldType.INPUT
+	},
+	{
+		key: SETTINGS_KEYS.PRESET_TOOLS_ENABLED,
+		label: 'Personality switching tools',
+		help: 'Give the model list_presets and change_preset tools so it can switch the conversation persona (permission is still asked per call).',
+		defaultValue: false,
+		type: SettingsFieldType.CHECKBOX
 	},
 	{
 		key: SETTINGS_KEYS.TITLE_GENERATION_USE_LLM,

@@ -6,6 +6,7 @@
 		SettingsChatFields,
 		SettingsChatImportExportTab,
 		SettingsChatMobileHeader,
+		SettingsChatSystemPromptPresets,
 		SettingsChatToolsTab,
 		SettingsFooter
 	} from '$lib/components/app/settings';
@@ -167,6 +168,8 @@
 							/>
 
 							{#if currentSection.title === SETTINGS_SECTION_TITLES.GENERAL}
+								<SettingsChatSystemPromptPresets />
+
 								<div class="flex justify-end">
 									<Button variant="outline" onclick={() => window.location.reload()}>
 										<RefreshCw class="h-3 w-3" />

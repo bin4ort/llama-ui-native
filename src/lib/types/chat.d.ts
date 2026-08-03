@@ -116,6 +116,7 @@ export interface ChatStreamCallbacks {
 		extras?: DatabaseMessageExtra[]
 	) => Promise<void>;
 	createAssistantMessage?: () => Promise<DatabaseMessage>;
+	onPresetChange?: (conversationId: string, content: string) => Promise<void> | void;
 	onFlowComplete?: (timings?: ChatMessageTimings) => void;
 	onError?: (error: Error) => void;
 	onTurnComplete?: (intermediateTimings: ChatMessageTimings) => void;

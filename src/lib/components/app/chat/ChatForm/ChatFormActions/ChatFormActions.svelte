@@ -6,6 +6,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { ChatService } from '$lib/services';
 	import {
+		ChatFormActionPersona,
 		ChatFormActionsAdd,
 		ChatFormActionModels,
 		ChatFormActionRecord,
@@ -140,6 +141,8 @@
 >
 	{#if showAddButton}
 		<div class="mr-auto flex items-center gap-2">
+			<ChatFormActionPersona {disabled} />
+
 			<ChatFormActionsAdd
 				{disabled}
 				{hasAudioModality}

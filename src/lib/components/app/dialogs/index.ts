@@ -423,6 +423,8 @@ export { default as DialogConversationSelection } from './DialogConversationSele
  * ```
  */
 export { default as DialogModelInformation } from './DialogModelInformation.svelte';
+export { default as DialogPersonaPicker } from './DialogPersonaPicker.svelte';
+export { default as DialogPresetWizard } from './DialogPresetWizard.svelte';
 
 /**
  * **DialogMcpResourcesBrowser** - MCP resources browser dialog
