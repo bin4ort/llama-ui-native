@@ -7,7 +7,7 @@ Ideas and features that matter to users. Priority is indicative.
 - [ ] **Conversation search filters** — search by date range / model used
 - [ ] **MCP server presets** — one-click config for common servers (filesystem, fetch, ...)
 - [ ] **Custom prompt library** — store and reuse prompts per conversation
-- [ ] **More languages** — follow "Adding a Language" in README (dicts are ready for it)
+- [x] **More languages** — 12 total (zh, ja, ko, pt, it, tr, pl added; dicts ready for more)
 - [ ] **Automatic app updates** — check llama.cpp releases / notify in-app
 - [ ] **Tray icon & background server** — run llama-server from the app
 - [ ] **Per-conversation system message & model** — not just per-chat defaults

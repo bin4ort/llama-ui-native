@@ -206,7 +206,9 @@
 							</button>
 						{/if}
 					</div>
-					<Select.Content>
+					<Select.Content
+						class={field.key === SETTINGS_KEYS.LANGUAGE ? 'lang-select-content max-h-[10.5rem]' : ''}
+					>
 						{#if field.options}
 							{#each field.options as option (option.value)}
 								<Select.Item value={option.value} label={option.label}>

@@ -1,0 +1,63 @@
+/*
+ * Bundled CJK fonts (Noto Sans SC/JP/KR, variable, woff2) so Chinese,
+ * Japanese and Korean render correctly even on systems without CJK fonts
+ * installed. Fetched from google/fonts, converted with woff2_compress.
+ */
+
+@font-face {
+	font-family: 'Noto Sans SC';
+	src: url('./NotoSansSC-Variable.woff2') format('woff2-variations');
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Noto Sans JP';
+	src: url('./NotoSansJP-Variable.woff2') format('woff2-variations');
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Noto Sans KR';
+	src: url('./NotoSansKR-Variable.woff2') format('woff2-variations');
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+/*
+ * CJK fonts always participate in the stack (chat content may contain CJK
+ * text in any language). They sit after the system fonts so Latin text keeps
+ * its native look. The active UI language reorders the stack so kanji/hanzi/
+ * hangul render with the typographically correct variant.
+ */
+:root {
+	--font-sans:
+		ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+		'Noto Sans SC', 'Noto Sans JP', 'Noto Sans KR', sans-serif, 'Apple Color Emoji',
+		'Segoe UI Emoji', 'Noto Color Emoji';
+}
+
+html:lang(zh) {
+	--font-sans:
+		'Noto Sans SC', 'Noto Sans JP', 'Noto Sans KR', ui-sans-serif, system-ui, -apple-system,
+		'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji',
+		'Segoe UI Emoji', 'Noto Color Emoji';
+}
+
+html:lang(ja) {
+	--font-sans:
+		'Noto Sans JP', 'Noto Sans SC', 'Noto Sans KR', ui-sans-serif, system-ui, -apple-system,
+		'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji',
+		'Segoe UI Emoji', 'Noto Color Emoji';
+}
+
+html:lang(ko) {
+	--font-sans:
+		'Noto Sans KR', 'Noto Sans SC', 'Noto Sans JP', ui-sans-serif, system-ui, -apple-system,
+		'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji',
+		'Segoe UI Emoji', 'Noto Color Emoji';
+}

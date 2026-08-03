@@ -3,6 +3,22 @@
 All notable changes to Llama UI Native are documented here.
 Version is kept in `src/lib/constants/app.ts` (mirrored in `server.h` and `package.json`).
 
+## Unreleased
+
+### Languages & fonts
+
+- **12 languages**: added 中文 (zh), 日本語 (ja), 한국어 (ko), Português (pt),
+  Italiano (it), Türkçe (tr), Polski (pl) — full 617-key dictionaries each
+- **Bundled CJK fonts** (Noto Sans SC/JP/KR variable woff2) so Chinese, Japanese
+  and Korean render correctly even without system fonts; per-language font
+  stack ordering via `html:lang`
+- **Language dropdown** now opens as a fixed 5-option scrollable window
+
+### Removed
+
+- Build version tracker (`b0000`) in the bottom-right corner — display,
+  setting, store, plugin and `build.json` are gone
+
 ## [0.4.0] - 2026-08-03
 
 ### Translation system (complete)

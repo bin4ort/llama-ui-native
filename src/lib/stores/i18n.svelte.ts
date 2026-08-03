@@ -7477,6 +7477,7 @@ function applyCode(code: string) {
   // Full dicts are embedded in this bundle — the single source of truth.
   // (lang/*.json is the editable reference; run scripts/sync-embedded-dicts.mjs
   // after editing it, then rebuild.)
+  if (browser) document.documentElement.lang = code;
   if (code === 'de') applyDict(DE_FULL);
   else if (code === 'ru') applyDict(RU_FULL);
   else if (code === 'es') applyDict(ES_FULL);
