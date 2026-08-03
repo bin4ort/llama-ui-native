@@ -4,6 +4,9 @@
 > that should ship built into Llama UI Native (no external MCP server needed).
 > Everything here is a candidate; nothing is committed yet.
 
+> **Day-to-day custom tools** (what to actually build, excluding llama.cpp's
+> built-ins): see `docs/day-to-day-tools-draft.md`.
+
 ## Already covered by llama.cpp (just needs `--tools`)
 
 The llama.cpp server ships built-in agent tools behind the `--tools` flag

@@ -4,8 +4,10 @@
 
 Ideas and features that matter to users. Priority is indicative.
 
-- [ ] **Built-in tools for the chat** — draft in `docs/builtin-tools-draft.md`
-      (calculator, workspace FS, fetch_url, search, mermaid, todo list, …)
+- [ ] **Built-in tools for the chat** — drafts in `docs/builtin-tools-draft.md`
+      (broad roadmap) and `docs/day-to-day-tools-draft.md` (curated everyday
+      tools not in llama.cpp: calculator, fetch_url, tables, clipboard,
+      notifications, weather, wikipedia, memory, …)
 - [ ] **Conversation search filters** — search by date range / model used
 - [ ] **MCP server presets** — one-click config for common servers (filesystem, fetch, ...)
 - [ ] **Custom prompt library** — store and reuse prompts per conversation
