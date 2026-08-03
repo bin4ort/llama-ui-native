@@ -104,6 +104,67 @@
       endpoint; report unsupported otherwise.
     - Day-to-day for voice notes and meetings (local-first when possible).
 
+## Tier E — additional ideas (brainstorm)
+
+18. **Feed reader** (`read_rss`)
+    - Parse RSS/Atom feeds (keyless, local-first). "What's new in
+      this repo/blog/news"? Day-to-day for staying current without web search.
+19. **Generic HTTP client** (`http_request`)
+    - Any method/headers/body, via the local `/cors-proxy` — testing APIs,
+      webhooks and endpoints straight from chat. Opt-in; arbitrary network.
+20. **Download file** (`download_file`)
+    - Binary download (images, zips, models…) into the workspace.
+    - `fetch_url` is text-only; this is its binary sibling. Consent-gated.
+21. **Archives** (`archive`)
+    - Zip / unzip / list archive contents (in the workspace).
+    - Daily: package exports, unpack attachments, inspect zips.
+22. **Structured git** (`git_status`, `git_diff`, `git_log`)
+    - Read-only repo introspection with structured output — safer than
+      letting the model drive `exec_shell_command`. "What changed here?",
+      "show me uncommitted work". Consent-gated; commit/rebase stay manual.
+23. **SQLite queries** (`sqlite_query`)
+    - Read-only (default) queries on a user-selected `.db` file; write mode
+      opt-in per call. "Analyze this export", "what's the top row".
+24. **System status** (`system_status`)
+    - CPU/RAM/disk load, uptime, free space (native bridge).
+    - "Why is my machine slow?" / "how much space is left".
+25. **Text statistics** (`text_stats`)
+    - Words, chars, lines, reading time, keyword frequency. Tiny, deterministic,
+      useful for essays/translations/limits.
+26. **Dictionary** (`define_word`)
+    - Keyless word definitions via dictionaryapi.dev. "Define/pronounce X".
+27. **ArXiv search** (`arxiv_search`)
+    - Keyless paper search by query/author. Niche but perfect for a local
+      AI crowd. ("What's new on KV cache quantization?")
+28. **OCR** (`ocr_image`)
+    - Tesseract OCR for attached/local images — fallback when the model has
+      no vision, or for scanned documents. Uses system `tesseract` if present.
+29. **Image tool** (`image_edit`)
+    - Resize/compress/convert (WebP/JPEG/PNG), EXIF strip — via ImageMagick
+      or a JS image lib. Day-to-day with vision models: "compress this photo".
+30. **Checksum** (`checksum`)
+    - sha256/md5 of a workspace file — "verify this download".
+31. **QR code** (`qr_code`)
+    - Offline QR PNG generation — share URLs/Wi-Fi from chat. Small, fun,
+    genuinely used.
+32. **Charting** (`plot_chart`)
+    - Line/bar/pie charts from data → SVG preview card (client-side).
+    - "Plot these numbers", "show the trend" — mermaid covers diagrams, this
+      covers data visualization.
+33. **Conversation memory search** (`search_conversations`)
+    - Search past conversations (the app already has full-text search) —
+      "what did we decide about X last week?" Continuity across chats.
+34. **Delegate to another model** (`delegate_task`)
+    - Router mode: hand a sub-task to a second model/slot (e.g. cheap model
+      for formatting, big model for the hard part). Advanced; needs the
+      slot/router layer.
+35. **Local TTS fallback** (`speak_text`)
+    - espeak-ng / speech-dispatcher when no llama.cpp vocoder is loaded.
+    - "Read this aloud" — optional, offline, dependency-gated.
+36. **Micro text utilities** (`text_utils`)
+    - base64 / URL-encode / hex / slugify — the tiny everyday dev helpers
+      that models mangle constantly.
+
 ## Explicit non-goals (for now)
 
 - **Email / calendar / social / smart-home**: require accounts, APIs and
