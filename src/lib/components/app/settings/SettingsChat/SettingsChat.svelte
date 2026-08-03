@@ -16,6 +16,7 @@
 		NUMERIC_FIELDS,
 		POSITIVE_INTEGER_FIELDS,
 		SETTINGS_CHAT_SECTIONS,
+		SETTINGS_KEYS,
 		SETTINGS_SECTION_TITLES
 	} from '$lib/constants';
 
@@ -129,6 +130,11 @@
 	});
 </script>
 
+// Snippet rendered right under the "Default system prompt" field.
+{#snippet systemPromptPresetsSnippet()}
+	<SettingsChatSystemPromptPresets />
+{/snippet}
+
 <div class="mx-auto flex h-full w-full flex-col md:pl-8" in:fade={{ duration: 150 }}>
 	<div class="flex flex-1 flex-col gap-4 md:flex-row">
 		<SettingsChatDesktopSidebar
@@ -165,11 +171,10 @@
 								{localConfig}
 								onConfigChange={handleConfigChange}
 								onThemeChange={handleThemeChange}
+								fieldSuffixes={{ [SETTINGS_KEYS.SYSTEM_MESSAGE]: systemPromptPresetsSnippet }}
 							/>
 
 							{#if currentSection.title === SETTINGS_SECTION_TITLES.GENERAL}
-								<SettingsChatSystemPromptPresets />
-
 								<div class="flex justify-end">
 									<Button variant="outline" onclick={() => window.location.reload()}>
 										<RefreshCw class="h-3 w-3" />

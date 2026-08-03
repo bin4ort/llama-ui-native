@@ -40,7 +40,6 @@
 		try {
 			const model = config().model as string | undefined;
 			await new Promise<void>((resolve) => {
-				let acc = '';
 				void ChatService.sendMessage(
 					[{ role: 'user', content: `${PRESET_WIZARD_META_PROMPT}\n\n${description.trim()}` }],
 					{
@@ -49,11 +48,10 @@
 						max_tokens: 400,
 						stream: false,
 						onChunk: (chunk: string) => {
-							acc += chunk;
-							draft = acc;
+							draft = chunk;
 						},
-						onComplete: () => {
-							draft = acc;
+						onComplete: (content: string) => {
+							draft = content;
 							resolve();
 						},
 						onError: (e: Error) => {
@@ -86,7 +84,7 @@
 		<Dialog.Overlay class="z-9999" />
 		<Dialog.Content class="z-9999 max-w-xl">
 			<Dialog.Header>
-				<Dialog.Title>{t('Create a personality preset')}</Dialog.Title>
+				<Dialog.Title>{t('Create a prompt preset')}</Dialog.Title>
 				<Dialog.Description>{t('Describe the personality or expert role — the model drafts the system prompt for you to review.')}</Dialog.Description>
 			</Dialog.Header>
 

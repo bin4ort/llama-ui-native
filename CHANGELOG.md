@@ -5,7 +5,7 @@ Version is kept in `src/lib/constants/app.ts` (mirrored in `server.h` and `packa
 
 ## [0.4.2] - 2026-08-03
 
-### Personality presets
+### Prompt presets (system prompt presets)
 
 - **Preset library** — reusable system prompt presets (personas), stored in
   settings and included in export/import; favorites (max 5) surface in the

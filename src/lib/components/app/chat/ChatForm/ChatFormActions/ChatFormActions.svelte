@@ -6,7 +6,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { ChatService } from '$lib/services';
 	import {
-		ChatFormActionPersona,
+		ChatFormActionPreset,
 		ChatFormActionsAdd,
 		ChatFormActionModels,
 		ChatFormActionRecord,
@@ -141,8 +141,6 @@
 >
 	{#if showAddButton}
 		<div class="mr-auto flex items-center gap-2">
-			<ChatFormActionPersona {disabled} />
-
 			<ChatFormActionsAdd
 				{disabled}
 				{hasAudioModality}
@@ -156,6 +154,8 @@
 				{onMcpResourcesClick}
 				onMcpSettingsClick={() => goto(ROUTES.MCP_SERVERS)}
 			/>
+
+			<ChatFormActionPreset {disabled} />
 		</div>
 	{/if}
 

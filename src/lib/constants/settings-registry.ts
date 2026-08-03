@@ -710,8 +710,8 @@ const NON_UI_SETTINGS: SettingsEntry[] = [
 	},
 	{
 		key: SETTINGS_KEYS.PRESET_TOOLS_ENABLED,
-		label: 'Personality switching tools',
-		help: 'Give the model list_presets and change_preset tools so it can switch the conversation persona (permission is still asked per call).',
+		label: 'Prompt preset switching tools',
+		help: 'Give the model list_presets and change_preset tools so it can switch the prompt preset of the conversation (permission is still asked per call).',
 		defaultValue: false,
 		type: SettingsFieldType.CHECKBOX
 	},

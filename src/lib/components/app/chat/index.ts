@@ -167,7 +167,7 @@ export { default as ChatForm } from './ChatForm/ChatForm.svelte';
  * or Sheet.Root (mobile) to maintain consistent styling while allowing
  * platform-specific trigger wrappers.
  */
-export { default as ChatFormActionPersona } from './ChatForm/ChatFormActions/ChatFormActionPersona.svelte';
+export { default as ChatFormActionPreset } from './ChatForm/ChatFormActions/ChatFormActionPreset.svelte';
 export { default as ChatFormActionsAdd } from './ChatForm/ChatFormActions/ChatFormActionAdd/ChatFormActionsAdd.svelte';
 
 /**

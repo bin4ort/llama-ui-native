@@ -19,7 +19,7 @@
 	import { tr, t } from '$lib/stores/i18n.svelte';
 
 
-	let { fields, localConfig, onConfigChange, onThemeChange } = $props();
+	let { fields, localConfig, onConfigChange, onThemeChange, fieldSuffixes } = $props();
 
 	let currentModelParams = $derived.by(() => {
 		propsCacheVersion();
@@ -142,6 +142,12 @@
 							{t('Show system message in conversations')}
 						</Label>
 					</div>
+
+					{#if fieldSuffixes?.[field.key]}
+						<div class="mt-4">
+							{@render fieldSuffixes[field.key]()}
+						</div>
+					{/if}
 				{/if}
 			{:else if field.type === SettingsFieldType.SELECT}
 				{@const selectedOption = field.options?.find(
