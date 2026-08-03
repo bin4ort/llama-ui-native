@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import { Select as SelectPrimitive } from 'bits-ui';
 	import SelectScrollUpButton from './select-scroll-up-button.svelte';
 	import SelectScrollDownButton from './select-scroll-down-button.svelte';
@@ -18,44 +18,8 @@
 
 	let cleanupInternalListeners: (() => void) | undefined;
 
-	onMount(() => {
-		const listenerOptions: AddEventListenerOptions = { passive: false };
-
-		const blockOutsideWheel = (event: WheelEvent) => {
-			if (!ref) {
-				return;
-			}
-
-			const target = event.target as Node | null;
-
-			if (!target || !ref.contains(target)) {
-				event.preventDefault();
-				event.stopPropagation();
-			}
-		};
-
-		const blockOutsideTouchMove = (event: TouchEvent) => {
-			if (!ref) {
-				return;
-			}
-
-			const target = event.target as Node | null;
-
-			if (!target || !ref.contains(target)) {
-				event.preventDefault();
-				event.stopPropagation();
-			}
-		};
-
-		document.addEventListener('wheel', blockOutsideWheel, listenerOptions);
-		document.addEventListener('touchmove', blockOutsideTouchMove, listenerOptions);
-
-		return () => {
-			document.removeEventListener('wheel', blockOutsideWheel, listenerOptions);
-			document.removeEventListener('touchmove', blockOutsideTouchMove, listenerOptions);
-		};
-	});
-
+	// Scroll chaining (the page behind the menu) is prevented natively by
+	// `overscroll-behavior: contain` on the content — no wheel bookkeeping.
 	$effect(() => {
 		const element = ref;
 
@@ -65,31 +29,16 @@
 			return;
 		}
 
-		const stopWheelPropagation = (event: WheelEvent) => {
-			event.stopPropagation();
-
-			// At the top/bottom of the list the wheel would otherwise scroll
-			// chain into the page behind the dropdown; prevent that while the
-			// cursor is over the open menu.
-			const { scrollTop, scrollHeight, clientHeight } = element;
-			const atTop = scrollTop <= 0;
-			const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
-
-			if ((atTop && event.deltaY < 0) || (atBottom && event.deltaY > 0)) {
-				event.preventDefault();
-			}
-		};
-
-		const stopTouchPropagation = (event: TouchEvent) => {
+		const stopPropagation = (event: WheelEvent | TouchEvent) => {
 			event.stopPropagation();
 		};
 
-		element.addEventListener('wheel', stopWheelPropagation, { passive: false });
-		element.addEventListener('touchmove', stopTouchPropagation);
+		element.addEventListener('wheel', stopPropagation, { passive: false });
+		element.addEventListener('touchmove', stopPropagation);
 
 		cleanupInternalListeners = () => {
-			element.removeEventListener('wheel', stopWheelPropagation);
-			element.removeEventListener('touchmove', stopTouchPropagation);
+			element.removeEventListener('wheel', stopPropagation);
+			element.removeEventListener('touchmove', stopPropagation);
 		};
 	});
 
@@ -104,7 +53,7 @@
 		{sideOffset}
 		data-slot="select-content"
 		class={cn(
-			'relative z-[var(--layer-popover,1000000)] max-h-(--bits-select-content-available-height) min-w-[8rem] origin-(--bits-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md data-[side=bottom]:translate-y-1 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:-translate-x-1 data-[side=left]:slide-in-from-right-2 data-[side=right]:translate-x-1 data-[side=right]:slide-in-from-left-2 data-[side=top]:-translate-y-1 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:fill-mode-forwards data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
+			'relative z-[var(--layer-popover,1000000)] max-h-(--bits-select-content-available-height) min-w-[8rem] origin-(--bits-select-content-transform-origin) overflow-x-hidden overflow-y-auto overscroll-contain rounded-md border bg-popover text-popover-foreground shadow-md data-[side=bottom]:translate-y-1 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:-translate-x-1 data-[side=left]:slide-in-from-right-2 data-[side=right]:translate-x-1 data-[side=right]:slide-in-from-left-2 data-[side=top]:-translate-y-1 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:fill-mode-forwards data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
 			className
 		)}
 		{...restProps}
