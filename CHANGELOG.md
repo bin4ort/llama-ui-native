@@ -3,6 +3,26 @@
 All notable changes to Llama UI Native are documented here.
 Version is kept in `src/lib/constants/app.ts` (mirrored in `server.h` and `package.json`).
 
+## [0.4.2] - 2026-08-03
+
+### Personality presets
+
+- **Preset library** — reusable system prompt presets (personas), stored in
+  settings and included in export/import; favorites (max 5) surface in the
+  chat-bar quick picker
+- **Settings**: "System Message" renamed to **"Default system prompt"**; new
+  collapsible **"Custom prompt presets"** manager (create / edit / star /
+  delete)
+- **Chat bar**: persona button with Default + favorite presets + "All
+  presets…" full picker dialog (search, preview, select, manage favorites)
+- **Wizard**: describe a personality in plain language → the model drafts the
+  system prompt → review and save (never auto-saves)
+- **Mid-conversation switching**: applying a preset updates the conversation's
+  system message from the next message; agentic `list_presets` /
+  `change_preset` tools (off by default, per-call permission) let the model
+  switch personas mid-flow
+- Work done on branch `feature/personality-presets`
+
 ## Unreleased
 
 ### Languages & fonts
