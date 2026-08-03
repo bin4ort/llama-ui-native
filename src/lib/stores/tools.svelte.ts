@@ -3,12 +3,14 @@ import { ToolsService } from '$lib/services/tools.service';
 import { mcpStore } from '$lib/stores/mcp.svelte';
 import { HealthCheckStatus, JsonSchemaType, ToolCallType, ToolSource } from '$lib/enums';
 import { config } from '$lib/stores/settings.svelte';
+import { SETTINGS_KEYS } from '$lib/constants';
 import {
 	DISABLED_TOOL_KEYS_LOCALSTORAGE_KEY,
 	buildSandboxToolDefinition,
 	TOOL_GROUP_LABELS,
 	TOOL_SERVER_LABELS
 } from '$lib/constants';
+import { buildChangePresetToolDefinition, buildListPresetsToolDefinition } from '$lib/constants/presets';
 
 import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 
@@ -143,9 +145,17 @@ class ToolsStore {
 	}
 
 	get frontendTools(): OpenAIToolDefinition[] {
-		return config().jsSandboxEnabled
-			? [buildSandboxToolDefinition(!!config().symbolicMathEnabled)]
-			: [];
+		const tools: OpenAIToolDefinition[] = [];
+
+		if (config().jsSandboxEnabled) {
+			tools.push(buildSandboxToolDefinition(!!config().symbolicMathEnabled));
+		}
+
+		if (config()[SETTINGS_KEYS.PRESET_TOOLS_ENABLED]) {
+			tools.push(buildListPresetsToolDefinition(), buildChangePresetToolDefinition());
+		}
+
+		return tools;
 	}
 
 	get customTools(): OpenAIToolDefinition[] {

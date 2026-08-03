@@ -13,6 +13,8 @@ export const SETTINGS_KEYS = {
 		WEB_UI_ENABLED: 'webUiEnabled',
 	API_KEY: 'apiKey',
 	SYSTEM_MESSAGE: 'systemMessage',
+	SYSTEM_PROMPT_PRESETS: 'systemPromptPresets',
+	PRESET_TOOLS_ENABLED: 'presetToolsEnabled',
 	PASTE_LONG_TEXT_TO_FILE_LEN: 'pasteLongTextToFileLen',
 	COPY_TEXT_ATTACHMENTS_AS_PLAIN_TEXT: 'copyTextAttachmentsAsPlainText',
 	SEND_ON_ENTER: 'sendOnEnter',

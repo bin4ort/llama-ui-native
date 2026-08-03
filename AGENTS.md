@@ -33,6 +33,12 @@
 - Frontend served from `frontend/v2/` directory
 - Proxies `/v1/chat/completions` to `http://localhost:8080`
 
+## Versioning convention
+- Patch bump per shipped feature batch (0.4.0 translation system → 0.4.1
+  languages → 0.4.2 personality presets). Bump `APP_VERSION`/`APP_BUILD` in
+  `src/lib/constants/app.ts`, mirror in `server.h` and `package.json`, add a
+  CHANGELOG entry, then rebuild the C binary (server.h feeds /health).
+
 ## Git workflow
 - All work in the project root — the repo is self-contained
 - node_modules is symlinked from external tools but gitignored

@@ -122,6 +122,8 @@ export interface AgenticFlowCallbacks {
 	) => Promise<void>;
 	/** Create a new assistant message for the next agentic turn */
 	createAssistantMessage?: () => Promise<DatabaseMessage>;
+	/** Apply a system prompt (persona) to a conversation - used by the change_preset tool */
+	onPresetChange?: (conversationId: string, content: string) => Promise<void> | void;
 	/** Entire agentic flow is complete */
 	onFlowComplete?: (timings?: ChatMessageTimings) => void;
 	/** Error during flow */

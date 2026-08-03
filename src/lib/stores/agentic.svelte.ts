@@ -25,8 +25,10 @@ import { config } from '$lib/stores/settings.svelte';
 import { mcpStore } from '$lib/stores/mcp.svelte';
 import { modelsStore } from '$lib/stores/models.svelte';
 import { toolsStore } from '$lib/stores/tools.svelte';
+import { presetsStore } from '$lib/stores/presets.svelte';
 import { permissionsStore } from '$lib/stores/permissions.svelte';
 import { BuiltInTool, ToolSource, ToolPermissionDecision } from '$lib/enums';
+import { PRESET_CHANGE_TOOL, PRESET_LIST_TOOL } from '$lib/constants/presets';
 import { SvelteMap } from 'svelte/reactivity';
 import { ToolsService } from '$lib/services/tools.service';
 import { SandboxService } from '$lib/services/sandbox.service';
@@ -842,11 +844,49 @@ class AgenticStore {
 							if (executionResult.isError) toolSuccess = false;
 						} else if (toolSource === ToolSource.FRONTEND) {
 							const args = this.parseToolArguments(toolCall.function.arguments);
-							const executionResult = await SandboxService.executeTool(toolName, args, signal);
 
-							result = executionResult.content;
+							if (toolName === PRESET_LIST_TOOL) {
+								result = JSON.stringify(
+									presetsStore.presets.map((p) => ({
+										name: p.name,
+										description: p.description ?? ''
+									}))
+								);
+							} else if (toolName === PRESET_CHANGE_TOOL) {
+								const preset =
+									typeof args?.name === 'string' ? presetsStore.getByName(args.name) : undefined;
 
-							if (executionResult.isError) toolSuccess = false;
+								if (!preset) {
+									result = `Unknown preset "${String(args?.name ?? '')}". Available presets: ${presetsStore.presets.map((p) => p.name).join(', ') || 'none'}`;
+									toolSuccess = false;
+								} else {
+									await callbacks.onPresetChange?.(conversationId, preset.content);
+
+									// Apply to the running session immediately so the next
+									// turn in this loop uses the new persona.
+									const systemIdx = sessionMessages.findIndex(
+										(m) => m.role === MessageRole.SYSTEM
+									);
+									if (systemIdx !== -1) {
+										sessionMessages[systemIdx] = {
+											...sessionMessages[systemIdx],
+											content: preset.content
+										};
+									}
+
+									result = `Persona switched to "${preset.name}".`;
+								}
+							} else {
+								const executionResult = await SandboxService.executeTool(
+									toolName,
+									args,
+									signal
+								);
+
+								result = executionResult.content;
+
+								if (executionResult.isError) toolSuccess = false;
+							}
 						} else {
 							const mcpCall: MCPToolCall = {
 								id: toolCall.id,

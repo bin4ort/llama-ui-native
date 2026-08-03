@@ -180,3 +180,6 @@ export type { ReasoningEffortLevel } from './reasoning';
 
 // Splash
 export type { SplashDimensions } from './splash';
+
+// System prompt presets (personas)
+export type { SystemPromptPreset } from './presets';
