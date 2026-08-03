@@ -25,7 +25,7 @@
 </script>
 
 {#if groups.length === 0}
-	<div class="py-8 text-center text-sm text-muted-foreground">{tr["No tools available"] || "No tools available"}</div>
+	<div class="py-8 text-center text-sm text-muted-foreground">{tr.dict["No tools available"] || "No tools available"}</div>
 {:else}
 	<div class="space-y-2">
 		{#each groups as group (group.key)}

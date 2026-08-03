@@ -178,7 +178,7 @@
 				</div>
 
 				<div class="mt-8 border-t border-border/30 pt-6">
-					<p class="text-xs text-muted-foreground">{tr["Settings are saved in browser's localStorage"] || "Settings are saved in browser's localStorage"}</p>
+					<p class="text-xs text-muted-foreground">{tr.dict["Settings are saved in browser's localStorage"] || "Settings are saved in browser's localStorage"}</p>
 				</div>
 			</div>
 

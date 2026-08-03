@@ -39,13 +39,13 @@ import { tr } from '$lib/stores/i18n.svelte';
 		</Button>
 	</div>
 
-	<Button onclick={handleSave}>{tr["Save settings"] || "Save settings"}</Button>
+	<Button onclick={handleSave}>{tr.dict["Save settings"] || "Save settings"}</Button>
 </div>
 
 <AlertDialog.Root bind:open={showResetDialog}>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
-			<AlertDialog.Title>{tr["Reset Settings to Default"] || "Reset Settings to Default"}</AlertDialog.Title>
+			<AlertDialog.Title>{tr.dict["Reset Settings to Default"] || "Reset Settings to Default"}</AlertDialog.Title>
 			<AlertDialog.Description>
 				Are you sure you want to reset all settings to their default values? This will reset all
 				parameters to the values provided by the server's /props endpoint and remove all your custom
@@ -53,8 +53,8 @@ import { tr } from '$lib/stores/i18n.svelte';
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
-			<AlertDialog.Cancel>{tr["Cancel"] || "Cancel"}</AlertDialog.Cancel>
-			<AlertDialog.Action onclick={handleConfirmReset}>{tr["Reset to Default"] || "Reset to Default"}</AlertDialog.Action>
+			<AlertDialog.Cancel>{tr.dict["Cancel"] || "Cancel"}</AlertDialog.Cancel>
+			<AlertDialog.Action onclick={handleConfirmReset}>{tr.dict["Reset to Default"] || "Reset to Default"}</AlertDialog.Action>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

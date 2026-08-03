@@ -3002,13 +3002,8 @@ const FR_FULL: Record<string,string> = {
 
 
 function applyDict(dict: Record<string,string>) {
-  // Set each key directly on tr — same mechanism as tr.Settings = "Einstellungen"
-  for (const k in dict) {
-    if (dict.hasOwnProperty(k)) tr[k] = dict[k];
-  }
-  // Also set on tr.dict for t() function compatibility
   tr.dict = dict;
-  tr["Русский"] = "Русский";
+  tr.dict['Русский'] = 'Русский';
 }
 
 function applyCode(code: string) {
