@@ -4,6 +4,8 @@
 
 Ideas and features that matter to users. Priority is indicative.
 
+- [ ] **Built-in tools for the chat** — draft in `docs/builtin-tools-draft.md`
+      (calculator, workspace FS, fetch_url, search, mermaid, todo list, …)
 - [ ] **Conversation search filters** — search by date range / model used
 - [ ] **MCP server presets** — one-click config for common servers (filesystem, fetch, ...)
 - [ ] **Custom prompt library** — store and reuse prompts per conversation
