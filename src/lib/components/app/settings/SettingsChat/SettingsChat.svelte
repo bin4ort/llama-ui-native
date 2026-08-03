@@ -41,7 +41,7 @@
 			SETTINGS_CHAT_SECTIONS[0]
 	);
 
-	let localConfig = $state({ ...config() });
+	let localConfig = $state({ ...config(), language: (localStorage.getItem("lang")||"en").trim() });
 
 	let mobileHeader;
 

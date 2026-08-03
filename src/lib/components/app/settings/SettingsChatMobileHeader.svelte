@@ -1,4 +1,5 @@
 <script lang="ts">
+import { tr } from '$lib/stores/i18n.svelte';
 	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
 	import { Settings, ChevronLeft, ChevronRight } from '@lucide/svelte';
 	import { onMount, tick } from 'svelte';
@@ -71,7 +72,7 @@
 								}}
 							>
 								<section.icon class="{ICON_CLASS_DEFAULT} flex-shrink-0" />
-								<span>{section.title}</span>
+								<span>{tr.dict[section.title] || section.title}</span>
 							</a>
 						{:else}
 							<button
@@ -87,7 +88,7 @@
 								}}
 							>
 								<section.icon class="{ICON_CLASS_DEFAULT} flex-shrink-0" />
-								<span>{section.title}</span>
+								<span>{tr.dict[section.title] || section.title}</span>
 							</button>
 						{/if}
 					{/each}
