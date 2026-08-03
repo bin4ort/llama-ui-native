@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 import { tr } from '$lib/stores/i18n.svelte';
+import { tr } from '$lib/stores/i18n.svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import { settingsStore } from '$lib/stores/settings.svelte';
 	import { RotateCcw } from '@lucide/svelte';
@@ -45,7 +46,7 @@ import { tr } from '$lib/stores/i18n.svelte';
 <AlertDialog.Root bind:open={showResetDialog}>
 	<AlertDialog.Content>
 		<AlertDialog.Header>
-			<AlertDialog.Title>Reset Settings to Default</AlertDialog.Title>
+			<AlertDialog.Title>{tr.dict["Reset Settings to Default"] || "Reset Settings to Default"}</AlertDialog.Title>
 			<AlertDialog.Description>
 				Are you sure you want to reset all settings to their default values? This will reset all
 				parameters to the values provided by the server's /props endpoint and remove all your custom
@@ -53,8 +54,8 @@ import { tr } from '$lib/stores/i18n.svelte';
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
-			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action onclick={handleConfirmReset}>Reset to Default</AlertDialog.Action>
+			<AlertDialog.Cancel>{tr.dict["Cancel"] || "Cancel"}</AlertDialog.Cancel>
+			<AlertDialog.Action onclick={handleConfirmReset}>{tr.dict["Reset to Default"] || "Reset to Default"}</AlertDialog.Action>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

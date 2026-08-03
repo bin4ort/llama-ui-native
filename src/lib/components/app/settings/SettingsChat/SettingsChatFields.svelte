@@ -258,7 +258,7 @@
 								for={itemId}
 								class="flex cursor-pointer items-center gap-1.5 text-sm font-normal"
 							>
-								{opt.label}
+								{tr.dict[opt.label] || opt.label}
 
 								{#if opt.isExperimental}
 									<FlaskConical class="h-3.5 w-3.5 text-muted-foreground" />
