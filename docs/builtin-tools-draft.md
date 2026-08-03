@@ -4,6 +4,30 @@
 > that should ship built into Llama UI Native (no external MCP server needed).
 > Everything here is a candidate; nothing is committed yet.
 
+## Already covered by llama.cpp (just needs `--tools`)
+
+The llama.cpp server ships built-in agent tools behind the `--tools` flag
+(`--tools all`, or a comma-separated subset; `--agent` enables all + CORS
+proxy). Security note from upstream: *do not enable in untrusted environments*;
+it also restricts `--cors-origins` to localhost by default. The app already
+fetches these from `/tools` and renders them (403 from `/tools` = server was
+started without `--tools`).
+
+| Available llama.cpp tool | Draft overlap |
+| --- | --- |
+| `read_file` | workspace FS |
+| `write_file` / `edit_file` | workspace FS |
+| `file_glob_search` | workspace FS (glob) |
+| `grep_search` | workspace FS (grep) |
+| `exec_shell_command` | sandboxed shell — **but un-sandboxed**: runs on the server host with full privileges; the app-side sandbox (no-network, cwd=workspace) is still needed |
+| `get_datetime` | `get_current_time` — already solved upstream |
+| `get_info` | system info |
+
+**Consequence:** the draft below should NOT re-implement read/write/edit/glob/
+grep/datetime as app tools. Instead the app should (a) document/forward the
+`--tools` flags (later: launch the server itself), (b) add per-tool permission
+gating for the server tools, and (c) only app-build what llama.cpp lacks.
+
 ## What exists today
 
 | Tool / capability | Where it lives |
@@ -40,16 +64,13 @@ settings-gated tool toggles (like the sandbox settings), and the local
 1. **Calculator** (`calculate`)
    - Arbitrary-precision arithmetic (Decimal/BigInt), expression parser.
    - The model stops doing arithmetic in prose; results are exact.
-2. **Current date/time** (`get_current_time`)
-   - Returns local time, UTC, ISO, weekday, timezone; optional target timezone.
-   - Models cannot know "now" — this is the most universally useful tool.
-3. **Workspace filesystem** (`list_dir`, `read_file`, `write_file`,
-   `search_files` glob/grep, `file_info`)
-   - App-managed **workspace root** (user-configurable, e.g. `~/llamaui-workspace`,
-     or per-conversation temp dir).
-   - Path containment: every path resolved against the root, `..`/symlink
-     escapes rejected.
-   - Unifies with the existing server-side tool parsers so UI cards already work.
+2. **Current date/time** — ✅ already solved: llama.cpp `get_datetime`
+   (`--tools get_datetime`). Only app-side work: surface it in the tools UI.
+3. **Workspace filesystem** — ✅ read/write/edit/glob/grep already exist as
+   llama.cpp built-ins. Only app-side work: path-containment + workspace-root
+   policy **is not enforced by the server** (it reads/writes anywhere the
+   server user can) — decide whether the app restricts it or documents the
+   server's trust boundary.
 4. **Fetch URL** (`fetch_url`)
    - HTTP GET via the existing local `/cors-proxy`; response size cap
      (e.g. 1 MB), timeout, content-type sniffing, HTML→text extraction.
@@ -84,10 +105,12 @@ settings-gated tool toggles (like the sandbox settings), and the local
     - Direct llama-server control through the C bridge: switch models, watch
       slots/KV, manage a second slot for background tasks.
 12. **Sandboxed shell** (`run_command`)
-    - Opt-in, explicit consent per call, hard timeout, working directory =
-      workspace root, **no network by default** (starts a local-only
-      network namespace where available). Mirrors the server-side
-      `exec_shell_command` renderer.
+    - ⚠️ llama.cpp already has `exec_shell_command`, but it is **un-sandboxed**
+      (runs as the server user with full privileges). If we use it, the app
+      must add: explicit consent per call, hard timeout, and (ideally) a
+      dedicated low-privilege user/workspace for the server itself. A fully
+      sandboxed app-side alternative (no-network, cwd=workspace) remains an
+      option for later.
 13. **Local text extraction** (`extract_text`)
     - PDF (pdf.js already bundled), text files, EPUB; optional OCR hook
       (Tesseract) when present on the system.
@@ -120,10 +143,13 @@ settings-gated tool toggles (like the sandbox settings), and the local
 
 ## Suggested order of implementation
 
-1. `calculate`, `get_current_time` — trivial, immediate value
-2. Workspace filesystem + path containment
-3. `fetch_url` via `/cors-proxy` (foundation for search)
-4. `to_table`, `generate_mermaid`, `todo_list`
-5. Clipboard + notifications (native bridge)
-6. Web search (opt-in), model lifecycle
-7. Sandboxed shell, memory store, timers, transcription
+0. **Enable llama.cpp built-ins**: forward `--tools` (or `--agent`) when the
+   app later manages the server; verify `/tools` flows through the existing
+   tools UI + parsers. Decide the workspace trust boundary.
+1. `calculate` — trivial, immediate value
+2. `fetch_url` via `/cors-proxy` (foundation for search)
+3. `to_table`, `generate_mermaid`, `todo_list`
+4. Clipboard + notifications (native bridge)
+5. Web search (opt-in), model lifecycle (app-native — not in llama.cpp)
+6. Sandboxed shell policy (consent/timeout/privileges), memory store, timers,
+   transcription
