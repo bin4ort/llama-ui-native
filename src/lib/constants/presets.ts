@@ -23,14 +23,17 @@ export const PRESET_CHANGE_TOOL = 'change_preset';
 
 /**
  * Meta-prompt used by the preset wizard: the loaded model drafts a system
- * prompt from the user's plain-language description. Result is always shown
- * to the user for review — never auto-saved.
+ * prompt (plus a one-line picker description) from the user's plain-language
+ * description. Result is always shown to the user for review — never
+ * auto-saved.
  */
 export const PRESET_WIZARD_META_PROMPT =
 	'You are a system prompt designer. Turn the user\'s description into a concise, ' +
 	'effective system prompt that defines a personality, role and expert knowledge. ' +
 	'Write 2–5 sentences, second person, imperative mood. Keep it focused: no formatting ' +
-	'instructions, no repetition of the request.';
+	'instructions, no repetition of the request.\n\n' +
+	'Respond with JSON only, in this exact shape:\n' +
+	'{"description": "<one-line description of this preset for a picker list>", "content": "<the system prompt text>"}';
 
 /** List all available presets (names + descriptions) so the model can pick. */
 export function buildListPresetsToolDefinition(): OpenAIToolDefinition {

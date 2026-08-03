@@ -664,6 +664,7 @@ const DE_FULL: Record<string,string> = {
   "Create a prompt preset": "Prompt-Preset erstellen",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Wählen Sie ein Prompt-Preset für diese Unterhaltung. Es gilt ab der nächsten Nachricht.",
   "Prompt preset switching tools": "Prompt-Preset-Wechselwerkzeuge",
+  "What should the preset do?": "Was soll das Preset tun?",
 };
 
 const RU_FULL: Record<string,string> = {
@@ -1310,6 +1311,7 @@ const RU_FULL: Record<string,string> = {
   "Create a prompt preset": "Создать пресет промпта",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Выберите пресет промпта для этой беседы. Он применится со следующего сообщения.",
   "Prompt preset switching tools": "Инструменты смены пресетов промптов",
+  "What should the preset do?": "Что должен делать пресет?",
 };
 
 const EN_FULL: Record<string,string> = {
@@ -1956,6 +1958,7 @@ const EN_FULL: Record<string,string> = {
   "Create a prompt preset": "Create a prompt preset",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Pick a prompt preset for this conversation. It applies from the next message.",
   "Prompt preset switching tools": "Prompt preset switching tools",
+  "What should the preset do?": "What should the preset do?",
 };
 
 const ES_FULL: Record<string,string> = {
@@ -2602,6 +2605,7 @@ const ES_FULL: Record<string,string> = {
   "Create a prompt preset": "Crear un preajuste de prompt",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Elige un preajuste de prompt para esta conversación. Se aplica a partir del siguiente mensaje.",
   "Prompt preset switching tools": "Herramientas de cambio de preajustes",
+  "What should the preset do?": "¿Qué debe hacer el ajuste preestablecido?",
 };
 
 const FR_FULL: Record<string,string> = {
@@ -3248,6 +3252,7 @@ const FR_FULL: Record<string,string> = {
   "Create a prompt preset": "Créer un préréglage de prompt",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Choisissez un préréglage de prompt pour cette conversation. Il s'applique au prochain message.",
   "Prompt preset switching tools": "Outils de changement de préréglages",
+  "What should the preset do?": "Que doit faire le préréglage ?",
 };
 
 const ZH_FULL: Record<string,string> = {
@@ -3894,6 +3899,7 @@ const ZH_FULL: Record<string,string> = {
   "Create a prompt preset": "创建提示词预设",
   "Pick a prompt preset for this conversation. It applies from the next message.": "为此对话选择提示词预设。它从下一条消息开始生效。",
   "Prompt preset switching tools": "提示词预设切换工具",
+  "What should the preset do?": "这个预设应该做什么？",
 };
 
 const JA_FULL: Record<string,string> = {
@@ -4540,6 +4546,7 @@ const JA_FULL: Record<string,string> = {
   "Create a prompt preset": "プロンプトプリセットを作成",
   "Pick a prompt preset for this conversation. It applies from the next message.": "この会話のプロンプトプリセットを選択してください。次のメッセージから適用されます。",
   "Prompt preset switching tools": "プロンプトプリセット切替ツール",
+  "What should the preset do?": "プリセットに何をさせますか？",
 };
 
 const KO_FULL: Record<string,string> = {
@@ -5186,6 +5193,7 @@ const KO_FULL: Record<string,string> = {
   "Create a prompt preset": "프롬프트 프리셋 만들기",
   "Pick a prompt preset for this conversation. It applies from the next message.": "이 대화에 사용할 프롬프트 프리셋을 선택하세요. 다음 메시지부터 적용됩니다.",
   "Prompt preset switching tools": "프롬프트 프리셋 전환 도구",
+  "What should the preset do?": "프리셋이 무엇을 해야 하나요?",
 };
 
 const PT_FULL: Record<string,string> = {
@@ -5832,6 +5840,7 @@ const PT_FULL: Record<string,string> = {
   "Create a prompt preset": "Criar uma predefinição de prompt",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Escolha uma predefinição de prompt para esta conversa. Aplica-se a partir da próxima mensagem.",
   "Prompt preset switching tools": "Ferramentas de troca de predefinições",
+  "What should the preset do?": "O que o preset deve fazer?",
 };
 
 const IT_FULL: Record<string,string> = {
@@ -6478,6 +6487,7 @@ const IT_FULL: Record<string,string> = {
   "Create a prompt preset": "Crea un preset di prompt",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Scegli un preset di prompt per questa conversazione. Si applica dal prossimo messaggio.",
   "Prompt preset switching tools": "Strumenti di cambio preset",
+  "What should the preset do?": "Cosa deve fare il preset?",
 };
 
 const TR_FULL: Record<string,string> = {
@@ -7124,6 +7134,7 @@ const TR_FULL: Record<string,string> = {
   "Create a prompt preset": "İstem hazır ayarı oluştur",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Bu sohbet için bir istem hazır ayarı seçin. Bir sonraki mesajdan itibaren geçerli olur.",
   "Prompt preset switching tools": "İstem hazır ayarı değiştirme araçları",
+  "What should the preset do?": "Hazır ayar ne yapmalı?",
 };
 
 const PL_FULL: Record<string,string> = {
@@ -7770,6 +7781,7 @@ const PL_FULL: Record<string,string> = {
   "Create a prompt preset": "Utwórz preset promptu",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Wybierz preset promptu dla tej rozmowy. Zastosuje się od następnej wiadomości.",
   "Prompt preset switching tools": "Narzędzia zmiany presetów promptu",
+  "What should the preset do?": "Co ma robić preset?",
 };
 function applyDict(dict: Record<string,string>) {
   // Mirror every key onto tr so all lookup styles resolve:

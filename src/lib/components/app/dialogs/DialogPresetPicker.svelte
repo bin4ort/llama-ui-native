@@ -7,9 +7,12 @@
 	import type { SystemPromptPreset } from '$lib/types';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
+	import { Textarea } from '$lib/components/ui/textarea';
+	import { Label } from '$lib/components/ui/label';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import { SearchInput } from '$lib/components/app/forms';
-	import { Star, Trash2, Plus, Check } from '@lucide/svelte';
+	import { Star, Trash2, Plus, Check, Pencil, X } from '@lucide/svelte';
 	import DialogPresetWizard from './DialogPresetWizard.svelte';
 
 	interface Props {
@@ -21,6 +24,10 @@
 
 	let searchQuery = $state('');
 	let showWizard = $state(false);
+	let editingId = $state<string | null>(null);
+	let editName = $state('');
+	let editDescription = $state('');
+	let editContent = $state('');
 
 	// Effective current persona: exact content match against the library,
 	// otherwise the default.
@@ -42,6 +49,26 @@
 		})
 	);
 
+	function startEdit(preset: SystemPromptPreset) {
+		editingId = preset.id;
+		editName = preset.name;
+		editDescription = preset.description ?? '';
+		editContent = preset.content;
+	}
+
+	function cancelEdit() {
+		editingId = null;
+	}
+
+	function saveEdit(preset: SystemPromptPreset) {
+		presetsStore.update(preset.id, {
+			name: editName,
+			description: editDescription,
+			content: editContent
+		});
+		editingId = null;
+	}
+
 	function applyPreset(preset: SystemPromptPreset | null) {
 		const conv = conversationsStore.activeConversation;
 		if (!conv) return;
@@ -57,10 +84,10 @@
 	}
 </script>
 
-<Dialog.Root bind:open onOpenChange={(o) => { if (!o) { searchQuery = ''; showWizard = false; } onOpenChange?.(o); }}>
+<Dialog.Root bind:open onOpenChange={(o) => { if (!o) { searchQuery = ''; showWizard = false; editingId = null; } onOpenChange?.(o); }}>
 	<Dialog.Portal>
 		<Dialog.Overlay class="z-9999" />
-		<Dialog.Content class="z-9999 max-w-lg">
+		<Dialog.Content class="z-9999 !max-h-[85dvh] max-w-xl overflow-y-auto">
 			<Dialog.Header>
 				<Dialog.Title>{t('Prompt presets')}</Dialog.Title>
 				<Dialog.Description>{t('Pick a prompt preset for this conversation. It applies from the next message.')}</Dialog.Description>
@@ -70,7 +97,7 @@
 				<SearchInput bind:value={searchQuery} placeholder={t('Search presets...')} />
 
 				{#if !showWizard}
-					<ScrollArea class="h-72 pr-3">
+					<ScrollArea class="h-96 pr-3">
 						<div class="space-y-1">
 							<button
 								type="button"
@@ -87,42 +114,80 @@
 
 							{#each filtered as preset (preset.id)}
 								{@const isActive = activePresetId === preset.id}
-								<div class="group flex items-center gap-1 rounded-md transition-colors hover:bg-accent {isActive
+								<div class="rounded-md transition-colors hover:bg-accent {isActive
 									? 'bg-accent text-accent-foreground'
 									: ''}">
-									<button
-										type="button"
-										class="flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left text-sm"
-										onclick={() => applyPreset(preset)}
-									>
-										<span class="min-w-0 flex-1 truncate">{preset.name}</span>
-										{#if preset.description}
-											<span class="hidden min-w-0 flex-1 truncate text-xs text-muted-foreground sm:block"
-												>{preset.description}</span
-											>
-										{/if}
-										{#if isActive}
-											<Check class="h-4 w-4 shrink-0" />
-										{/if}
-									</button>
+									<div class="group flex items-center gap-1">
+										<button
+											type="button"
+											class="flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left text-sm"
+											onclick={() => applyPreset(preset)}
+										>
+											<span class="min-w-0 flex-1 truncate">{preset.name}</span>
+											{#if preset.description}
+												<span class="hidden min-w-0 flex-1 truncate text-xs text-muted-foreground sm:block"
+													>{preset.description}</span
+												>
+											{/if}
+											{#if isActive}
+												<Check class="h-4 w-4 shrink-0" />
+											{/if}
+										</button>
 
-									<button
-										type="button"
-										class="shrink-0 p-2 text-muted-foreground hover:text-foreground"
-										title={preset.favorite ? t('Remove from favorites') : t('Add to favorites')}
-										onclick={() => presetsStore.toggleFavorite(preset.id)}
-									>
-										<Star class="h-4 w-4 {preset.favorite ? 'fill-amber-400 text-amber-400' : ''}" />
-									</button>
+										<button
+											type="button"
+											class="shrink-0 p-2 text-muted-foreground hover:text-foreground"
+											title={t('Edit')}
+											onclick={() => startEdit(preset)}
+										>
+											<Pencil class="h-4 w-4" />
+										</button>
 
-									<button
-										type="button"
-										class="shrink-0 p-2 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
-										title={t('Delete')}
-										onclick={() => presetsStore.remove(preset.id)}
-									>
-										<Trash2 class="h-4 w-4" />
-									</button>
+										<button
+											type="button"
+											class="shrink-0 p-2 text-muted-foreground hover:text-foreground"
+											title={preset.favorite ? t('Remove from favorites') : t('Add to favorites')}
+											onclick={() => presetsStore.toggleFavorite(preset.id)}
+										>
+											<Star class="h-4 w-4 {preset.favorite ? 'fill-amber-400 text-amber-400' : ''}" />
+										</button>
+
+										<button
+											type="button"
+											class="shrink-0 p-2 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
+											title={t('Delete')}
+											onclick={() => {
+												presetsStore.remove(preset.id);
+												if (editingId === preset.id) cancelEdit();
+											}}
+										>
+											<Trash2 class="h-4 w-4" />
+										</button>
+									</div>
+
+									{#if editingId === preset.id}
+										<div class="space-y-2 border-t border-border/40 px-3 py-3">
+											<Label for="edit-preset-name">{t('Preset name')}</Label>
+											<Input id="edit-preset-name" bind:value={editName} />
+
+											<Label for="edit-preset-description">{t('Short description (shown in the picker)')}</Label>
+											<Input id="edit-preset-description" bind:value={editDescription} />
+
+											<Label for="edit-preset-content">{t('System prompt draft')}</Label>
+											<Textarea id="edit-preset-content" bind:value={editContent} rows={6} class="font-mono text-xs" />
+
+											<div class="flex gap-2">
+												<Button type="button" size="sm" onclick={() => saveEdit(preset)}>
+													<Check class="mr-1 h-3.5 w-3.5" />
+													{t('Save')}
+												</Button>
+												<Button type="button" variant="ghost" size="sm" onclick={cancelEdit}>
+													<X class="mr-1 h-3.5 w-3.5" />
+													{t('Cancel')}
+												</Button>
+											</div>
+										</div>
+									{/if}
 								</div>
 							{:else}
 								{#if searchQuery}

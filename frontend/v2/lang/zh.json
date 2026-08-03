@@ -641,5 +641,6 @@
   "Choose a prompt preset": "选择提示词预设",
   "Create a prompt preset": "创建提示词预设",
   "Pick a prompt preset for this conversation. It applies from the next message.": "为此对话选择提示词预设。它从下一条消息开始生效。",
-  "Prompt preset switching tools": "提示词预设切换工具"
+  "Prompt preset switching tools": "提示词预设切换工具",
+  "What should the preset do?": "这个预设应该做什么？"
 }

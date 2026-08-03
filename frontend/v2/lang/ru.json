@@ -641,5 +641,6 @@
   "Choose a prompt preset": "Выберите пресет промпта",
   "Create a prompt preset": "Создать пресет промпта",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Выберите пресет промпта для этой беседы. Он применится со следующего сообщения.",
-  "Prompt preset switching tools": "Инструменты смены пресетов промптов"
+  "Prompt preset switching tools": "Инструменты смены пресетов промптов",
+  "What should the preset do?": "Что должен делать пресет?"
 }

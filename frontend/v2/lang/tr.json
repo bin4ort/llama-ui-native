@@ -641,5 +641,6 @@
   "Choose a prompt preset": "İstem hazır ayarı seçin",
   "Create a prompt preset": "İstem hazır ayarı oluştur",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Bu sohbet için bir istem hazır ayarı seçin. Bir sonraki mesajdan itibaren geçerli olur.",
-  "Prompt preset switching tools": "İstem hazır ayarı değiştirme araçları"
+  "Prompt preset switching tools": "İstem hazır ayarı değiştirme araçları",
+  "What should the preset do?": "Hazır ayar ne yapmalı?"
 }

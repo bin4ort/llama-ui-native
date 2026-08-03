@@ -641,5 +641,6 @@
   "Choose a prompt preset": "Choose a prompt preset",
   "Create a prompt preset": "Create a prompt preset",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Pick a prompt preset for this conversation. It applies from the next message.",
-  "Prompt preset switching tools": "Prompt preset switching tools"
+  "Prompt preset switching tools": "Prompt preset switching tools",
+  "What should the preset do?": "What should the preset do?"
 }

@@ -641,5 +641,6 @@
   "Choose a prompt preset": "프롬프트 프리셋 선택",
   "Create a prompt preset": "프롬프트 프리셋 만들기",
   "Pick a prompt preset for this conversation. It applies from the next message.": "이 대화에 사용할 프롬프트 프리셋을 선택하세요. 다음 메시지부터 적용됩니다.",
-  "Prompt preset switching tools": "프롬프트 프리셋 전환 도구"
+  "Prompt preset switching tools": "프롬프트 프리셋 전환 도구",
+  "What should the preset do?": "프리셋이 무엇을 해야 하나요?"
 }

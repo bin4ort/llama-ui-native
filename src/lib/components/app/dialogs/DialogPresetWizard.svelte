@@ -19,39 +19,63 @@
 
 	let { open = $bindable(), onOpenChange, onSaved }: Props = $props();
 
-	let description = $state('');
+	let request = $state('');
 	let name = $state('');
+	let description = $state('');
 	let draft = $state('');
 	let generating = $state(false);
 	let error = $state('');
 
 	function reset() {
-		description = '';
+		request = '';
 		name = '';
+		description = '';
 		draft = '';
 		error = '';
 	}
 
+	/** Parse the model's JSON answer; fall back to treating the whole output as content. */
+	function parseGenerated(raw: string): { description: string; content: string } {
+		let cleaned = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '');
+		const jsonStart = cleaned.indexOf('{');
+		const jsonEnd = cleaned.lastIndexOf('}');
+		if (jsonStart !== -1 && jsonEnd > jsonStart) {
+			cleaned = cleaned.slice(jsonStart, jsonEnd + 1);
+		}
+		try {
+			const obj = JSON.parse(cleaned);
+			if (obj && typeof obj.content === 'string') {
+				return {
+					description: typeof obj.description === 'string' ? obj.description.trim() : '',
+					content: obj.content.trim()
+				};
+			}
+		} catch {
+			// not JSON — fall through
+		}
+		return { description: '', content: cleaned };
+	}
+
 	async function generate() {
-		if (!description.trim() || generating) return;
+		if (!request.trim() || generating) return;
 		generating = true;
 		error = '';
 		draft = '';
+		description = '';
 		try {
 			const model = config().model as string | undefined;
 			await new Promise<void>((resolve) => {
 				void ChatService.sendMessage(
-					[{ role: 'user', content: `${PRESET_WIZARD_META_PROMPT}\n\n${description.trim()}` }],
+					[{ role: 'user', content: `${PRESET_WIZARD_META_PROMPT}\n\n${request.trim()}` }],
 					{
 						...(model ? { model } : {}),
 						temperature: 0.6,
-						max_tokens: 400,
+						max_tokens: 500,
 						stream: false,
-						onChunk: (chunk: string) => {
-							draft = chunk;
-						},
 						onComplete: (content: string) => {
-							draft = content;
+							const parsed = parseGenerated(content);
+							draft = parsed.content;
+							description = parsed.description;
 							resolve();
 						},
 						onError: (e: Error) => {
@@ -70,7 +94,7 @@
 		if (!draft.trim() || !name.trim()) return;
 		const preset = presetsStore.add({
 			name: name.trim(),
-			description: description.trim() || undefined,
+			description: description.trim() || request.trim() || undefined,
 			content: draft.trim()
 		});
 		onSaved?.(preset.id);
@@ -82,7 +106,7 @@
 <Dialog.Root bind:open onOpenChange={(o) => { if (!o) reset(); onOpenChange?.(o); }}>
 	<Dialog.Portal>
 		<Dialog.Overlay class="z-9999" />
-		<Dialog.Content class="z-9999 max-w-xl">
+		<Dialog.Content class="z-9999 !max-h-[85dvh] max-w-2xl overflow-y-auto">
 			<Dialog.Header>
 				<Dialog.Title>{t('Create a prompt preset')}</Dialog.Title>
 				<Dialog.Description>{t('Describe the personality or expert role — the model drafts the system prompt for you to review.')}</Dialog.Description>
@@ -90,16 +114,16 @@
 
 			<div class="space-y-4 py-2">
 				<div class="space-y-2">
-					<Label for="preset-description">{t('Preset description')}</Label>
+					<Label for="preset-request">{t('What should the preset do?')}</Label>
 					<Textarea
-						id="preset-description"
-						bind:value={description}
+						id="preset-request"
+						bind:value={request}
 						rows={3}
 						placeholder={t('A strict code reviewer who demands citations for every claim…')}
 					/>
 				</div>
 
-				<Button type="button" onclick={generate} disabled={!description.trim() || generating}>
+				<Button type="button" onclick={generate} disabled={!request.trim() || generating}>
 					{#if generating}
 						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 					{:else}
@@ -117,11 +141,18 @@
 						<Label for="preset-name">{t('Preset name')}</Label>
 						<Input id="preset-name" bind:value={name} placeholder={t('Expert Code Reviewer')} />
 
+						<Label for="preset-description">{t('Short description (shown in the picker)')}</Label>
+						<Input
+							id="preset-description"
+							bind:value={description}
+							placeholder={t('Short description (shown in the picker)')}
+						/>
+
 						<Label for="preset-content">{t('System prompt draft')}</Label>
 						<Textarea
 							id="preset-content"
 							bind:value={draft}
-							rows={8}
+							rows={10}
 							class="font-mono text-xs"
 						/>
 					</div>
