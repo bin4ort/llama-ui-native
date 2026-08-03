@@ -3,6 +3,8 @@
  * for custom themes. Uses the same approach as mode-watcher's .dark class.
  */
 
+import { setMode } from 'mode-watcher';
+
 const DARK_CLASSES = [
 	'amoled',
 	'nord', 'dracula', 'cobalt', 'solarized', 'gruvbox',
@@ -29,4 +31,14 @@ export function applyThemeClass(mode: string): void {
 	if (isCustomTheme(mode)) {
 		root.classList.add(mode);
 	}
+}
+
+/**
+ * Single entry point for applying a theme. mode-watcher's setMode handles the
+ * base light/dark/system modes, applyThemeClass handles the custom class
+ * themes. Both must run together or custom themes stay stale until reload.
+ */
+export function applyTheme(mode: string): void {
+	setMode(normalizeThemeForSetMode(mode));
+	applyThemeClass(mode);
 }

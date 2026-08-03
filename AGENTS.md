@@ -10,7 +10,7 @@
 1. Edit source files in `src/`
 2. Run `npm run build` from project root
 3. Output goes to `dist/` — already configured to copy to `frontend/v2/`
-4. Rebuild C: `gcc -o llama-ui-native main.c server.c mongoose.c $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) -lpthread -lm -lcurl -Wall`
+4. Rebuild C: `gcc -o llama-ui-native main.c server.c mongoose.c $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) -ljxl -lpthread -lm -lcurl -Wall`
 5. Never edit files in `frontend/v2/` directly (except `lang/*.json` and `i18n.js`)
 
 ## Frontend technology
@@ -27,7 +27,7 @@
 - UI templates use `{tr.dict["key"] || "key"}` for reactive translation
 
 ## Native wrapper (C code)
-- Compile: `gcc -o llama-ui-native main.c server.c mongoose.c $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) -lpthread -lm -lcurl -Wall`
+- Compile: `gcc -o llama-ui-native main.c server.c mongoose.c $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) -ljxl -lpthread -lm -lcurl -Wall`
 - Dependencies: gtk+-3.0, webkit2gtk-4.1, libcurl
 - Server port: 8765 (defined in `server.h`)
 - Frontend served from `frontend/v2/` directory

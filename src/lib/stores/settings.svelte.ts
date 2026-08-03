@@ -33,8 +33,7 @@
 
 import { browser } from '$app/environment';
 import type { SettingsExportType } from '$lib/types';
-import { setMode } from 'mode-watcher';
-import { applyThemeClass, normalizeThemeForSetMode } from '$lib/utils/theme-presets';
+import { applyTheme } from '$lib/utils/theme-presets';
 import {
 	CONFIG_LOCALSTORAGE_KEY,
 	SETTING_CONFIG_DEFAULT,
@@ -106,8 +105,7 @@ class SettingsStore {
 			this.loadConfig();
 			this.migrateLegacyTheme();
 			// Apply the persisted theme from config on initial load
-			setMode(normalizeThemeForSetMode(this.config[SETTINGS_KEYS.THEME] as string));
-			applyThemeClass(this.config[SETTINGS_KEYS.THEME] as string);
+			applyTheme(this.config[SETTINGS_KEYS.THEME] as string);
 			// Auto-detect network IP for Web UI Address on first load
 			this.detectNetworkAddress();
 			this.isInitialized = true;
@@ -171,7 +169,7 @@ class SettingsStore {
 			this.config[SETTINGS_KEYS.THEME] = legacyTheme;
 			localStorage.removeItem('theme');
 			this.saveConfig();
-			setMode(normalizeThemeForSetMode(legacyTheme));
+			applyTheme(legacyTheme);
 		}
 	}
 	/**
@@ -263,8 +261,7 @@ class SettingsStore {
 	updateTheme(newTheme: string) {
 		this.updateConfig(SETTINGS_KEYS.THEME, newTheme);
 
-		setMode(normalizeThemeForSetMode(newTheme));
-		applyThemeClass(newTheme);
+		applyTheme(newTheme);
 	}
 
 	/**
@@ -290,8 +287,7 @@ class SettingsStore {
 	 */
 	resetTheme() {
 		this.updateConfig(SETTINGS_KEYS.THEME, SETTING_CONFIG_DEFAULT[SETTINGS_KEYS.THEME]);
-		setMode('system');
-		applyThemeClass('');
+		applyTheme('');
 	}
 
 	/**
@@ -371,7 +367,7 @@ class SettingsStore {
 
 					// theme lives in mode-watcher, not just in config -> propagate
 					if (key === SETTINGS_KEYS.THEME) {
-						setMode(normalizeThemeForSetMode(value as string));
+						applyTheme(value as string);
 					}
 				}
 			}
@@ -419,7 +415,7 @@ class SettingsStore {
 			setConfigValue(this.config, key, value);
 
 			if (key === SETTINGS_KEYS.THEME) {
-				setMode(normalizeThemeForSetMode(value as string));
+				applyTheme(value as string);
 			}
 
 			this.userOverrides.delete(key);
@@ -567,7 +563,7 @@ class SettingsStore {
 		this.saveConfig();
 
 		// Apply theme for immediate visual feedback
-		setMode(normalizeThemeForSetMode(this.config[SETTINGS_KEYS.THEME] as string));
+		applyTheme(this.config[SETTINGS_KEYS.THEME] as string);
 
 		console.log('Settings imported successfully');
 	}
