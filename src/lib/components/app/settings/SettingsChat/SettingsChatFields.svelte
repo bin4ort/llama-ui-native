@@ -61,7 +61,7 @@
 
 				<div class="flex items-center gap-2">
 					<Label for={field.key} class="flex items-center gap-1.5 text-sm font-medium">
-						{tr.dict[field.label] || field.label}
+						{tr[field.label] || field.label}
 
 						{#if field.isExperimental}
 							<FlaskConical class="h-3.5 w-3.5 text-muted-foreground" />
@@ -92,8 +92,8 @@
 								onConfigChange(field.key, '');
 							}}
 							class="absolute top-1/2 right-2 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded transition-colors hover:bg-muted"
-							aria-label={tr.dict["Reset to default"] || "Reset to default"}
-							title={tr.dict["Reset to default"] || "Reset to default"}
+							aria-label={tr["Reset to default"] || "Reset to default"}
+							title={tr["Reset to default"] || "Reset to default"}
 						>
 							<RotateCcw class="h-3 w-3" />
 						</button>
@@ -101,13 +101,13 @@
 				</div>
 				{#if field.help || SETTING_CONFIG_INFO[field.key]}
 					<p class="mt-1 text-xs text-muted-foreground">
-						{@html tr.dict[field.help || SETTING_CONFIG_INFO[field.key]] || field.help || SETTING_CONFIG_INFO[field.key]}
+						{@html tr[field.help || SETTING_CONFIG_INFO[field.key]] || field.help || SETTING_CONFIG_INFO[field.key]}
 					</p>
 				{/if}
 			{:else if field.type === SettingsFieldType.TEXTAREA}
 				{#if field.label}
 					<Label for={field.key} class="block flex items-center gap-1.5 text-sm font-medium">
-						{tr.dict[field.label] || field.label}
+						{tr[field.label] || field.label}
 
 						{#if field.isExperimental}
 							<FlaskConical class="h-3.5 w-3.5 text-muted-foreground" />
@@ -125,7 +125,7 @@
 
 				{#if field.help || SETTING_CONFIG_INFO[field.key]}
 					<p class="mt-1 text-xs text-muted-foreground">
-						{tr.dict[field.help || SETTING_CONFIG_INFO[field.key]] || field.help || SETTING_CONFIG_INFO[field.key]}
+						{tr[field.help || SETTING_CONFIG_INFO[field.key]] || field.help || SETTING_CONFIG_INFO[field.key]}
 					</p>
 				{/if}
 
@@ -158,7 +158,7 @@
 
 				<div class="flex items-center gap-2">
 					<Label for={field.key} class="flex items-center gap-1.5 text-sm font-medium">
-						{tr.dict[field.label] || field.label}
+						{tr[field.label] || field.label}
 
 						{#if field.isExperimental}
 							<FlaskConical class="h-3.5 w-3.5 text-muted-foreground" />
@@ -199,8 +199,8 @@
 									onConfigChange(field.key, '');
 								}}
 								class="absolute top-1/2 right-8 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded transition-colors hover:bg-muted"
-								aria-label={tr.dict["Reset to default"] || "Reset to default"}
-								title={tr.dict["Reset to default"] || "Reset to default"}
+								aria-label={tr["Reset to default"] || "Reset to default"}
+								title={tr["Reset to default"] || "Reset to default"}
 							>
 								<RotateCcw class="h-3 w-3" />
 							</button>
@@ -224,7 +224,7 @@
 				</Select.Root>
 				{#if field.help || SETTING_CONFIG_INFO[field.key]}
 					<p class="mt-1 text-xs text-muted-foreground">
-						{tr.dict[field.help || SETTING_CONFIG_INFO[field.key]] || field.help || SETTING_CONFIG_INFO[field.key]}
+						{tr[field.help || SETTING_CONFIG_INFO[field.key]] || field.help || SETTING_CONFIG_INFO[field.key]}
 					</p>
 				{/if}
 			{:else if field.type === SettingsFieldType.RADIO && field.radioOptions}
@@ -258,7 +258,7 @@
 								for={itemId}
 								class="flex cursor-pointer items-center gap-1.5 text-sm font-normal"
 							>
-								{tr.dict[opt.label] || opt.label}
+								{tr[opt.label] || opt.label}
 
 								{#if opt.isExperimental}
 									<FlaskConical class="h-3.5 w-3.5 text-muted-foreground" />
@@ -270,7 +270,7 @@
 
 				{#if field.help || SETTING_CONFIG_INFO[field.key]}
 					<p class="text-xs text-muted-foreground">
-						{tr.dict[field.help || SETTING_CONFIG_INFO[field.key]] || field.help || SETTING_CONFIG_INFO[field.key]}
+						{tr[field.help || SETTING_CONFIG_INFO[field.key]] || field.help || SETTING_CONFIG_INFO[field.key]}
 					</p>
 				{/if}
 			{:else if field.type === SettingsFieldType.CHECKBOX}
@@ -287,7 +287,7 @@
 							for={field.key}
 							class="flex cursor-pointer items-center gap-1.5 pt-1 pb-0.5 text-sm leading-none font-medium"
 						>
-							{tr.dict[field.label] || field.label}
+							{tr[field.label] || field.label}
 
 							{#if field.isExperimental}
 								<FlaskConical class="h-3.5 w-3.5 text-muted-foreground" />
@@ -296,7 +296,7 @@
 
 						{#if field.help || SETTING_CONFIG_INFO[field.key]}
 							<p class="text-xs text-muted-foreground">
-								{tr.dict[field.help || SETTING_CONFIG_INFO[field.key]] || field.help || SETTING_CONFIG_INFO[field.key]}
+								{tr[field.help || SETTING_CONFIG_INFO[field.key]] || field.help || SETTING_CONFIG_INFO[field.key]}
 							</p>
 						{/if}
 					</div>

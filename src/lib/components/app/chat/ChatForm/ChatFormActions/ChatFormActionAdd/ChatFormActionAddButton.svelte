@@ -23,13 +23,13 @@
 			variant="secondary"
 			type="button"
 		>
-			<span class="sr-only">{tr.dict[ATTACHMENT_TOOLTIP_TEXT] || ATTACHMENT_TOOLTIP_TEXT}</span>
+			<span class="sr-only">{tr[ATTACHMENT_TOOLTIP_TEXT] || ATTACHMENT_TOOLTIP_TEXT}</span>
 
 			<Plus class={ICON_CLASS_DEFAULT} />
 		</Button>
 	</Tooltip.Trigger>
 
 	<Tooltip.Content>
-		<p>{tr.dict[ATTACHMENT_TOOLTIP_TEXT] || ATTACHMENT_TOOLTIP_TEXT}</p>
+		<p>{tr[ATTACHMENT_TOOLTIP_TEXT] || ATTACHMENT_TOOLTIP_TEXT}</p>
 	</Tooltip.Content>
 </Tooltip.Root>

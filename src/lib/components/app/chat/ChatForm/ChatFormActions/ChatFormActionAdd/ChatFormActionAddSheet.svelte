@@ -188,7 +188,7 @@
 									>
 										<item.icon class="{ICON_CLASS_DEFAULT} shrink-0" />
 
-										<span>{tr.dict[item.label] || item.label}</span>
+										<span>{tr[item.label] || item.label}</span>
 									</button>
 								{:else if item.disabledTooltip}
 									<Tooltip.Root delayDuration={TOOLTIP_DELAY_DURATION}>
@@ -196,7 +196,7 @@
 											<button type="button" class={sheetItemClass} disabled>
 												<item.icon class="{ICON_CLASS_DEFAULT} shrink-0" />
 
-												<span>{tr.dict[item.label] || item.label}</span>
+												<span>{tr[item.label] || item.label}</span>
 											</button>
 										</Tooltip.Trigger>
 

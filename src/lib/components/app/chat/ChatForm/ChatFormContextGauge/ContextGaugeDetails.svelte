@@ -77,7 +77,7 @@
 		{#if hasCurrent}
 			<div>
 				<h3 class="text-[11px] font-medium uppercase tracking-wide text-muted-foreground/70 mb-2">
-					{tr.dict["THIS TURN · KV CACHE"] || "This turn · KV cache"}
+					{tr["THIS TURN · KV CACHE"] || "This turn · KV cache"}
 				</h3>
 
 				<div class="flex flex-col gap-2">

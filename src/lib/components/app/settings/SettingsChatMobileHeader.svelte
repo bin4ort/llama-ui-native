@@ -72,7 +72,7 @@ import { tr } from '$lib/stores/i18n.svelte';
 								}}
 							>
 								<section.icon class="{ICON_CLASS_DEFAULT} flex-shrink-0" />
-								<span>{tr.dict[section.title] || section.title}</span>
+								<span>{tr[section.title] || section.title}</span>
 							</a>
 						{:else}
 							<button
@@ -88,7 +88,7 @@ import { tr } from '$lib/stores/i18n.svelte';
 								}}
 							>
 								<section.icon class="{ICON_CLASS_DEFAULT} flex-shrink-0" />
-								<span>{tr.dict[section.title] || section.title}</span>
+								<span>{tr[section.title] || section.title}</span>
 							</button>
 						{/if}
 					{/each}

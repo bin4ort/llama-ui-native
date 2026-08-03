@@ -140,7 +140,7 @@
 
 							{#if showIcons}
 								<span in:fade={itemTransition} out:fade={itemTransition} class="min-w-0 truncate"
-									>{tr.dict[item.tooltip] || item.tooltip}</span
+									>{tr[item.tooltip] || item.tooltip}</span
 								>
 							{/if}
 						</span>
@@ -176,7 +176,7 @@
 				<div transition:fade={itemTransition}>
 					<ActionIcon
 						icon={item.icon}
-						tooltip={tr.dict[item.tooltip] || item.tooltip}
+						tooltip={tr[item.tooltip] || item.tooltip}
 						tooltipSide={TooltipSide.RIGHT}
 						size="lg"
 						iconSize={ICON_CLASS_DEFAULT}
