@@ -8,6 +8,36 @@
 >
 > See also: `docs/builtin-tools-draft.md` (broader, tiered roadmap).
 
+## v1 scope (pruned — the first implementation pass)
+
+10 tools, chosen for **value ÷ effort ÷ risk** (deterministic & trusted first,
+keyless services, no new permissions):
+
+| # | Tool | Why it makes v1 |
+| --- | --- | --- |
+| 1 | `calculate` | trivial, used daily, zero permissions |
+| 2 | `fetch_url` | foundation for everything web; summarize any page |
+| 3 | `to_table` | everyday data (CSV/JSON exports, logs, budgets) |
+| 4 | `json_tool` | validate/format/query — constant dev use |
+| 5 | `clipboard` (read/write) | native, "copy that", "paste what I copied" |
+| 6 | `notify` | long tasks finish while window is minimized |
+| 7 | `todo_list` | agentic continuity across turns |
+| 8 | `weather` | keyless, the classic everyday ask |
+| 9 | `wikipedia` | keyless factual grounding |
+| 10 | `plot_chart` | data visualization — high visible value |
+
+**Deferred to v1.1+** (full list with notes stays below):
+`web_search` (opt-in key), `read_rss`, `http_request`, `system_status`,
+`search_conversations`, `mermaid`, `extract_text`, `diff_text`, `regex_test`,
+`qr_code`, `text_stats`, `convert_units`, `define_word`, `checksum`,
+`image_edit`, `ocr_image`, `archive`, `download_file`, `git_*`,
+`sqlite_query`, `arxiv_search`, `remember`/`recall`, `remind_me`,
+`capture_screen`, `transcribe`, `speak_text`, `delegate_task`,
+`text_utils`.
+
+Everything below documents the full idea space; the v1 cut is what gets
+built first.
+
 ## Selection principles
 
 - **Everyday value**: each tool should be something a normal user reaches for
@@ -176,12 +206,16 @@
 
 ## Suggested implementation order
 
-1. Tier A 1–4 (`calculate`, `fetch_url`, `to_table`, `json_tool`) — no
-   permissions, immediate everyday value
-2. Tier A 5–7 (clipboard, notify, todo) — native bridge, consent-gated
-3. Tier B (weather, wikipedia, search opt-in, convert_units)
-4. Tier C (extract_text, mermaid, diff_text, regex_test)
-5. Tier D (memory, reminders, screenshot, transcription)
+v1 (the pruned scope):
+1. `calculate`, `json_tool`, `to_table` — no permissions, immediate value
+2. `fetch_url` via `/cors-proxy` (foundation)
+3. `weather`, `wikipedia` — keyless, read-only
+4. `clipboard`, `notify` — native bridge, consent-gated
+5. `todo_list`, `plot_chart` — state + rendering
+
+v1.1+: `web_search` (opt-in), `system_status`, `read_rss`, `http_request`,
+`search_conversations`, `mermaid`, `extract_text`, then the rest of the
+idea space by demand.
 
 ## Cross-cutting
 
