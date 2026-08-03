@@ -27,8 +27,7 @@ function rewrite(path: string, pairs: [string, string][]): void {
  * SvelteKit bakes root absolute /_app/ paths into the SPA fallback because paths.relative
  * does not apply to a depth agnostic fallback page. Rewriting to ./_app/ lets a plain
  * recursive copy of the output into /any/subdir/ resolve assets against the document URL.
- * Runs after adapter-static writes index.html and the PWA plugin writes sw.js, deferred the
- * same way as buildInfoPlugin so the emitted files exist.
+ * Runs after adapter-static writes index.html and the PWA plugin writes sw.js.
  */
 export function relativizeBasePlugin(): Plugin {
 	return {

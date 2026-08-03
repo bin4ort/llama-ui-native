@@ -114,6 +114,13 @@ const SETTINGS_REGISTRY: Record<string, SettingsSectionEntry> = {
 							{ value: 'ru', label: 'Русский', icon: Globe },
 							{ value: 'es', label: 'Español', icon: Globe },
 							{ value: 'fr', label: 'Français', icon: Globe },
+							{ value: 'zh', label: '中文', icon: Globe },
+							{ value: 'ja', label: '日本語', icon: Globe },
+							{ value: 'ko', label: '한국어', icon: Globe },
+							{ value: 'pt', label: 'Português', icon: Globe },
+							{ value: 'it', label: 'Italiano', icon: Globe },
+							{ value: 'tr', label: 'Türkçe', icon: Globe },
+							{ value: 'pl', label: 'Polski', icon: Globe },
 						]
 					},
 					{
@@ -346,14 +353,6 @@ const SETTINGS_REGISTRY: Record<string, SettingsSectionEntry> = {
 				type: SettingsFieldType.CHECKBOX,
 				section: SETTINGS_SECTION_SLUGS.DISPLAY
 			},
-			{
-				key: SETTINGS_KEYS.SHOW_BUILD_VERSION,
-				label: 'Show build version information',
-				help: 'Display the current build version in the bottom-right corner of the interface.',
-				defaultValue: false,
-				type: SettingsFieldType.CHECKBOX,
-				section: SETTINGS_SECTION_SLUGS.DISPLAY
-			}
 		]
 	},
 	[SETTINGS_SECTION_SLUGS.SAMPLING]: {

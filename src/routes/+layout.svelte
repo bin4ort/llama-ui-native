@@ -28,9 +28,7 @@
 	import { conversations } from '$lib/stores/conversations.svelte';
 	import { isMobile } from '$lib/stores/viewport.svelte';
 	import { theme } from '$lib/stores/theme.svelte';
-	import { buildInfoStore } from '$lib/stores/build-info.svelte';
 
-	import { SETTINGS_KEYS } from '$lib/constants';
 
 	let { children } = $props();
 	let innerHeight = $state<number | undefined>();
@@ -43,7 +41,6 @@
 		  }
 		| undefined = $state();
 
-	let showBuildVersion = $derived(config()[SETTINGS_KEYS.SHOW_BUILD_VERSION] as boolean);
 
 	// Keep the hook object intact: destructuring needRefreshByStorage reads the getter once and freezes it
 	const pwa = usePwa();
@@ -284,12 +281,8 @@
 	<Toaster richColors />
 </Tooltip.Provider>
 
-<!-- PWA update prompt + version -->
+<!-- PWA update prompt -->
 <div class="fixed right-4 bottom-4 z-9999 flex flex-col items-end gap-1">
-	{#if showBuildVersion && buildInfoStore.value}
-		<span class="text-[10px] tabular-nums text-muted-foreground">{buildInfoStore.value}</span>
-	{/if}
-
 	<PwaRefreshAlert
 		needRefresh={$needRefresh || pwa.needRefreshByStorage}
 		forceReload={pwa.needRefreshByStorage}

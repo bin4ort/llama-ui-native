@@ -14,6 +14,13 @@ const LANGS = [
   ['EN_FULL', 'en.json'],
   ['ES_FULL', 'es.json'],
   ['FR_FULL', 'fr.json'],
+  ['ZH_FULL', 'zh.json'],
+  ['JA_FULL', 'ja.json'],
+  ['KO_FULL', 'ko.json'],
+  ['PT_FULL', 'pt.json'],
+  ['IT_FULL', 'it.json'],
+  ['TR_FULL', 'tr.json'],
+  ['PL_FULL', 'pl.json'],
 ];
 
 let src = fs.readFileSync(I18N, 'utf8');
