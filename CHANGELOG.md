@@ -9,10 +9,12 @@ Version is kept in `src/lib/constants/app.ts` (mirrored in `server.h` and `packa
 
 - **12 languages**: added 中文 (zh), 日本語 (ja), 한국어 (ko), Português (pt),
   Italiano (it), Türkçe (tr), Polski (pl) — full 617-key dictionaries each
-- **Bundled CJK fonts** (Noto Sans SC/JP/KR variable woff2) so Chinese, Japanese
-  and Korean render correctly even without system fonts; per-language font
-  stack ordering via `html:lang`
-- **Language dropdown** now opens as a fixed 5-option scrollable window
+- **Bundled fonts** so every language renders correctly without system fonts:
+  Noto Sans (Latin/Cyrillic/Greek/Vietnamese — covers de/es/fr/it/pt/tr/pl/ru)
+  and Noto Sans SC/JP/KR (CJK); per-language font stack ordering via
+  `html:lang`
+- **Language dropdown** opens as a fixed 5-option scrollable window and no
+  longer scrolls the page when the wheel hits the top/bottom of the list
 
 ### Removed
 

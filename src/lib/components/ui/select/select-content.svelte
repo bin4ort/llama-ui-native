@@ -67,13 +67,24 @@
 
 		const stopWheelPropagation = (event: WheelEvent) => {
 			event.stopPropagation();
+
+			// At the top/bottom of the list the wheel would otherwise scroll
+			// chain into the page behind the dropdown; prevent that while the
+			// cursor is over the open menu.
+			const { scrollTop, scrollHeight, clientHeight } = element;
+			const atTop = scrollTop <= 0;
+			const atBottom = scrollTop + clientHeight >= scrollHeight - 1;
+
+			if ((atTop && event.deltaY < 0) || (atBottom && event.deltaY > 0)) {
+				event.preventDefault();
+			}
 		};
 
 		const stopTouchPropagation = (event: TouchEvent) => {
 			event.stopPropagation();
 		};
 
-		element.addEventListener('wheel', stopWheelPropagation);
+		element.addEventListener('wheel', stopWheelPropagation, { passive: false });
 		element.addEventListener('touchmove', stopTouchPropagation);
 
 		cleanupInternalListeners = () => {

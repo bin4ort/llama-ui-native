@@ -1,8 +1,21 @@
 /*
- * Bundled CJK fonts (Noto Sans SC/JP/KR, variable, woff2) so Chinese,
- * Japanese and Korean render correctly even on systems without CJK fonts
- * installed. Fetched from google/fonts, converted with woff2_compress.
+ * Bundled fonts so all 12 UI languages render correctly even on systems
+ * without the matching system fonts:
+ *   - Noto Sans (variable) — Latin, Latin-ext, Greek, Cyrillic, Vietnamese:
+ *     covers de/es/fr/it/pt/tr/pl/ru (+ vn)
+ *   - Noto Sans SC / JP / KR (variable) — Simplified Chinese / Japanese /
+ *     Korean: covers zh, ja, ko and CJK text in chat content
+ * Fetched from google/fonts, converted with woff2_compress.
  */
+
+@font-face {
+	font-family: 'Noto Sans';
+	src: url('./NotoSans-Variable.woff2') format('woff2-variations');
+	font-weight: 100 900;
+	font-stretch: 62.5% 100%;
+	font-style: normal;
+	font-display: swap;
+}
 
 @font-face {
 	font-family: 'Noto Sans SC';
@@ -29,35 +42,35 @@
 }
 
 /*
- * CJK fonts always participate in the stack (chat content may contain CJK
- * text in any language). They sit after the system fonts so Latin text keeps
- * its native look. The active UI language reorders the stack so kanji/hanzi/
- * hangul render with the typographically correct variant.
+ * Bundled fonts participate in every stack (chat content may contain any
+ * script in any language) but sit after the system fonts so Latin text keeps
+ * its native look. The active UI language reorders the stack so the matching
+ * script renders first (kanji/hanzi/hangul, and Latin/Cyrillic on CJK UIs).
  */
 :root {
 	--font-sans:
 		ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-		'Noto Sans SC', 'Noto Sans JP', 'Noto Sans KR', sans-serif, 'Apple Color Emoji',
-		'Segoe UI Emoji', 'Noto Color Emoji';
+		'Noto Sans', 'Noto Sans SC', 'Noto Sans JP', 'Noto Sans KR', sans-serif,
+		'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
 }
 
 html:lang(zh) {
 	--font-sans:
-		'Noto Sans SC', 'Noto Sans JP', 'Noto Sans KR', ui-sans-serif, system-ui, -apple-system,
-		'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji',
-		'Segoe UI Emoji', 'Noto Color Emoji';
+		'Noto Sans SC', 'Noto Sans JP', 'Noto Sans KR', 'Noto Sans', ui-sans-serif, system-ui,
+		-apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif,
+		'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
 }
 
 html:lang(ja) {
 	--font-sans:
-		'Noto Sans JP', 'Noto Sans SC', 'Noto Sans KR', ui-sans-serif, system-ui, -apple-system,
-		'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji',
-		'Segoe UI Emoji', 'Noto Color Emoji';
+		'Noto Sans JP', 'Noto Sans SC', 'Noto Sans KR', 'Noto Sans', ui-sans-serif, system-ui,
+		-apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif,
+		'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
 }
 
 html:lang(ko) {
 	--font-sans:
-		'Noto Sans KR', 'Noto Sans SC', 'Noto Sans JP', ui-sans-serif, system-ui, -apple-system,
-		'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji',
-		'Segoe UI Emoji', 'Noto Color Emoji';
+		'Noto Sans KR', 'Noto Sans SC', 'Noto Sans JP', 'Noto Sans', ui-sans-serif, system-ui,
+		-apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif,
+		'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
 }
