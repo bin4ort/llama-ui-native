@@ -63,18 +63,25 @@ npm run build
 1. Copy `frontend/v2/lang/en.json` to `frontend/v2/lang/{code}.json`
 2. Translate all values (keep keys in English)
 3. Add the language option in `src/lib/constants/settings-registry.ts` (line ~112)
-4. Add the language dict in `src/lib/stores/i18n.svelte.ts` (follow the `DE`/`RU` pattern)
-5. Add the language code handling in the `applyCode()` function
+4. Regenerate the embedded dict in `src/lib/stores/i18n.svelte.ts`:
+   `node scripts/sync-embedded-dicts.mjs`
+5. Add the language code in the `applyCode()` function of `src/lib/stores/i18n.svelte.ts`
 6. Run `npm run build` and commit
 
 ## Translation Architecture
 
-The app uses SvelteKit's native `$state` reactivity for translations:
+All UI strings are looked up by English key through a single mechanism:
 
-- **Named properties**: `tr.Settings`, `tr.General` etc. — instant via Svelte reactivity
-- **Dict entries**: `tr.dict[key]` — populated from inline `*_FULL` dicts at runtime
-- **Templates**: All UI text uses `{tr.dict["key"] || "key"}` for reactive updates
-- **Fallback**: `i18n.js` DOM-walking script catches any remaining hardcoded text
+- **`t("key")`** in templates and scripts — the canonical lookup
+- **`tr["key"]` / `tr.Settings` / `tr.dict["key"]`** — all equivalent; every key of
+  the active language dict is mirrored onto `tr` itself by `applyDict()`
+- **Source of truth**: `frontend/v2/lang/*.json`. Edit these files, then run
+  `node scripts/sync-embedded-dicts.mjs` to regenerate the inline `*_FULL` dicts
+  in `src/lib/stores/i18n.svelte.ts` (embedded = no async fetch, no stale data)
+- **Fallback**: `t("key")` returns the key itself when no translation exists
+
+The `applyLang(code)` function switches languages at runtime (reactively via
+`$state`); the user's choice is persisted in `localStorage['lang']`.
 
 ## Notes
 

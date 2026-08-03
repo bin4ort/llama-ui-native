@@ -201,7 +201,7 @@
 										</Tooltip.Trigger>
 
 										<Tooltip.Content side="right">
-											<p>{item.disabledTooltip}</p>
+											<p>{t(item.disabledTooltip)}</p>
 										</Tooltip.Content>
 									</Tooltip.Root>
 								{/if}
@@ -223,7 +223,7 @@
 						<span class="flex-1">{t("MCP Servers")}</span>
 
 						<span class="text-xs text-muted-foreground">
-							{mcpServers.length} server{mcpServers.length !== 1 ? 's' : ''}
+							{mcpServers.length} {t(mcpServers.length === 1 ? 'server' : 'servers')}
 						</span>
 					</Collapsible.Trigger>
 

@@ -120,7 +120,7 @@
 							>
 								<item.icon class={ICON_CLASS_DEFAULT} />
 
-								<span>{item.label}</span>
+								<span>{tr[item.label] || item.label}</span>
 							</DropdownMenu.Item>
 						{:else if item.disabledTooltip}
 							<Tooltip.Root delayDuration={TOOLTIP_DELAY_DURATION}>
@@ -133,14 +133,14 @@
 											>
 												<item.icon class={ICON_CLASS_DEFAULT} />
 
-												<span>{item.label}</span>
+												<span>{tr[item.label] || item.label}</span>
 											</DropdownMenu.Item>
 										</div>
 									{/snippet}
 								</Tooltip.Trigger>
 
 								<Tooltip.Content side="right">
-									<p>{item.disabledTooltip}</p>
+									<p>{t(item.disabledTooltip)}</p>
 								</Tooltip.Content>
 							</Tooltip.Root>
 						{/if}

@@ -2,6 +2,7 @@
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import type { Component, Snippet } from 'svelte';
 	import { KeyboardKey } from '$lib/enums';
+	import { t } from '$lib/stores/i18n.svelte';
 
 	interface Props {
 		open: boolean;
@@ -56,11 +57,11 @@
 
 					<IconComponent class="h-5 w-5 {variant === 'destructive' ? 'text-destructive' : ''}" />
 				{/if}
-				{title}
+				{t(title)}
 			</AlertDialog.Title>
 
 			<AlertDialog.Description>
-				{description}
+				{t(description)}
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 
@@ -69,12 +70,12 @@
 		{/if}
 
 		<AlertDialog.Footer>
-			<AlertDialog.Cancel onclick={onCancel}>{cancelText}</AlertDialog.Cancel>
+			<AlertDialog.Cancel onclick={onCancel}>{t(cancelText)}</AlertDialog.Cancel>
 			<AlertDialog.Action
 				onclick={onConfirm}
 				class={variant === 'destructive' ? 'bg-destructive text-white hover:bg-destructive/80' : ''}
 			>
-				{confirmText}
+				{t(confirmText)}
 			</AlertDialog.Action>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>

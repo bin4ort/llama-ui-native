@@ -3,6 +3,7 @@
 	import { mcpStore } from '$lib/stores/mcp.svelte';
 	import { conversationsStore } from '$lib/stores/conversations.svelte';
 	import { toolsStore } from '$lib/stores/tools.svelte';
+	import { t } from '$lib/stores/i18n.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import * as Empty from '$lib/components/ui/empty';
 	import { ActionIcon, McpServerCard, McpServerCardSkeleton } from '$lib/components/app';
@@ -80,7 +81,7 @@
 		<div class="flex items-center gap-2">
 			<McpLogo class="h-5 w-5 md:h-6 md:w-6" />
 
-			<h1 class="text-lg font-semibold md:text-2xl">MCP Servers</h1>
+			<h1 class="text-lg font-semibold md:text-2xl">{t("MCP Servers")}</h1>
 		</div>
 	</div>
 
@@ -94,16 +95,16 @@
 						<Plus />
 					</Empty.Media>
 
-					<Empty.Title>Add your first MCP server</Empty.Title>
+					<Empty.Title>{t("Add your first MCP server")}</Empty.Title>
 
-					<Empty.Description>Connect a remote MCP server by URL.</Empty.Description>
+					<Empty.Description>{t("Connect a remote MCP server by URL.")}</Empty.Description>
 				</Empty.Header>
 
 				<Empty.Content>
 					<Button size="sm" onclick={() => (isAddingServer = true)}>
 						<Plus />
 
-						Add New Server
+						{t("Add New Server")}
 					</Button>
 				</Empty.Content>
 			</Empty.Root>
@@ -143,9 +144,9 @@
 							<Plus />
 						</Empty.Media>
 
-						<Empty.Title>Add another MCP server</Empty.Title>
+						<Empty.Title>{t("Add another MCP server")}</Empty.Title>
 
-						<Empty.Description>Connect a remote MCP server by URL.</Empty.Description>
+						<Empty.Description>{t("Connect a remote MCP server by URL.")}</Empty.Description>
 					</Empty.Header>
 
 					<Empty.Content>

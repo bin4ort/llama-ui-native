@@ -168,12 +168,7 @@
 			</div>
 
 			<span class="text-xs text-muted-foreground">
-				({serverRes.resources.length} {t("resource")}{serverRes.resources.length !== 1
-					? t("s")
-					: ''}{#if hasTemplates}, {serverRes.templates.length} {t("template")}{serverRes.templates
-						.length !== 1
-						? t("s")
-						: ''}{/if})
+				({serverRes.resources.length} {t(serverRes.resources.length === 1 ? 'resource' : 'resources')}{#if hasTemplates}, {serverRes.templates.length} {t(serverRes.templates.length === 1 ? 'template' : 'templates')}{/if})
 			</span>
 		</span>
 

@@ -10,6 +10,7 @@
 		SettingsFooter
 	} from '$lib/components/app/settings';
 	import { config, settingsStore } from '$lib/stores/settings.svelte';
+	import { t } from '$lib/stores/i18n.svelte';
 	import {
 		NUMERIC_FIELDS,
 		POSITIVE_INTEGER_FIELDS,
@@ -149,7 +150,7 @@
 				<div class="grid">
 					<div class="mb-6 flex items-center gap-2 border-b border-border/30 pb-6 md:flex">
 						<currentSection.icon class="h-5 w-5" />
-						<h3 class="text-lg font-semibold">{currentSection.title}</h3>
+						<h3 class="text-lg font-semibold">{t(currentSection.title)}</h3>
 					</div>
 
 					{#if currentSection.title === SETTINGS_SECTION_TITLES.TOOLS}
@@ -169,7 +170,7 @@
 								<div class="flex justify-end">
 									<Button variant="outline" onclick={() => window.location.reload()}>
 										<RefreshCw class="h-3 w-3" />
-										Reload app
+										{t("Reload app")}
 									</Button>
 								</div>
 							{/if}

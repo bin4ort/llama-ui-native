@@ -1,5 +1,5 @@
 <script lang="ts">
-import { tr } from '$lib/stores/i18n.svelte';
+import { tr, t } from '$lib/stores/i18n.svelte';
 	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
 	import { Settings, ChevronLeft, ChevronRight } from '@lucide/svelte';
 	import { onMount, tick } from 'svelte';
@@ -36,7 +36,7 @@ import { tr } from '$lib/stores/i18n.svelte';
 	<div class="flex items-center gap-2 px-4 pt-4 pb-2 md:pt-6">
 		<Settings class="h-5 w-5 md:h-6 md:w-6" />
 
-		<h1 class="text-xl font-semibold md:text-2xl">Settings</h1>
+		<h1 class="text-xl font-semibold md:text-2xl">{t("Settings")}</h1>
 	</div>
 
 	<div class="border-b border-border/30 py-2">

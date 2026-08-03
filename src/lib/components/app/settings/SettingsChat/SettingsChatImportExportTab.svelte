@@ -7,6 +7,7 @@
 	} from '$lib/components/app';
 	import { createMessageCountMap } from '$lib/utils';
 	import { settingsStore } from '$lib/stores/settings.svelte';
+	import { t } from '$lib/stores/i18n.svelte';
 	import { conversationsStore, conversations } from '$lib/stores/conversations.svelte';
 	import { toast } from 'svelte-sonner';
 	import { fade } from 'svelte/transition';
@@ -58,10 +59,10 @@
 
 			showSettingsExportSummary = true;
 			showSettingsImportSummary = false;
-			toast.success('Settings exported');
+			toast.success(t('Settings exported'));
 		} catch (err) {
 			console.error('Failed to export settings:', err);
-			toast.error('Failed to export settings');
+			toast.error(t('Failed to export settings'));
 		}
 	}
 
@@ -92,10 +93,10 @@
 
 					showSettingsImportSummary = true;
 					showSettingsExportSummary = false;
-					toast.success('Settings imported successfully');
+					toast.success(t('Settings imported successfully'));
 				} catch (err) {
 					console.error('Failed to import settings:', err);
-					toast.error('Failed to import settings');
+					toast.error(t('Failed to import settings'));
 				}
 			};
 
@@ -110,7 +111,7 @@
 		try {
 			const allConversations = conversations();
 			if (allConversations.length === 0) {
-				toast.info('No conversations to export');
+				toast.info(t('No conversations to export'));
 				return;
 			}
 
@@ -126,7 +127,7 @@
 			showExportDialog = true;
 		} catch (err) {
 			console.error('Failed to load conversations:', err);
-			alert('Failed to load conversations');
+			alert(t('Failed to load conversations'));
 		}
 	}
 
@@ -151,7 +152,7 @@
 			showExportDialog = false;
 		} catch (err) {
 			console.error('Export failed:', err);
-			alert('Failed to export conversations');
+			alert(t('Failed to export conversations'));
 		}
 	}
 
@@ -181,14 +182,14 @@
 					const message = err instanceof Error ? err.message : 'Unknown error';
 
 					console.error('Failed to parse file:', err);
-					alert(`Failed to parse file: ${message}`);
+					alert(t('Failed to parse file') + ': ' + message);
 				}
 			};
 
 			input.click();
 		} catch (err) {
 			console.error('Import failed:', err);
-			alert('Failed to import conversations');
+			alert(t('Failed to import conversations'));
 		}
 	}
 
@@ -207,7 +208,7 @@
 			showImportDialog = false;
 		} catch (err) {
 			console.error('Import failed:', err);
-			alert('Failed to import conversations. Please check the file format.');
+			alert(t('Failed to import conversations. Please check the file format.'));
 		}
 	}
 
@@ -216,14 +217,14 @@
 			const allConversations = conversations();
 
 			if (allConversations.length === 0) {
-				toast.info('No conversations to delete');
+				toast.info(t('No conversations to delete'));
 				return;
 			}
 
 			showDeleteDialog = true;
 		} catch (err) {
 			console.error('Failed to load conversations for deletion:', err);
-			toast.error('Failed to load conversations');
+			toast.error(t('Failed to load conversations'));
 		}
 	}
 
@@ -243,7 +244,7 @@
 </script>
 
 <div class="space-y-12" in:fade={{ duration: 150 }}>
-	<SettingsGroup title="Conversations">
+	<SettingsGroup title={t("Conversations")}>
 		<SettingsChatImportExportSection
 			title="Export"
 			description="Download your conversations as a ZIP of JSONL files. This includes all messages, attachments, and conversation history."
@@ -274,7 +275,7 @@
 		/>
 	</SettingsGroup>
 
-	<SettingsGroup title="Settings">
+	<SettingsGroup title={t("Settings")}>
 		<SettingsChatImportExportSection
 			title="Export"
 			description="Export your chat settings and preferences as a JSON file."

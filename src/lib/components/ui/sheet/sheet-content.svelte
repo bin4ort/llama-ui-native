@@ -1,5 +1,6 @@
 <script lang="ts" module>
 	import { tv, type VariantProps } from 'tailwind-variants';
+	import { t } from '$lib/stores/i18n.svelte';
 	export const sheetVariants = tv({
 		base: `border-border/30 dark:border-border/20 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fill-mode-forwards fixed z-50 flex flex-col gap-4 shadow-sm transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 ${PANEL_CLASSES}`,
 		variants: {
@@ -55,7 +56,7 @@
 			class="absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:pointer-events-none"
 		>
 			<XIcon class="size-4" />
-			<span class="sr-only">Close</span>
+			<span class="sr-only">{t("Close")}</span>
 		</SheetPrimitive.Close>
 	</SheetPrimitive.Content>
 </SheetPrimitive.Portal>
