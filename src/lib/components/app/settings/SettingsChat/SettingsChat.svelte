@@ -130,7 +130,6 @@
 	});
 </script>
 
-// Snippet rendered right under the "Default system prompt" field.
 {#snippet systemPromptPresetsSnippet()}
 	<SettingsChatSystemPromptPresets />
 {/snippet}
