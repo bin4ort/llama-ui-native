@@ -675,5 +675,6 @@
   "Allow use of {tool}?": "{tool} の使用を許可しますか？",
   "Always allow {tool} tool": "{tool} ツールを常に許可",
   "Always allow all tools from {server}": "{server} のすべてのツールを常に許可",
-  "Approve all tools from {server}": "{server} のすべてのツールを承認"
+  "Approve all tools from {server}": "{server} のすべてのツールを承認",
+  "tools": "ツール"
 }

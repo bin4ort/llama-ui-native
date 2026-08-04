@@ -698,6 +698,7 @@ const DE_FULL: Record<string,string> = {
   "Always allow {tool} tool": "{tool}-Werkzeug immer erlauben",
   "Always allow all tools from {server}": "Alle Werkzeuge aus {server} immer erlauben",
   "Approve all tools from {server}": "Alle Werkzeuge aus {server} genehmigen",
+  "tools": "Werkzeuge",
 };
 
 const RU_FULL: Record<string,string> = {
@@ -1378,6 +1379,7 @@ const RU_FULL: Record<string,string> = {
   "Always allow {tool} tool": "Всегда разрешать инструмент {tool}",
   "Always allow all tools from {server}": "Всегда разрешать все инструменты из {server}",
   "Approve all tools from {server}": "Одобрить все инструменты из {server}",
+  "tools": "инструментов",
 };
 
 const EN_FULL: Record<string,string> = {
@@ -2058,6 +2060,7 @@ const EN_FULL: Record<string,string> = {
   "Always allow {tool} tool": "Always allow {tool} tool",
   "Always allow all tools from {server}": "Always allow all tools from {server}",
   "Approve all tools from {server}": "Approve all tools from {server}",
+  "tools": "tools",
 };
 
 const ES_FULL: Record<string,string> = {
@@ -2738,6 +2741,7 @@ const ES_FULL: Record<string,string> = {
   "Always allow {tool} tool": "Permitir siempre la herramienta {tool}",
   "Always allow all tools from {server}": "Permitir siempre todas las herramientas de {server}",
   "Approve all tools from {server}": "Aprobar todas las herramientas de {server}",
+  "tools": "herramientas",
 };
 
 const FR_FULL: Record<string,string> = {
@@ -3418,6 +3422,7 @@ const FR_FULL: Record<string,string> = {
   "Always allow {tool} tool": "Toujours autoriser l'outil {tool}",
   "Always allow all tools from {server}": "Toujours autoriser tous les outils de {server}",
   "Approve all tools from {server}": "Approuver tous les outils de {server}",
+  "tools": "outils",
 };
 
 const ZH_FULL: Record<string,string> = {
@@ -4098,6 +4103,7 @@ const ZH_FULL: Record<string,string> = {
   "Always allow {tool} tool": "始终允许 {tool} 工具",
   "Always allow all tools from {server}": "始终允许来自 {server} 的所有工具",
   "Approve all tools from {server}": "批准来自 {server} 的所有工具",
+  "tools": "个工具",
 };
 
 const JA_FULL: Record<string,string> = {
@@ -4778,6 +4784,7 @@ const JA_FULL: Record<string,string> = {
   "Always allow {tool} tool": "{tool} ツールを常に許可",
   "Always allow all tools from {server}": "{server} のすべてのツールを常に許可",
   "Approve all tools from {server}": "{server} のすべてのツールを承認",
+  "tools": "ツール",
 };
 
 const KO_FULL: Record<string,string> = {
@@ -5458,6 +5465,7 @@ const KO_FULL: Record<string,string> = {
   "Always allow {tool} tool": "{tool} 도구를 항상 허용",
   "Always allow all tools from {server}": "{server}의 모든 도구를 항상 허용",
   "Approve all tools from {server}": "{server}의 모든 도구 승인",
+  "tools": "도구",
 };
 
 const PT_FULL: Record<string,string> = {
@@ -6138,6 +6146,7 @@ const PT_FULL: Record<string,string> = {
   "Always allow {tool} tool": "Permitir sempre a ferramenta {tool}",
   "Always allow all tools from {server}": "Permitir sempre todas as ferramentas de {server}",
   "Approve all tools from {server}": "Aprovar todas as ferramentas de {server}",
+  "tools": "ferramentas",
 };
 
 const IT_FULL: Record<string,string> = {
@@ -6818,6 +6827,7 @@ const IT_FULL: Record<string,string> = {
   "Always allow {tool} tool": "Consenti sempre lo strumento {tool}",
   "Always allow all tools from {server}": "Consenti sempre tutti gli strumenti di {server}",
   "Approve all tools from {server}": "Approva tutti gli strumenti di {server}",
+  "tools": "strumenti",
 };
 
 const TR_FULL: Record<string,string> = {
@@ -7498,6 +7508,7 @@ const TR_FULL: Record<string,string> = {
   "Always allow {tool} tool": "{tool} aracına her zaman izin ver",
   "Always allow all tools from {server}": "{server} kaynağındaki tüm araçlara her zaman izin ver",
   "Approve all tools from {server}": "{server} kaynağındaki tüm araçları onayla",
+  "tools": "araç",
 };
 
 const PL_FULL: Record<string,string> = {
@@ -8178,6 +8189,7 @@ const PL_FULL: Record<string,string> = {
   "Always allow {tool} tool": "Zawsze zezwalaj na narzędzie {tool}",
   "Always allow all tools from {server}": "Zawsze zezwalaj na wszystkie narzędzia z {server}",
   "Approve all tools from {server}": "Zatwierdź wszystkie narzędzia z {server}",
+  "tools": "narzędzi",
 };
 function applyDict(dict: Record<string,string>) {
   // Mirror every key onto tr so all lookup styles resolve:

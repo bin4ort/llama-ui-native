@@ -675,5 +675,6 @@
   "Allow use of {tool}?": "{tool} 사용을 허용하시겠습니까?",
   "Always allow {tool} tool": "{tool} 도구를 항상 허용",
   "Always allow all tools from {server}": "{server}의 모든 도구를 항상 허용",
-  "Approve all tools from {server}": "{server}의 모든 도구 승인"
+  "Approve all tools from {server}": "{server}의 모든 도구 승인",
+  "tools": "도구"
 }

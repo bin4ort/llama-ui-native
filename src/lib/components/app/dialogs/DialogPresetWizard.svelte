@@ -139,7 +139,7 @@
 				{#if draft}
 					<div class="space-y-2">
 						<Label for="preset-name">{t('Preset name')}</Label>
-						<Input id="preset-name" bind:value={name} placeholder={t('Expert Code Reviewer')} />
+						<Input id="preset-name" bind:value={name} maxlength={50} placeholder={t('Expert Code Reviewer')} />
 
 						<Label for="preset-description">{t('Short description (shown in the picker)')}</Label>
 						<Input

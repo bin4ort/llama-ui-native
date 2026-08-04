@@ -675,5 +675,6 @@
   "Allow use of {tool}?": "Разрешить использование {tool}?",
   "Always allow {tool} tool": "Всегда разрешать инструмент {tool}",
   "Always allow all tools from {server}": "Всегда разрешать все инструменты из {server}",
-  "Approve all tools from {server}": "Одобрить все инструменты из {server}"
+  "Approve all tools from {server}": "Одобрить все инструменты из {server}",
+  "tools": "инструментов"
 }

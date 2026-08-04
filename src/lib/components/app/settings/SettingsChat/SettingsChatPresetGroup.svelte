@@ -210,7 +210,7 @@
 
 							{#if editing}
 								<div class="space-y-2 border-t border-border/40 px-3 py-3">
-									<Input bind:value={buffer.name} placeholder={t('Preset name')} />
+									<Input bind:value={buffer.name} maxlength={50} placeholder={t('Preset name')} />
 									<Textarea
 										bind:value={buffer.description}
 										rows={2}

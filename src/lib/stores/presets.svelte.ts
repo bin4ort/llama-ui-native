@@ -50,6 +50,9 @@ function seedDefaultsIfNeeded(): void {
 	localStorage.setItem(PRESETS_SEEDED_KEY, '1');
 }
 
+/** Maximum preset name length. */
+export const PRESET_NAME_MAX_LENGTH = 50;
+
 class PresetStore {
 	get presets(): SystemPromptPreset[] {
 		seedDefaultsIfNeeded();
@@ -76,7 +79,7 @@ class PresetStore {
 	add(preset: Omit<SystemPromptPreset, 'id'>): SystemPromptPreset {
 		const entry: SystemPromptPreset = {
 			id: crypto.randomUUID(),
-			name: preset.name.trim(),
+			name: preset.name.trim().slice(0, PRESET_NAME_MAX_LENGTH),
 			description: preset.description?.trim() || undefined,
 			content: preset.content,
 			favorite: false
@@ -91,7 +94,10 @@ class PresetStore {
 				p.id === id
 					? {
 							...p,
-							name: patch.name !== undefined ? patch.name.trim() : p.name,
+							name:
+								patch.name !== undefined
+									? patch.name.trim().slice(0, PRESET_NAME_MAX_LENGTH)
+									: p.name,
 							description:
 								patch.description !== undefined
 									? patch.description.trim() || undefined

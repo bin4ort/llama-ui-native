@@ -675,5 +675,6 @@
   "Allow use of {tool}?": "{tool} kullanımına izin verilsin mi?",
   "Always allow {tool} tool": "{tool} aracına her zaman izin ver",
   "Always allow all tools from {server}": "{server} kaynağındaki tüm araçlara her zaman izin ver",
-  "Approve all tools from {server}": "{server} kaynağındaki tüm araçları onayla"
+  "Approve all tools from {server}": "{server} kaynağındaki tüm araçları onayla",
+  "tools": "araç"
 }
