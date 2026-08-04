@@ -142,7 +142,8 @@ export class DatabaseService {
 	static async createSystemMessage(
 		convId: string,
 		systemPrompt: string,
-		parentId: string
+		parentId: string,
+		type: string = MessageRole.SYSTEM
 	): Promise<DatabaseMessage> {
 		const trimmedPrompt = systemPrompt.trim();
 		if (!trimmedPrompt) {
@@ -152,7 +153,7 @@ export class DatabaseService {
 		const systemMessage: DatabaseMessage = {
 			id: uuid(),
 			convId,
-			type: MessageRole.SYSTEM,
+			type,
 			timestamp: Date.now(),
 			role: MessageRole.SYSTEM,
 			content: trimmedPrompt,

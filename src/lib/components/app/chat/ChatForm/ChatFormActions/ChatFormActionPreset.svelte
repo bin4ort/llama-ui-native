@@ -33,7 +33,7 @@
 
 	const activePreset = $derived.by(() => {
 		const am = conversationsStore.activeMessages;
-		const sys = am.find((m) => m.role === 'system');
+		const sys = am.find((m) => m.type === 'persona');
 		const content = typeof sys?.content === 'string' ? sys.content.trim() : '';
 		if (!content) return null;
 		return presetsStore.presets.find((p) => p.content.trim() === content) ?? null;

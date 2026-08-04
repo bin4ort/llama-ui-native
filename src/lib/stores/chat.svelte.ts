@@ -856,7 +856,11 @@ class ChatStore {
 		return message;
 	}
 
-	async addSystemPrompt(initialContent?: string, openEditor: boolean = true): Promise<void> {
+	async addSystemPrompt(
+		initialContent?: string,
+		openEditor: boolean = true,
+		type: string = MessageRole.SYSTEM
+	): Promise<void> {
 		let activeConv = conversationsStore.activeConversation;
 		if (!activeConv) {
 			await conversationsStore.createConversation();
@@ -883,7 +887,8 @@ class ChatStore {
 			const systemMessage = await DatabaseService.createSystemMessage(
 				activeConv.id,
 				initialContent?.trim() || SYSTEM_MESSAGE_PLACEHOLDER,
-				rootId
+				rootId,
+				type
 			);
 			if (firstActiveMessage) {
 				await DatabaseService.updateMessage(firstActiveMessage.id, {
@@ -916,8 +921,10 @@ class ChatStore {
 	}
 
 	/**
-	 * Apply a system prompt (persona) to a conversation: updates the existing
-	 * system message row in place, or creates one if the conversation has none.
+	 * Apply a system prompt (persona) to a conversation: updates the persona
+	 * row (type 'persona') in place, or creates one if the conversation has
+	 * none. The persona stacks with the conversation's own system message
+	 * (context row, type 'system'): both are sent to the server, persona first.
 	 * Used by the persona picker and the change_preset tool.
 	 */
 	async applySystemPromptContent(conversationId: string, content: string): Promise<void> {
@@ -929,29 +936,29 @@ class ChatStore {
 				? rootMessage.id
 				: await DatabaseService.createRootMessage(conversationId);
 
-			const existingSystemMessage = allMessages.find(
-				(m) => m.role === MessageRole.SYSTEM && m.parent === rootId
+			const existingPersona = allMessages.find(
+				(m) => m.type === 'persona' && m.parent === rootId
 			);
 
-			if (existingSystemMessage) {
+			if (existingPersona) {
 				if (!trimmed) {
-					// Empty target: remove the system row cleanly (reparent
+					// Empty target: remove the persona row cleanly (reparent
 					// children to root) so no ghost bubble with only action
 					// icons remains.
 					if (conversationsStore.activeConversation?.id === conversationId) {
-						await this.removeSystemPromptPlaceholder(existingSystemMessage.id);
+						await this.removeSystemPromptPlaceholder(existingPersona.id);
 					} else {
-						await DatabaseService.updateMessage(existingSystemMessage.id, {
+						await DatabaseService.updateMessage(existingPersona.id, {
 							content: ''
 						});
 					}
 					return;
 				}
-				await DatabaseService.updateMessage(existingSystemMessage.id, {
+				await DatabaseService.updateMessage(existingPersona.id, {
 					content: trimmed
 				});
 				const idx = conversationsStore.activeMessages.findIndex(
-					(m) => m.id === existingSystemMessage.id
+					(m) => m.id === existingPersona.id
 				);
 				if (idx !== -1) {
 					conversationsStore.updateMessageAtIndex(idx, { content: trimmed });
@@ -963,9 +970,9 @@ class ChatStore {
 				// Active conversation: reuse the tested addSystemPrompt path
 				// (re-parenting + in-memory list), but with real content and no
 				// auto-opened editor.
-				await this.addSystemPrompt(trimmed, false);
+				await this.addSystemPrompt(trimmed, false, 'persona');
 			} else {
-				await DatabaseService.createSystemMessage(conversationId, trimmed, rootId);
+				await DatabaseService.createSystemMessage(conversationId, trimmed, rootId, 'persona');
 			}
 		} catch (error) {
 			console.error('Failed to apply system prompt content:', error);
@@ -1069,7 +1076,8 @@ class ChatStore {
 					const systemMessage = await DatabaseService.createSystemMessage(
 						currentConv.id,
 						systemPrompt,
-						rootId
+						rootId,
+						'persona'
 					);
 					conversationsStore.addMessageToActive(systemMessage);
 					parentIdForUserMessage = systemMessage.id;

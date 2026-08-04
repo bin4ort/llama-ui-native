@@ -33,7 +33,7 @@
 	// otherwise the default.
 	const activePresetId = $derived.by(() => {
 		const am = conversationsStore.activeMessages;
-		const sys = am.find((m) => m.role === 'system');
+		const sys = am.find((m) => m.type === 'persona');
 		const content = typeof sys?.content === 'string' ? sys.content.trim() : '';
 		if (!content) return PRESET_DEFAULT_ID;
 		return presetsStore.presets.find((p) => p.content.trim() === content)?.id ?? PRESET_DEFAULT_ID;
