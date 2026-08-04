@@ -96,7 +96,7 @@
 <Dialog.Root bind:open onOpenChange={(o) => { if (!o) { searchQuery = ''; showWizard = false; editingId = null; } onOpenChange?.(o); }}>
 	<Dialog.Portal>
 		<Dialog.Overlay class="z-9999" />
-		<Dialog.Content class="z-9999 !max-h-[85dvh] !max-w-xl overflow-x-hidden overflow-y-auto">
+		<Dialog.Content class="z-9999 !max-h-[85dvh] !max-w-2xl overflow-x-hidden overflow-y-auto">
 			<Dialog.Header>
 				<Dialog.Title>{t('Prompt presets')}</Dialog.Title>
 				<Dialog.Description>{t('Pick a prompt preset for this conversation. It applies from the next message.')}</Dialog.Description>
@@ -132,9 +132,9 @@
 											class="flex min-w-0 flex-1 items-center gap-2 px-3 py-2 text-left text-sm"
 											onclick={() => applyPreset(preset)}
 										>
-											<span class="min-w-0 flex-1 truncate">{preset.name}</span>
+											<span class="min-w-0 max-w-72 flex-1 truncate">{preset.name}</span>
 											{#if preset.description}
-												<span class="hidden min-w-0 max-w-[45%] truncate text-xs text-muted-foreground sm:block"
+												<span class="hidden min-w-0 max-w-48 truncate text-xs text-muted-foreground sm:block"
 													>{preset.description}</span
 												>
 											{/if}
