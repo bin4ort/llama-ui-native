@@ -3,6 +3,7 @@
 	import { ChevronDown, ChevronRight } from '@lucide/svelte';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Collapsible from '$lib/components/ui/collapsible';
+	import SettingsChatBuiltinTools from './SettingsChatBuiltinTools.svelte';
 	import { tr } from '$lib/stores/i18n.svelte';
 	import { TruncatedText, McpServerIdentity } from '$lib/components/app';
 	import { toolsStore } from '$lib/stores/tools.svelte';
@@ -119,3 +120,7 @@
 		{/each}
 	</div>
 {/if}
+
+<div class="mt-6">
+	<SettingsChatBuiltinTools />
+</div>

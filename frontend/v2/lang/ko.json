@@ -642,5 +642,17 @@
   "Create a prompt preset": "프롬프트 프리셋 만들기",
   "Pick a prompt preset for this conversation. It applies from the next message.": "이 대화에 사용할 프롬프트 프리셋을 선택하세요. 다음 메시지부터 적용됩니다.",
   "Prompt preset switching tools": "프롬프트 프리셋 전환 도구",
-  "What should the preset do?": "프리셋이 무엇을 해야 하나요?"
+  "What should the preset do?": "프리셋이 무엇을 해야 하나요?",
+  "Built-in tools": "내장 도구",
+  "Calculator": "계산기",
+  "Fetch URL": "URL 가져오기",
+  "Table from data": "데이터로 표 만들기",
+  "JSON helper": "JSON 도우미",
+  "Clipboard": "클립보드",
+  "Notifications": "알림",
+  "Task list": "할 일 목록",
+  "Weather": "날씨",
+  "Wikipedia lookup": "위키백과 조회",
+  "Chart": "차트",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "활성화된 도구는 에이전트 흐름에서 모델에 제공되며 호출 시마다 권한을 묻습니다."
 }

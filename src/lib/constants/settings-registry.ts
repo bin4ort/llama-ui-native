@@ -709,6 +709,76 @@ const NON_UI_SETTINGS: SettingsEntry[] = [
 		type: SettingsFieldType.INPUT
 	},
 	{
+		key: SETTINGS_KEYS.BUILTIN_TOOL_CALCULATE,
+		label: 'Calculator',
+		help: 'Built-in day-to-day tool: evaluate mathematical expressions.',
+		defaultValue: true,
+		type: SettingsFieldType.CHECKBOX
+	},
+	{
+		key: SETTINGS_KEYS.BUILTIN_TOOL_FETCH_URL,
+		label: 'Fetch URL',
+		help: 'Built-in day-to-day tool: read a web page as text.',
+		defaultValue: true,
+		type: SettingsFieldType.CHECKBOX
+	},
+	{
+		key: SETTINGS_KEYS.BUILTIN_TOOL_TO_TABLE,
+		label: 'Table from data',
+		help: 'Built-in day-to-day tool: CSV/TSV/JSON into a markdown table.',
+		defaultValue: true,
+		type: SettingsFieldType.CHECKBOX
+	},
+	{
+		key: SETTINGS_KEYS.BUILTIN_TOOL_JSON,
+		label: 'JSON helper',
+		help: 'Built-in day-to-day tool: validate, format and query JSON.',
+		defaultValue: true,
+		type: SettingsFieldType.CHECKBOX
+	},
+	{
+		key: SETTINGS_KEYS.BUILTIN_TOOL_CLIPBOARD,
+		label: 'Clipboard',
+		help: 'Built-in day-to-day tool: read/write the system clipboard.',
+		defaultValue: true,
+		type: SettingsFieldType.CHECKBOX
+	},
+	{
+		key: SETTINGS_KEYS.BUILTIN_TOOL_NOTIFY,
+		label: 'Notifications',
+		help: 'Built-in day-to-day tool: desktop notifications.',
+		defaultValue: true,
+		type: SettingsFieldType.CHECKBOX
+	},
+	{
+		key: SETTINGS_KEYS.BUILTIN_TOOL_TODO,
+		label: 'Task list',
+		help: 'Built-in day-to-day tool: persistent per-conversation to-do list.',
+		defaultValue: true,
+		type: SettingsFieldType.CHECKBOX
+	},
+	{
+		key: SETTINGS_KEYS.BUILTIN_TOOL_WEATHER,
+		label: 'Weather',
+		help: 'Built-in day-to-day tool: current conditions and forecast (Open-Meteo).',
+		defaultValue: true,
+		type: SettingsFieldType.CHECKBOX
+	},
+	{
+		key: SETTINGS_KEYS.BUILTIN_TOOL_WIKIPEDIA,
+		label: 'Wikipedia lookup',
+		help: 'Built-in day-to-day tool: article summaries for factual grounding.',
+		defaultValue: true,
+		type: SettingsFieldType.CHECKBOX
+	},
+	{
+		key: SETTINGS_KEYS.BUILTIN_TOOL_PLOT_CHART,
+		label: 'Chart',
+		help: 'Built-in day-to-day tool: line/bar charts from data (SVG).',
+		defaultValue: true,
+		type: SettingsFieldType.CHECKBOX
+	},
+	{
 		key: SETTINGS_KEYS.PRESET_TOOLS_ENABLED,
 		label: 'Prompt preset switching tools',
 		help: 'Give the model list_presets and change_preset tools so it can switch the prompt preset of the conversation (permission is still asked per call).',

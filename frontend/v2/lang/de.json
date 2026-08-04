@@ -642,5 +642,17 @@
   "Create a prompt preset": "Prompt-Preset erstellen",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Wählen Sie ein Prompt-Preset für diese Unterhaltung. Es gilt ab der nächsten Nachricht.",
   "Prompt preset switching tools": "Prompt-Preset-Wechselwerkzeuge",
-  "What should the preset do?": "Was soll das Preset tun?"
+  "What should the preset do?": "Was soll das Preset tun?",
+  "Built-in tools": "Eingebaute Werkzeuge",
+  "Calculator": "Taschenrechner",
+  "Fetch URL": "URL abrufen",
+  "Table from data": "Tabelle aus Daten",
+  "JSON helper": "JSON-Helfer",
+  "Clipboard": "Zwischenablage",
+  "Notifications": "Benachrichtigungen",
+  "Task list": "Aufgabenliste",
+  "Weather": "Wetter",
+  "Wikipedia lookup": "Wikipedia-Nachschlagen",
+  "Chart": "Diagramm",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Aktivierte Werkzeuge werden dem Modell in agentischen Abläufen angeboten; die Zustimmung wird weiterhin pro Aufruf erfragt."
 }

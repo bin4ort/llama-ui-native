@@ -642,5 +642,17 @@
   "Create a prompt preset": "プロンプトプリセットを作成",
   "Pick a prompt preset for this conversation. It applies from the next message.": "この会話のプロンプトプリセットを選択してください。次のメッセージから適用されます。",
   "Prompt preset switching tools": "プロンプトプリセット切替ツール",
-  "What should the preset do?": "プリセットに何をさせますか？"
+  "What should the preset do?": "プリセットに何をさせますか？",
+  "Built-in tools": "組み込みツール",
+  "Calculator": "電卓",
+  "Fetch URL": "URLを取得",
+  "Table from data": "データから表を作成",
+  "JSON helper": "JSONヘルパー",
+  "Clipboard": "クリップボード",
+  "Notifications": "通知",
+  "Task list": "タスクリスト",
+  "Weather": "天気",
+  "Wikipedia lookup": "Wikipedia検索",
+  "Chart": "チャート",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "有効なツールはエージェントフローでモデルに提供されます。呼び出しごとに許可が求められます。"
 }

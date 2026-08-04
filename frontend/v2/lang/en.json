@@ -642,5 +642,17 @@
   "Create a prompt preset": "Create a prompt preset",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Pick a prompt preset for this conversation. It applies from the next message.",
   "Prompt preset switching tools": "Prompt preset switching tools",
-  "What should the preset do?": "What should the preset do?"
+  "What should the preset do?": "What should the preset do?",
+  "Built-in tools": "Built-in tools",
+  "Calculator": "Calculator",
+  "Fetch URL": "Fetch URL",
+  "Table from data": "Table from data",
+  "JSON helper": "JSON helper",
+  "Clipboard": "Clipboard",
+  "Notifications": "Notifications",
+  "Task list": "Task list",
+  "Weather": "Weather",
+  "Wikipedia lookup": "Wikipedia lookup",
+  "Chart": "Chart",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Enabled tools are offered to the model in agentic flows; permission is still asked per call."
 }

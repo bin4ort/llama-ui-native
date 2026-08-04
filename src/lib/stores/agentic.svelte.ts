@@ -29,6 +29,8 @@ import { presetsStore } from '$lib/stores/presets.svelte';
 import { permissionsStore } from '$lib/stores/permissions.svelte';
 import { BuiltInTool, ToolSource, ToolPermissionDecision } from '$lib/enums';
 import { PRESET_CHANGE_TOOL, PRESET_LIST_TOOL } from '$lib/constants/presets';
+import { BUILTIN_TOOL_NAMES } from '$lib/constants/builtin-tools';
+import { executeBuiltinTool } from '$lib/services/builtin-tools.service';
 import { SvelteMap } from 'svelte/reactivity';
 import { ToolsService } from '$lib/services/tools.service';
 import { SandboxService } from '$lib/services/sandbox.service';
@@ -876,6 +878,14 @@ class AgenticStore {
 
 									result = `Persona switched to "${preset.name}".`;
 								}
+							} else if ((Object.values(BUILTIN_TOOL_NAMES) as string[]).includes(toolName)) {
+								const executionResult = await executeBuiltinTool(toolName, toolCall.function.arguments, {
+									conversationId
+								});
+
+								result = executionResult.content;
+
+								if (executionResult.isError) toolSuccess = false;
 							} else {
 								const executionResult = await SandboxService.executeTool(
 									toolName,

@@ -11,6 +11,7 @@ import {
 	TOOL_SERVER_LABELS
 } from '$lib/constants';
 import { buildChangePresetToolDefinition, buildListPresetsToolDefinition } from '$lib/constants/presets';
+import { buildBuiltinToolDefinitions } from '$lib/constants/builtin-tools';
 
 import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 
@@ -154,6 +155,8 @@ class ToolsStore {
 		if (config()[SETTINGS_KEYS.PRESET_TOOLS_ENABLED]) {
 			tools.push(buildListPresetsToolDefinition(), buildChangePresetToolDefinition());
 		}
+
+		tools.push(...buildBuiltinToolDefinitions(config()));
 
 		return tools;
 	}

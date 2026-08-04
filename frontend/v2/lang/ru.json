@@ -642,5 +642,17 @@
   "Create a prompt preset": "Создать пресет промпта",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Выберите пресет промпта для этой беседы. Он применится со следующего сообщения.",
   "Prompt preset switching tools": "Инструменты смены пресетов промптов",
-  "What should the preset do?": "Что должен делать пресет?"
+  "What should the preset do?": "Что должен делать пресет?",
+  "Built-in tools": "Встроенные инструменты",
+  "Calculator": "Калькулятор",
+  "Fetch URL": "Загрузить URL",
+  "Table from data": "Таблица из данных",
+  "JSON helper": "JSON-помощник",
+  "Clipboard": "Буфер обмена",
+  "Notifications": "Уведомления",
+  "Task list": "Список задач",
+  "Weather": "Погода",
+  "Wikipedia lookup": "Справка Википедии",
+  "Chart": "Диаграмма",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Включённые инструменты предлагаются модели в агентных потоках; разрешение по-прежнему запрашивается на каждый вызов."
 }

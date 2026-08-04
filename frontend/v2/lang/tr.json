@@ -642,5 +642,17 @@
   "Create a prompt preset": "İstem hazır ayarı oluştur",
   "Pick a prompt preset for this conversation. It applies from the next message.": "Bu sohbet için bir istem hazır ayarı seçin. Bir sonraki mesajdan itibaren geçerli olur.",
   "Prompt preset switching tools": "İstem hazır ayarı değiştirme araçları",
-  "What should the preset do?": "Hazır ayar ne yapmalı?"
+  "What should the preset do?": "Hazır ayar ne yapmalı?",
+  "Built-in tools": "Yerleşik araçlar",
+  "Calculator": "Hesap makinesi",
+  "Fetch URL": "URL getir",
+  "Table from data": "Verilerden tablo",
+  "JSON helper": "JSON yardımcısı",
+  "Clipboard": "Pano",
+  "Notifications": "Bildirimler",
+  "Task list": "Görev listesi",
+  "Weather": "Hava durumu",
+  "Wikipedia lookup": "Vikipedi araması",
+  "Chart": "Grafik",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Etkin araçlar, aracı akışlarında modele sunulur; her çağrıda izin yine istenir."
 }

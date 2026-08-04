@@ -665,6 +665,18 @@ const DE_FULL: Record<string,string> = {
   "Pick a prompt preset for this conversation. It applies from the next message.": "Wählen Sie ein Prompt-Preset für diese Unterhaltung. Es gilt ab der nächsten Nachricht.",
   "Prompt preset switching tools": "Prompt-Preset-Wechselwerkzeuge",
   "What should the preset do?": "Was soll das Preset tun?",
+  "Built-in tools": "Eingebaute Werkzeuge",
+  "Calculator": "Taschenrechner",
+  "Fetch URL": "URL abrufen",
+  "Table from data": "Tabelle aus Daten",
+  "JSON helper": "JSON-Helfer",
+  "Clipboard": "Zwischenablage",
+  "Notifications": "Benachrichtigungen",
+  "Task list": "Aufgabenliste",
+  "Weather": "Wetter",
+  "Wikipedia lookup": "Wikipedia-Nachschlagen",
+  "Chart": "Diagramm",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Aktivierte Werkzeuge werden dem Modell in agentischen Abläufen angeboten; die Zustimmung wird weiterhin pro Aufruf erfragt.",
 };
 
 const RU_FULL: Record<string,string> = {
@@ -1312,6 +1324,18 @@ const RU_FULL: Record<string,string> = {
   "Pick a prompt preset for this conversation. It applies from the next message.": "Выберите пресет промпта для этой беседы. Он применится со следующего сообщения.",
   "Prompt preset switching tools": "Инструменты смены пресетов промптов",
   "What should the preset do?": "Что должен делать пресет?",
+  "Built-in tools": "Встроенные инструменты",
+  "Calculator": "Калькулятор",
+  "Fetch URL": "Загрузить URL",
+  "Table from data": "Таблица из данных",
+  "JSON helper": "JSON-помощник",
+  "Clipboard": "Буфер обмена",
+  "Notifications": "Уведомления",
+  "Task list": "Список задач",
+  "Weather": "Погода",
+  "Wikipedia lookup": "Справка Википедии",
+  "Chart": "Диаграмма",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Включённые инструменты предлагаются модели в агентных потоках; разрешение по-прежнему запрашивается на каждый вызов.",
 };
 
 const EN_FULL: Record<string,string> = {
@@ -1959,6 +1983,18 @@ const EN_FULL: Record<string,string> = {
   "Pick a prompt preset for this conversation. It applies from the next message.": "Pick a prompt preset for this conversation. It applies from the next message.",
   "Prompt preset switching tools": "Prompt preset switching tools",
   "What should the preset do?": "What should the preset do?",
+  "Built-in tools": "Built-in tools",
+  "Calculator": "Calculator",
+  "Fetch URL": "Fetch URL",
+  "Table from data": "Table from data",
+  "JSON helper": "JSON helper",
+  "Clipboard": "Clipboard",
+  "Notifications": "Notifications",
+  "Task list": "Task list",
+  "Weather": "Weather",
+  "Wikipedia lookup": "Wikipedia lookup",
+  "Chart": "Chart",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Enabled tools are offered to the model in agentic flows; permission is still asked per call.",
 };
 
 const ES_FULL: Record<string,string> = {
@@ -2606,6 +2642,18 @@ const ES_FULL: Record<string,string> = {
   "Pick a prompt preset for this conversation. It applies from the next message.": "Elige un preajuste de prompt para esta conversación. Se aplica a partir del siguiente mensaje.",
   "Prompt preset switching tools": "Herramientas de cambio de preajustes",
   "What should the preset do?": "¿Qué debe hacer el ajuste preestablecido?",
+  "Built-in tools": "Herramientas integradas",
+  "Calculator": "Calculadora",
+  "Fetch URL": "Obtener URL",
+  "Table from data": "Tabla a partir de datos",
+  "JSON helper": "Asistente JSON",
+  "Clipboard": "Portapapeles",
+  "Notifications": "Notificaciones",
+  "Task list": "Lista de tareas",
+  "Weather": "Clima",
+  "Wikipedia lookup": "Consulta de Wikipedia",
+  "Chart": "Gráfico",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Las herramientas activadas se ofrecen al modelo en flujos de agente; se sigue pidiendo permiso en cada llamada.",
 };
 
 const FR_FULL: Record<string,string> = {
@@ -3253,6 +3301,18 @@ const FR_FULL: Record<string,string> = {
   "Pick a prompt preset for this conversation. It applies from the next message.": "Choisissez un préréglage de prompt pour cette conversation. Il s'applique au prochain message.",
   "Prompt preset switching tools": "Outils de changement de préréglages",
   "What should the preset do?": "Que doit faire le préréglage ?",
+  "Built-in tools": "Outils intégrés",
+  "Calculator": "Calculatrice",
+  "Fetch URL": "Récupérer une URL",
+  "Table from data": "Tableau à partir de données",
+  "JSON helper": "Assistant JSON",
+  "Clipboard": "Presse-papiers",
+  "Notifications": "Notifications",
+  "Task list": "Liste de tâches",
+  "Weather": "Météo",
+  "Wikipedia lookup": "Recherche Wikipédia",
+  "Chart": "Graphique",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Les outils activés sont proposés au modèle dans les flux d'agent ; la permission est toujours demandée à chaque appel.",
 };
 
 const ZH_FULL: Record<string,string> = {
@@ -3900,6 +3960,18 @@ const ZH_FULL: Record<string,string> = {
   "Pick a prompt preset for this conversation. It applies from the next message.": "为此对话选择提示词预设。它从下一条消息开始生效。",
   "Prompt preset switching tools": "提示词预设切换工具",
   "What should the preset do?": "这个预设应该做什么？",
+  "Built-in tools": "内置工具",
+  "Calculator": "计算器",
+  "Fetch URL": "获取网址",
+  "Table from data": "数据转表格",
+  "JSON helper": "JSON 助手",
+  "Clipboard": "剪贴板",
+  "Notifications": "通知",
+  "Task list": "任务列表",
+  "Weather": "天气",
+  "Wikipedia lookup": "维基百科查询",
+  "Chart": "图表",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "启用的工具会在智能体流程中提供给模型；每次调用仍会请求权限。",
 };
 
 const JA_FULL: Record<string,string> = {
@@ -4547,6 +4619,18 @@ const JA_FULL: Record<string,string> = {
   "Pick a prompt preset for this conversation. It applies from the next message.": "この会話のプロンプトプリセットを選択してください。次のメッセージから適用されます。",
   "Prompt preset switching tools": "プロンプトプリセット切替ツール",
   "What should the preset do?": "プリセットに何をさせますか？",
+  "Built-in tools": "組み込みツール",
+  "Calculator": "電卓",
+  "Fetch URL": "URLを取得",
+  "Table from data": "データから表を作成",
+  "JSON helper": "JSONヘルパー",
+  "Clipboard": "クリップボード",
+  "Notifications": "通知",
+  "Task list": "タスクリスト",
+  "Weather": "天気",
+  "Wikipedia lookup": "Wikipedia検索",
+  "Chart": "チャート",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "有効なツールはエージェントフローでモデルに提供されます。呼び出しごとに許可が求められます。",
 };
 
 const KO_FULL: Record<string,string> = {
@@ -5194,6 +5278,18 @@ const KO_FULL: Record<string,string> = {
   "Pick a prompt preset for this conversation. It applies from the next message.": "이 대화에 사용할 프롬프트 프리셋을 선택하세요. 다음 메시지부터 적용됩니다.",
   "Prompt preset switching tools": "프롬프트 프리셋 전환 도구",
   "What should the preset do?": "프리셋이 무엇을 해야 하나요?",
+  "Built-in tools": "내장 도구",
+  "Calculator": "계산기",
+  "Fetch URL": "URL 가져오기",
+  "Table from data": "데이터로 표 만들기",
+  "JSON helper": "JSON 도우미",
+  "Clipboard": "클립보드",
+  "Notifications": "알림",
+  "Task list": "할 일 목록",
+  "Weather": "날씨",
+  "Wikipedia lookup": "위키백과 조회",
+  "Chart": "차트",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "활성화된 도구는 에이전트 흐름에서 모델에 제공되며 호출 시마다 권한을 묻습니다.",
 };
 
 const PT_FULL: Record<string,string> = {
@@ -5841,6 +5937,18 @@ const PT_FULL: Record<string,string> = {
   "Pick a prompt preset for this conversation. It applies from the next message.": "Escolha uma predefinição de prompt para esta conversa. Aplica-se a partir da próxima mensagem.",
   "Prompt preset switching tools": "Ferramentas de troca de predefinições",
   "What should the preset do?": "O que o preset deve fazer?",
+  "Built-in tools": "Ferramentas integradas",
+  "Calculator": "Calculadora",
+  "Fetch URL": "Buscar URL",
+  "Table from data": "Tabela a partir de dados",
+  "JSON helper": "Auxiliar JSON",
+  "Clipboard": "Área de transferência",
+  "Notifications": "Notificações",
+  "Task list": "Lista de tarefas",
+  "Weather": "Clima",
+  "Wikipedia lookup": "Consulta à Wikipédia",
+  "Chart": "Gráfico",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "As ferramentas ativadas são oferecidas ao modelo em fluxos de agente; a permissão é solicitada a cada chamada.",
 };
 
 const IT_FULL: Record<string,string> = {
@@ -6488,6 +6596,18 @@ const IT_FULL: Record<string,string> = {
   "Pick a prompt preset for this conversation. It applies from the next message.": "Scegli un preset di prompt per questa conversazione. Si applica dal prossimo messaggio.",
   "Prompt preset switching tools": "Strumenti di cambio preset",
   "What should the preset do?": "Cosa deve fare il preset?",
+  "Built-in tools": "Strumenti integrati",
+  "Calculator": "Calcolatrice",
+  "Fetch URL": "Recupera URL",
+  "Table from data": "Tabella da dati",
+  "JSON helper": "Assistente JSON",
+  "Clipboard": "Appunti",
+  "Notifications": "Notifiche",
+  "Task list": "Elenco attività",
+  "Weather": "Meteo",
+  "Wikipedia lookup": "Ricerca Wikipedia",
+  "Chart": "Grafico",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Gli strumenti attivati vengono offerti al modello nei flussi agente; il permesso è comunque chiesto a ogni chiamata.",
 };
 
 const TR_FULL: Record<string,string> = {
@@ -7135,6 +7255,18 @@ const TR_FULL: Record<string,string> = {
   "Pick a prompt preset for this conversation. It applies from the next message.": "Bu sohbet için bir istem hazır ayarı seçin. Bir sonraki mesajdan itibaren geçerli olur.",
   "Prompt preset switching tools": "İstem hazır ayarı değiştirme araçları",
   "What should the preset do?": "Hazır ayar ne yapmalı?",
+  "Built-in tools": "Yerleşik araçlar",
+  "Calculator": "Hesap makinesi",
+  "Fetch URL": "URL getir",
+  "Table from data": "Verilerden tablo",
+  "JSON helper": "JSON yardımcısı",
+  "Clipboard": "Pano",
+  "Notifications": "Bildirimler",
+  "Task list": "Görev listesi",
+  "Weather": "Hava durumu",
+  "Wikipedia lookup": "Vikipedi araması",
+  "Chart": "Grafik",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Etkin araçlar, aracı akışlarında modele sunulur; her çağrıda izin yine istenir.",
 };
 
 const PL_FULL: Record<string,string> = {
@@ -7782,6 +7914,18 @@ const PL_FULL: Record<string,string> = {
   "Pick a prompt preset for this conversation. It applies from the next message.": "Wybierz preset promptu dla tej rozmowy. Zastosuje się od następnej wiadomości.",
   "Prompt preset switching tools": "Narzędzia zmiany presetów promptu",
   "What should the preset do?": "Co ma robić preset?",
+  "Built-in tools": "Wbudowane narzędzia",
+  "Calculator": "Kalkulator",
+  "Fetch URL": "Pobierz URL",
+  "Table from data": "Tabela z danych",
+  "JSON helper": "Pomocnik JSON",
+  "Clipboard": "Schowek",
+  "Notifications": "Powiadomienia",
+  "Task list": "Lista zadań",
+  "Weather": "Pogoda",
+  "Wikipedia lookup": "Wyszukiwanie w Wikipedii",
+  "Chart": "Wykres",
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Włączone narzędzia są oferowane modelowi w przepływach agenta; zgoda jest nadal wymagana przy każdym wywołaniu.",
 };
 function applyDict(dict: Record<string,string>) {
   // Mirror every key onto tr so all lookup styles resolve:

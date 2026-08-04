@@ -69,8 +69,8 @@
 					[{ role: 'user', content: `${PRESET_WIZARD_META_PROMPT}\n\n${request.trim()}` }],
 					{
 						...(model ? { model } : {}),
-						temperature: 0.6,
-						max_tokens: 500,
+						temperature: 0.4,
+						max_tokens: 1200,
 						stream: false,
 						onComplete: (content: string) => {
 							const parsed = parseGenerated(content);

@@ -5,8 +5,9 @@
  * (`systemPromptPresets`), so it rides along with the existing localStorage
  * persistence and the settings export/import for free.
  */
+import { browser } from '$app/environment';
 import { config, settingsStore } from '$lib/stores/settings.svelte';
-import { SETTINGS_KEYS } from '$lib/constants';
+import { BUILTIN_PRESETS, SETTINGS_KEYS } from '$lib/constants';
 import type { SystemPromptPreset } from '$lib/types';
 
 function parsePresets(raw: string | undefined): SystemPromptPreset[] {
@@ -23,8 +24,35 @@ function parsePresets(raw: string | undefined): SystemPromptPreset[] {
 	}
 }
 
+let seeded = false;
+
+/** localStorage marker: the built-in library has been seeded once. */
+const PRESETS_SEEDED_KEY = 'systemPromptPresetsSeeded';
+
+/**
+ * Seed the built-in preset library on first run. The marker makes this
+ * one-time: a user who later deletes the built-ins keeps them deleted, and an
+ * existing library (even "[]") is never overwritten. Fresh installs get the
+ * shipped presets.
+ */
+function seedDefaultsIfNeeded(): void {
+	if (seeded) return;
+	seeded = true;
+	if (!browser) return;
+	if (localStorage.getItem(PRESETS_SEEDED_KEY) !== null) return;
+	const raw = config()[SETTINGS_KEYS.SYSTEM_PROMPT_PRESETS];
+	if (raw === undefined || raw === null || raw === '' || raw === '[]') {
+		settingsStore.updateConfig(
+			SETTINGS_KEYS.SYSTEM_PROMPT_PRESETS,
+			JSON.stringify(BUILTIN_PRESETS)
+		);
+	}
+	localStorage.setItem(PRESETS_SEEDED_KEY, '1');
+}
+
 class PresetStore {
 	get presets(): SystemPromptPreset[] {
+		seedDefaultsIfNeeded();
 		return parsePresets(config()[SETTINGS_KEYS.SYSTEM_PROMPT_PRESETS] as string | undefined);
 	}
 
@@ -101,3 +129,8 @@ export const presetsStore = new PresetStore();
 
 export const presetList = () => presetsStore.presets;
 export const presetFavorites = () => presetsStore.favorites;
+
+/* Seed the built-in library eagerly at module load (browser only): the
+ * chat-bar button only renders once a conversation exists, so waiting for the
+ * first read could delay shipping the built-ins to a fresh install. */
+seedDefaultsIfNeeded();

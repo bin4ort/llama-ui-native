@@ -1,6 +1,6 @@
 <script lang="ts">
-	// MIT License — Copyright (c) 2025 Llama UI Native
-	// See LICENSE file in the project root.
+	// Copyright (C) 2025 Llama UI Native contributors
+	// Licensed under the GNU General Public License v3 or later — see LICENSE.
 	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
 	import { RotateCcw, FlaskConical } from '@lucide/svelte';
 	import { Checkbox } from '$lib/components/ui/checkbox';
