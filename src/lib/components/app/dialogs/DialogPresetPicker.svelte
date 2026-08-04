@@ -134,14 +134,7 @@
 											class="min-w-0 flex-1 px-3 py-2 text-left text-sm"
 											onclick={() => applyPreset(preset)}
 										>
-											<span class="flex min-w-0 items-center justify-between gap-2">
-												<span class="min-w-0 max-w-80 truncate">{preset.name}</span>
-												{#if isActive}
-													<Check class="h-4 w-4 shrink-0" />
-												{:else}
-													<span class="h-4 w-4 shrink-0" aria-hidden="true"></span>
-												{/if}
-											</span>
+											<span class="min-w-0 max-w-80 truncate">{preset.name}</span>
 											{#if preset.description}
 												<span class="mt-0.5 block min-w-0 max-w-96 truncate text-xs text-muted-foreground"
 													>{preset.description}</span
@@ -166,6 +159,16 @@
 										>
 											<Star class="h-4 w-4 {preset.favorite ? 'fill-amber-400 text-amber-400' : ''}" />
 										</button>
+
+										{#if isActive}
+											<span class="shrink-0 p-2 text-foreground">
+												<Check class="h-4 w-4" />
+											</span>
+										{:else}
+											<span class="shrink-0 p-2" aria-hidden="true">
+												<span class="block h-4 w-4"></span>
+											</span>
+										{/if}
 
 										<button
 											type="button"
