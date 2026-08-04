@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# MIT License — Copyright (c) 2025 Llama UI Native
+# Copyright (C) 2025 Llama UI Native contributors
+# Licensed under the GNU General Public License v3 or later — see LICENSE.
 # Llama UI Native — install script
 set -euo pipefail
 
@@ -35,7 +36,7 @@ echo "  All dependencies found."
 
 echo ""
 echo "[2/3] Building llama-ui-native..."
-gcc -o llama-ui-native main.c server.c mongoose.c \
+gcc -o llama-ui-native main.c server.c \
     $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) \
     -L. -ljxl -ljxl_threads -lpthread -lm -lcurl -Wall \
     -Wl,-rpath,'$ORIGIN' \

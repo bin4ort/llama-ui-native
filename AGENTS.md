@@ -3,14 +3,16 @@
 ## Project structure
 - `src/` — SvelteKit 5 source (edit here, then `npm run build`)
 - `frontend/v2/` — Compiled static output (served by C server)
-- `main.c` + `server.c` — GTK window + Mongoose HTTP server
+- `main.c` + `server.c` — GTK window + self-contained HTTP server
 - Single `npm run build` compiles the frontend
 
 ## Modification workflow
 1. Edit source files in `src/`
 2. Run `npm run build` from project root
-3. Output goes to `dist/` — already configured to copy to `frontend/v2/`
-4. Rebuild C: `gcc -o llama-ui-native main.c server.c mongoose.c $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) -ljxl -lpthread -lm -lcurl -Wall`
+3. Output goes to `dist/` — copy it to `frontend/v2/`:
+   `cp -a dist/. frontend/v2/ && rm -rf frontend/v2/_app && cp -a dist/_app frontend/v2/_app`
+   (keeps `frontend/v2/lang/*.json` and `i18n.js`, which are not part of the build)
+4. Rebuild C: `gcc -o llama-ui-native main.c server.c $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) -ljxl -lpthread -lm -lcurl -Wall`
 5. Never edit files in `frontend/v2/` directly (except `lang/*.json` and `i18n.js`)
 
 ## Frontend technology
@@ -27,9 +29,10 @@
 - UI templates use `{tr.dict["key"] || "key"}` for reactive translation
 
 ## Native wrapper (C code)
-- Compile: `gcc -o llama-ui-native main.c server.c mongoose.c $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) -ljxl -lpthread -lm -lcurl -Wall`
+- Compile: `gcc -o llama-ui-native main.c server.c $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) -ljxl -lpthread -lm -lcurl -Wall`
 - Dependencies: gtk+-3.0, webkit2gtk-4.1, libcurl
 - Server port: 8765 (defined in `server.h`)
+- `server.c` is a self-contained minimal HTTP server (thread-per-connection) — no embedded web server library
 - Frontend served from `frontend/v2/` directory
 - Proxies `/v1/chat/completions` to `http://localhost:8080`
 
