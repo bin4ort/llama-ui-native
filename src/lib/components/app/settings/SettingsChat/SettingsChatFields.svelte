@@ -19,7 +19,7 @@
 	import { tr, t } from '$lib/stores/i18n.svelte';
 
 
-	let { fields, localConfig, onConfigChange, onThemeChange, fieldSuffixes } = $props();
+	let { fields, localConfig, onConfigChange, onThemeChange, fieldSuffixes = undefined } = $props();
 
 	let currentModelParams = $derived.by(() => {
 		propsCacheVersion();

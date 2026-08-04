@@ -5,6 +5,7 @@
 	import * as Collapsible from '$lib/components/ui/collapsible';
 	import { Input } from '$lib/components/ui/input';
 	import { tr, t } from '$lib/stores/i18n.svelte';
+	import SettingsChatPresetGroup from './SettingsChatPresetGroup.svelte';
 	import { TruncatedText, McpServerIdentity } from '$lib/components/app';
 	import { toolsStore } from '$lib/stores/tools.svelte';
 	import { settingsToolsStore } from '$lib/stores/settings-tools.svelte';
@@ -149,5 +150,7 @@
 				</Collapsible.Content>
 			</Collapsible.Root>
 		{/each}
+
+		<SettingsChatPresetGroup />
 	</div>
 {/if}

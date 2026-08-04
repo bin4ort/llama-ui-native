@@ -73,5 +73,4 @@ export { default as SettingsChatFields } from './SettingsChat/SettingsChatFields
  * toggles to enable/disable individual tools and tool groups. Shows MCP
  * server favicons and permission management controls.
  */
-export { default as SettingsChatSystemPromptPresets } from './SettingsChat/SettingsChatSystemPromptPresets.svelte';
 export { default as SettingsChatToolsTab } from './SettingsChat/SettingsChatToolsTab.svelte';
