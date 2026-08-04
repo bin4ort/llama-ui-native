@@ -934,6 +934,19 @@ class ChatStore {
 			);
 
 			if (existingSystemMessage) {
+				if (!trimmed) {
+					// Empty target: remove the system row cleanly (reparent
+					// children to root) so no ghost bubble with only action
+					// icons remains.
+					if (conversationsStore.activeConversation?.id === conversationId) {
+						await this.removeSystemPromptPlaceholder(existingSystemMessage.id);
+					} else {
+						await DatabaseService.updateMessage(existingSystemMessage.id, {
+							content: ''
+						});
+					}
+					return;
+				}
 				await DatabaseService.updateMessage(existingSystemMessage.id, {
 					content: trimmed
 				});

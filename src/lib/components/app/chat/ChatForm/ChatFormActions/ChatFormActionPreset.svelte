@@ -59,7 +59,7 @@
 		if (!(await ensureConversation())) return;
 		const conv = conversationsStore.activeConversation;
 		if (!conv) return;
-		await chatStore.applySystemPromptContent(conv.id, '');
+		await chatStore.applySystemPromptContent(conv.id, presetsStore.resolveContent(null));
 	}
 </script>
 
