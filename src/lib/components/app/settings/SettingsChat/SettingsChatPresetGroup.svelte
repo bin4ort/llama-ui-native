@@ -6,12 +6,15 @@
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Input } from '$lib/components/ui/input';
 	import { TruncatedText } from '$lib/components/app';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+	import { SvelteSet } from 'svelte/reactivity';
 	import {
 		Star,
 		Trash2,
 		Plus,
 		Pencil,
 		Check,
+		Info,
 		ChevronDown,
 		ChevronRight,
 		Search,
@@ -22,6 +25,7 @@
 	let expanded = $state(false);
 	let showWizard = $state(false);
 	let searchQuery = $state('');
+	let expandedDescriptions = new SvelteSet<string>();
 
 	// Row edit buffers: id -> { name, description, content }
 	let editBuffers = $state<Record<string, { name: string; description: string; content: string }>>({});
@@ -130,11 +134,28 @@
 						<div class="rounded-md border border-border/40 bg-background">
 							<div class="flex items-center gap-2 rounded px-2 py-1.5 text-sm hover:bg-muted/50">
 								<span class="flex min-w-0 flex-1 items-center gap-1.5">
-									<TruncatedText
-										text={preset.description ? `${preset.name} — ${preset.description}` : preset.name}
-										class="min-w-0 font-medium"
-										showTooltip={true}
-									/>
+									<Tooltip.Root>
+										<Tooltip.Trigger class="min-w-0">
+											<TruncatedText text={preset.name} class="min-w-0 font-medium" />
+										</Tooltip.Trigger>
+										<Tooltip.Content side="top">
+											<p class="max-w-xs">{preset.description ?? preset.name}</p>
+										</Tooltip.Content>
+									</Tooltip.Root>
+
+									{#if preset.description}
+										<button
+											type="button"
+											class="shrink-0 p-0.5 text-muted-foreground hover:text-foreground"
+											title={expandedDescriptions.has(preset.id) ? t('Hide description') : t('Show description')}
+											onclick={() => {
+												if (expandedDescriptions.has(preset.id)) expandedDescriptions.delete(preset.id);
+												else expandedDescriptions.add(preset.id);
+											}}
+										>
+											<Info class="h-3.5 w-3.5" />
+										</button>
+									{/if}
 								</span>
 
 								<div class="flex w-16 shrink-0 justify-center">
@@ -172,6 +193,12 @@
 									</button>
 								</div>
 							</div>
+
+							{#if expandedDescriptions.has(preset.id) && preset.description}
+								<div class="border-t border-border/40 px-3 py-1.5 text-xs text-muted-foreground">
+									{preset.description}
+								</div>
+							{/if}
 
 							{#if editing}
 								<div class="space-y-2 border-t border-border/40 px-3 py-3">

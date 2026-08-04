@@ -6,6 +6,7 @@
 		SettingsChatFields,
 		SettingsChatImportExportTab,
 		SettingsChatMobileHeader,
+		SettingsChatPresetGroup,
 		SettingsChatToolsTab,
 		SettingsFooter
 	} from '$lib/components/app/settings';
@@ -159,6 +160,10 @@
 	});
 </script>
 
+{#snippet presetGroupSnippet()}
+	<SettingsChatPresetGroup />
+{/snippet}
+
 <div class="mx-auto flex h-full w-full flex-col md:pl-8" in:fade={{ duration: 150 }}>
 	<div class="flex flex-1 flex-col gap-4 md:flex-row">
 		<SettingsChatDesktopSidebar
@@ -195,6 +200,7 @@
 								{localConfig}
 								onConfigChange={handleConfigChange}
 								onThemeChange={handleThemeChange}
+								fieldSuffixes={{ [SETTINGS_KEYS.SYSTEM_MESSAGE]: presetGroupSnippet }}
 							/>
 
 							{#if currentSection.title === SETTINGS_SECTION_TITLES.GENERAL}
