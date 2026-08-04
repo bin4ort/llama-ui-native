@@ -131,21 +131,21 @@
 									<div class="group flex items-center gap-1">
 										<button
 											type="button"
-											class="flex min-w-0 flex-1 items-center justify-between gap-2 px-3 py-2 text-left text-sm"
+											class="min-w-0 flex-1 px-3 py-2 text-left text-sm"
 											onclick={() => applyPreset(preset)}
 										>
-											<span class="flex min-w-0 items-center gap-2">
-												<span class="min-w-0 max-w-72 truncate">{preset.name}</span>
-												{#if preset.description}
-													<span class="hidden min-w-0 max-w-48 truncate text-xs text-muted-foreground sm:block"
-														>{preset.description}</span
-													>
+											<span class="flex min-w-0 items-center justify-between gap-2">
+												<span class="min-w-0 max-w-80 truncate">{preset.name}</span>
+												{#if isActive}
+													<Check class="h-4 w-4 shrink-0" />
+												{:else}
+													<span class="h-4 w-4 shrink-0" aria-hidden="true"></span>
 												{/if}
 											</span>
-											{#if isActive}
-												<Check class="h-4 w-4 shrink-0" />
-											{:else}
-												<span class="h-4 w-4 shrink-0" aria-hidden="true"></span>
+											{#if preset.description}
+												<span class="mt-0.5 block min-w-0 max-w-96 truncate text-xs text-muted-foreground"
+													>{preset.description}</span
+												>
 											{/if}
 										</button>
 
