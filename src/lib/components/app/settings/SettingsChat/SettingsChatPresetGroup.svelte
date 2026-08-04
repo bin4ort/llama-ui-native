@@ -131,9 +131,13 @@
 						<div>
 							<div class="flex items-center gap-3 rounded px-2 py-1.5 text-sm hover:bg-muted/50">
 								<span class="flex min-w-0 flex-1 items-center gap-1.5">
-									<Tooltip.Root>
-										<Tooltip.Trigger class="min-w-0">
-											<TruncatedText text={preset.name} class="min-w-0 font-medium" />
+									<Tooltip.Root delayDuration={300}>
+										<Tooltip.Trigger>
+											{#snippet child({ props })}
+												<span {...props} class="flex min-w-0 flex-1 cursor-pointer">
+													<TruncatedText text={preset.name} class="min-w-0 font-medium" />
+												</span>
+											{/snippet}
 										</Tooltip.Trigger>
 										<Tooltip.Content side="top">
 											<p class="max-w-xs">{preset.description ?? preset.name}</p>
@@ -142,38 +146,65 @@
 								</span>
 
 								<div class="flex w-20 shrink-0 justify-center">
-									<button
-										type="button"
-										class="shrink-0 p-1 text-muted-foreground hover:text-foreground"
-										title={preset.favorite ? t('Remove from favorites') : t('Add to favorites')}
-										onclick={() => presetsStore.toggleFavorite(preset.id)}
-									>
-										<Star class="h-4 w-4 {preset.favorite ? 'fill-amber-400 text-amber-400' : ''}" />
-									</button>
+									<Tooltip.Root delayDuration={300}>
+										<Tooltip.Trigger>
+											{#snippet child({ props })}
+												<button
+													type="button"
+													{...props}
+													class="shrink-0 p-1 text-muted-foreground hover:text-foreground"
+													onclick={() => presetsStore.toggleFavorite(preset.id)}
+												>
+													<Star class="h-4 w-4 {preset.favorite ? 'fill-amber-400 text-amber-400' : ''}" />
+												</button>
+											{/snippet}
+										</Tooltip.Trigger>
+										<Tooltip.Content side="top">
+											<p>{preset.favorite ? t('Remove from favorites') : t('Add to favorites')}</p>
+										</Tooltip.Content>
+									</Tooltip.Root>
 								</div>
 
 								<div class="flex w-20 shrink-0 justify-center">
 									{#if !editing}
-										<button
-											type="button"
-											class="shrink-0 p-1 text-muted-foreground hover:text-foreground"
-											title={t('Edit')}
-											onclick={() => (editBuffers[preset.id] = bufferFor(preset.id))}
-										>
-											<Pencil class="h-4 w-4" />
-										</button>
+										<Tooltip.Root delayDuration={300}>
+											<Tooltip.Trigger>
+												{#snippet child({ props })}
+													<button
+														type="button"
+														{...props}
+														class="shrink-0 p-1 text-muted-foreground hover:text-foreground"
+														onclick={() => (editBuffers[preset.id] = bufferFor(preset.id))}
+													>
+														<Pencil class="h-4 w-4" />
+													</button>
+												{/snippet}
+											</Tooltip.Trigger>
+											<Tooltip.Content side="top">
+												<p>{t('Edit')}</p>
+											</Tooltip.Content>
+										</Tooltip.Root>
 									{/if}
 								</div>
 
 								<div class="flex w-20 shrink-0 justify-center">
-									<button
-										type="button"
-										class="shrink-0 p-1 text-muted-foreground hover:text-destructive"
-										title={t('Delete')}
-										onclick={() => presetsStore.remove(preset.id)}
-									>
-										<Trash2 class="h-4 w-4" />
-									</button>
+									<Tooltip.Root delayDuration={300}>
+										<Tooltip.Trigger>
+											{#snippet child({ props })}
+												<button
+													type="button"
+													{...props}
+													class="shrink-0 p-1 text-muted-foreground hover:text-destructive"
+													onclick={() => presetsStore.remove(preset.id)}
+												>
+													<Trash2 class="h-4 w-4" />
+												</button>
+											{/snippet}
+										</Tooltip.Trigger>
+										<Tooltip.Content side="top">
+											<p>{t('Delete')}</p>
+										</Tooltip.Content>
+									</Tooltip.Root>
 								</div>
 							</div>
 
