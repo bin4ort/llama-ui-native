@@ -5,14 +5,36 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Input } from '$lib/components/ui/input';
-	import { Star, Trash2, Plus, ChevronDown, ChevronRight, Check } from '@lucide/svelte';
+	import { TruncatedText } from '$lib/components/app';
+	import {
+		Star,
+		Trash2,
+		Plus,
+		Pencil,
+		Check,
+		ChevronDown,
+		ChevronRight,
+		Search,
+		X
+	} from '@lucide/svelte';
 	import DialogPresetWizard from '$lib/components/app/dialogs/DialogPresetWizard.svelte';
 
 	let expanded = $state(false);
 	let showWizard = $state(false);
+	let searchQuery = $state('');
 
 	// Row edit buffers: id -> { name, description, content }
 	let editBuffers = $state<Record<string, { name: string; description: string; content: string }>>({});
+
+	const filtered = $derived(
+		presetsStore.presets.filter((preset) => {
+			const q = searchQuery.trim().toLowerCase();
+			if (!q) return true;
+			return (
+				preset.name.toLowerCase().includes(q) || (preset.description ?? '').toLowerCase().includes(q)
+			);
+		})
+	);
 
 	function bufferFor(id: string) {
 		if (!editBuffers[id]) {
@@ -70,62 +92,113 @@
 		</Collapsible.Trigger>
 
 		<Collapsible.Content>
-			<div class="mt-3 space-y-2">
-				{#if presetsStore.presets.length === 0}
-					<p class="text-sm text-muted-foreground">{t('No presets yet')}</p>
-				{:else}
-					{#each presetsStore.presets as preset (preset.id)}
-						{@const buffer = bufferFor(preset.id)}
-						{@const editing = !!editBuffers[preset.id]}
-						<div class="rounded-md border border-border/40 bg-background p-2">
-							<div class="flex items-center gap-2">
-								<button
-									type="button"
-									class="shrink-0 p-1 text-muted-foreground hover:text-foreground"
-									title={preset.favorite ? t('Remove from favorites') : t('Add to favorites')}
-									onclick={() => presetsStore.toggleFavorite(preset.id)}
-								>
-									<Star class="h-4 w-4 {preset.favorite ? 'fill-amber-400 text-amber-400' : ''}" />
-								</button>
+			{#if expanded}
+				<div class="mt-3 space-y-1">
+					<div class="relative px-1 py-1.5">
+						<Search class="absolute top-1/2 left-4 z-10 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+						<Input
+							class="h-8 pl-8"
+							placeholder={t('Search presets...')}
+							bind:value={searchQuery}
+						/>
+						{#if searchQuery}
+							<button
+								type="button"
+								class="absolute top-1/2 right-3 z-10 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+								title={t('Clear')}
+								onclick={() => (searchQuery = '')}
+							>
+								<X class="h-3.5 w-3.5" />
+							</button>
+						{/if}
+					</div>
 
-								<span class="min-w-0 flex-1 truncate text-sm font-medium">{preset.name}</span>
+					<!-- Header row -->
+					<div class="flex items-center gap-2 px-2 py-1 text-xs text-muted-foreground">
+						<span class="min-w-0 flex-1">{t('Preset')}</span>
+						<span class="w-16 shrink-0 text-center">{t('Favorite')}</span>
+						<span class="w-16 shrink-0 text-center">{t('Edit')}</span>
+						<span class="w-16 shrink-0 text-center">{t('Delete')}</span>
+					</div>
 
-								{#if !editing}
-									<Button type="button" variant="ghost" size="sm" onclick={() => (editBuffers[preset.id] = bufferFor(preset.id))}>
-										{t('Edit')}
-									</Button>
-									<Button
-										type="button"
-										variant="ghost"
-										size="sm"
-										class="text-destructive hover:text-destructive"
-										onclick={() => presetsStore.remove(preset.id)}
-									>
-										<Trash2 class="h-3.5 w-3.5" />
-									</Button>
-								{/if}
-							</div>
+					{#if filtered.length === 0}
+						<div class="px-2 py-4 text-center text-sm text-muted-foreground">
+							{presetsStore.presets.length === 0 ? t('No presets yet') : t('No matches')}
+						</div>
+					{:else}
+						{#each filtered as preset (preset.id)}
+							{@const buffer = bufferFor(preset.id)}
+							{@const editing = !!editBuffers[preset.id]}
+							<div class="rounded-md border border-border/40 bg-background">
+								<div class="flex items-center gap-2 rounded px-2 py-1.5 text-sm hover:bg-muted/50">
+									<span class="flex min-w-0 flex-1 items-center gap-1.5">
+										<TruncatedText
+											text={preset.description ? `${preset.name} — ${preset.description}` : preset.name}
+											class="min-w-0 font-medium"
+											showTooltip={true}
+										/>
+									</span>
 
-							{#if editing}
-								<div class="mt-2 space-y-2">
-									<Input bind:value={buffer.name} placeholder={t('Preset name')} />
-									<Input bind:value={buffer.description} placeholder={t('Short description (shown in the picker)')} />
-									<Textarea bind:value={buffer.content} rows={4} class="font-mono text-xs" />
-									<div class="flex gap-2">
-										<Button type="button" size="sm" onclick={() => savePreset(preset.id)}>
-											<Check class="mr-1 h-3.5 w-3.5" />
-											{t('Save')}
-										</Button>
-										<Button type="button" variant="ghost" size="sm" onclick={() => discardEdit(preset.id)}>
-											{t('Cancel')}
-										</Button>
+									<div class="flex w-16 shrink-0 justify-center">
+										<button
+											type="button"
+											class="shrink-0 p-1 text-muted-foreground hover:text-foreground"
+											title={preset.favorite ? t('Remove from favorites') : t('Add to favorites')}
+											onclick={() => presetsStore.toggleFavorite(preset.id)}
+										>
+											<Star class="h-4 w-4 {preset.favorite ? 'fill-amber-400 text-amber-400' : ''}" />
+										</button>
+									</div>
+
+									<div class="flex w-16 shrink-0 justify-center">
+										{#if !editing}
+											<button
+												type="button"
+												class="shrink-0 p-1 text-muted-foreground hover:text-foreground"
+												title={t('Edit')}
+												onclick={() => (editBuffers[preset.id] = bufferFor(preset.id))}
+											>
+												<Pencil class="h-4 w-4" />
+											</button>
+										{/if}
+									</div>
+
+									<div class="flex w-16 shrink-0 justify-center">
+										<button
+											type="button"
+											class="shrink-0 p-1 text-muted-foreground hover:text-destructive"
+											title={t('Delete')}
+											onclick={() => presetsStore.remove(preset.id)}
+										>
+											<Trash2 class="h-4 w-4" />
+										</button>
 									</div>
 								</div>
-							{/if}
-						</div>
-					{/each}
-				{/if}
-			</div>
+
+								{#if editing}
+									<div class="space-y-2 border-t border-border/40 px-3 py-3">
+										<Input bind:value={buffer.name} placeholder={t('Preset name')} />
+										<Input
+											bind:value={buffer.description}
+											placeholder={t('Short description (shown in the picker)')}
+										/>
+										<Textarea bind:value={buffer.content} rows={4} class="font-mono text-xs" />
+										<div class="flex gap-2">
+											<Button type="button" size="sm" onclick={() => savePreset(preset.id)}>
+												<Check class="mr-1 h-3.5 w-3.5" />
+												{t('Save')}
+											</Button>
+											<Button type="button" variant="ghost" size="sm" onclick={() => discardEdit(preset.id)}>
+												{t('Cancel')}
+											</Button>
+										</div>
+									</div>
+								{/if}
+							</div>
+						{/each}
+					{/if}
+				</div>
+			{/if}
 		</Collapsible.Content>
 	</Collapsible.Root>
 

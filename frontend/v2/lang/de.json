@@ -659,5 +659,7 @@
   "Safety verification": "Sicherheitsprüfung",
   "Allow the following tools to always run without asking for permission?": "Dürfen die folgenden Werkzeuge immer ohne Nachfrage ausgeführt werden?",
   "Allow always": "Immer erlauben",
-  "Verifying…": "Prüfe…"
+  "Verifying…": "Prüfe…",
+  "Preset": "Preset",
+  "Favorite": "Favorit"
 }

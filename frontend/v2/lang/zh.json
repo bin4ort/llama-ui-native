@@ -659,5 +659,7 @@
   "Safety verification": "安全验证",
   "Allow the following tools to always run without asking for permission?": "允许以下工具始终在无需询问权限的情况下运行？",
   "Allow always": "始终允许",
-  "Verifying…": "验证中…"
+  "Verifying…": "验证中…",
+  "Preset": "预设",
+  "Favorite": "收藏"
 }

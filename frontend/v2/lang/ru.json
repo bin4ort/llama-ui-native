@@ -659,5 +659,7 @@
   "Safety verification": "Проверка безопасности",
   "Allow the following tools to always run without asking for permission?": "Разрешить следующим инструментам всегда выполняться без запроса разрешения?",
   "Allow always": "Разрешать всегда",
-  "Verifying…": "Проверка…"
+  "Verifying…": "Проверка…",
+  "Preset": "Пресет",
+  "Favorite": "Избранное"
 }

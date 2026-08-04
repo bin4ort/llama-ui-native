@@ -682,6 +682,8 @@ const DE_FULL: Record<string,string> = {
   "Allow the following tools to always run without asking for permission?": "Dürfen die folgenden Werkzeuge immer ohne Nachfrage ausgeführt werden?",
   "Allow always": "Immer erlauben",
   "Verifying…": "Prüfe…",
+  "Preset": "Preset",
+  "Favorite": "Favorit",
 };
 
 const RU_FULL: Record<string,string> = {
@@ -1346,6 +1348,8 @@ const RU_FULL: Record<string,string> = {
   "Allow the following tools to always run without asking for permission?": "Разрешить следующим инструментам всегда выполняться без запроса разрешения?",
   "Allow always": "Разрешать всегда",
   "Verifying…": "Проверка…",
+  "Preset": "Пресет",
+  "Favorite": "Избранное",
 };
 
 const EN_FULL: Record<string,string> = {
@@ -2010,6 +2014,8 @@ const EN_FULL: Record<string,string> = {
   "Allow the following tools to always run without asking for permission?": "Allow the following tools to always run without asking for permission?",
   "Allow always": "Allow always",
   "Verifying…": "Verifying…",
+  "Preset": "Preset",
+  "Favorite": "Favorite",
 };
 
 const ES_FULL: Record<string,string> = {
@@ -2674,6 +2680,8 @@ const ES_FULL: Record<string,string> = {
   "Allow the following tools to always run without asking for permission?": "¿Permitir que las siguientes herramientas se ejecuten siempre sin pedir permiso?",
   "Allow always": "Permitir siempre",
   "Verifying…": "Verificando…",
+  "Preset": "Ajuste preestablecido",
+  "Favorite": "Favorito",
 };
 
 const FR_FULL: Record<string,string> = {
@@ -3338,6 +3346,8 @@ const FR_FULL: Record<string,string> = {
   "Allow the following tools to always run without asking for permission?": "Autoriser les outils suivants à toujours s'exécuter sans demander la permission ?",
   "Allow always": "Toujours autoriser",
   "Verifying…": "Vérification…",
+  "Preset": "Préréglage",
+  "Favorite": "Favori",
 };
 
 const ZH_FULL: Record<string,string> = {
@@ -4002,6 +4012,8 @@ const ZH_FULL: Record<string,string> = {
   "Allow the following tools to always run without asking for permission?": "允许以下工具始终在无需询问权限的情况下运行？",
   "Allow always": "始终允许",
   "Verifying…": "验证中…",
+  "Preset": "预设",
+  "Favorite": "收藏",
 };
 
 const JA_FULL: Record<string,string> = {
@@ -4666,6 +4678,8 @@ const JA_FULL: Record<string,string> = {
   "Allow the following tools to always run without asking for permission?": "以下のツールが許可を求めずに常に実行されることを許可しますか？",
   "Allow always": "常に許可",
   "Verifying…": "確認中…",
+  "Preset": "プリセット",
+  "Favorite": "お気に入り",
 };
 
 const KO_FULL: Record<string,string> = {
@@ -5330,6 +5344,8 @@ const KO_FULL: Record<string,string> = {
   "Allow the following tools to always run without asking for permission?": "다음 도구가 허락 없이 항상 실행되도록 허용하시겠습니까?",
   "Allow always": "항상 허용",
   "Verifying…": "확인 중…",
+  "Preset": "프리셋",
+  "Favorite": "즐겨찾기",
 };
 
 const PT_FULL: Record<string,string> = {
@@ -5994,6 +6010,8 @@ const PT_FULL: Record<string,string> = {
   "Allow the following tools to always run without asking for permission?": "Permitir que as seguintes ferramentas sempre sejam executadas sem pedir permissão?",
   "Allow always": "Permitir sempre",
   "Verifying…": "Verificando…",
+  "Preset": "Preset",
+  "Favorite": "Favorito",
 };
 
 const IT_FULL: Record<string,string> = {
@@ -6658,6 +6676,8 @@ const IT_FULL: Record<string,string> = {
   "Allow the following tools to always run without asking for permission?": "Consentire ai seguenti strumenti di essere sempre eseguiti senza chiedere il permesso?",
   "Allow always": "Consenti sempre",
   "Verifying…": "Verifica…",
+  "Preset": "Preset",
+  "Favorite": "Preferito",
 };
 
 const TR_FULL: Record<string,string> = {
@@ -7322,6 +7342,8 @@ const TR_FULL: Record<string,string> = {
   "Allow the following tools to always run without asking for permission?": "Aşağıdaki araçların izin istemeden her zaman çalışmasına izin verilsin mi?",
   "Allow always": "Her zaman izin ver",
   "Verifying…": "Doğrulanıyor…",
+  "Preset": "Hazır ayar",
+  "Favorite": "Favori",
 };
 
 const PL_FULL: Record<string,string> = {
@@ -7986,6 +8008,8 @@ const PL_FULL: Record<string,string> = {
   "Allow the following tools to always run without asking for permission?": "Zezwolić, aby następujące narzędzia zawsze działały bez pytania o pozwolenie?",
   "Allow always": "Zawsze zezwalaj",
   "Verifying…": "Weryfikacja…",
+  "Preset": "Preset",
+  "Favorite": "Ulubione",
 };
 function applyDict(dict: Record<string,string>) {
   // Mirror every key onto tr so all lookup styles resolve:

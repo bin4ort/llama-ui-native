@@ -659,5 +659,7 @@
   "Safety verification": "안전 확인",
   "Allow the following tools to always run without asking for permission?": "다음 도구가 허락 없이 항상 실행되도록 허용하시겠습니까?",
   "Allow always": "항상 허용",
-  "Verifying…": "확인 중…"
+  "Verifying…": "확인 중…",
+  "Preset": "프리셋",
+  "Favorite": "즐겨찾기"
 }

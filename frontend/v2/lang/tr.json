@@ -659,5 +659,7 @@
   "Safety verification": "Güvenlik doğrulaması",
   "Allow the following tools to always run without asking for permission?": "Aşağıdaki araçların izin istemeden her zaman çalışmasına izin verilsin mi?",
   "Allow always": "Her zaman izin ver",
-  "Verifying…": "Doğrulanıyor…"
+  "Verifying…": "Doğrulanıyor…",
+  "Preset": "Hazır ayar",
+  "Favorite": "Favori"
 }

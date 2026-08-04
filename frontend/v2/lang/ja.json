@@ -659,5 +659,7 @@
   "Safety verification": "安全確認",
   "Allow the following tools to always run without asking for permission?": "以下のツールが許可を求めずに常に実行されることを許可しますか？",
   "Allow always": "常に許可",
-  "Verifying…": "確認中…"
+  "Verifying…": "確認中…",
+  "Preset": "プリセット",
+  "Favorite": "お気に入り"
 }
