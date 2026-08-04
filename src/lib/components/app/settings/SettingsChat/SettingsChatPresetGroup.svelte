@@ -7,14 +7,12 @@
 	import { Input } from '$lib/components/ui/input';
 	import { TruncatedText } from '$lib/components/app';
 	import * as Tooltip from '$lib/components/ui/tooltip';
-	import { SvelteSet } from 'svelte/reactivity';
 	import {
 		Star,
 		Trash2,
 		Plus,
 		Pencil,
 		Check,
-		Info,
 		ChevronDown,
 		ChevronRight,
 		Search,
@@ -25,7 +23,6 @@
 	let expanded = $state(false);
 	let showWizard = $state(false);
 	let searchQuery = $state('');
-	let expandedDescriptions = new SvelteSet<string>();
 
 	// Row edit buffers: id -> { name, description, content }
 	let editBuffers = $state<Record<string, { name: string; description: string; content: string }>>({});
@@ -102,7 +99,7 @@
 			<div class="ml-4 border-l border-border/50 pl-2">
 				<div class="relative px-2 py-1.5">
 					<Search class="absolute top-1/2 left-5 z-10 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-					<Input class="h-8 pl-8" placeholder={t('Search presets...')} bind:value={searchQuery} />
+					<Input class="h-8 pl-8" placeholder={t('Search presets...')} value={searchQuery} oninput={(e) => (searchQuery = e.currentTarget.value)} />
 					{#if searchQuery}
 						<button
 							type="button"
@@ -116,11 +113,11 @@
 				</div>
 
 				<!-- Header row -->
-				<div class="flex items-center gap-2 px-2 py-1 text-xs text-muted-foreground">
+				<div class="flex items-center gap-3 px-2 py-1 text-xs text-muted-foreground">
 					<span class="min-w-0 flex-1">{t('Preset')}</span>
-					<span class="w-16 shrink-0 text-center">{t('Favorite')}</span>
-					<span class="w-16 shrink-0 text-center">{t('Edit')}</span>
-					<span class="w-16 shrink-0 text-center">{t('Delete')}</span>
+					<span class="w-20 shrink-0"></span>
+					<span class="w-20 shrink-0"></span>
+					<span class="w-20 shrink-0"></span>
 				</div>
 
 				{#if filtered.length === 0}
@@ -131,8 +128,8 @@
 					{#each filtered as preset (preset.id)}
 						{@const buffer = bufferFor(preset.id)}
 						{@const editing = !!editBuffers[preset.id]}
-						<div class="rounded-md border border-border/40 bg-background">
-							<div class="flex items-center gap-2 rounded px-2 py-1.5 text-sm hover:bg-muted/50">
+						<div>
+							<div class="flex items-center gap-3 rounded px-2 py-1.5 text-sm hover:bg-muted/50">
 								<span class="flex min-w-0 flex-1 items-center gap-1.5">
 									<Tooltip.Root>
 										<Tooltip.Trigger class="min-w-0">
@@ -142,23 +139,9 @@
 											<p class="max-w-xs">{preset.description ?? preset.name}</p>
 										</Tooltip.Content>
 									</Tooltip.Root>
-
-									{#if preset.description}
-										<button
-											type="button"
-											class="shrink-0 p-0.5 text-muted-foreground hover:text-foreground"
-											title={expandedDescriptions.has(preset.id) ? t('Hide description') : t('Show description')}
-											onclick={() => {
-												if (expandedDescriptions.has(preset.id)) expandedDescriptions.delete(preset.id);
-												else expandedDescriptions.add(preset.id);
-											}}
-										>
-											<Info class="h-3.5 w-3.5" />
-										</button>
-									{/if}
 								</span>
 
-								<div class="flex w-16 shrink-0 justify-center">
+								<div class="flex w-20 shrink-0 justify-center">
 									<button
 										type="button"
 										class="shrink-0 p-1 text-muted-foreground hover:text-foreground"
@@ -169,7 +152,7 @@
 									</button>
 								</div>
 
-								<div class="flex w-16 shrink-0 justify-center">
+								<div class="flex w-20 shrink-0 justify-center">
 									{#if !editing}
 										<button
 											type="button"
@@ -182,7 +165,7 @@
 									{/if}
 								</div>
 
-								<div class="flex w-16 shrink-0 justify-center">
+								<div class="flex w-20 shrink-0 justify-center">
 									<button
 										type="button"
 										class="shrink-0 p-1 text-muted-foreground hover:text-destructive"
@@ -193,12 +176,6 @@
 									</button>
 								</div>
 							</div>
-
-							{#if expandedDescriptions.has(preset.id) && preset.description}
-								<div class="border-t border-border/40 px-3 py-1.5 text-xs text-muted-foreground">
-									{preset.description}
-								</div>
-							{/if}
 
 							{#if editing}
 								<div class="space-y-2 border-t border-border/40 px-3 py-3">
