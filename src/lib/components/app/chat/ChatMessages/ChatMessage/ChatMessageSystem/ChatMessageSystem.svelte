@@ -70,6 +70,16 @@
 
 	let showExpandButton = $derived(contentHeight > MAX_HEIGHT);
 
+	// While the system message is being edited, keep it painted (content-
+	// visibility skips offscreen messages) and bring it into view so the
+	// editor is never invisible.
+	$effect(() => {
+		if (!editCtx.isEditing) return;
+		requestAnimationFrame(() => {
+			textareaElement?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+		});
+	});
+
 	$effect(() => {
 		if (!messageElement || !message.content.trim()) return;
 
@@ -101,7 +111,7 @@
 
 <div
 	aria-label={t("System message with actions")}
-	class="group flex flex-col items-end gap-3 md:gap-2 {className}"
+	class="group flex flex-col items-end gap-3 md:gap-2 {className} {editCtx.isEditing ? 'system-edit-active' : ''}"
 	role="group"
 >
 	{#if editCtx.isEditing}

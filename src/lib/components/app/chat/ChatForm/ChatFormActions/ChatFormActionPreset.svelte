@@ -77,7 +77,7 @@
 		{:else}
 			<Sparkles class="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
 		{/if}
-		<span class="max-w-24 truncate">{activePreset?.name ?? t('Default')}</span>
+		<span class="min-w-0 max-w-24 truncate">{activePreset?.name ?? t('Default')}</span>
 		<ChevronDown class="h-3 w-3 shrink-0 text-muted-foreground" />
 	</DropdownMenu.Trigger>
 
@@ -101,7 +101,7 @@
 				class="flex cursor-pointer items-center justify-between gap-2"
 				onclick={() => apply(preset)}
 			>
-				<span class="truncate">{preset.name}</span>
+				<span class="min-w-0 flex-1 truncate">{preset.name}</span>
 				{#if activePreset?.id === preset.id}
 					<Check class="h-4 w-4 shrink-0" />
 				{/if}

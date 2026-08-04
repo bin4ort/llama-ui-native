@@ -408,4 +408,10 @@
 		content-visibility: auto;
 		contain-intrinsic-size: auto 500px;
 	}
+
+	/* Keep an editing system message always painted — otherwise the
+	 * editor is invisible while the chat is scrolled elsewhere. */
+	.chat-message:has(:global(.system-edit-active)) {
+		content-visibility: visible;
+	}
 </style>

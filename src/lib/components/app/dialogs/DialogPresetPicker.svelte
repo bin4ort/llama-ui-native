@@ -134,7 +134,7 @@
 										>
 											<span class="min-w-0 flex-1 truncate">{preset.name}</span>
 											{#if preset.description}
-												<span class="hidden min-w-0 flex-1 truncate text-xs text-muted-foreground sm:block"
+												<span class="hidden min-w-0 max-w-[45%] truncate text-xs text-muted-foreground sm:block"
 													>{preset.description}</span
 												>
 											{/if}
