@@ -160,16 +160,6 @@
 											<Star class="h-4 w-4 {preset.favorite ? 'fill-amber-400 text-amber-400' : ''}" />
 										</button>
 
-										{#if isActive}
-											<span class="shrink-0 p-2 text-foreground">
-												<Check class="h-4 w-4" />
-											</span>
-										{:else}
-											<span class="shrink-0 p-2" aria-hidden="true">
-												<span class="block h-4 w-4"></span>
-											</span>
-										{/if}
-
 										<button
 											type="button"
 											class="shrink-0 p-2 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
@@ -181,6 +171,16 @@
 										>
 											<Trash2 class="h-4 w-4" />
 										</button>
+
+										{#if isActive}
+											<span class="shrink-0 p-2 text-foreground">
+												<Check class="h-4 w-4" />
+											</span>
+										{:else}
+											<span class="shrink-0 p-2" aria-hidden="true">
+												<span class="block h-4 w-4"></span>
+											</span>
+										{/if}
 									</div>
 
 									{#if editingId === preset.id}
