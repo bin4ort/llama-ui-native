@@ -278,6 +278,24 @@ A owns — B only replaces that node's content via router contract).
   tools, persona stacking) are **in scope** — they keep working in `src/`
   while we port; their final state at the swap date is the parity target.
 
+### Phase 0 — Data keys snapshot (taken 2026-08-04)
+
+IndexedDB (Dexie):
+- DB name: `LlamaUi`, version 1
+- `conversations` — indexes: `id, lastModified, currNode, name`
+- `messages` — indexes: `id, convId, type, role, timestamp, parent, children`
+
+localStorage (prefix `LlamaUi.`):
+- `LlamaUi.config` (settings JSON incl. `systemPromptPresets`, `logLevel` later)
+- `LlamaUi.alwaysAllowedTools` · `LlamaUi.disabledTools` · `LlamaUi.disabledToolKeys`
+- `LlamaUi.favoriteModels` · `LlamaUi.reasoningEffortDefault` · `LlamaUi.userOverrides`
+- `LlamaUi.dismissedRecommendedMcpServers` · `LlamaUi.buildVersion` · `LlamaUi.todos`
+- `LlamaUi.streamResume.<convId>` (per-conversation prefix)
+- bare keys: `lang`, `systemPromptPresetsSeeded` (one-time built-in presets marker)
+- legacy (`LlamaCppWebui.*`): config, alwaysAllowedTools, disabledTools, favoriteModels, userOverrides — port migration
+
+Phase 0 screenshot harness: `scripts/parity-screenshots.mjs` (playwright), output to `parity-baseline/`.
+
 ### Phase 1 — Foundation (sequential, ONE agent; ~3–5 days)
 Build `web/` skeleton: `index.html`, `build.mjs` (esbuild + tailwind +
 copy + `--watch` dev mode), `kernel/*` (router, store, api, i18n with all 12
