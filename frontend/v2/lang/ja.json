@@ -661,5 +661,19 @@
   "Allow always": "常に許可",
   "Verifying…": "確認中…",
   "Preset": "プリセット",
-  "Favorite": "お気に入り"
+  "Favorite": "お気に入り",
+  "Tool": "ツール",
+  "Enabled": "有効",
+  "Always allow": "常に許可",
+  "tool": "ツール",
+  "Built-in": "組み込み",
+  "Built in tools": "組み込みツール",
+  "Built-in Tools": "組み込みツール",
+  "Custom Tools": "カスタムツール",
+  "MCP Tools": "MCPツール",
+  "Allow use of {tool} from {server}?": "{server} の {tool} の使用を許可しますか？",
+  "Allow use of {tool}?": "{tool} の使用を許可しますか？",
+  "Always allow {tool} tool": "{tool} ツールを常に許可",
+  "Always allow all tools from {server}": "{server} のすべてのツールを常に許可",
+  "Approve all tools from {server}": "{server} のすべてのツールを承認"
 }

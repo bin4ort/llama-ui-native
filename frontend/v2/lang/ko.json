@@ -661,5 +661,19 @@
   "Allow always": "항상 허용",
   "Verifying…": "확인 중…",
   "Preset": "프리셋",
-  "Favorite": "즐겨찾기"
+  "Favorite": "즐겨찾기",
+  "Tool": "도구",
+  "Enabled": "활성화됨",
+  "Always allow": "항상 허용",
+  "tool": "도구",
+  "Built-in": "내장",
+  "Built in tools": "내장 도구",
+  "Built-in Tools": "내장 도구",
+  "Custom Tools": "사용자 지정 도구",
+  "MCP Tools": "MCP 도구",
+  "Allow use of {tool} from {server}?": "{server}의 {tool} 사용을 허용하시겠습니까?",
+  "Allow use of {tool}?": "{tool} 사용을 허용하시겠습니까?",
+  "Always allow {tool} tool": "{tool} 도구를 항상 허용",
+  "Always allow all tools from {server}": "{server}의 모든 도구를 항상 허용",
+  "Approve all tools from {server}": "{server}의 모든 도구 승인"
 }

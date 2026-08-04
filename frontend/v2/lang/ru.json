@@ -661,5 +661,19 @@
   "Allow always": "Разрешать всегда",
   "Verifying…": "Проверка…",
   "Preset": "Пресет",
-  "Favorite": "Избранное"
+  "Favorite": "Избранное",
+  "Tool": "Инструмент",
+  "Enabled": "Включено",
+  "Always allow": "Разрешать всегда",
+  "tool": "инструмент",
+  "Built-in": "Встроенные",
+  "Built in tools": "Встроенные инструменты",
+  "Built-in Tools": "Встроенные инструменты",
+  "Custom Tools": "Пользовательские инструменты",
+  "MCP Tools": "MCP-инструменты",
+  "Allow use of {tool} from {server}?": "Разрешить использование {tool} из {server}?",
+  "Allow use of {tool}?": "Разрешить использование {tool}?",
+  "Always allow {tool} tool": "Всегда разрешать инструмент {tool}",
+  "Always allow all tools from {server}": "Всегда разрешать все инструменты из {server}",
+  "Approve all tools from {server}": "Одобрить все инструменты из {server}"
 }

@@ -22,8 +22,11 @@
 
 <ChatMessageActionCard icon={ShieldQuestion}>
 	{#snippet message()}
-		Allow use of <span class="font-semibold">{toolName}</span>{#if serverLabel}
-			&nbsp;from <span class="font-semibold">{serverLabel}</span>{/if}?
+		{serverLabel
+			? t('Allow use of {tool} from {server}?')
+					.replace('{tool}', toolName)
+					.replace('{server}', serverLabel)
+			: t('Allow use of {tool}?').replace('{tool}', toolName)}
 	{/snippet}
 
 	{#snippet actions()}
@@ -53,23 +56,22 @@
 
 			<DropdownMenu.Content align="start" class="min-w-[8rem]">
 				<DropdownMenu.Item onclick={() => onDecision(ToolPermissionDecision.ALWAYS)}>
-					Always allow <pre>{toolName}</pre>
-					tool
+					{t('Always allow {tool} tool').replace('{tool}', toolName)}
 				</DropdownMenu.Item>
 				{#if serverLabel}
 					<DropdownMenu.Item onclick={() => onDecision(ToolPermissionDecision.ALWAYS_SERVER)}>
-						Always allow all tools from {serverLabel}
+						{t('Always allow all tools from {server}').replace('{server}', serverLabel)}
 					</DropdownMenu.Item>
 				{:else}
 					{@const source = toolsStore.getToolSource(toolName)}
 					{@const providerName =
 						source === ToolSource.BUILTIN
-							? TOOL_SERVER_LABELS[ToolSource.BUILTIN]
+							? t('Built-in Tools')
 							: source === ToolSource.CUSTOM
-								? TOOL_SERVER_LABELS[ToolSource.CUSTOM]
-								: 'MCP Tools'}
+								? t('Custom Tools')
+								: t('MCP Tools')}
 					<DropdownMenu.Item onclick={() => onDecision(ToolPermissionDecision.ALWAYS_SERVER)}>
-						Approve all tools from {providerName}
+						{t('Approve all tools from {server}').replace('{server}', providerName)}
 					</DropdownMenu.Item>
 				{/if}
 			</DropdownMenu.Content>

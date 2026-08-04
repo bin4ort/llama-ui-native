@@ -661,5 +661,19 @@
   "Allow always": "Allow always",
   "Verifying…": "Verifying…",
   "Preset": "Preset",
-  "Favorite": "Favorite"
+  "Favorite": "Favorite",
+  "Tool": "Tool",
+  "Enabled": "Enabled",
+  "Always allow": "Always allow",
+  "tool": "tool",
+  "Built-in": "Built-in",
+  "Built in tools": "Built in tools",
+  "Built-in Tools": "Built-in Tools",
+  "Custom Tools": "Custom Tools",
+  "MCP Tools": "MCP Tools",
+  "Allow use of {tool} from {server}?": "Allow use of {tool} from {server}?",
+  "Allow use of {tool}?": "Allow use of {tool}?",
+  "Always allow {tool} tool": "Always allow {tool} tool",
+  "Always allow all tools from {server}": "Always allow all tools from {server}",
+  "Approve all tools from {server}": "Approve all tools from {server}"
 }

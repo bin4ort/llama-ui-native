@@ -661,5 +661,19 @@
   "Allow always": "Her zaman izin ver",
   "Verifying…": "Doğrulanıyor…",
   "Preset": "Hazır ayar",
-  "Favorite": "Favori"
+  "Favorite": "Favori",
+  "Tool": "Araç",
+  "Enabled": "Etkin",
+  "Always allow": "Her zaman izin ver",
+  "tool": "araç",
+  "Built-in": "Yerleşik",
+  "Built in tools": "Yerleşik araçlar",
+  "Built-in Tools": "Yerleşik araçlar",
+  "Custom Tools": "Özel araçlar",
+  "MCP Tools": "MCP araçları",
+  "Allow use of {tool} from {server}?": "{server} kaynağından {tool} kullanımına izin verilsin mi?",
+  "Allow use of {tool}?": "{tool} kullanımına izin verilsin mi?",
+  "Always allow {tool} tool": "{tool} aracına her zaman izin ver",
+  "Always allow all tools from {server}": "{server} kaynağındaki tüm araçlara her zaman izin ver",
+  "Approve all tools from {server}": "{server} kaynağındaki tüm araçları onayla"
 }

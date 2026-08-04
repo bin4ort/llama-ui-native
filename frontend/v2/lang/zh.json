@@ -661,5 +661,19 @@
   "Allow always": "始终允许",
   "Verifying…": "验证中…",
   "Preset": "预设",
-  "Favorite": "收藏"
+  "Favorite": "收藏",
+  "Tool": "工具",
+  "Enabled": "已启用",
+  "Always allow": "始终允许",
+  "tool": "个工具",
+  "Built-in": "内置",
+  "Built in tools": "内置工具",
+  "Built-in Tools": "内置工具",
+  "Custom Tools": "自定义工具",
+  "MCP Tools": "MCP 工具",
+  "Allow use of {tool} from {server}?": "允许使用来自 {server} 的 {tool}？",
+  "Allow use of {tool}?": "允许使用 {tool}？",
+  "Always allow {tool} tool": "始终允许 {tool} 工具",
+  "Always allow all tools from {server}": "始终允许来自 {server} 的所有工具",
+  "Approve all tools from {server}": "批准来自 {server} 的所有工具"
 }

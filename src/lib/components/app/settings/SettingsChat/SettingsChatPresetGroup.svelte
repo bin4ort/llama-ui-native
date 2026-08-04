@@ -140,7 +140,7 @@
 											{/snippet}
 										</Tooltip.Trigger>
 										<Tooltip.Content side="top">
-											<p class="max-w-md">{preset.description ?? preset.name}</p>
+											<p>{preset.description ?? preset.name}</p>
 										</Tooltip.Content>
 									</Tooltip.Root>
 								</span>
@@ -211,8 +211,9 @@
 							{#if editing}
 								<div class="space-y-2 border-t border-border/40 px-3 py-3">
 									<Input bind:value={buffer.name} placeholder={t('Preset name')} />
-									<Input
+									<Textarea
 										bind:value={buffer.description}
+										rows={2}
 										placeholder={t('Short description (shown in the picker)')}
 									/>
 									<Textarea bind:value={buffer.content} rows={4} class="font-mono text-xs" />

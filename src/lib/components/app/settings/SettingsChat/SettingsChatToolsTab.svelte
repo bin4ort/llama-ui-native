@@ -44,22 +44,31 @@
 
 					{@const faviconUrl = group.serverId ? mcpStore.getServerFavicon(group.serverId) : null}
 
+					{@const groupLabel =
+						group.source === 'mcp'
+							? group.label
+							: group.source === 'custom'
+								? 'JSON Schema'
+								: group.source === 'frontend'
+									? t('Built in tools')
+									: t('Built-in')}
+
 					<span class="inline-flex min-w-0 items-center gap-1.5 font-medium">
 						{#if group.source === 'mcp'}
 							<McpServerIdentity
 								iconClass={ICON_CLASS_DEFAULT}
 								iconRounded="rounded-sm"
 								showVersion={false}
-								displayName={group.label}
+								displayName={groupLabel}
 								{faviconUrl}
 							/>
 						{:else}
-							<TruncatedText text={group.label} class="font-medium" />
+							<TruncatedText text={groupLabel} class="font-medium" />
 						{/if}
 					</span>
 
 					<span class="ml-auto shrink-0 text-xs text-muted-foreground">
-						{group.tools.length} tool{group.tools.length !== 1 ? 's' : ''}
+						{group.tools.length} {t(group.tools.length === 1 ? 'tool' : 'tools')}
 					</span>
 				</Collapsible.Trigger>
 
@@ -96,9 +105,9 @@
 
 						<!-- Header row -->
 						<div class="flex items-center gap-2 px-2 py-1 text-xs text-muted-foreground">
-							<span class="min-w-0 flex-1">Tool</span>
-							<span class="w-16 shrink-0 text-center">Enabled</span>
-							<span class="w-20 shrink-0 text-center">Always allow</span>
+							<span class="min-w-0 flex-1">{t('Tool')}</span>
+							<span class="w-16 shrink-0 text-center">{t('Enabled')}</span>
+							<span class="w-20 shrink-0 text-center">{t('Always allow')}</span>
 						</div>
 
 						{#if filteredTools.length === 0}

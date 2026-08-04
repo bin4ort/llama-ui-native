@@ -661,5 +661,19 @@
   "Allow always": "Permitir siempre",
   "Verifying…": "Verificando…",
   "Preset": "Ajuste preestablecido",
-  "Favorite": "Favorito"
+  "Favorite": "Favorito",
+  "Tool": "Herramienta",
+  "Enabled": "Activado",
+  "Always allow": "Permitir siempre",
+  "tool": "herramienta",
+  "Built-in": "Integrado",
+  "Built in tools": "Herramientas integradas",
+  "Built-in Tools": "Herramientas integradas",
+  "Custom Tools": "Herramientas personalizadas",
+  "MCP Tools": "Herramientas MCP",
+  "Allow use of {tool} from {server}?": "¿Permitir el uso de {tool} de {server}?",
+  "Allow use of {tool}?": "¿Permitir el uso de {tool}?",
+  "Always allow {tool} tool": "Permitir siempre la herramienta {tool}",
+  "Always allow all tools from {server}": "Permitir siempre todas las herramientas de {server}",
+  "Approve all tools from {server}": "Aprobar todas las herramientas de {server}"
 }
