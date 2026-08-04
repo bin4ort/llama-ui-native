@@ -140,7 +140,7 @@
 											{/snippet}
 										</Tooltip.Trigger>
 										<Tooltip.Content side="top">
-											<p class="max-w-xs">{preset.description ?? preset.name}</p>
+											<p class="max-w-md">{preset.description ?? preset.name}</p>
 										</Tooltip.Content>
 									</Tooltip.Root>
 								</span>
