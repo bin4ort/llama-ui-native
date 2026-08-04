@@ -1,0 +1,9 @@
+/* input.css — Tailwind v4 entry (preflight + utilities), then kernel tokens + base. */
+@import 'tailwindcss';
+@import '../kernel/tokens.css';
+@import './base.css';
+
+/* Class scanning sources (vanilla JS trees) */
+@source '../app/**/*.js';
+@source '../settings/**/*.js';
+@source '../index.js';

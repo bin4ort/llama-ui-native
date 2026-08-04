@@ -10,3 +10,4 @@ llama-ui-native
 *~
 .env
 .env.*
+dist-web
