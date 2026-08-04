@@ -23,7 +23,56 @@ Version is kept in `src/lib/constants/app.ts` (mirrored in `server.h` and `packa
   switch personas mid-flow
 - Work done on branch `feature/personality-presets`
 
+## [0.4.3] - 2026-08-04
+
+### Built-in tools
+
+- **10 built-in day-to-day tools** (calculate, fetch_url, to_table, json_tool,
+  clipboard, notify, todo_list, weather, wikipedia, plot_chart) implemented as
+  frontend tools executed in the agentic loop, managed in the Tools settings
+  tab with per-tool search and enable/disable
+- **"Always allow" permissions** are staged and only applied on Save; new
+  grants open a modular safety-verification dialog (cancelled grants are
+  discarded); dialog is reusable (future: conversation vault)
+- **Custom prompt presets** moved into the General tab below the Default
+  system prompt, restyled like the tools menu (search, column header, rows),
+  with hover/click description access
+- Tooltips: fixed native-title suppression (now the app tooltip with a 300ms
+  delay) and width-filling text (removed text-wrap balancing)
+
 ## Unreleased
+
+### Licensing
+
+- Project relicensed from MIT to **GNU GPL v3 (or later)** — see `LICENSE`,
+  source headers in `main.c` / `server.c`, and the README "License" section
+- `package.json` now declares `"license": "GPL-3.0-or-later"`
+- **License audit**: every dependency verified GPLv3-compatible. The one
+  exception — the vendored **Mongoose** HTTP server (GPL-2.0-only) — was
+  removed and replaced with a self-written minimal HTTP server in `server.c`
+  (thread-per-connection: static file serving, JSON endpoints, SSE proxy;
+  ~600 lines, no third-party server code)
+- Swapping to GPL-2.0(-or-later) instead was considered and rejected: the
+  Apache-2.0 frontend deps (dexie, pdfjs-dist) are GPLv2-incompatible, so
+  only the Mongoose side could be fixed
+
+### Prompt wizard & built-in presets
+
+- **Wizard overhaul**: the meta-prompt now produces detailed, professional
+  system prompts (150–400 words, structured ROLE / METHOD / RESPONSE FORMAT /
+  RULES sections, real field techniques, concrete answer formats), with a
+  few-shot example for JSON reliability on small local models; wizard call
+  uses `max_tokens: 1200`, `temperature: 0.4`
+- Generated personas must act as the requested expert — no "see a specialist"
+  cop-outs, no robotic filler, no invented studies
+- **5 built-in presets** seeded on first run (one-time marker; existing
+  libraries and later deletions are never overwritten): Psychologist,
+  Brainstorming Partner, Productivity Coach, Socratic Thinking Partner,
+  Creative Writing Editor — all non-programming, each with concrete methods,
+  session formats and anti-pattern rules
+- 3 further drafts (Language Tutor, Life Decision Advisor, Relationship
+  Coach) authored in `src/lib/constants/presets.ts` but **not shipped** —
+  dormant candidates for a future opt-in library
 
 ### Languages & fonts
 
