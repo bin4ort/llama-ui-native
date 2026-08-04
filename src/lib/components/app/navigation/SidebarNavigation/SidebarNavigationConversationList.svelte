@@ -96,6 +96,7 @@
 			{onRowMouseDown}
 		/>
 	{:else}
+		<div class="min-h-0 flex-1 overflow-y-auto">
 		{#if pinnedConversations.length > 0}
 			<div class="py-2 flex whitespace-nowrap {className}">
 				<div
@@ -146,7 +147,7 @@
 				</div>
 			{/if}
 
-			<div class="min-h-0 flex-1 md:overflow-y-auto">
+			<div class="min-h-0 flex-1">
 				<ul class="flex w-full min-w-0 flex-col gap-4 md:gap-0">
 					{#each unpinnedConversations as { conversation, depth } (conversation.id)}
 						<li class="group/item relative mb-1 p-0">
@@ -184,6 +185,8 @@
 					{/if}
 				</ul>
 			</div>
+		</div>
+
 		</div>
 
 		{#if isSelectionMode}

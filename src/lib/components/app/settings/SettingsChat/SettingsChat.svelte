@@ -22,6 +22,10 @@
 
 	import { RouterService } from '$lib/services/router.service';
 	import { applyTheme } from '$lib/utils/theme-presets';
+	import { toolsStore } from '$lib/stores/tools.svelte';
+	import { settingsToolsStore } from '$lib/stores/settings-tools.svelte';
+	import { requestVerification } from '$lib/stores/verification.svelte';
+	import VerificationDialog from '$lib/components/app/dialogs/VerificationDialog.svelte';
 	import { ColorMode } from '$lib/enums/ui.enums';
 	import { fade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
@@ -80,7 +84,7 @@
 		mobileHeader?.updateCarousel();
 	}
 
-	function handleSave() {
+	async function handleSave() {
 		if (
 			localConfig.customJson &&
 			typeof localConfig.customJson === 'string' &&
@@ -113,12 +117,38 @@
 			}
 		}
 
+		// Staged "always allow" tool permissions: new grants require verification.
+		if (settingsToolsStore.hasPending) {
+			const additions = settingsToolsStore.additions;
+
+			if (additions.length > 0) {
+				const labels = additions
+					.map((key) => toolsStore.allTools.find((entry) => entry.key === key)?.definition.function.name ?? key)
+					.join(', ');
+
+				const verified = await requestVerification({
+					title: t('Safety verification'),
+					description:
+						t('Allow the following tools to always run without asking for permission?') + '\n' + labels,
+					confirmText: t('Allow always'),
+					cancelText: t('Cancel')
+				});
+
+				if (verified) settingsToolsStore.apply();
+				else settingsToolsStore.discard();
+			} else {
+				// Only revocations staged — no verification needed.
+				settingsToolsStore.apply();
+			}
+		}
+
 		settingsStore.updateMultipleConfig(processedConfig);
 		goto(settingsReferrer.url);
 	}
 
 	export function reset() {
 		localConfig = { ...config() };
+		settingsToolsStore.discard();
 	}
 
 	setChatSettingsConfigContext({
@@ -191,6 +221,8 @@
 			</div>
 
 			<SettingsFooter onReset={handleReset} onSave={handleSave} />
+
+			<VerificationDialog />
 		</div>
 	</div>
 </div>

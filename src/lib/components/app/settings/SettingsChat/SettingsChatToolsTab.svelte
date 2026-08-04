@@ -1,19 +1,20 @@
 <script lang="ts">
 	import { ICON_CLASS_DEFAULT } from '$lib/constants/css-classes';
-	import { ChevronDown, ChevronRight } from '@lucide/svelte';
+	import { ChevronDown, ChevronRight, Search, X } from '@lucide/svelte';
 	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Collapsible from '$lib/components/ui/collapsible';
-	import SettingsChatBuiltinTools from './SettingsChatBuiltinTools.svelte';
-	import { tr } from '$lib/stores/i18n.svelte';
+	import { Input } from '$lib/components/ui/input';
+	import { tr, t } from '$lib/stores/i18n.svelte';
 	import { TruncatedText, McpServerIdentity } from '$lib/components/app';
 	import { toolsStore } from '$lib/stores/tools.svelte';
-	import { permissionsStore } from '$lib/stores/permissions.svelte';
+	import { settingsToolsStore } from '$lib/stores/settings-tools.svelte';
 	import { mcpStore } from '$lib/stores/mcp.svelte';
 	import { getBuiltinToolUi } from '$lib/constants/built-in-tools';
 	import { ToolSource } from '$lib/enums/tools.enums';
-	import { SvelteSet } from 'svelte/reactivity';
+	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 
 	let expandedGroups = new SvelteSet<string>();
+	let groupQueries = new SvelteMap<string, string>();
 	let groups = $derived(toolsStore.toolGroups);
 
 	function toggleExpanded(key: string) {
@@ -63,7 +64,36 @@
 				</Collapsible.Trigger>
 
 				<Collapsible.Content>
-					<div class="ml-4 border-l border-border/50 pl-2">
+					{#if isExpanded}
+						{@const query = (groupQueries.get(group.key) ?? '').trim().toLowerCase()}
+						{@const filteredTools = query
+							? group.tools.filter((entry) =>
+									(entry.definition.function.name + ' ' + (getBuiltinToolUi(entry.definition.function.name)?.label ?? ''))
+										.toLowerCase()
+										.includes(query)
+								)
+							: group.tools}
+						<div class="ml-4 border-l border-border/50 pl-2">
+							<div class="relative px-2 py-1.5">
+								<Search class="absolute top-1/2 left-5 z-10 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+								<Input
+									class="h-8 pl-8"
+									placeholder={t('Search tools...')}
+									value={groupQueries.get(group.key) ?? ''}
+									oninput={(e) => groupQueries.set(group.key, e.currentTarget.value)}
+								/>
+								{#if (groupQueries.get(group.key) ?? '') !== ''}
+									<button
+										type="button"
+										class="absolute top-1/2 right-4 z-10 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+										title={t('Clear')}
+										onclick={() => groupQueries.delete(group.key)}
+									>
+										<X class="h-3.5 w-3.5" />
+									</button>
+								{/if}
+							</div>
+
 						<!-- Header row -->
 						<div class="flex items-center gap-2 px-2 py-1 text-xs text-muted-foreground">
 							<span class="min-w-0 flex-1">Tool</span>
@@ -71,56 +101,53 @@
 							<span class="w-20 shrink-0 text-center">Always allow</span>
 						</div>
 
-						{#each group.tools as entry (entry.key)}
-							{@const toolName = entry.definition.function.name}
-							{@const builtinUi =
-								entry.source === ToolSource.BUILTIN || entry.source === ToolSource.FRONTEND
-									? getBuiltinToolUi(toolName)
-									: null}
-							{@const displayLabel = builtinUi?.label ?? toolName}
-							{@const IconComponent = builtinUi?.icon ?? null}
-							{@const isEnabled = toolsStore.isToolEnabled(entry.key)}
-							{@const permissionKey = entry.key}
-							{@const isAlwaysAllowed = permissionsStore.hasTool(permissionKey)}
-
-							<div class="flex items-center gap-2 rounded px-2 py-1.5 text-sm hover:bg-muted/50">
-								<span class="flex min-w-0 flex-1 items-center gap-1.5">
-									{#if IconComponent}
-										<IconComponent class={ICON_CLASS_DEFAULT} />
-									{/if}
-									<TruncatedText text={displayLabel} class="min-w-0" showTooltip={true} />
-								</span>
-
-								<div class="flex w-16 shrink-0 justify-center">
-									<Checkbox
-										checked={isEnabled}
-										onCheckedChange={() => toolsStore.toggleTool(entry.key)}
-										class={ICON_CLASS_DEFAULT}
-									/>
-								</div>
-
-								<div class="flex w-20 shrink-0 justify-center">
-									<Checkbox
-										checked={isAlwaysAllowed}
-										onCheckedChange={() => {
-											if (isAlwaysAllowed) {
-												permissionsStore.revokeTool(permissionKey);
-											} else {
-												permissionsStore.allowTool(permissionKey);
-											}
-										}}
-										class={ICON_CLASS_DEFAULT}
-									/>
-								</div>
+						{#if filteredTools.length === 0}
+							<div class="px-2 py-4 text-center text-sm text-muted-foreground">
+								{tr.dict['No matches'] || 'No matches'}
 							</div>
-						{/each}
-					</div>
+						{:else}
+							{#each filteredTools as entry (entry.key)}
+								{@const toolName = entry.definition.function.name}
+								{@const builtinUi =
+									entry.source === ToolSource.BUILTIN || entry.source === ToolSource.FRONTEND
+										? getBuiltinToolUi(toolName)
+										: null}
+								{@const displayLabel = builtinUi?.label ?? toolName}
+								{@const IconComponent = builtinUi?.icon ?? null}
+								{@const isEnabled = toolsStore.isToolEnabled(entry.key)}
+								{@const permissionKey = entry.key}
+								{@const isAlwaysAllowed = settingsToolsStore.isChecked(permissionKey)}
+
+								<div class="flex items-center gap-2 rounded px-2 py-1.5 text-sm hover:bg-muted/50">
+									<span class="flex min-w-0 flex-1 items-center gap-1.5">
+										{#if IconComponent}
+											<IconComponent class={ICON_CLASS_DEFAULT} />
+										{/if}
+										<TruncatedText text={displayLabel} class="min-w-0" showTooltip={true} />
+									</span>
+
+									<div class="flex w-16 shrink-0 justify-center">
+										<Checkbox
+											checked={isEnabled}
+											onCheckedChange={() => toolsStore.toggleTool(entry.key)}
+											class={ICON_CLASS_DEFAULT}
+										/>
+									</div>
+
+									<div class="flex w-20 shrink-0 justify-center">
+										<Checkbox
+											checked={isAlwaysAllowed}
+											onCheckedChange={() => settingsToolsStore.toggle(permissionKey)}
+											class={ICON_CLASS_DEFAULT}
+										/>
+									</div>
+								</div>
+							{/each}
+						{/if}
+						</div>
+					{/if}
 				</Collapsible.Content>
 			</Collapsible.Root>
 		{/each}
 	</div>
 {/if}
-
-<div class="mt-6">
-	<SettingsChatBuiltinTools />
-</div>

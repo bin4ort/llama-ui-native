@@ -654,5 +654,10 @@
   "Weather": "Weather",
   "Wikipedia lookup": "Wikipedia lookup",
   "Chart": "Chart",
-  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Enabled tools are offered to the model in agentic flows; permission is still asked per call."
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Enabled tools are offered to the model in agentic flows; permission is still asked per call.",
+  "Search tools...": "Search tools...",
+  "Safety verification": "Safety verification",
+  "Allow the following tools to always run without asking for permission?": "Allow the following tools to always run without asking for permission?",
+  "Allow always": "Allow always",
+  "Verifying…": "Verifying…"
 }

@@ -654,5 +654,10 @@
   "Weather": "天气",
   "Wikipedia lookup": "维基百科查询",
   "Chart": "图表",
-  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "启用的工具会在智能体流程中提供给模型；每次调用仍会请求权限。"
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "启用的工具会在智能体流程中提供给模型；每次调用仍会请求权限。",
+  "Search tools...": "搜索工具...",
+  "Safety verification": "安全验证",
+  "Allow the following tools to always run without asking for permission?": "允许以下工具始终在无需询问权限的情况下运行？",
+  "Allow always": "始终允许",
+  "Verifying…": "验证中…"
 }

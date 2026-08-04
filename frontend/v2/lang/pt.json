@@ -654,5 +654,10 @@
   "Weather": "Clima",
   "Wikipedia lookup": "Consulta à Wikipédia",
   "Chart": "Gráfico",
-  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "As ferramentas ativadas são oferecidas ao modelo em fluxos de agente; a permissão é solicitada a cada chamada."
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "As ferramentas ativadas são oferecidas ao modelo em fluxos de agente; a permissão é solicitada a cada chamada.",
+  "Search tools...": "Pesquisar ferramentas...",
+  "Safety verification": "Verificação de segurança",
+  "Allow the following tools to always run without asking for permission?": "Permitir que as seguintes ferramentas sempre sejam executadas sem pedir permissão?",
+  "Allow always": "Permitir sempre",
+  "Verifying…": "Verificando…"
 }

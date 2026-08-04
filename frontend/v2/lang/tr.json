@@ -654,5 +654,10 @@
   "Weather": "Hava durumu",
   "Wikipedia lookup": "Vikipedi araması",
   "Chart": "Grafik",
-  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Etkin araçlar, aracı akışlarında modele sunulur; her çağrıda izin yine istenir."
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Etkin araçlar, aracı akışlarında modele sunulur; her çağrıda izin yine istenir.",
+  "Search tools...": "Araç ara...",
+  "Safety verification": "Güvenlik doğrulaması",
+  "Allow the following tools to always run without asking for permission?": "Aşağıdaki araçların izin istemeden her zaman çalışmasına izin verilsin mi?",
+  "Allow always": "Her zaman izin ver",
+  "Verifying…": "Doğrulanıyor…"
 }

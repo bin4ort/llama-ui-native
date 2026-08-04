@@ -8,6 +8,8 @@ Ideas and features that matter to users. Priority is indicative.
       (broad roadmap) and `docs/day-to-day-tools-draft.md` (curated everyday
       tools not in llama.cpp: calculator, fetch_url, tables, clipboard,
       notifications, weather, wikipedia, memory, …)
+- [ ] **Vaulted conversations** — hide conversations behind a vault lock
+      (reuse the modular VerificationDialog for the unlock check)
 - [ ] **Conversation search filters** — search by date range / model used
 - [ ] **MCP server presets** — one-click config for common servers (filesystem, fetch, ...)
 - [ ] **Custom prompt library** — store and reuse prompts per conversation
@@ -20,6 +22,12 @@ Ideas and features that matter to users. Priority is indicative.
 ## Internal / maintainers
 
 Technical debt and things to watch. Tick items when done.
+
+### Verification & safety
+- [ ] VerificationDialog is modular (`requestVerification`) — future callers:
+      vault unlock, always-allow confirmations, destructive bulk actions
+- [ ] "Always allow" tool grants are staged until Save and verified; consider
+      a review screen listing currently always-allowed tools
 
 ### Type safety
 - [ ] Fix the 8 remaining `svelte-check` errors (baseline before translation work):

@@ -677,6 +677,11 @@ const DE_FULL: Record<string,string> = {
   "Wikipedia lookup": "Wikipedia-Nachschlagen",
   "Chart": "Diagramm",
   "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Aktivierte Werkzeuge werden dem Modell in agentischen Abläufen angeboten; die Zustimmung wird weiterhin pro Aufruf erfragt.",
+  "Search tools...": "Werkzeuge suchen...",
+  "Safety verification": "Sicherheitsprüfung",
+  "Allow the following tools to always run without asking for permission?": "Dürfen die folgenden Werkzeuge immer ohne Nachfrage ausgeführt werden?",
+  "Allow always": "Immer erlauben",
+  "Verifying…": "Prüfe…",
 };
 
 const RU_FULL: Record<string,string> = {
@@ -1336,6 +1341,11 @@ const RU_FULL: Record<string,string> = {
   "Wikipedia lookup": "Справка Википедии",
   "Chart": "Диаграмма",
   "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Включённые инструменты предлагаются модели в агентных потоках; разрешение по-прежнему запрашивается на каждый вызов.",
+  "Search tools...": "Поиск инструментов...",
+  "Safety verification": "Проверка безопасности",
+  "Allow the following tools to always run without asking for permission?": "Разрешить следующим инструментам всегда выполняться без запроса разрешения?",
+  "Allow always": "Разрешать всегда",
+  "Verifying…": "Проверка…",
 };
 
 const EN_FULL: Record<string,string> = {
@@ -1995,6 +2005,11 @@ const EN_FULL: Record<string,string> = {
   "Wikipedia lookup": "Wikipedia lookup",
   "Chart": "Chart",
   "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Enabled tools are offered to the model in agentic flows; permission is still asked per call.",
+  "Search tools...": "Search tools...",
+  "Safety verification": "Safety verification",
+  "Allow the following tools to always run without asking for permission?": "Allow the following tools to always run without asking for permission?",
+  "Allow always": "Allow always",
+  "Verifying…": "Verifying…",
 };
 
 const ES_FULL: Record<string,string> = {
@@ -2654,6 +2669,11 @@ const ES_FULL: Record<string,string> = {
   "Wikipedia lookup": "Consulta de Wikipedia",
   "Chart": "Gráfico",
   "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Las herramientas activadas se ofrecen al modelo en flujos de agente; se sigue pidiendo permiso en cada llamada.",
+  "Search tools...": "Buscar herramientas...",
+  "Safety verification": "Verificación de seguridad",
+  "Allow the following tools to always run without asking for permission?": "¿Permitir que las siguientes herramientas se ejecuten siempre sin pedir permiso?",
+  "Allow always": "Permitir siempre",
+  "Verifying…": "Verificando…",
 };
 
 const FR_FULL: Record<string,string> = {
@@ -3313,6 +3333,11 @@ const FR_FULL: Record<string,string> = {
   "Wikipedia lookup": "Recherche Wikipédia",
   "Chart": "Graphique",
   "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Les outils activés sont proposés au modèle dans les flux d'agent ; la permission est toujours demandée à chaque appel.",
+  "Search tools...": "Rechercher des outils...",
+  "Safety verification": "Vérification de sécurité",
+  "Allow the following tools to always run without asking for permission?": "Autoriser les outils suivants à toujours s'exécuter sans demander la permission ?",
+  "Allow always": "Toujours autoriser",
+  "Verifying…": "Vérification…",
 };
 
 const ZH_FULL: Record<string,string> = {
@@ -3972,6 +3997,11 @@ const ZH_FULL: Record<string,string> = {
   "Wikipedia lookup": "维基百科查询",
   "Chart": "图表",
   "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "启用的工具会在智能体流程中提供给模型；每次调用仍会请求权限。",
+  "Search tools...": "搜索工具...",
+  "Safety verification": "安全验证",
+  "Allow the following tools to always run without asking for permission?": "允许以下工具始终在无需询问权限的情况下运行？",
+  "Allow always": "始终允许",
+  "Verifying…": "验证中…",
 };
 
 const JA_FULL: Record<string,string> = {
@@ -4631,6 +4661,11 @@ const JA_FULL: Record<string,string> = {
   "Wikipedia lookup": "Wikipedia検索",
   "Chart": "チャート",
   "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "有効なツールはエージェントフローでモデルに提供されます。呼び出しごとに許可が求められます。",
+  "Search tools...": "ツールを検索...",
+  "Safety verification": "安全確認",
+  "Allow the following tools to always run without asking for permission?": "以下のツールが許可を求めずに常に実行されることを許可しますか？",
+  "Allow always": "常に許可",
+  "Verifying…": "確認中…",
 };
 
 const KO_FULL: Record<string,string> = {
@@ -5290,6 +5325,11 @@ const KO_FULL: Record<string,string> = {
   "Wikipedia lookup": "위키백과 조회",
   "Chart": "차트",
   "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "활성화된 도구는 에이전트 흐름에서 모델에 제공되며 호출 시마다 권한을 묻습니다.",
+  "Search tools...": "도구 검색...",
+  "Safety verification": "안전 확인",
+  "Allow the following tools to always run without asking for permission?": "다음 도구가 허락 없이 항상 실행되도록 허용하시겠습니까?",
+  "Allow always": "항상 허용",
+  "Verifying…": "확인 중…",
 };
 
 const PT_FULL: Record<string,string> = {
@@ -5949,6 +5989,11 @@ const PT_FULL: Record<string,string> = {
   "Wikipedia lookup": "Consulta à Wikipédia",
   "Chart": "Gráfico",
   "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "As ferramentas ativadas são oferecidas ao modelo em fluxos de agente; a permissão é solicitada a cada chamada.",
+  "Search tools...": "Pesquisar ferramentas...",
+  "Safety verification": "Verificação de segurança",
+  "Allow the following tools to always run without asking for permission?": "Permitir que as seguintes ferramentas sempre sejam executadas sem pedir permissão?",
+  "Allow always": "Permitir sempre",
+  "Verifying…": "Verificando…",
 };
 
 const IT_FULL: Record<string,string> = {
@@ -6608,6 +6653,11 @@ const IT_FULL: Record<string,string> = {
   "Wikipedia lookup": "Ricerca Wikipedia",
   "Chart": "Grafico",
   "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Gli strumenti attivati vengono offerti al modello nei flussi agente; il permesso è comunque chiesto a ogni chiamata.",
+  "Search tools...": "Cerca strumenti...",
+  "Safety verification": "Verifica di sicurezza",
+  "Allow the following tools to always run without asking for permission?": "Consentire ai seguenti strumenti di essere sempre eseguiti senza chiedere il permesso?",
+  "Allow always": "Consenti sempre",
+  "Verifying…": "Verifica…",
 };
 
 const TR_FULL: Record<string,string> = {
@@ -7267,6 +7317,11 @@ const TR_FULL: Record<string,string> = {
   "Wikipedia lookup": "Vikipedi araması",
   "Chart": "Grafik",
   "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Etkin araçlar, aracı akışlarında modele sunulur; her çağrıda izin yine istenir.",
+  "Search tools...": "Araç ara...",
+  "Safety verification": "Güvenlik doğrulaması",
+  "Allow the following tools to always run without asking for permission?": "Aşağıdaki araçların izin istemeden her zaman çalışmasına izin verilsin mi?",
+  "Allow always": "Her zaman izin ver",
+  "Verifying…": "Doğrulanıyor…",
 };
 
 const PL_FULL: Record<string,string> = {
@@ -7926,6 +7981,11 @@ const PL_FULL: Record<string,string> = {
   "Wikipedia lookup": "Wyszukiwanie w Wikipedii",
   "Chart": "Wykres",
   "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "Włączone narzędzia są oferowane modelowi w przepływach agenta; zgoda jest nadal wymagana przy każdym wywołaniu.",
+  "Search tools...": "Szukaj narzędzi...",
+  "Safety verification": "Weryfikacja bezpieczeństwa",
+  "Allow the following tools to always run without asking for permission?": "Zezwolić, aby następujące narzędzia zawsze działały bez pytania o pozwolenie?",
+  "Allow always": "Zawsze zezwalaj",
+  "Verifying…": "Weryfikacja…",
 };
 function applyDict(dict: Record<string,string>) {
   // Mirror every key onto tr so all lookup styles resolve:

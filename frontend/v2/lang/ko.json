@@ -654,5 +654,10 @@
   "Weather": "날씨",
   "Wikipedia lookup": "위키백과 조회",
   "Chart": "차트",
-  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "활성화된 도구는 에이전트 흐름에서 모델에 제공되며 호출 시마다 권한을 묻습니다."
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "활성화된 도구는 에이전트 흐름에서 모델에 제공되며 호출 시마다 권한을 묻습니다.",
+  "Search tools...": "도구 검색...",
+  "Safety verification": "안전 확인",
+  "Allow the following tools to always run without asking for permission?": "다음 도구가 허락 없이 항상 실행되도록 허용하시겠습니까?",
+  "Allow always": "항상 허용",
+  "Verifying…": "확인 중…"
 }

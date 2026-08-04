@@ -654,5 +654,10 @@
   "Weather": "天気",
   "Wikipedia lookup": "Wikipedia検索",
   "Chart": "チャート",
-  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "有効なツールはエージェントフローでモデルに提供されます。呼び出しごとに許可が求められます。"
+  "Enabled tools are offered to the model in agentic flows; permission is still asked per call.": "有効なツールはエージェントフローでモデルに提供されます。呼び出しごとに許可が求められます。",
+  "Search tools...": "ツールを検索...",
+  "Safety verification": "安全確認",
+  "Allow the following tools to always run without asking for permission?": "以下のツールが許可を求めずに常に実行されることを許可しますか？",
+  "Allow always": "常に許可",
+  "Verifying…": "確認中…"
 }
