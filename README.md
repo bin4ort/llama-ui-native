@@ -120,6 +120,10 @@ switched mid-conversation by the model via the `list_presets` /
 
 ## Notes
 
+- The exact, implementation-independent visual instruction set (design
+  tokens, all 11 theme palettes, per-component geometry/behavior, i18n
+  conventions) lives in [docs/UI-SPEC.md](docs/UI-SPEC.md) — derived from
+  v0.4.3; the reference for UI parity and for a future native UI.
 - Known bugs and code-quality issues are tracked in [ISSUES.md](ISSUES.md) —
   check it before merging feature work.
 - The migration from SvelteKit/TypeScript to the vanilla frontend is tracked
