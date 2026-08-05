@@ -5,7 +5,7 @@
  */
 import * as kernel from '../../kernel/index.js';
 import { messagesStore, streamingStore, streamContentStore } from './chat.js';
-import { renderMarkdown } from './markdown.js';
+import { renderMarkdown, highlightCode } from './markdown.js';
 
 const { t } = kernel;
 
@@ -49,6 +49,7 @@ function renderList(listEl) {
     fragment.appendChild(renderMessage(m, streaming));
   }
   listEl.replaceChildren(fragment);
+  highlightCode(listEl).catch(() => {});
   if (scrolled) scrollToBottom(listEl);
 }
 
@@ -79,6 +80,12 @@ function renderMessage(m, streaming) {
 
   const isAssistant = m.role === 'assistant';
   const isStreaming = streaming && isAssistant && m === messagesStore.get().at(-1);
+  const hasImages = Array.isArray(m.attachments) && m.attachments.length > 0;
+  const attachmentHtml = hasImages
+    ? `<div class="mt-1 flex flex-wrap gap-1">${m.attachments
+        .map((a) => (a.dataUrl ? `<img src="${a.dataUrl}" class="h-24 w-24 rounded-md object-cover" alt="" />` : ''))
+        .join('')}</div>`
+    : '';
   const showActions = !streaming && (isAssistant || m.role === 'user');
 
   let body = '';
@@ -92,7 +99,7 @@ function renderMessage(m, streaming) {
       </details>
       <div class="message-content">${renderMarkdown(m.content ?? '')}</div>`;
   } else {
-    body = `<div class="message-content">${renderMarkdown(m.content ?? '')}</div>`;
+    body = `<div class="message-content">${renderMarkdown(m.content ?? '')}</div>${attachmentHtml}`;
   }
 
   wrap.className += ` group flex ${isAssistant ? 'justify-start' : 'justify-end'}`;
@@ -154,19 +161,58 @@ function promptEdit(m, actionsRow) {
 
 function renderComposer() {
   const wrap = document.createElement('div');
-  wrap.className = 'mx-auto flex max-w-3xl items-end gap-2';
+  wrap.className = 'mx-auto flex max-w-3xl flex-col items-end gap-2';
   wrap.innerHTML = `
-    <textarea
-      rows="1"
-      class="min-h-[40px] w-full resize-none rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-      placeholder="${t('Type a message...')}"
-    ></textarea>
-    <button class="shrink-0 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-      data-role="send">${t('Send')}</button>`;
+    <div data-role="attachments" class="flex w-full flex-wrap gap-2"></div>
+    <div class="flex w-full items-end gap-2">
+      <button class="shrink-0 rounded-xl border border-input px-3 py-2 text-sm hover:bg-accent" data-role="attach" title="${t('Attach file')}">📎</button>
+      <textarea
+        rows="1"
+        class="min-h-[40px] w-full resize-none rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+        placeholder="${t('Type a message...')}"
+      ></textarea>
+      <button class="shrink-0 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+        data-role="send">${t('Send')}</button>
+    </div>`;
+  const attachments = [];
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/*';
+  fileInput.multiple = true;
+  fileInput.className = 'hidden';
+  wrap.appendChild(fileInput);
 
   const textarea = wrap.querySelector('textarea');
   const sendBtn = wrap.querySelector('[data-role="send"]');
+  const attachBtn = wrap.querySelector('[data-role="attach"]');
+  const attList = wrap.querySelector('[data-role="attachments"]');
   const { sendMessage, abortStream, streamingStore: st } = chatApi;
+
+  attachBtn.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', async () => {
+    for (const file of fileInput.files ?? []) {
+      if (!file.type.startsWith('image/')) continue;
+      const dataUrl = await readFileAsDataUrl(file);
+      attachments.push({ name: file.name, type: file.type, dataUrl });
+    }
+    fileInput.value = '';
+    renderAttachments();
+  });
+
+  function renderAttachments() {
+    attList.replaceChildren();
+    for (let i = 0; i < attachments.length; i++) {
+      const chip = document.createElement('div');
+      chip.className = 'relative h-16 w-16 overflow-hidden rounded-md border border-border/50';
+      chip.innerHTML = `<img src="${attachments[i].dataUrl}" class="h-full w-full object-cover" alt="" />
+        <button class="absolute top-0 right-0 bg-background/80 px-1 text-xs" title="${t('Remove')}">×</button>`;
+      chip.querySelector('button').addEventListener('click', () => {
+        attachments.splice(i, 1);
+        renderAttachments();
+      });
+      attList.appendChild(chip);
+    }
+  }
 
   function updateState() {
     const busy = st.get();
@@ -193,16 +239,27 @@ function renderComposer() {
   function submit() {
     const value = textarea.value.trim();
     if (!value || st.get()) return;
+    const toSend = attachments.splice(0);
     textarea.value = '';
     textarea.style.height = 'auto';
+    renderAttachments();
     updateState();
-    sendMessage(value).catch(() => {});
+    sendMessage(value, toSend).catch(() => {});
   }
 
   return wrap;
 }
 
 import { chatApi } from './chat-api.js';
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
 
 function escapeHtml(value) {
   return String(value)

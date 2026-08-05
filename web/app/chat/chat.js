@@ -83,13 +83,14 @@ async function persistMessage(message) {
   }
 }
 
-function buildUserMessage(convId, content) {
+function buildUserMessage(convId, content, attachments = []) {
   return {
     id: crypto.randomUUID(),
     convId,
     type: 'user',
     role: 'user',
     content,
+    attachments,
     parent: null,
     children: [],
     timestamp: Date.now()
@@ -125,8 +126,18 @@ function toApiMessages(msgs) {
       out.push({ role: 'tool', tool_call_id: m.toolCallId, content: m.content });
     } else if (m.type === 'assistant' && m.toolCalls?.length) {
       out.push({ role: 'assistant', content: m.content || null, tool_calls: m.toolCalls });
-    } else if (m.role === 'user' || m.role === 'assistant') {
-      out.push({ role: m.role, content: m.content });
+    } else if (m.role === 'user') {
+      if (m.attachments?.length) {
+        const parts = [{ type: 'text', text: m.content || '' }];
+        for (const att of m.attachments) {
+          if (att.dataUrl) parts.push({ type: 'image_url', image_url: { url: att.dataUrl } });
+        }
+        out.push({ role: 'user', content: parts });
+      } else {
+        out.push({ role: 'user', content: m.content });
+      }
+    } else if (m.role === 'assistant') {
+      out.push({ role: 'assistant', content: m.content });
     }
   }
   return out;
@@ -188,11 +199,11 @@ export async function regenerateMessage(id) {
  * Appends the assistant message with delta content, reasoning and
  * tool-call fields.
  */
-export async function sendMessage(content) {
+export async function sendMessage(content, attachments = []) {
   if (!activeId || !content.trim()) return;
   abortController = new AbortController();
 
-  const userMsg = buildUserMessage(activeId, content.trim());
+  const userMsg = buildUserMessage(activeId, content.trim(), attachments);
   await persistMessage(userMsg);
   messagesStore.update((msgs) => [...msgs, userMsg]);
 

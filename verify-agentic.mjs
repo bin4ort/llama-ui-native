@@ -28,7 +28,9 @@ const server = http.createServer((req, res) => {
       }
       const reply = lastUser.includes('TOOLTEST')
         ? 'The calculator returned 4. Tool execution worked end to end.'
-        : `Mock response to: ${lastUser} — streamed.`;
+        : lastUser.includes('HIGHLIGHT')
+          ? 'Here is code:\n```js\nconst x = 42;\nconsole.log(x);\n```'
+          : `Mock response to: ${lastUser} — streamed.`;
       const words = reply.split(' ');
       let i = 0;
       const timer = setInterval(() => {
