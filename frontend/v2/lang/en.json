@@ -676,5 +676,9 @@
   "Always allow {tool} tool": "Always allow {tool} tool",
   "Always allow all tools from {server}": "Always allow all tools from {server}",
   "Approve all tools from {server}": "Approve all tools from {server}",
-  "tools": "tools"
+  "tools": "tools",
+  "fork": "fork",
+  "Request failed": "Request failed",
+  "Start a conversation with your local model. Ask anything, attach files, or pick a personality preset.": "Start a conversation with your local model. Ask anything, attach files, or pick a personality preset.",
+  "Attached": "Attached"
 }

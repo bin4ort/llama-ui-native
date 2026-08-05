@@ -30,10 +30,13 @@ async function boot() {
 
     // Agent B dialogs: real verification dialog + preset picker. Loaded
     // lazily so the settings tree stays out of the chat critical path.
-    import('./settings/verify-dialog.js').then((m) => m.registerVerificationDialog());
-    import('./settings/presets-picker.js').then((m) => m.registerPresetPicker());
+    await Promise.all([
+      import('./settings/verify-dialog.js').then((m) => m.registerVerificationDialog()),
+      import('./settings/presets-picker.js').then((m) => m.registerPresetPicker())
+    ]);
 
-    // e2e hook: ?autoapprove=1 resolves every tool permission automatically
+    // e2e hook: ?autoapprove=1 resolves every tool permission automatically.
+    // Registered AFTER the real dialog so the hook wins during headless runs.
     if (new URLSearchParams(window.location.search).has('autoapprove')) {
       permissions.registerVerifier(() => Promise.resolve(true));
     }

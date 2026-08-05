@@ -284,7 +284,7 @@
   "Modalities": "Модальности",
   "Build info": "Информация о сборке",
   "Chat Template": "Шаблон чата",
-  "Fork conversation": "Форкнуть беседу",
+  "Fork conversation": "Разветвить беседу",
   "Recent conversations": "Недавние беседы",
   "More actions": "Другие действия",
   "Pin": "Закрепить",
@@ -676,5 +676,9 @@
   "Always allow {tool} tool": "Всегда разрешать инструмент {tool}",
   "Always allow all tools from {server}": "Всегда разрешать все инструменты из {server}",
   "Approve all tools from {server}": "Одобрить все инструменты из {server}",
-  "tools": "инструментов"
+  "tools": "инструментов",
+  "fork": "форк",
+  "Request failed": "Запрос не удался",
+  "Start a conversation with your local model. Ask anything, attach files, or pick a personality preset.": "Начните разговор с локальной моделью. Спрашивайте что угодно, прикрепляйте файлы или выберите пресет личности.",
+  "Attached": "Прикреплено"
 }

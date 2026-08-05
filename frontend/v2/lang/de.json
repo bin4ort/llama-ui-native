@@ -285,7 +285,7 @@
   "Modalities": "Modalitäten",
   "Build info": "Build-Info",
   "Chat Template": "Chat-Vorlage",
-  "Fork conversation": "Unterhaltung verzweigen",
+  "Fork conversation": "Konversation verzweigen",
   "Recent conversations": "Letzte Unterhaltungen",
   "More actions": "Weitere Aktionen",
   "Pin": "Anheften",
@@ -676,5 +676,9 @@
   "Always allow {tool} tool": "{tool}-Werkzeug immer erlauben",
   "Always allow all tools from {server}": "Alle Werkzeuge aus {server} immer erlauben",
   "Approve all tools from {server}": "Alle Werkzeuge aus {server} genehmigen",
-  "tools": "Werkzeuge"
+  "tools": "Werkzeuge",
+  "fork": "fork",
+  "Request failed": "Anfrage fehlgeschlagen",
+  "Start a conversation with your local model. Ask anything, attach files, or pick a personality preset.": "Starte ein Gespräch mit deinem lokalen Modell. Frag alles, hänge Dateien an oder wähle eine Persönlichkeitsvorlage.",
+  "Attached": "Angehängt"
 }
