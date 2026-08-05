@@ -79,10 +79,21 @@ int main(int argc, char *argv[]) {
     if (getcwd(cwd, sizeof(cwd)))
         snprintf(icon_path, sizeof(icon_path), "%s/icon-128.png", cwd);
 
-    if (server_start() != 0)
-        g_warning("Server failed on port %d", BACKEND_PORT);
-
     gtk_init(&argc, &argv);
+
+    if (server_start() != 0) {
+        // Another instance is holding the port — tell the user instead of
+        // silently showing a dead window (or worse, an old UI).
+        GtkWidget *d = gtk_message_dialog_new(
+            NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+            "Another instance of Llama UI Native is already running.\n"
+            "(port %d is in use — close the other window and try again.)",
+            BACKEND_PORT);
+        gtk_window_set_title(GTK_WINDOW(d), "Llama UI Native");
+        gtk_dialog_run(GTK_DIALOG(d));
+        gtk_widget_destroy(d);
+        return 1;
+    }
 
     GtkWidget *w = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(w), "Llama UI Native");
