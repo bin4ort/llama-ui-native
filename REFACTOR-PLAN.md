@@ -244,6 +244,16 @@ Root causes:
   theme-palette tokens themselves were generated from `src/app.css` and are
   close, but each palette still needs a side-by-side check.
 
+Progress (2026-08-05, b50f575): structural port DONE — settings page shell
+(w-64 sticky sidebar + section title row + bottom action bar), sidebar
+collapsed icon strip, plain field groups (no cards), old INPUT_CLASSES
+controls, inline lucide icons. Measured: chat/search/mcp 1.2–1.5%, settings
+2.6–5.9% (was 1.4–1.7% / 3.5–6.8%).
+
+Remaining: fine-grained control styling + per-section spacing details —
+needs visual iteration (screenshot review), which the porting agent cannot
+do without image input; the residual is below 6% and mostly cosmetic.
+
 Work split (no interference):
 - **Agent A** — `web/app/shell.js`: port the old SidebarNavigation markup
   (collapsed strip, expand, logo, icons, conversation list inside the
