@@ -15,6 +15,7 @@ export const activeConversationStore = store(null);
 export const messagesStore = store([]); // flat messages of the active conversation
 export const streamingStore = store(false);
 export const streamContentStore = store('');
+export const contextStore = store(null); // { used, total } from /slots after a completion
 
 let activeId = null;
 let abortController = null;
@@ -143,6 +144,51 @@ function toApiMessages(msgs) {
   return out;
 }
 
+/**
+ * Apply a persona (preset or default system prompt) to the active
+ * conversation: updates the persona row (type 'persona') or creates one at
+ * the top of history. Persona + context (type 'system') rows stack when sent.
+ */
+export async function applyPersona(content) {
+  if (!activeId) return;
+  const trimmed = String(content ?? '').trim();
+  const msgs = messagesStore.get();
+  let persona = msgs.find((m) => m.type === 'persona');
+
+  if (persona) {
+    if (!trimmed) {
+      // empty target: remove the persona row
+      await db.deleteMessage(persona.id);
+      messagesStore.update((list) => list.filter((m) => m.id !== persona.id));
+      return;
+    }
+    await db.updateMessage(persona.id, { content: trimmed });
+    messagesStore.update((list) => list.map((m) => (m.id === persona.id ? { ...m, content: trimmed } : m)));
+    return;
+  }
+
+  if (!trimmed) return; // nothing to remove, no persona row exists
+
+  const first = msgs[0];
+  const personaRow = {
+    id: crypto.randomUUID(),
+    convId: activeId,
+    type: 'persona',
+    role: 'system',
+    content: trimmed,
+    parent: null,
+    children: [],
+    timestamp: (first?.timestamp ?? Date.now()) - 1 // keep it at the top
+  };
+  await persistMessage(personaRow);
+  messagesStore.update((list) => [personaRow, ...list]);
+}
+
+/** "Default" persona: the settings default system message (or none). */
+export function applyDefaultPersona() {
+  return applyPersona(kernel.config().systemMessage ?? '');
+}
+
 /** Truncate all descendants of a message (the active branch after it). */
 async function truncateBranch(convId, messageId) {
   const all = await db.getMessagesByConversation(convId);
@@ -254,6 +300,7 @@ export async function sendMessage(content, attachments = []) {
     });
     await db.updateConversation(activeId, { lastModified: Date.now() });
     loadConversations();
+    refreshContext();
   } catch (err) {
     if (err?.code) log.error(err.code, err.message, err.detail);
     else log.error('LLMUI-STR-004', 'chat: stream failed', String(err));
@@ -266,5 +313,21 @@ export async function sendMessage(content, attachments = []) {
 
 export function abortStream() {
   abortController?.abort();
+}
+
+/** Poll /slots and publish the active slot's token usage for the gauge. */
+export async function refreshContext() {
+  if (!activeId) return;
+  try {
+    const { getSlots } = await import('../../kernel/api.js');
+    const raw = await getSlots();
+    const slots = Array.isArray(raw) ? raw : (raw?.data ?? []);
+    const slot = [...slots].reverse().find((s) => s.n_past != null) ?? slots[0];
+    if (slot?.n_past != null && slot?.n_ctx) {
+      contextStore.set({ used: slot.n_past, total: slot.n_ctx });
+    }
+  } catch {
+    // gauge stays hidden when slots are unavailable
+  }
 }
 

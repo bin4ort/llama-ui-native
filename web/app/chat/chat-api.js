@@ -19,5 +19,8 @@ export const chatApi = {
   deleteMessage: chat.deleteMessage,
   regenerateMessage: chat.regenerateMessage,
   renameConversation: chat.renameConversation,
-  togglePin: chat.togglePin
+  togglePin: chat.togglePin,
+  applyPersona: chat.applyPersona,
+  contextStore: chat.contextStore,
+  applyDefaultPersona: chat.applyDefaultPersona
 };

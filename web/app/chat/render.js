@@ -62,10 +62,17 @@ function renderMessage(m, streaming) {
   wrap.className = 'mx-auto my-4 max-w-3xl';
 
   if (m.type === 'persona' || m.type === 'system') {
-    wrap.innerHTML = `
-      <div class="rounded-2xl border-2 border-dashed border-border/50 bg-muted px-3 py-1.5 text-sm">
-        <div class="message-content whitespace-pre-wrap">${escapeHtml(m.content ?? '')}</div>
+    const content = document.createElement('div');
+    content.className = 'rounded-2xl border-2 border-dashed border-border/50 bg-muted px-3 py-1.5 text-sm';
+    content.innerHTML = `<div class="message-content whitespace-pre-wrap">${escapeHtml(m.content ?? '')}</div>
+      <div class="mt-1 flex gap-1 text-xs text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
+        <button data-act="edit" class="rounded px-1.5 py-0.5 hover:bg-accent hover:text-foreground">${t('Edit')}</button>
+        <button data-act="delete" class="rounded px-1.5 py-0.5 hover:bg-accent hover:text-foreground">${t('Delete')}</button>
       </div>`;
+    content.querySelector('[data-act="edit"]').addEventListener('click', () => promptEdit(m, content));
+    content.querySelector('[data-act="delete"]').addEventListener('click', () => chatApi.deleteMessage(m.id).catch(() => {}));
+    wrap.appendChild(content);
+    wrap.className += ' group';
     return wrap;
   }
 
@@ -166,6 +173,7 @@ function renderComposer() {
     <div data-role="attachments" class="flex w-full flex-wrap gap-2"></div>
     <div class="flex w-full items-end gap-2">
       <button class="shrink-0 rounded-xl border border-input px-3 py-2 text-sm hover:bg-accent" data-role="attach" title="${t('Attach file')}">📎</button>
+      <button class="shrink-0 rounded-xl border border-input px-3 py-2 text-sm hover:bg-accent" data-role="persona" title="${t('Choose a personality preset')}">🧑‍🎤</button>
       <textarea
         rows="1"
         class="min-h-[40px] w-full resize-none rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
@@ -185,8 +193,24 @@ function renderComposer() {
   const textarea = wrap.querySelector('textarea');
   const sendBtn = wrap.querySelector('[data-role="send"]');
   const attachBtn = wrap.querySelector('[data-role="attach"]');
+  const personaBtn = wrap.querySelector('[data-role="persona"]');
   const attList = wrap.querySelector('[data-role="attachments"]');
-  const { sendMessage, abortStream, streamingStore: st } = chatApi;
+  const { sendMessage, abortStream, streamingStore: st, contextStore } = chatApi;
+
+  const gauge = document.createElement('div');
+  gauge.className = 'w-full text-right text-[10px] tabular-nums text-muted-foreground';
+  contextStore.subscribe((ctx) => {
+    gauge.textContent = ctx ? `${t('Context')}: ${ctx.used} / ${ctx.total} tokens` : '';
+  });
+  wrap.prepend(gauge);
+
+  personaBtn.addEventListener('click', async () => {
+    const preset = await kernel.presets.openPicker();
+    if (preset === null) return; // dismissed
+    if (preset === undefined || preset?.id === 'default') await chatApi.applyDefaultPersona();
+    else await chatApi.applyPersona(preset.content);
+  });
+  personaBtn.textContent = activePersonaLabel();
 
   attachBtn.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', async () => {
@@ -251,6 +275,14 @@ function renderComposer() {
 }
 
 import { chatApi } from './chat-api.js';
+
+function activePersonaLabel() {
+  const msgs = messagesStore.get();
+  const persona = msgs.find((m) => m.type === 'persona');
+  if (!persona) return '🧑‍🎤 ' + t('Default');
+  const preset = kernel.presets.getPresets().find((p) => p.content.trim() === (persona.content ?? '').trim());
+  return '🧑‍🎤 ' + (preset?.name ?? t('Default'));
+}
 
 function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
