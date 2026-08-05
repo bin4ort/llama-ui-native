@@ -125,7 +125,6 @@ stays untouched until parity is proven; the C server switches
 ---
 
 ## 2.1 Error codes & leveled logging (new capability)
-
 Every unexpected behavior in the app carries a **stable error code**, and a
 **log-level slider** in Developer settings controls how much gets logged —
 from "errors only" up to "everything without exception". This makes bug
@@ -219,6 +218,49 @@ Rules:
 - **Agent A** (chat/services) and **Agent B** (settings/services): both
   instrument their own code with registry codes; they may only *use* codes,
   never edit the registry (kernel-frozen; new codes are contract changes).
+
+---
+
+## 2.5 Visual parity port (NEW — priority over feature depth)
+
+The v0.5.0 alpha shipped a UI that measurably diverges from the old Svelte
+UI. Measured pixel-diff vs parity-baseline (light theme, 1400×900, same
+routes): **settings sections 3.5–6.8%, chat/search/MCP/shell 1.4–1.7%**.
+Acceptance for the migration gate: **≤ 1% per view** (pixel-diff via
+`scripts/diff-parity.mjs`).
+
+Root causes:
+- Settings sections were re-designed (cards/rows/controls) instead of
+  porting the registry-driven field markup from
+  `src/lib/components/app/settings/SettingsChat/SettingsChatFields.svelte`
+  (Label `text-sm font-medium` + control + `mt-1 text-xs text-muted-foreground`
+  help; collapsible groups; tool tables).
+- The shell sidebar was re-designed: the old app uses a collapsed icon strip
+  (`md:w-12`, logo button, hover/click expand to `md:w-72
+  md:bg-muted/60 md:backdrop-blur-xl`) — the vanilla `web/app/shell.js` uses a
+  full-width text sidebar. This affects every view.
+- Theme storage differed (old: `mode-watcher-*` keys; vanilla:
+  `LlamaUi.config.theme`) — compatibility migration landed in the kernel;
+  theme-palette tokens themselves were generated from `src/app.css` and are
+  close, but each palette still needs a side-by-side check.
+
+Work split (no interference):
+- **Agent A** — `web/app/shell.js`: port the old SidebarNavigation markup
+  (collapsed strip, expand, logo, icons, conversation list inside the
+  expanded panel); chat-screen chrome (greeting, message bubble layout,
+  composer container) per `src/lib/components/app/chat/**`.
+- **Agent B** — `web/settings/`: port the settings page layout (desktop
+  section nav + content) and the registry-driven field rendering
+  (checkbox/slider/select/textarea markup + collapsible groups + tool
+  tables) from the Svelte components; update `web/settings/fields.js` to the
+  ported markup; MCP + presets pages styled to match their old counterparts.
+- **Both** — re-run `scripts/capture-vanilla.mjs` (theme views must set
+  `LlamaUi.config.theme`, not the legacy mode-watcher keys) and iterate
+  `scripts/diff-parity.mjs` per owned view until ≤ 1%.
+
+Out of scope for the port (documented, intentional): none — every view must
+pass. The legacy `src/` tree stays until the gate passes (it is the markup
+reference).
 
 ---
 
