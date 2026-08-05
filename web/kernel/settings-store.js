@@ -32,8 +32,19 @@ const DEFAULTS = {
   customCss: '',
   apiKey: '',
   serverEndpoint: 'http://localhost:8080',
-  webUiAddress: '',
-  enableWebUi: false
+  webUiAddress: 'http://localhost:8765',
+  webUiEnabled: false,
+  pasteLongTextToFileLen: 2500,
+  sendOnEnter: true,
+  autoMicOnEmpty: false,
+  enableContinueGeneration: false,
+  copyTextAttachmentsAsPlainText: false,
+  pdfAsImage: false,
+  maxImageMPixels: 0,
+  preEncodeConversation: false,
+  disableReasoningParsing: false,
+  excludeReasoningFromContext: false,
+  showRawOutputSwitch: false
 };
 
 export const configStore = store({ ...DEFAULTS });

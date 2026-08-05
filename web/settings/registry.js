@@ -34,7 +34,19 @@ export const FIELDS = {
     { key: 'language', label: 'Language', type: 'select', help: 'Choose the interface language.' },
     { key: 'theme', label: 'Theme', type: 'select', help: 'Choose the color theme for the interface.' },
     { key: 'serverEndpoint', label: 'Server Endpoint', type: 'input', help: 'Set the llama.cpp server or OpenAI-compatible API endpoint.' },
-    { key: 'systemMessage', label: 'Default system prompt', type: 'textarea', help: 'The default system prompt — the starting message that defines how the model behaves.' }
+    { key: 'webUiAddress', label: 'Web UI Address', type: 'input', help: 'The address where the Web UI is hosted.' },
+    { key: 'webUiEnabled', label: 'Enable Web UI', type: 'checkbox', help: 'Allow access to the Web UI from other devices.' },
+    { key: 'apiKey', label: 'API Key', type: 'input', help: 'Optional API key for OpenAI-compatible endpoints.' },
+    { key: 'systemMessage', label: 'Default system prompt', type: 'textarea', help: 'The default system prompt — the starting message that defines how the model behaves.' },
+    { key: 'pasteLongTextToFileLen', label: 'Paste long text to file length', type: 'input', posInt: true, help: 'On pasting long text, it will be converted to a file. You can control the file length by setting the value of this parameter. Value 0 means disable.' },
+    { key: 'sendOnEnter', label: 'Send message on Enter', type: 'checkbox', help: 'Use Enter to send messages and Shift + Enter for new lines. When disabled, use Ctrl/Cmd + Enter.' },
+    { key: 'autoMicOnEmpty', label: 'Show microphone on empty input', type: 'checkbox', help: 'Automatically show microphone button instead of send button when textarea is empty for models with audio modality support.' },
+    { key: 'enableContinueGeneration', label: 'Enable "Continue" button', type: 'checkbox', help: 'Enable "Continue" button for assistant messages, including reasoning models.' },
+    { key: 'titleGenerationUseFirstLine', label: 'Conversation title', type: 'radio', help: 'Choose how conversation titles are generated.', options: [['true', 'Use first line'], ['false', 'Generate with LLM']] },
+    { key: 'titleGenerationPrompt', label: 'LLM title generation prompt', type: 'textarea', help: 'Optional template for the title generation prompt. Use {{USER}} and {{ASSISTANT}} placeholders.' },
+    { key: 'copyTextAttachmentsAsPlainText', label: 'Copy text attachments as plain text', type: 'checkbox', help: 'When copying a message with text attachments, combine them into a single plain text string instead of a special format that can be pasted back as attachments.' },
+    { key: 'pdfAsImage', label: 'Parse PDF as image', type: 'checkbox', help: 'Parse PDF as image instead of text. Automatically falls back to text processing for non-vision models.' },
+    { key: 'maxImageMPixels', label: 'Maximum image resolution (megapixels)', type: 'input', help: 'Images larger than this will be resized before sending to server. Set to 0 to disable.' }
   ],
   display: [
     { key: 'showMessageStats', label: 'Show message generation statistics', type: 'checkbox', help: 'Display generation statistics (tokens/second, token count, duration) for assistant messages.' },
@@ -53,19 +65,18 @@ export const FIELDS = {
     { key: 'customCss', label: 'Custom CSS', type: 'textarea', help: 'CSS injected into the page at runtime. Set it here, or ship it as a static file.' }
   ],
   agentic: [
-    { key: 'agenticMaxTurns', label: 'Agentic turns', type: 'input', help: 'Maximum number of tool execution cycles before stopping (prevents infinite loops).' },
-    { key: 'mcpRequestTimeoutSeconds', label: 'MCP request timeout (seconds)', type: 'input', help: 'Timeout for individual MCP tool calls.' },
-    { key: 'presetToolsEnabled', label: 'Prompt preset switching tools', type: 'checkbox', help: 'Give the model list_presets and change_preset tools so it can switch the prompt preset of the conversation (permission is still asked per call).' },
-    { key: 'titleGenerationUseFirstLine', label: 'Conversation title', type: 'checkbox', help: 'Choose how conversation titles are generated. The first non-empty user message line is used.' },
-    { key: 'titleGenerationUseLLM', label: 'Generate title with LLM', type: 'checkbox', help: 'Counterpart of the conversation title radio; stored and synced without a dedicated UI field.' },
-    { key: 'titleGenerationPrompt', label: 'LLM title generation prompt', type: 'textarea', help: 'Optional template for the title generation prompt. Use {{USER}} and {{ASSISTANT}} placeholders.' }
+    { key: 'agenticMaxTurns', label: 'Agentic turns', type: 'input', posInt: true, help: 'Maximum number of tool execution cycles before stopping (prevents infinite loops).' },
+    { key: 'mcpRequestTimeoutSeconds', label: 'MCP request timeout (seconds)', type: 'input', posInt: true, help: 'Timeout for individual MCP tool calls.' }
   ],
   developer: [
-    { key: 'apiKey', label: 'API Key', type: 'input', help: 'Optional API key for OpenAI-compatible endpoints.' },
+    { key: 'preEncodeConversation', label: 'Pre-fill KV cache after response', type: 'checkbox', help: 'After each response, re-submit the conversation to pre-fill the server KV cache. Makes the next turn faster since the prompt is already encoded while you read the response.' },
+    { key: 'disableReasoningParsing', label: 'Disable reasoning content parsing', type: 'checkbox', help: 'Send reasoning_format=none so the server returns thinking tokens inline instead of extracting them into a separate field.' },
+    { key: 'excludeReasoningFromContext', label: 'Exclude reasoning from context', type: 'checkbox', help: 'Strip thinking from previous messages before sending. When off, thinking is sent back via the reasoning_content field so the model sees its own chain-of-thought across turns.' },
+    { key: 'showRawOutputSwitch', label: 'Enable raw output toggle', type: 'checkbox', help: 'Show toggle button to display messages as plain text instead of Markdown-formatted content' },
     { key: 'jsSandboxEnabled', label: 'JavaScript sandbox tool', type: 'checkbox', help: 'Expose a run_javascript tool to the model. Code runs in a Web Worker sandbox.' },
     { key: 'symbolicMathEnabled', label: 'Symbolic math (nerdamer)', type: 'checkbox', help: 'Pre-load nerdamer in the sandbox for symbolic computation.' },
-    { key: 'webUiEnabled', label: 'Enable Web UI', type: 'checkbox', help: 'Allow access to the Web UI from other devices.' },
-    { key: 'webUiAddress', label: 'Web UI Address', type: 'input', help: 'The address where the Web UI is hosted.' }
+    { key: 'customJson', label: 'Custom JSON', type: 'textarea', help: 'Custom JSON parameters to send to the API. Must be valid JSON.' },
+    { key: 'customCss', label: 'Custom CSS', type: 'textarea', help: 'CSS injected into the page at runtime. Set it here, or ship it as a static file.' }
   ],
   tools: [
     { key: 'toolCalculateEnabled', label: 'Calculator', type: 'checkbox', help: 'Built-in day-to-day tool: evaluate mathematical expressions.' },

@@ -168,6 +168,37 @@ export function registrySection(fields, opts = {}) {
       labelRow.appendChild(lab);
       wrap.appendChild(labelRow);
       wrap.appendChild(box);
+    } else if (field.type === 'radio') {
+      const labelRow = document.createElement('div');
+      labelRow.className = 'flex items-center gap-2';
+      const lab = document.createElement('label');
+      lab.className = 'flex items-center gap-1.5 text-sm font-medium';
+      lab.textContent = translate(field.label);
+      labelRow.appendChild(lab);
+      wrap.appendChild(labelRow);
+      const radios = document.createElement('div');
+      radios.className = 'space-y-1.5';
+      for (const [val, text] of field.options || []) {
+        const rlab = document.createElement('label');
+        rlab.className = 'flex cursor-pointer items-center gap-2 text-sm select-none';
+        const r = document.createElement('input');
+        r.type = 'radio';
+        r.name = field.key;
+        r.value = val;
+        r.checked = String(current ?? '') === val;
+        r.className = 'h-4 w-4 accent-primary';
+        r.addEventListener('change', () => {
+          if (r.checked) {
+            updateConfig({ [field.key]: val === 'true', titleGenerationUseLLM: val !== 'true' });
+          }
+        });
+        rlab.appendChild(r);
+        const span = document.createElement('span');
+        span.textContent = translate(text);
+        rlab.appendChild(span);
+        radios.appendChild(rlab);
+      }
+      wrap.appendChild(radios);
     } else {
       const labelRow = document.createElement('div');
       labelRow.className = 'flex items-center gap-2';
@@ -180,7 +211,8 @@ export function registrySection(fields, opts = {}) {
       if (field.type === 'select') {
         const sel = document.createElement('select');
         sel.className = 'w-full bg-muted/60 dark:bg-muted/75 border border-border/30 shadow-sm outline-none text-foreground rounded-md px-3 py-2 text-sm';
-        for (const [val, text] of field.options || []) {
+        const options = opts.selectOptions?.[field.key] || field.options || [];
+        for (const [val, text] of options) {
           const o = document.createElement('option');
           o.value = val;
           o.textContent = text;

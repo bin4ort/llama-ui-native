@@ -25,6 +25,14 @@ export function renderToolsSection() {
 
   root.appendChild(sectionCard(t('Built in tools')));
   const builtinCard = root.lastChild;
+  builtinCard.appendChild(
+    checkboxField(
+      t('Prompt preset switching tools'),
+      config().presetToolsEnabled,
+      t('Give the model list_presets and change_preset tools so it can switch the prompt preset of the conversation (permission is still asked per call).'),
+      (v) => updateConfig({ presetToolsEnabled: v })
+    )
+  );
   for (const [key, label, help] of TOOL_TOGGLES) {
     builtinCard.appendChild(
       checkboxField(t(label), config()[key] !== false, t(help), (v) => updateConfig({ [key]: v }))

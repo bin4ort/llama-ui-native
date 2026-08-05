@@ -1,10 +1,11 @@
 /**
  * developer.js — Agent B: Developer settings section.
- * API key, server endpoint, JS sandbox flags, and the log-level slider
- * (0 Errors … 4 Trace) with a live debug-log view + "Copy debug log".
+ * Registry-driven (8 fields, old order) + the log-level slider with live
+ * debug-log view and Copy, and the reset-to-default action.
  */
 import { t, log, getLogLevel, getRingEntries, updateConfig, resetConfig, config } from '../../kernel/index.js';
-import { checkboxField, textField, sectionCard, button } from '../fields.js';
+import { registrySection, button } from '../fields.js';
+import { FIELDS } from '../registry.js';
 
 export const LOG_LEVEL_LABELS = ['Errors', 'Warnings', 'Info', 'Debug', 'Trace'];
 
@@ -12,38 +13,13 @@ export function renderDeveloperSection() {
   const root = document.createElement('div');
   root.className = 'space-y-4';
 
-  root.appendChild(sectionCard(t('Server')));
-  root.lastChild.appendChild(
-    textField(t('API Key'), config().apiKey, t('Optional key sent to the model server.'), (v) =>
-      updateConfig({ apiKey: v })
-    )
-  );
-  root.lastChild.appendChild(
-    textField(t('Server endpoint'), config().serverEndpoint, 'http://localhost:8080', (v) =>
-      updateConfig({ serverEndpoint: v })
-    )
+  root.appendChild(
+    registrySection(FIELDS.developer, { config, updateConfig, translate: (s) => t(s) })
   );
 
-  root.appendChild(sectionCard(t('JavaScript sandbox')));
-  root.lastChild.appendChild(
-    checkboxField(
-      t('Enable JS sandbox'),
-      config().jsSandboxEnabled,
-      t('Run frontend JavaScript tools in a sandboxed worker.'),
-      (v) => updateConfig({ jsSandboxEnabled: v })
-    )
-  );
-  root.lastChild.appendChild(
-    checkboxField(
-      t('Symbolic math'),
-      config().symbolicMathEnabled,
-      'nerdamer symbolic computation for the calculator tool.',
-      (v) => updateConfig({ symbolicMathEnabled: v })
-    )
-  );
-
-  root.appendChild(sectionCard(t('Logging')));
-  const levelCard = root.lastChild;
+  // ---- Logging (log-level slider + debug log) ----
+  const logging = document.createElement('div');
+  logging.className = 'space-y-6';
 
   const levelWrap = document.createElement('div');
   levelWrap.className = 'space-y-1.5 py-3 first:pt-0 last:pb-0';
@@ -66,12 +42,11 @@ export function renderDeveloperSection() {
   slider.step = '1';
   slider.value = String(getLogLevel());
   slider.className = 'w-full accent-primary';
-  const applyLevel = (v) => {
-    const n = Number(v);
+  slider.addEventListener('input', () => {
+    const n = Number(slider.value);
     updateConfig({ logLevel: n });
     levelLabel.textContent = LOG_LEVEL_LABELS[n] ?? String(n);
-  };
-  slider.addEventListener('input', () => applyLevel(slider.value));
+  });
   levelWrap.appendChild(slider);
 
   const ticks = document.createElement('div');
@@ -82,36 +57,30 @@ export function renderDeveloperSection() {
     ticks.appendChild(s);
   });
   levelWrap.appendChild(ticks);
-
   const help = document.createElement('p');
   help.className = 'text-xs text-muted-foreground';
   help.textContent = t('Errors only logs critical failures; Trace logs everything without exception.');
   levelWrap.appendChild(help);
-  levelCard.appendChild(levelWrap);
+  logging.appendChild(levelWrap);
 
-  // Live debug log view (kernel ring buffer)
   const logBox = document.createElement('pre');
-  logBox.className =
-    'max-h-56 overflow-auto rounded-md border border-border/60 bg-muted/40 p-2 font-mono text-[11px] leading-relaxed whitespace-pre-wrap';
+  logBox.className = 'settings-log max-h-56 overflow-auto rounded-md border border-border/60 bg-muted/40 p-2 font-mono text-[11px] leading-relaxed whitespace-pre-wrap';
   const renderLog = () => {
     const entries = getRingEntries();
-    logBox.textContent = entries
-      .map((e) => `${e.ts} | ${e.level} | ${e.code} | ${e.message}`)
-      .join('\n');
+    logBox.textContent = entries.map((e) => `${e.ts} | ${e.level} | ${e.code} | ${e.message}`).join('\n');
     logBox.scrollTop = logBox.scrollHeight;
   };
   renderLog();
   const refresh = setInterval(renderLog, 1000);
-  levelCard.addEventListener('remove', () => clearInterval(refresh), { once: true });
+  root.addEventListener('remove', () => clearInterval(refresh), { once: true });
 
-  const row = document.createElement('div');
-  row.className = 'space-y-1.5 py-3 first:pt-0 last:pb-0';
+  const logRow = document.createElement('div');
+  logRow.className = 'space-y-1.5 py-3 first:pt-0 last:pb-0';
   const logLab = document.createElement('label');
   logLab.className = 'block text-sm font-medium';
   logLab.textContent = t('Debug log');
-  row.appendChild(logLab);
-  row.appendChild(logBox);
-
+  logRow.appendChild(logLab);
+  logRow.appendChild(logBox);
   const actions = document.createElement('div');
   actions.className = 'flex items-center gap-2 pt-1';
   actions.appendChild(
@@ -122,29 +91,22 @@ export function renderDeveloperSection() {
       log.info('LLMUI-CFG-010', 'debug log copied to clipboard');
     }, 'outline')
   );
-  row.appendChild(actions);
-  levelCard.appendChild(row);
+  logRow.appendChild(actions);
+  logging.appendChild(logRow);
+  root.appendChild(logging);
 
-  root.appendChild(sectionCard(t('Danger zone')));
-  const danger = root.lastChild;
-  danger.appendChild(
-    checkboxField(
-      t('Enable Web UI'),
-      config().enableWebUi,
-      t('Expose the built-in web UI (native window remains the primary interface).'),
-      (v) => updateConfig({ enableWebUi: v })
-    )
-  );
+  // ---- Reset ----
   const resetRow = document.createElement('div');
   resetRow.className = 'flex items-center gap-2 py-3';
-  resetRow.appendChild(button(t('Reset settings'), () => {
-    // eslint-disable-next-line no-restricted-globals
-    if (confirm(t('Reset all settings to defaults? This cannot be undone.'))) {
-      resetConfig();
-      location.reload();
-    }
-  }, 'outline'));
-  danger.appendChild(resetRow);
+  resetRow.appendChild(
+    button(t('Reset settings'), () => {
+      if (confirm(t('Reset all settings to defaults? This cannot be undone.'))) {
+        resetConfig();
+        location.reload();
+      }
+    }, 'outline')
+  );
+  root.appendChild(resetRow);
 
   return root;
 }
