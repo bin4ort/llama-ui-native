@@ -21,15 +21,26 @@ chat edits remain uncommitted in the working tree (their files, untouched).
 Kernel contract changes so far (logged per §4):
 - `kernel/api.js` added: models/props/slots/health/completions + SSE stream
   reader (was planned in §2 but missing; codes taken from the frozen registry)
-- `kernel/error-codes.js`: append-only additions CFG-005..010, MCP-008, TL-007
+- `kernel/error-codes.js`: append-only additions CFG-005..010, MCP-008,
+  PRS-005, TL-007
 - `kernel/presets-store.js`: BUILTIN_PRESETS restored to the approved set
   (Psychologist, Brainstorming Partner, Productivity Coach, Socratic Thinking
   Partner, Creative Writing Editor) — the Phase 1 list contained programming
   presets ("Expert Programmer", "Strict Code Reviewer") which the product
-  requirements explicitly rule out
+  requirements explicitly rule out. Added `openPicker()`/`registerPicker()`
+  (preset picker contract, plan §4) and `getByName()`.
+- `kernel/modal.js`: added `mountModalHost()` — the modal primitive had no
+  renderer, so dialogs built on showModal never displayed.
+- `kernel/permissions.js`: `verify()`/`registerVerifier()` stubs existed;
+  Agent B now registers the real VerificationDialog at boot
+  (`web/settings/verify-dialog.js`).
 - `web/index.js`: /settings/*, /settings/presets, /mcp-servers routes
-  delegate to the settings module (was the Agent B placeholder)
+  delegate to the settings module; modal host mounted; verifier + picker
+  registered at boot; SW registered (skipped under ?native); e2e hook
+  `?test=1` exposes `window.__kernel`.
 - `web/styles/input.css`: imports settings.css (Agent B owned)
+- Agent A additions (162eede): `kernel/ui.js` button/checkbox/collapsible
+  primitives; build.mjs copies katex dist; mermaid/katex lazy blocks.
 
 ---
 

@@ -41,10 +41,22 @@ Implementation tracking (rewrite scope):
 - [ ] `error-codes.js` registry (frontend) + `error-codes.h` (C) — Phase 1 kernel
 - [ ] `logger.js` — levels, console + ring buffer (500), `LlmUiError` — Phase 1 kernel
 - [ ] `logLevel` setting (key `logLevel`, default 2) in `LlamaUi.config` — Phase 1 kernel
-- [ ] slider UI + "Copy debug log" + live log view in Developer settings — Phase 2, Agent B
-- [ ] LLMUI-code instrumentation of all services — Phase 2, both agents (use-only)
-- [ ] C server `[LLMUI-SRV-NNN]` stderr + `LLMUI_LOG_LEVEL` env filter — Phase 1/2
+- [ ] slider UI + "Copy debug log" + live log view in Developer settings — **DONE (6f8ca0a)**
+- [ ] LLMUI-code instrumentation of all services — Phase 2, both agents (use-only) — partially done (api.js, settings sections use registry codes)
+- [ ] C server `[LLMUI-SRV-NNN]` stderr + `LLMUI_LOG_LEVEL` env filter — Phase 1/2 — **still pending (SRV registry exists in error-codes.h)**
 - [ ] `docs/ERROR-CODES.md` generator — Phase 4
+
+## Rewrite (web/) findings & fixes
+
+| Item | Status |
+|---|---|
+| `permissions.verify()` was called by Agent A's committed agentic loop but only a stub + `?autoapprove` auto-allow existed → tool permission prompts would silently auto-allow or fail. | **FIXED** — real VerificationDialog (`web/settings/verify-dialog.js`, registered at boot) resolves allow/deny via the modal host; verified headless (modal shown, Allow once → true) |
+| Kernel `modal.js` had no renderer (`subscribeModal` existed, nothing mounted) — dialogs built on `showModal` would never display. | **FIXED** — `mountModalHost()` added to the kernel modal + `<div id="modal-host">` in index.html |
+| Kernel `presets-store.js` BUILTIN_PRESETS (Phase 1) shipped programming presets ("Expert Programmer", "Strict Code Reviewer") — the approved set is all non-programming. | **FIXED** — approved 5 restored (Psychologist, Brainstorming Partner, Productivity Coach, Socratic Thinking Partner, Creative Writing Editor) |
+| Preset picker contract (`kernel.presets.openPicker()`, plan §4) was missing entirely — Agent A's chat bar has nothing to call. | **DONE** — `openPicker()`/`registerPicker()` in kernel + full picker dialog (`web/settings/presets-picker.js`); verified (picks Psychologist, Default clears, wizard shortcut) |
+| Wizard duplicated in presets.js — manager and picker both need it. | **DONE** — extracted `web/settings/presets-wizard.js` (shared, meta-prompt + JSON parse ported) |
+| Tools settings had no way to ADD always-allow grants. | **DONE** — grant dropdown (10 built-in tool keys matching Agent A's registry `frontend:{name}`) + staged Save; verified persisted |
+| PWA (manifest + service worker) planned for Agent B, missing. | **DONE** — `web/static/manifest.webmanifest` + `web/sw.js` (cache-first hashed assets, network-first shell, no precache of lazy chunks); registered in boot, skipped under `?native` |
 
 ---
 
