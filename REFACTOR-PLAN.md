@@ -9,17 +9,27 @@ other's files**.
 
 Status: IN PROGRESS — Phase 0 done (baseline + data snapshot, committed
 f7bf252; plus a seeded-content baseline with verification harness, committed
-cd845db). Phase 1 kernel foundation built, bootable and committed (c710ac7):
-`web/` tree with build.mjs (esbuild + tailwind CLI + dict generation +
-version stamp + watch), kernel/* (store, router, i18n w/ 12 embedded dicts,
-theme w/ all 11 palettes ported, settings-store incl. logLevel, Dexie db,
-presets-store w/ seeding, permissions w/ staging + verify contract,
-error-codes.js registry + logger w/ ring buffer, modal/toast), tokens.css
-generated from app.css, base.css, bootable shell (sidebar + chat empty state
-+ settings placeholder) verified in a headless browser (build + boot green,
-no console errors). `error-codes.h` (C side) added.
-Phase 2 starts: Agent B vertical (web/settings/**) and Agent A chat vertical
-(web/app/**) — only `web/app/shell.js` exists so far.
+cd845db). Phase 1 kernel foundation built, bootable and committed (c710ac7).
+Phase 2 both verticals landed first cut: Agent A chat vertical (65c9104 —
+streaming, composer, sidebar, search) and Agent B settings vertical
+(6f8ca0a — all 8 settings sections, MCP page, preset manager + wizard,
+log-level slider + debug log in Developer, import/export). Settings pages
+verified headless with zero console errors; wizard generates drafts via the
+live backend; logLevel persists in LlamaUi.config. Agent A's in-progress
+chat edits remain uncommitted in the working tree (their files, untouched).
+
+Kernel contract changes so far (logged per §4):
+- `kernel/api.js` added: models/props/slots/health/completions + SSE stream
+  reader (was planned in §2 but missing; codes taken from the frozen registry)
+- `kernel/error-codes.js`: append-only additions CFG-005..010, MCP-008, TL-007
+- `kernel/presets-store.js`: BUILTIN_PRESETS restored to the approved set
+  (Psychologist, Brainstorming Partner, Productivity Coach, Socratic Thinking
+  Partner, Creative Writing Editor) — the Phase 1 list contained programming
+  presets ("Expert Programmer", "Strict Code Reviewer") which the product
+  requirements explicitly rule out
+- `web/index.js`: /settings/*, /settings/presets, /mcp-servers routes
+  delegate to the settings module (was the Agent B placeholder)
+- `web/styles/input.css`: imports settings.css (Agent B owned)
 
 ---
 
