@@ -5,7 +5,7 @@
  */
 import * as kernel from '../../kernel/index.js';
 import { messagesStore, streamingStore, streamContentStore } from './chat.js';
-import { renderMarkdown, highlightCode } from './markdown.js';
+import { renderMarkdown, renderExtras } from './markdown.js';
 
 const { t } = kernel;
 
@@ -49,7 +49,7 @@ function renderList(listEl) {
     fragment.appendChild(renderMessage(m, streaming));
   }
   listEl.replaceChildren(fragment);
-  highlightCode(listEl).catch(() => {});
+  renderExtras(listEl).catch(() => {});
   if (scrolled) scrollToBottom(listEl);
 }
 

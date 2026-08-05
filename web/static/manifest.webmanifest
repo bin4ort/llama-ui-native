@@ -1,0 +1,16 @@
+{
+  "name": "Llama UI Native",
+  "short_name": "Llama UI",
+  "description": "Native GTK desktop application wrapping the llama.cpp Web UI",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0d0d",
+  "theme_color": "#0d0d0d",
+  "icons": [
+    {
+      "src": "/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    }
+  ]
+}

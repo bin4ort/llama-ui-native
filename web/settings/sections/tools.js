@@ -34,6 +34,34 @@ export function renderToolsSection() {
   // Staged always-allow grants (kernel permissions contract)
   root.appendChild(sectionCard(t('Always allow')));
   const allowCard = root.lastChild;
+
+  // Built-in tool keys — must match Agent A's registry (web/app/chat/tools.js).
+  const BUILTIN_TOOL_KEYS = [
+    'calculate', 'fetch_url', 'to_table', 'json_tool', 'clipboard',
+    'notify', 'todo_list', 'weather', 'wikipedia', 'plot_chart'
+  ];
+
+  const grantRow = document.createElement('div');
+  grantRow.className = 'flex items-center gap-2 py-1';
+  const grantSel = document.createElement('select');
+  grantSel.className = 'h-9 flex-1 rounded-md border border-input bg-background px-3 text-sm';
+  for (const key of BUILTIN_TOOL_KEYS) {
+    const o = document.createElement('option');
+    o.value = key;
+    o.textContent = key;
+    grantSel.appendChild(o);
+  }
+  grantRow.appendChild(grantSel);
+  grantRow.appendChild(
+    button(t('Grant always allow'), () => {
+      const key = `frontend:${grantSel.value}`;
+      if (stagedKeys.has(key)) return;
+      stagedKeys.add(key);
+      renderAllowList();
+    }, 'outline')
+  );
+  allowCard.appendChild(grantRow);
+
   const stagedKeys = new Set(permissions.permissionsStore.get());
 
   const renderAllowList = () => {

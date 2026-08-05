@@ -50,3 +50,41 @@ export function closeModal() {
     onClose?.();
   }
 }
+
+/**
+ * Mount the modal renderer into a host element. Subscribes to the modal
+ * state and renders the open modal (overlay + centered dialog) — shared by
+ * all dialogs built on showModal (verification, preset picker, …).
+ */
+export function mountModalHost(host) {
+  subscribeModal((spec) => {
+    host.replaceChildren();
+    if (!spec) return;
+
+    const overlay = document.createElement('div');
+    overlay.className =
+      'fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4';
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+
+    const dialog = document.createElement('div');
+    dialog.className =
+      'w-full max-w-xl rounded-lg border border-border bg-card p-5 shadow-xl max-h-[85vh] overflow-y-auto';
+    const title = document.createElement('h3');
+    title.className = 'text-base font-semibold mb-1';
+    title.textContent = spec.title || '';
+    dialog.appendChild(title);
+    if (spec.description) {
+      const d = document.createElement('p');
+      d.className = 'mb-4 text-sm text-muted-foreground';
+      d.textContent = spec.description;
+      dialog.appendChild(d);
+    }
+    const content = spec.content?.();
+    if (content) dialog.appendChild(content);
+
+    overlay.appendChild(dialog);
+    host.appendChild(overlay);
+  });
+}

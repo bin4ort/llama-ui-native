@@ -4,7 +4,7 @@
  */
 import * as kernel from './kernel/index.js';
 
-const { router, theme, settings, i18n, presets, permissions, log, mountToasts } = kernel;
+const { router, theme, settings, i18n, presets, permissions, log, mountToasts, mountModalHost } = kernel;
 
 globalThis.APP_VERSION = '0.4.3';
 globalThis.APP_BUILD = '0x07D21';
@@ -18,10 +18,28 @@ async function boot() {
     presets.seedBuiltinPresets();
 
     mountToasts(document.getElementById('toast-host'));
+    mountModalHost(document.getElementById('modal-host'));
+
+    // PWA (Agent B): service worker — cache-first for hashed assets,
+    // network-first for the shell. Skipped in the native window.
+    if ('serviceWorker' in navigator && !new URLSearchParams(window.location.search).has('native')) {
+      navigator.serviceWorker.register('/sw.js').catch((err) => {
+        log.warn('LLMUI-PWA-000', 'pwa: service worker registration failed', String(err));
+      });
+    }
+
+    // Agent B dialogs: real verification dialog + preset picker. Loaded
+    // lazily so the settings tree stays out of the chat critical path.
+    import('./settings/verify-dialog.js').then((m) => m.registerVerificationDialog());
+    import('./settings/presets-picker.js').then((m) => m.registerPresetPicker());
 
     // e2e hook: ?autoapprove=1 resolves every tool permission automatically
     if (new URLSearchParams(window.location.search).has('autoapprove')) {
       permissions.registerVerifier(() => Promise.resolve(true));
+    }
+    // e2e hook: ?test=1 exposes the kernel facade for headless tests
+    if (new URLSearchParams(window.location.search).has('test')) {
+      globalThis.__kernel = kernel;
     }
 
     const shell = await import('./app/shell.js');

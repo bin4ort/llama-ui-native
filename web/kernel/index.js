@@ -17,5 +17,6 @@ export {
 export * as db from './db.js';
 export * as presets from './presets-store.js';
 export * as permissions from './permissions.js';
-export { showModal, closeModal, modalState, subscribeModal } from './modal.js';
+export { showModal, closeModal, modalState, subscribeModal, mountModalHost } from './modal.js';
+export { button, checkbox, collapsible } from './ui.js';
 export { toast, toastApi, mountToasts } from './toast.js';

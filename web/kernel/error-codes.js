@@ -148,6 +148,7 @@ export const CODES = {
   'LLMUI-PRS-002': { area: 'PRS', msg: 'presets: wizard JSON parse failed', status: 'active' },
   'LLMUI-PRS-003': { area: 'PRS', msg: 'presets: change_preset target not found', status: 'active' },
   'LLMUI-PRS-004': { area: 'PRS', msg: 'presets: seeding marker write failed', status: 'active' },
+  'LLMUI-PRS-005': { area: 'PRS', msg: 'presets: picker dialog not registered', status: 'active' },
 
   /* SEC */
   'LLMUI-SEC-000': { area: 'SEC', msg: 'sandbox: harness build failed', status: 'active' },

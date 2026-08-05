@@ -64,11 +64,20 @@ function tailwind(watch) {
   }
 }
 
-// ---- 4. copy static assets ----
+// ---- 3.5 copy katex dist (css + fonts) for lazy math rendering ----
+function copyKatex() {
+  const src = path.join(ROOT, 'node_modules/katex/dist');
+  const dst = path.join(OUT, 'assets/katex');
+  fs.cpSync(src, dst, { recursive: true });
+}
+
+// ---- 4. copy static assets (+ service worker at root scope) ----
 function copyStatic() {
   const src = path.join(WEB, 'static');
   if (!fs.existsSync(src)) return;
   fs.cpSync(src, OUT, { recursive: true });
+  const sw = path.join(WEB, 'sw.js');
+  if (fs.existsSync(sw)) fs.copyFileSync(sw, path.join(OUT, 'sw.js'));
 }
 
 // ---- 5. index.html + version stamp ----
@@ -93,6 +102,7 @@ banner();
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });
 tailwind(WATCH);
+copyKatex();
 copyStatic();
 writeHtml();
 

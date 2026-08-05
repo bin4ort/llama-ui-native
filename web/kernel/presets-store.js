@@ -215,4 +215,26 @@ export function seedBuiltinPresets() {
   }
 }
 
+/** Resolve a preset by exact name (change_preset tool). */
+export function getByName(name) {
+  return getPresets().find((p) => p.name === name);
+}
+
+/**
+ * Open the full preset picker dialog (implemented in web/settings/presets
+ * by Agent B; registered here as a contract stub). Resolves with the picked
+ * preset object, or null when dismissed.
+ */
+let picker = null;
+export function registerPicker(fn) {
+  picker = fn;
+}
+export function openPicker(options) {
+  if (!picker) {
+    log.warn('LLMUI-PRS-005', 'presets: picker dialog not registered');
+    return Promise.resolve(null);
+  }
+  return picker(options);
+}
+
 import { updateConfig } from './settings-store.js';

@@ -4,56 +4,10 @@
  * system prompt through kernel api.chatCompletion using the professional
  * meta-prompt (port of PRESET_WIZARD_META_PROMPT from the current app).
  */
-import { t, log, presets, api } from '../kernel/index.js';
+import { t, log, presets } from '../kernel/index.js';
 import { button, checkboxField } from './fields.js';
+import { openWizardDialog } from './presets-wizard.js';
 
-export const WIZARD_META_PROMPT =
-  'You are a senior system prompt engineer. Turn the user\'s description into a DETAILED, ' +
-  'professional system prompt that works well with local LLMs (llama.cpp, 7B–70B class). ' +
-  'The system prompt must be substantially better than what a casual user would write: ' +
-  'structured, specific, and grounded in how real experts in that field actually work.\n\n' +
-  'REQUIREMENTS FOR THE GENERATED SYSTEM PROMPT:\n' +
-  '1. STRUCTURE — Organize it into clear labeled sections when the role is complex: ' +
-  '"ROLE", "HOW TO INTERACT / METHOD", "RESPONSE FORMAT", "RULES". Plain text labels are fine; ' +
-  'write in second person, imperative mood ("You are…", "Always…", "Never…"). Short, forceful sentences.\n' +
-  '2. DEPTH — Specify what a real practitioner would actually do:\n' +
-  '   - the concrete methods, techniques or frameworks of the field;\n' +
-  '   - the exact session behavior: how to open, whether to ask one clarifying question at a time, ' +
-  '   when to challenge or summarize, how to end a session;\n' +
-  '   - the expected answer format per message: typical length, when to use numbered lists, ' +
-  '   step-by-step reasoning, when to ask follow-up questions, when to give a concrete example;\n' +
-  '   - a short concrete example of a good response when it clarifies the format.\n' +
-  '3. VOICE — Write like a skilled human expert: natural, specific, direct. Ban robotic phrases ' +
-  '("As an AI", "I\'m here to help", "Let\'s get started", "Feel free to ask", "This will help you ' +
-  'achieve your goals"). No corporate fluff, no generic filler.\n' +
-  '4. REAL HELPFULNESS — The persona must ACT AS the expert the user asked for. Never write ' +
-  'cop-outs like "consider seeking professional help", "consult a specialist" or "I am not ' +
-  'qualified". The only exception: genuine safety-critical situations — then give a concise, ' +
-  'humane safety note and continue helping.\n' +
-  '5. RULES — Include a short "RULES" section listing what the persona must NOT do: no generic ' +
-  'advice, no unsolicited listicles, no invented studies or statistics, no substance-free praise, ' +
-  'no role ambiguity.\n\n' +
-  'The resulting system prompt must be 150–400 words (longer for elaborate roles). Use the full ' +
-  'space for substance: concrete techniques, specific formats, explicit behavior rules.\n\n' +
-  'OUTPUT — your ENTIRE reply must be one valid JSON object with exactly two keys, and nothing ' +
-  'else (no code fences, no commentary, no section labels):\n' +
-  '{"description": "<one-line description for a picker list, max 12 words>", "content": "<the full system prompt text>"}';
-
-function parseGenerated(raw) {
-  let cleaned = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '');
-  const start = cleaned.indexOf('{');
-  const end = cleaned.lastIndexOf('}');
-  if (start !== -1 && end > start) cleaned = cleaned.slice(start, end + 1);
-  try {
-    const obj = JSON.parse(cleaned);
-    if (obj && typeof obj.content === 'string') {
-      return { description: typeof obj.description === 'string' ? obj.description.trim() : '', content: obj.content.trim() };
-    }
-  } catch {
-    /* fall through */
-  }
-  return { description: '', content: cleaned };
-}
 
 export function renderPresetsPage(container) {
   const root = document.createElement('div');
@@ -72,7 +26,7 @@ export function renderPresetsPage(container) {
   search.className = 'mb-4 h-9 w-full rounded-md border border-input bg-background px-3 text-sm';
   root.appendChild(search);
 
-  const wizardBtn = button(t('Create with wizard…'), () => openWizard(renderList), 'outline');
+  const wizardBtn = button(t('Create with wizard…'), () => openWizardDialog(() => renderList()), 'outline');
   root.appendChild(wizardBtn);
 
   const list = document.createElement('div');
@@ -174,102 +128,3 @@ export function renderPresetsPage(container) {
   container.replaceChildren(root);
 }
 
-function openWizard(onSaved) {
-  const overlay = document.createElement('div');
-  overlay.className =
-    'fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4';
-  const dialog = document.createElement('div');
-  dialog.className = 'w-full max-w-xl rounded-lg border border-border bg-card p-5 shadow-xl max-h-[85vh] overflow-y-auto';
-  const h = document.createElement('h3');
-  h.className = 'text-base font-semibold mb-1';
-  h.textContent = t('Create a prompt preset');
-  dialog.appendChild(h);
-  const sub = document.createElement('p');
-  sub.className = 'mb-4 text-sm text-muted-foreground';
-  sub.textContent = t('Describe the personality or expert role — the model drafts the system prompt for you to review.');
-  dialog.appendChild(sub);
-
-  const request = document.createElement('textarea');
-  request.rows = 3;
-  request.className = 'mb-3 w-full rounded-md border border-input bg-background p-2 text-sm';
-  request.placeholder = t('A psychologist who helps me untangle a decision…');
-  dialog.appendChild(request);
-
-  const status = document.createElement('p');
-  status.className = 'mb-3 text-sm text-destructive';
-  dialog.appendChild(status);
-
-  const generateBtn = button(t('Generate'), () => {
-    const req = request.value.trim();
-    if (!req) return;
-    generateBtn.disabled = true;
-    generateBtn.textContent = '…';
-    status.textContent = '';
-    api
-      .chatCompletion([{ role: 'user', content: `${WIZARD_META_PROMPT}\n\n${req}` }], {
-        temperature: 0.4,
-        max_tokens: 1200
-      })
-      .then((raw) => {
-        const parsed = parseGenerated(raw);
-        draftPanel.style.display = '';
-        nameIn.value = req.slice(0, 50);
-        descIn.value = parsed.description;
-        contentIn.value = parsed.content;
-      })
-      .catch((err) => {
-        status.textContent = `${t('Generation failed')} (${err?.code ?? 'LLMUI-PRS-001'})`;
-        log.error('LLMUI-PRS-001', 'presets: wizard generation failed', err?.message ?? String(err));
-      })
-      .finally(() => {
-        generateBtn.disabled = false;
-        generateBtn.textContent = t('Generate');
-      });
-  });
-  dialog.appendChild(generateBtn);
-
-  const draftPanel = document.createElement('div');
-  draftPanel.style.display = 'none';
-  const nameIn = document.createElement('input');
-  nameIn.className = 'mb-2 h-9 w-full rounded-md border border-input bg-background px-3 text-sm';
-  nameIn.placeholder = t('Preset name');
-  const descIn = document.createElement('input');
-  descIn.className = 'mb-2 h-9 w-full rounded-md border border-input bg-background px-3 text-sm';
-  descIn.placeholder = t('Short description (shown in the picker)');
-  const contentIn = document.createElement('textarea');
-  contentIn.className = 'mb-2 w-full rounded-md border border-input bg-background p-2 font-mono text-xs';
-  contentIn.rows = 12;
-  draftPanel.appendChild(nameIn);
-  draftPanel.appendChild(descIn);
-  draftPanel.appendChild(contentIn);
-  const saveRow = document.createElement('div');
-  saveRow.className = 'flex items-center gap-2';
-  saveRow.appendChild(button(t('Save preset'), () => {
-    if (!contentIn.value.trim() || !nameIn.value.trim()) return;
-    presets.addPreset({
-      name: nameIn.value.trim(),
-      description: descIn.value.trim() || request.value.trim() || undefined,
-      content: contentIn.value.trim()
-    });
-    close();
-    onSaved?.();
-  }));
-  saveRow.appendChild(button(t('Cancel'), close, 'outline'));
-  draftPanel.appendChild(saveRow);
-  dialog.appendChild(draftPanel);
-
-  const cancelBtn = button(t('Close'), close, 'ghost');
-  const foot = document.createElement('div');
-  foot.className = 'mt-3 flex justify-end';
-  foot.appendChild(cancelBtn);
-  dialog.appendChild(foot);
-
-  function close() {
-    overlay.remove();
-  }
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) close();
-  });
-  overlay.appendChild(dialog);
-  document.body.appendChild(overlay);
-}
