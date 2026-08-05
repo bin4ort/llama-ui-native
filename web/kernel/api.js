@@ -140,10 +140,15 @@ export async function* streamChatCompletion(messages, options = {}) {
         }
         try {
           const parsed = JSON.parse(payload);
-          const delta = parsed?.choices?.[0]?.delta?.content ?? '';
-          const finish = parsed?.choices?.[0]?.finish_reason;
-          if (finish) yield { delta, finish };
-          else if (delta) yield { delta, finish: null };
+          const choice = parsed?.choices?.[0] ?? {};
+          const d = choice.delta ?? {};
+          const delta = d.content ?? '';
+          const finish = choice.finish_reason;
+          const extra = {};
+          if (d.reasoning_content) extra.reasoning = d.reasoning_content;
+          if (d.tool_calls?.length) extra.toolCalls = d.tool_calls;
+          if (finish) yield { delta, finish, ...extra };
+          else if (delta || extra.reasoning || extra.toolCalls) yield { delta, finish: null, ...extra };
         } catch {
           log.warn('LLMUI-STR-001', 'stream: unparseable SSE line', payload.slice(0, 120));
         }

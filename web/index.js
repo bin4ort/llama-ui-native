@@ -19,6 +19,11 @@ async function boot() {
 
     mountToasts(document.getElementById('toast-host'));
 
+    // e2e hook: ?autoapprove=1 resolves every tool permission automatically
+    if (new URLSearchParams(window.location.search).has('autoapprove')) {
+      permissions.registerVerifier(() => Promise.resolve(true));
+    }
+
     const shell = await import('./app/shell.js');
 
     router.register(/^\/(?:chat\/new)?$/, () => shell.renderChat(['new']));

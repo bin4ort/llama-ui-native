@@ -79,6 +79,7 @@ function renderMessage(m, streaming) {
 
   const isAssistant = m.role === 'assistant';
   const isStreaming = streaming && isAssistant && m === messagesStore.get().at(-1);
+  const showActions = !streaming && (isAssistant || m.role === 'user');
 
   let body = '';
   if (isStreaming) {
@@ -94,10 +95,11 @@ function renderMessage(m, streaming) {
     body = `<div class="message-content">${renderMarkdown(m.content ?? '')}</div>`;
   }
 
-  wrap.className += ` flex ${isAssistant ? 'justify-start' : 'justify-end'}`;
+  wrap.className += ` group flex ${isAssistant ? 'justify-start' : 'justify-end'}`;
   wrap.innerHTML = `
     <div class="max-w-[80%] rounded-2xl px-3 py-2 text-sm ${isAssistant ? 'bg-muted/60' : 'bg-primary text-primary-foreground'}" ${isStreaming ? 'data-streaming=""' : ''}>
       ${body}
+      ${showActions ? renderActions(m, isAssistant) : ''}
     </div>`;
 
   if (m.toolCalls?.length && !isStreaming) {
@@ -110,6 +112,44 @@ function renderMessage(m, streaming) {
   }
 
   return wrap;
+}
+
+function renderActions(m, isAssistant) {
+  const { editMessage, deleteMessage, regenerateMessage } = chatApi;
+  const actions = document.createElement('div');
+  actions.className = 'mt-1 flex gap-1 text-xs text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100';
+  const addBtn = (label, fn) => {
+    const b = document.createElement('button');
+    b.className = 'rounded px-1.5 py-0.5 hover:bg-accent hover:text-foreground';
+    b.textContent = label;
+    b.addEventListener('click', (e) => {
+      e.stopPropagation();
+      fn();
+    });
+    actions.appendChild(b);
+  };
+  addBtn(t('Edit'), () => promptEdit(m, actions));
+  addBtn(t('Delete'), () => deleteMessage(m.id).catch(() => {}));
+  if (isAssistant) addBtn(t('Regenerate'), () => regenerateMessage(m.id).catch(() => {}));
+  return actions.outerHTML;
+}
+
+function promptEdit(m, actionsRow) {
+  const editor = document.createElement('div');
+  editor.className = 'mt-2';
+  editor.innerHTML = `
+    <textarea class="w-full rounded-md border border-input bg-background px-2 py-1 text-sm outline-none focus:ring-2 focus:ring-ring" rows="2"></textarea>
+    <div class="mt-1 flex gap-2">
+      <button class="rounded bg-primary px-2 py-1 text-xs text-primary-foreground" data-act="save">${t('Save')}</button>
+      <button class="rounded px-2 py-1 text-xs hover:bg-accent" data-act="cancel">${t('Cancel')}</button>
+    </div>`;
+  editor.querySelector('textarea').value = m.content ?? '';
+  editor.querySelector('[data-act="save"]').addEventListener('click', async () => {
+    const value = editor.querySelector('textarea').value.trim();
+    await chatApi.editMessage(m.id, value);
+  });
+  editor.querySelector('[data-act="cancel"]').addEventListener('click', () => editor.remove());
+  actionsRow.parentElement.insertBefore(editor, actionsRow.nextSibling);
 }
 
 function renderComposer() {

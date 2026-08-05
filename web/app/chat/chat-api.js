@@ -15,6 +15,9 @@ export const chatApi = {
   openConversation: chat.openConversation,
   newConversation: chat.newConversation,
   deleteConversation: chat.deleteConversation,
+  editMessage: chat.editMessage,
+  deleteMessage: chat.deleteMessage,
+  regenerateMessage: chat.regenerateMessage,
   renameConversation: chat.renameConversation,
   togglePin: chat.togglePin
 };

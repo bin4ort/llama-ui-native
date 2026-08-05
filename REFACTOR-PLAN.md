@@ -288,6 +288,16 @@ A owns — B only replaces that node's content via router contract).
 
 ---
 
+## Plan changelog (contract changes)
+
+- 2026-08-05 — `web/kernel/api.js` (Agent B authored, committed 6f8ca0a):
+  accepted as the kernel HTTP client (baseUrl from serverEndpoint, request()
+  with code maps, chatCompletion one-shot, generator-based streamChatCompletion).
+- 2026-08-05 — **Contract change (Agent A, kernel owner):** the SSE generator
+  now additionally yields `reasoning` and `toolCalls` fields alongside
+  `delta`/`finish` (additive — existing consumers unaffected). Needed by the
+  agentic loop; no renumbering of codes.
+
 ## 5. Phases
 
 ### Phase 0 — Freeze scope (0.5–1 day, parallel-safe)

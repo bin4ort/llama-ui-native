@@ -6,6 +6,7 @@
  */
 import * as kernel from '../../kernel/index.js';
 import { streamChatCompletion } from '../../kernel/api.js';
+import { runAgenticLoop } from './tools.js';
 
 const { store, db, log, presets } = kernel;
 
@@ -131,9 +132,61 @@ function toApiMessages(msgs) {
   return out;
 }
 
+/** Truncate all descendants of a message (the active branch after it). */
+async function truncateBranch(convId, messageId) {
+  const all = await db.getMessagesByConversation(convId);
+  const descendants = [];
+  const stack = [...all.filter((m) => m.parent === messageId).map((m) => m.id)];
+  const byParent = new Map();
+  for (const m of all) {
+    if (!byParent.has(m.parent)) byParent.set(m.parent, []);
+    byParent.get(m.parent).push(m.id);
+  }
+  while (stack.length) {
+    const id = stack.pop();
+    descendants.push(id);
+    stack.push(...(byParent.get(id) ?? []));
+  }
+  for (const id of descendants) {
+    try {
+      await db.deleteMessage(id);
+    } catch (err) {
+      log.error('LLMUI-DB-004', 'chat: branch delete failed', String(err));
+    }
+  }
+  return descendants;
+}
+
+/** Edit a message in place and truncate its descendants (active-branch edit). */
+export async function editMessage(id, content) {
+  const msg = messagesStore.get().find((m) => m.id === id);
+  if (!msg) return;
+  const removed = await truncateBranch(activeId, id);
+  await db.updateMessage(id, { content });
+  messagesStore.update((msgs) => msgs.filter((m) => !removed.includes(m.id)).map((m) => (m.id === id ? { ...m, content } : m)));
+}
+
+/** Delete a message and its descendants. */
+export async function deleteMessage(id) {
+  const removed = await truncateBranch(activeId, id);
+  await db.deleteMessage(id);
+  messagesStore.update((msgs) => msgs.filter((m) => m.id !== id && !removed.includes(m.id)));
+}
+
+/** Regenerate an assistant message: drop it + descendants, re-run the loop from the prior user turn. */
+export async function regenerateMessage(id) {
+  const msgs = messagesStore.get();
+  const idx = msgs.findIndex((m) => m.id === id);
+  if (idx === -1 || msgs[idx].role !== 'assistant') return;
+  await deleteMessage(id);
+  const prior = [...messagesStore.get()].filter((m) => m.role === 'user').at(-1);
+  if (prior) await sendMessage(prior.content);
+}
+
 /**
- * Send a user message: persist, then stream the completion. Appends the
- * assistant message with delta content, reasoning and tool-call fields.
+ * Send a user message: persist, then stream the completion.
+ * Appends the assistant message with delta content, reasoning and
+ * tool-call fields.
  */
 export async function sendMessage(content) {
   if (!activeId || !content.trim()) return;
@@ -151,40 +204,45 @@ export async function sendMessage(content) {
   const apiMessages = toApiMessages(messagesStore.get().filter((m) => m.id !== assistant.id));
 
   try {
-    await streamChatCompletion({
+    const result = await runAgenticLoop({
       messages: apiMessages,
+      conversationId: activeId,
       options: {
         temperature: Number(kernel.config().temperature) || undefined,
         max_tokens: Number(kernel.config().max_tokens) || undefined
       },
       signal: abortController.signal,
-      onData: (json) => {
-        const delta = json.choices?.[0]?.delta ?? {};
-        const content = delta.content ?? '';
-        const reasoning = delta.reasoning_content ?? '';
-        if (content || reasoning) {
-          assistant.content += content;
-          if (reasoning) {
-            assistant.reasoning ??= '';
-            assistant.reasoning += reasoning;
-          }
-          streamContentStore.set(assistant.content);
-          messagesStore.update((msgs) => msgs.map((m) => (m.id === assistant.id ? { ...assistant } : m)));
-        }
-        if (delta.tool_calls?.length) {
-          assistant.toolCalls = mergeToolCalls(assistant.toolCalls ?? [], delta.tool_calls);
-        }
+      onAssistantContent: () => {
+        streamingStore.set(true);
       },
-      onDone: async () => {
-        await db.updateMessage(assistant.id, {
-          content: assistant.content,
-          reasoning: assistant.reasoning ?? '',
-          toolCalls: assistant.toolCalls ?? []
-        });
-        await db.updateConversation(activeId, { lastModified: Date.now() });
-        loadConversations();
+      onToolResult: async (toolName, content, isError) => {
+        // persist a tool row so the loop keeps context and the UI shows it
+        const toolMsg = {
+          id: crypto.randomUUID(),
+          convId: activeId,
+          type: 'tool',
+          role: 'tool',
+          content: `${toolName}: ${content}`.slice(0, 2000),
+          parent: null,
+          children: [],
+          timestamp: Date.now()
+        };
+        await persistMessage(toolMsg);
+        messagesStore.update((msgs) => [...msgs, toolMsg]);
       }
     });
+    assistant.content = result.content ?? '';
+    assistant.reasoning = result.reasoning ?? '';
+    assistant.toolCalls = result.toolCalls ?? [];
+    streamContentStore.set(assistant.content);
+    messagesStore.update((msgs) => msgs.map((m) => (m.id === assistant.id ? { ...assistant } : m)));
+    await db.updateMessage(assistant.id, {
+      content: assistant.content,
+      reasoning: assistant.reasoning,
+      toolCalls: assistant.toolCalls
+    });
+    await db.updateConversation(activeId, { lastModified: Date.now() });
+    loadConversations();
   } catch (err) {
     if (err?.code) log.error(err.code, err.message, err.detail);
     else log.error('LLMUI-STR-004', 'chat: stream failed', String(err));
@@ -199,14 +257,3 @@ export function abortStream() {
   abortController?.abort();
 }
 
-function mergeToolCalls(existing, incoming) {
-  const map = new Map(existing.map((tc) => [tc.index, tc]));
-  for (const tc of incoming) {
-    const current = map.get(tc.index) ?? { index: tc.index, id: '', type: 'function', function: { name: '', arguments: '' } };
-    current.id = tc.id || current.id;
-    current.function.name += tc.function?.name ?? '';
-    current.function.arguments += tc.function?.arguments ?? '';
-    map.set(tc.index, current);
-  }
-  return [...map.values()];
-}
