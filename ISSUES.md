@@ -43,7 +43,7 @@ Implementation tracking (rewrite scope):
 - [ ] `logLevel` setting (key `logLevel`, default 2) in `LlamaUi.config` — Phase 1 kernel
 - [ ] slider UI + "Copy debug log" + live log view in Developer settings — **DONE (6f8ca0a)**
 - [ ] LLMUI-code instrumentation of all services — Phase 2, both agents (use-only) — partially done (api.js, settings sections use registry codes)
-- [ ] C server `[LLMUI-SRV-NNN]` stderr + `LLMUI_LOG_LEVEL` env filter — Phase 1/2 — **still pending (SRV registry exists in error-codes.h)**
+- [x] C server `[LLMUI-SRV-NNN]` stderr + `LLMUI_LOG_LEVEL` env filter — **DONE** (server.c instrumented: SRV-000/001/002/003/005/006/007/008/010/013/014; verified headless)
 - [ ] `docs/ERROR-CODES.md` generator — Phase 4
 
 ## Rewrite (web/) findings & fixes

@@ -21,6 +21,7 @@
  *   - SSE proxy of /v1/chat/completions to the local llama.cpp backend
  */
 #include "server.h"
+#include "web/kernel/error-codes.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,6 +39,53 @@
 static pthread_t g_thread;
 static volatile int g_running = 0;
 static volatile int g_listen_fd = -1;
+
+/* ---- leveled stderr logging (LLMUI-SRV-*) ----
+ * Levels (env LLMUI_LOG_LEVEL, default 1): 0 = errors only, 1 = +warnings,
+ * 2 = +info. Warning/error lines carry their SRV code: [LLMUI-SRV-001];
+ * info lines use a bare [LLMUI-SRV] prefix. Codes come from
+ * web/kernel/error-codes.h (append-only, never reused). */
+enum { SRV_L_ERR = 0, SRV_L_WARN = 1, SRV_L_INFO = 2 };
+
+static int g_log_level = -1;
+
+static void srv_log_init(void) {
+    if (g_log_level >= 0)
+        return;
+    const char *env = getenv("LLMUI_LOG_LEVEL");
+    g_log_level = env ? atoi(env) : 1;
+    if (g_log_level < 0)
+        g_log_level = 0;
+    if (g_log_level > 2)
+        g_log_level = 2;
+}
+
+#define SRV_LOGE(code, ...) do { \
+    srv_log_init(); \
+    if (SRV_L_ERR <= g_log_level) { \
+        fprintf(stderr, "[LLMUI-SRV-%03d] ", (int)(code)); \
+        fprintf(stderr, __VA_ARGS__); \
+        fputc('\n', stderr); \
+    } \
+} while (0)
+
+#define SRV_LOGW(code, ...) do { \
+    srv_log_init(); \
+    if (SRV_L_WARN <= g_log_level) { \
+        fprintf(stderr, "[LLMUI-SRV-%03d] ", (int)(code)); \
+        fprintf(stderr, __VA_ARGS__); \
+        fputc('\n', stderr); \
+    } \
+} while (0)
+
+#define SRV_LOGI(...) do { \
+    srv_log_init(); \
+    if (SRV_L_INFO <= g_log_level) { \
+        fprintf(stderr, "[LLMUI-SRV] "); \
+        fprintf(stderr, __VA_ARGS__); \
+        fputc('\n', stderr); \
+    } \
+} while (0)
 
 /* Max request header size (method line + headers). */
 #define MAX_HEADER 16384
@@ -191,6 +239,7 @@ static void send_file(int fd, const char *path, const struct stat *st,
     int cache_asset) {
     FILE *f = fopen(path, "rb");
     if (!f) {
+        SRV_LOGW(LLMUI_SRV_001, "static: not found or unreadable: %s", path);
         const char *msg = "Not Found";
         send_headers(fd, 404, "Not Found", "text/plain", (long)strlen(msg), 0);
         send_all(fd, msg, strlen(msg));
@@ -200,6 +249,7 @@ static void send_file(int fd, const char *path, const struct stat *st,
     char *data = malloc(size ? size : 1);
     if (!data) {
         fclose(f);
+        SRV_LOGE(LLMUI_SRV_002, "static: out of memory reading %s", path);
         const char *msg = "Internal Server Error";
         send_headers(fd, 500, "Internal Server Error", "text/plain",
             (long)strlen(msg), 0);
@@ -208,6 +258,8 @@ static void send_file(int fd, const char *path, const struct stat *st,
     }
     size_t got = fread(data, 1, size, f);
     fclose(f);
+    if (got != size)
+        SRV_LOGW(LLMUI_SRV_002, "static: short read %s (%zu/%zu)", path, got, size);
     send_headers(fd, 200, "OK", mime_for(path), (long)got, cache_asset);
     send_all(fd, data, got);
     free(data);
@@ -215,6 +267,7 @@ static void send_file(int fd, const char *path, const struct stat *st,
 
 static void serve_static(int fd, const char *path) {
     if (strstr(path, "..")) {
+        SRV_LOGW(LLMUI_SRV_001, "static: path traversal blocked: %s", path);
         const char *msg = "Not Found";
         send_headers(fd, 404, "Not Found", "text/plain", (long)strlen(msg), 0);
         send_all(fd, msg, strlen(msg));
@@ -242,6 +295,7 @@ static void serve_static(int fd, const char *path) {
                 return;
             }
         }
+        SRV_LOGW(LLMUI_SRV_001, "static: not found: %s", path);
         const char *msg = "Not Found";
         send_headers(fd, 404, "Not Found", "text/plain", (long)strlen(msg), 0);
         send_all(fd, msg, strlen(msg));
@@ -274,6 +328,8 @@ static void handle_network_info(int fd) {
     snprintf(j, sizeof(j),
         "{\"ip\":\"%s\",\"port\":%d,\"url\":\"http://%s:%d\"}",
         ip, BACKEND_PORT, ip, BACKEND_PORT);
+    if (strcmp(ip, "127.0.0.1") == 0 && s >= 0)
+        SRV_LOGW(LLMUI_SRV_013, "network-info: probe failed, falling back to 127.0.0.1");
     send_json(fd, j);
 }
 
@@ -296,6 +352,7 @@ static size_t proxy_write_cb(void *ptr, size_t sz, size_t n, void *d) {
 static void handle_proxy(int fd, const char *body, size_t blen) {
     CURL *curl = curl_easy_init();
     if (!curl) {
+        SRV_LOGE(LLMUI_SRV_014, "proxy: curl_easy_init failed");
         send_json(fd, "{\"error\":\"curl_init_failed\"}");
         return;
     }
@@ -322,6 +379,14 @@ static void handle_proxy(int fd, const char *body, size_t blen) {
 
     CURLcode r = curl_easy_perform(curl);
     if (r != CURLE_OK && r != CURLE_WRITE_ERROR) {
+        if (r == CURLE_COULDNT_RESOLVE_HOST || r == CURLE_COULDNT_CONNECT)
+            SRV_LOGW(LLMUI_SRV_003, "proxy: %s (%s)", curl_easy_strerror(r), BACKEND_URL);
+        else if (r == CURLE_OPERATION_TIMEDOUT)
+            SRV_LOGW(LLMUI_SRV_005, "proxy: upstream timed out after 120s");
+        else if (r == CURLE_HTTP_RETURNED_ERROR)
+            SRV_LOGW(LLMUI_SRV_006, "proxy: upstream returned an HTTP error");
+        else
+            SRV_LOGE(LLMUI_SRV_014, "proxy: curl error %d: %s", r, curl_easy_strerror(r));
         char err[256];
         snprintf(err, sizeof(err), "data:{\"error\":\"%s\"}\n\n",
             curl_easy_strerror(r));
@@ -362,6 +427,7 @@ static void handle_connection(int fd) {
     char method[8], path[4096];
     long clen = 0;
     if (!parse_request(req, method, sizeof(method), path, sizeof(path), &clen)) {
+        SRV_LOGW(LLMUI_SRV_008, "http: malformed request line");
         const char *msg = "Bad Request";
         send_headers(fd, 400, "Bad Request", "text/plain", (long)strlen(msg), 0);
         send_all(fd, msg, strlen(msg));
@@ -372,8 +438,10 @@ static void handle_connection(int fd) {
     char *body = NULL;
     size_t have = n - hlen;
     if (clen > 0) {
-        if (clen > MAX_BODY)
+        if (clen > MAX_BODY) {
+            SRV_LOGW(LLMUI_SRV_007, "http: body too large (%ld bytes)", clen);
             return;
+        }
         body = malloc((size_t)clen);
         if (!body)
             return;
@@ -437,6 +505,7 @@ static void handle_connection(int fd) {
     } else if (strcmp(method, "GET") == 0) {
         serve_static(fd, path);
     } else {
+        SRV_LOGW(LLMUI_SRV_010, "http: method not allowed: %s %s", method, path);
         send_json(fd, "{\"error\":\"method not allowed\"}");
     }
 
@@ -455,8 +524,10 @@ static void *conn_thread(void *arg) {
 static void *server_thread(void *arg) {
     (void)arg;
     int fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (fd < 0)
+    if (fd < 0) {
+        SRV_LOGE(LLMUI_SRV_000, "server: socket() failed: %s", strerror(errno));
         return NULL;
+    }
     int one = 1;
     setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
 
@@ -466,10 +537,13 @@ static void *server_thread(void *arg) {
     a.sin_port = htons(BACKEND_PORT);
     if (bind(fd, (struct sockaddr *)&a, sizeof(a)) != 0 ||
         listen(fd, 16) != 0) {
+        SRV_LOGE(LLMUI_SRV_000, "server: bind/listen on port %d failed: %s",
+            BACKEND_PORT, strerror(errno));
         close(fd);
         return NULL;
     }
 
+    SRV_LOGI("server: listening on http://0.0.0.0:%d (serving %s)", BACKEND_PORT, FRONTEND_DIR);
     g_listen_fd = fd;
     g_running = 1;
     while (g_running) {
