@@ -34,10 +34,14 @@ function genDicts() {
 }
 
 // ---- 2. esbuild ----
+// Entry gets a hashed filename ([name]-[hash]) so a stale service worker
+// (cache-first on /assets/*) can never serve an old entry for the new build
+// — the filename changes with every build.
 const esbuildOptions = {
   entryPoints: [path.join(WEB, 'index.js')],
   bundle: true,
   outdir: path.join(OUT, 'assets'),
+  entryNames: '[name]-[hash]',
   format: 'esm',
   splitting: true,
   minify: !WATCH,
@@ -92,10 +96,15 @@ function copyStatic() {
 
 // ---- 5. index.html + version stamp ----
 function writeHtml() {
+  // Resolve the hashed entry filename produced by esbuild.
+  const entry = fs
+    .readdirSync(path.join(OUT, 'assets'))
+    .find((f) => /^index-[a-zA-Z0-9_-]+\.js$/.test(f));
   const html = fs
     .readFileSync(path.join(WEB, 'index.html'), 'utf8')
     .replaceAll('__APP_VERSION__', APP_VERSION)
-    .replaceAll('__APP_BUILD__', APP_BUILD);
+    .replaceAll('__APP_BUILD__', APP_BUILD)
+    .replaceAll('/assets/index.js', `/assets/${entry ?? 'index.js'}`);
   fs.writeFileSync(path.join(OUT, 'index.html'), html);
   fs.writeFileSync(
     path.join(OUT, 'build.json'),
@@ -115,6 +124,10 @@ tailwind(WATCH);
 copyKatex();
 copyStatic();
 genErrorCodes();
+
+// esbuild must run BEFORE writeHtml: the entry filename is content-hashed
+// (index-<hash>.js) and writeHtml resolves it from the output dir.
+await build(esbuildOptions);
 writeHtml();
 
 if (WATCH) {
@@ -122,6 +135,5 @@ if (WATCH) {
   await ctx.watch();
   console.log('[build] watching for changes…');
 } else {
-  await build(esbuildOptions);
   console.log('[build] done.');
 }

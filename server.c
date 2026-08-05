@@ -127,7 +127,7 @@ static void send_headers(int fd, int status, const char *text,
         "Cache-Control: %s\r\n"
         "Content-Type: %s\r\n",
         status, text,
-        cache_asset ? "public, max-age=31536000, immutable" : "no-cache",
+        cache_asset ? "public, max-age=31536000, immutable" : "no-store",
         ctype);
     if (clen >= 0)
         n += snprintf(buf + n, sizeof(buf) - n, "Content-Length: %ld\r\n", clen);

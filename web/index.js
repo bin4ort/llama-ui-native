@@ -38,11 +38,23 @@ async function boot() {
     mountModalHost(document.getElementById('modal-host'));
 
     // PWA (Agent B): service worker — cache-first for hashed assets,
-    // network-first for the shell. Skipped in the native window.
-    if ('serviceWorker' in navigator && !new URLSearchParams(window.location.search).has('native')) {
-      navigator.serviceWorker.register('/sw.js').catch((err) => {
-        log.warn('LLMUI-PWA-000', 'pwa: service worker registration failed', String(err));
-      });
+    // network-first for the shell. Skipped in the native window; in native
+    // mode we also UNREGISTER any stale worker + purge caches left over
+    // from earlier non-native runs (a stale SW would serve the old UI).
+    const isNative = new URLSearchParams(window.location.search).has('native');
+    if ('serviceWorker' in navigator) {
+      if (isNative) {
+        navigator.serviceWorker
+          .getRegistrations()
+          .then((rs) => Promise.all(rs.map((r) => r.unregister())))
+          .then(() => caches.keys())
+          .then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
+          .catch((err) => log.warn('LLMUI-PWA-000', 'pwa: stale worker cleanup failed', String(err)));
+      } else {
+        navigator.serviceWorker.register('/sw.js').catch((err) => {
+          log.warn('LLMUI-PWA-000', 'pwa: service worker registration failed', String(err));
+        });
+      }
     }
 
     // Agent B dialogs: real verification dialog + preset picker. Loaded

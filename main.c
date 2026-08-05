@@ -114,7 +114,11 @@ int main(int argc, char *argv[]) {
     g_signal_connect(wv, "load-changed",
         G_CALLBACK(on_webview_load_changed), w);
 
-    webkit_web_view_load_uri(wv, "http://localhost:8765/?native=1");
+    // Version marker on the URL defeats any stale service-worker cache from
+    // earlier runs (SW cache is keyed by URL; a new URL misses the cache).
+    char url[128];
+    snprintf(url, sizeof(url), "http://localhost:8765/?native=1&v=%s", BUILD);
+    webkit_web_view_load_uri(wv, url);
     gtk_container_add(GTK_CONTAINER(w), GTK_WIDGET(wv));
     gtk_widget_show_all(w);
 
