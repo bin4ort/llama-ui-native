@@ -64,7 +64,10 @@ for (const [theme, value] of THEMES) {
       },
       [value]
     );
+    // identical-URL goto does not reload — force a fresh boot so the theme
+    // actually applies before the screenshot
     await page.goto(`${BASE}/#/settings/general`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForTimeout(1200);
     await page.screenshot({ path: path.join(OUT, `theme-${theme}.png`) });
     console.log('OK theme', theme);
