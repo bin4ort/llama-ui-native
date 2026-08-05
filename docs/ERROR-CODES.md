@@ -11,6 +11,12 @@
 | LLMUI-CFG-002 | CFG | settings: server prop sync failed | active |
 | LLMUI-CFG-003 | CFG | settings: reset to defaults failed | active |
 | LLMUI-CFG-004 | CFG | settings: import rejected (bad payload) | active |
+| LLMUI-CFG-005 | CFG | settings: export failed | active |
+| LLMUI-CFG-006 | CFG | settings: import failed | active |
+| LLMUI-CFG-007 | CFG | settings: model select persisted | active |
+| LLMUI-CFG-008 | CFG | settings: custom JSON invalid (saved anyway) | active |
+| LLMUI-CFG-009 | CFG | settings: MCP servers payload invalid | active |
+| LLMUI-CFG-010 | CFG | settings: debug log copied to clipboard | active |
 | LLMUI-DB-000 | DB | dexie: database open failed | active |
 | LLMUI-DB-001 | DB | dexie: conversation add failed | active |
 | LLMUI-DB-002 | DB | dexie: message add failed | active |
@@ -78,6 +84,7 @@
 | LLMUI-MCP-005 | MCP | mcp: tool call failed | active |
 | LLMUI-MCP-006 | MCP | mcp: resource read failed | active |
 | LLMUI-MCP-007 | MCP | mcp: prompt get failed | active |
+| LLMUI-MCP-008 | MCP | mcp: connection test failed | active |
 | LLMUI-TL-000 | TL | tools: agentic loop exceeded max turns | active |
 | LLMUI-TL-001 | TL | tools: tool call parse failed | active |
 | LLMUI-TL-002 | TL | tools: permission decision missing | active |
@@ -85,11 +92,13 @@
 | LLMUI-TL-004 | TL | tools: built-in executor failed | active |
 | LLMUI-TL-005 | TL | tools: sandbox execution failed | active |
 | LLMUI-TL-006 | TL | tools: steering message inject failed | active |
+| LLMUI-TL-007 | TL | tools: always-allow grants applied | active |
 | LLMUI-PRS-000 | PRS | presets: library parse failed | active |
 | LLMUI-PRS-001 | PRS | presets: wizard generation failed | active |
 | LLMUI-PRS-002 | PRS | presets: wizard JSON parse failed | active |
 | LLMUI-PRS-003 | PRS | presets: change_preset target not found | active |
 | LLMUI-PRS-004 | PRS | presets: seeding marker write failed | active |
+| LLMUI-PRS-005 | PRS | presets: picker dialog not registered | active |
 | LLMUI-SEC-000 | SEC | sandbox: harness build failed | active |
 | LLMUI-SEC-001 | SEC | sandbox: worker timeout | active |
 | LLMUI-SEC-002 | SEC | sandbox: output cap exceeded | active |

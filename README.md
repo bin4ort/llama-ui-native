@@ -23,9 +23,7 @@ A native GTK desktop application wrapping the llama.cpp Web UI in a WebKitGTK wi
 │   ├── settings/         # Settings vertical (8 sections, MCP, presets, PWA)
 │   └── build.mjs         # esbuild + Tailwind CLI + dict generation
 ├── frontend/v3/          # Compiled vanilla output (served by C server)
-├── frontend/v2/          # Legacy SvelteKit output (kept as fallback)
-├── src/                  # Legacy SvelteKit source (migration reference)
-├── scripts/              # Build helpers + screenshot baseline harness
+├── scripts/              # Build helpers + parity/e2e harness
 ├── ISSUES.md             # Known bugs & errors tracker
 ├── REFACTOR-PLAN.md      # Vanilla-rewrite plan (phases, parity gate)
 ├── install.sh            # Build + install
@@ -69,25 +67,21 @@ Dev mode: `npm run build:web:watch` (rebuilds on change).
 
 ## Adding a Language
 
-1. Copy `frontend/v2/lang/en.json` to `frontend/v2/lang/{code}.json`
+1. Copy `web/lang/en.json` to `web/lang/{code}.json`
 2. Translate all values (keep keys in English)
-3. Add the language option in `src/lib/constants/settings-registry.ts` (line ~112)
-4. Regenerate the embedded dict in `src/lib/stores/i18n.svelte.ts`:
-   `node scripts/sync-embedded-dicts.mjs`
-5. Add the language code in the `applyCode()` function of `src/lib/stores/i18n.svelte.ts`
-6. Run `npm run build` and commit
+3. Add the language option to the General settings dropdown (`web/settings/sections/general.js`)
+4. Run `npm run build:web` — the build regenerates `web/kernel/dicts.generated.js`
+5. Commit
 
 ## Translation Architecture
 
 All UI strings are looked up by English key through a single mechanism:
 
-- **`t("key")`** in templates and scripts — the canonical lookup
-- **`tr["key"]` / `tr.Settings` / `tr.dict["key"]`** — all equivalent; every key of
-  the active language dict is mirrored onto `tr` itself by `applyDict()`
-- **Source of truth**: `frontend/v2/lang/*.json`. Edit these files, then run
-  `node scripts/sync-embedded-dicts.mjs` to regenerate the inline `*_FULL` dicts
-  in `src/lib/stores/i18n.svelte.ts` (embedded = no async fetch, no stale data)
-- **Fallback**: `t("key")` returns the key itself when no translation exists
+- **`t("key")`** — the canonical lookup (key-fallback: unknown keys return
+  the key itself)
+- **Source of truth**: `web/lang/*.json` (12 languages). Edit these files,
+  then `npm run build:web` regenerates the embedded dicts in
+  `web/kernel/dicts.generated.js` (embedded = no async fetch, no stale data)
 
 The `applyLang(code)` function switches languages at runtime (reactively via
 `$state`); the user's choice is persisted in `localStorage['lang']`.
@@ -152,5 +146,5 @@ have clashed with the Apache-2.0 frontend deps).
 
 Third-party components keep their own licenses:
 
-- `src/lib/vendors/decimal.js/` — MIT
+- `web/kernel/error-codes.h` — generated from the C registry at build time
 - npm dev dependencies — see `package-lock.json`

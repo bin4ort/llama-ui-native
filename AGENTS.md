@@ -13,8 +13,6 @@
     dialogs, PWA) — do not edit as Agent A
 - `frontend/v3/` — compiled vanilla output (served by C server;
   `cp -a dist-web/. frontend/v3/` after `npm run build:web`)
-- `frontend/v2/` + `src/` — **legacy SvelteKit** output/source, kept as
-  migration fallback (v0.5.0 early alpha; delete after the parity gate)
 - `main.c` + `server.c` — GTK window + self-contained HTTP server
 - `ISSUES.md` — bug tracker (check before merging); `REFACTOR-PLAN.md` —
   migration plan + contract-changes log
@@ -23,7 +21,7 @@
 1. Edit source files in `web/` (only your owned tree + frozen-kernel contract
    changes)
 2. `npm run build:web` from project root (esbuild + Tailwind CLI + i18n dict
-   generation from `frontend/v2/lang/*.json`)
+   generation from `web/lang/*.json`)
 3. Copy to the served dir: `cp -a dist-web/. frontend/v3/`
 4. Rebuild C: `gcc -o llama-ui-native main.c server.c $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) -ljxl -lpthread -lm -lcurl -Wall`
 5. Never edit files in `frontend/v3/` or `dist-web/` directly
@@ -47,10 +45,10 @@
   "Error LLMUI-…" for the user.
 
 ## Translations (i18n)
-- Source of truth: `frontend/v2/lang/*.json` (12 languages). The build
+- Source of truth: `web/lang/*.json` (12 languages). The build
   regenerates `web/kernel/dicts.generated.js` from them automatically.
 - `t('key')` with key-fallback; `tr.dict` for dynamic lookups.
-- Adding a language: add `{code}.json` to `frontend/v2/lang/`, rebuild.
+- Adding a language: add `{code}.json` to `web/lang/`, rebuild.
 
 ## Native wrapper (C code)
 - Compile: `gcc -o llama-ui-native main.c server.c $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) -ljxl -lpthread -lm -lcurl -Wall`

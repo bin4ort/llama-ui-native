@@ -7,9 +7,8 @@ Version is kept in `server.h` (mirrored in `web/index.js` fallback,
 ## [0.5.0] - 2026-08-05 — Early Alpha
 
 **The native executable now ships the vanilla HTML/JS/CSS frontend** (`web/`
-tree, served from `frontend/v3`) instead of the SvelteKit build
-(`frontend/v2`, kept as fallback during the migration). No TypeScript, no
-framework — plain ES modules + esbuild + Tailwind CLI.
+tree, served from `frontend/v3`) instead of the SvelteKit build. No
+TypeScript, no framework — plain ES modules + esbuild + Tailwind CLI.
 
 ### Chat (Agent A vertical)
 - Conversation tree (root/persona/system/user/assistant), branching, fork
@@ -37,8 +36,8 @@ framework — plain ES modules + esbuild + Tailwind CLI.
 ### Native / platform
 - PWA manifest + service worker (skipped in the native window)
 - `server.h`: FRONTEND_DIR → `frontend/v3`, VERSION 0.5.0 / BUILD 0x07D22
-- Legacy Svelte sources (`src/`) remain for reference until the migration
-  gate completes (screenshot parity + e2e)
+- Legacy Svelte sources and `frontend/v2` removed (migration gate
+  complete); `web/lang/*.json` is the i18n source of truth
 
 ## [0.4.2] - 2026-08-03
 
