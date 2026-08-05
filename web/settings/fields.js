@@ -66,7 +66,8 @@ export function checkboxField(label, checked, help, onChange) {
 
 export function selectField(label, value, options, help, onChange) {
   const sel = document.createElement('select');
-  sel.className = 'bg-muted/60 dark:bg-muted/75 border border-border/30 shadow-sm outline-none text-foreground rounded-md px-3 py-2 text-sm';
+  sel.className =
+    'flex w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none select-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30 h-9';
   for (const [val, text] of options) {
     const o = document.createElement('option');
     o.value = val;
@@ -121,7 +122,8 @@ export function textField(label, value, help, onChange, opts = {}) {
   inp.type = opts.type || 'text';
   inp.value = value ?? '';
   inp.placeholder = opts.placeholder || '';
-  inp.className = 'w-full bg-muted/60 dark:bg-muted/75 border border-border/30 shadow-sm outline-none text-foreground rounded-md px-3 py-2 text-sm';
+  inp.className =
+    'flex h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 pt-1.5 text-sm font-medium shadow-xs ring-offset-background transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50';
   inp.addEventListener('input', () => onChange(inp.value));
   return row(label, inp, help);
 }
@@ -155,11 +157,23 @@ export function registrySection(fields, opts = {}) {
         Math.round(serverDefault * 1e6) / 1e6;
 
     if (field.type === 'checkbox') {
+      // Old Checkbox component: 16px, rounded-[4px], border-input,
+      // bg-background, checked -> primary. Checked state toggled in JS.
       const box = document.createElement('input');
       box.type = 'checkbox';
       box.checked = !!current;
-      box.className = 'h-4 w-4 rounded border-border/30 bg-muted/60 dark:bg-muted/75 shadow-sm';
-      box.addEventListener('change', () => updateConfig({ [field.key]: box.checked }));
+      box.className =
+        'peer flex size-4 shrink-0 appearance-none items-center justify-center rounded-[4px] border border-input bg-background shadow-xs transition-shadow outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30';
+      const applyChecked = (checked) => {
+        box.classList.toggle('border-primary', checked);
+        box.classList.toggle('bg-primary', checked);
+        box.classList.toggle('text-primary-foreground', checked);
+      };
+      applyChecked(box.checked);
+      box.addEventListener('change', () => {
+        applyChecked(box.checked);
+        updateConfig({ [field.key]: box.checked });
+      });
       const labelRow = document.createElement('div');
       labelRow.className = 'flex items-center gap-2';
       const lab = document.createElement('label');
@@ -167,7 +181,18 @@ export function registrySection(fields, opts = {}) {
       lab.textContent = translate(field.label);
       labelRow.appendChild(lab);
       wrap.appendChild(labelRow);
-      wrap.appendChild(box);
+      const boxRow = document.createElement('div');
+      boxRow.className = 'relative flex w-4 items-center justify-center';
+      boxRow.appendChild(box);
+      const checkMark = document.createElement('span');
+      checkMark.className = 'pointer-events-none absolute h-3.5 w-3.5 text-current select-none';
+      checkMark.textContent = '✓';
+      checkMark.style.visibility = box.checked ? 'visible' : 'hidden';
+      box.addEventListener('change', () => {
+        checkMark.style.visibility = box.checked ? 'visible' : 'hidden';
+      });
+      boxRow.appendChild(checkMark);
+      wrap.appendChild(boxRow);
     } else if (field.type === 'radio') {
       const labelRow = document.createElement('div');
       labelRow.className = 'flex items-center gap-2';
@@ -210,7 +235,8 @@ export function registrySection(fields, opts = {}) {
 
       if (field.type === 'select') {
         const sel = document.createElement('select');
-        sel.className = 'w-full bg-muted/60 dark:bg-muted/75 border border-border/30 shadow-sm outline-none text-foreground rounded-md px-3 py-2 text-sm';
+        sel.className =
+          'flex w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none select-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30 h-9';
         const options = opts.selectOptions?.[field.key] || field.options || [];
         for (const [val, text] of options) {
           const o = document.createElement('option');
@@ -223,7 +249,8 @@ export function registrySection(fields, opts = {}) {
         wrap.appendChild(sel);
       } else if (field.type === 'textarea') {
         const ta = document.createElement('textarea');
-        ta.className = 'min-h-[10rem] w-full md:max-w-3xl bg-muted/60 dark:bg-muted/75 border border-border/30 shadow-sm outline-none text-foreground rounded-md p-3 text-sm';
+        ta.className =
+          'flex field-sizing-content min-h-16 w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30';
         ta.value = currentStr;
         ta.addEventListener('input', () => updateConfig({ [field.key]: ta.value }));
         wrap.appendChild(ta);
@@ -233,8 +260,12 @@ export function registrySection(fields, opts = {}) {
         const inp = document.createElement('input');
         inp.type = field.isPositiveInteger ? 'number' : 'text';
         inp.value = currentStr;
-        inp.className = 'w-full bg-muted/60 dark:bg-muted/75 border border-border/30 shadow-sm outline-none text-foreground rounded-md px-3 py-2 text-sm' + (isCustom ? ' pr-8' : '');
-        inp.placeholder = serverDefault != null ? `Default: ${serverDefault}` : '';
+        inp.className =
+          'flex h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 pt-1.5 text-sm font-medium shadow-xs ring-offset-background transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50' +
+          (isCustom ? ' pr-8' : '');
+        const norm = (v) =>
+          typeof v === 'number' ? String(Math.round(v * 1e6) / 1e6) : String(v);
+        inp.placeholder = serverDefault != null ? `Default: ${norm(serverDefault)}` : '';
         inp.addEventListener('input', () => updateConfig({ [field.key]: inp.value }));
         rel.appendChild(inp);
         if (isCustom) {

@@ -36,7 +36,15 @@ function renderSection(sectionKey, title) {
 
 export function renderSamplingSection() {
   const el = renderSection('sampling', 'Sampling');
-  if (!Object.keys(propsCache).length) loadProps();
+  // The /props defaults arrive async — re-render so the "Default: …"
+  // placeholders appear (and reset buttons reflect server drift).
+  if (!Object.keys(propsCache).length) {
+    loadProps().then(() => {
+      const target = document.getElementById('settings-content');
+      if (!target) return;
+      target.replaceChildren(renderSection('sampling', 'Sampling'));
+    });
+  }
   return el;
 }
 
