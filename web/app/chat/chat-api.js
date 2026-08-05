@@ -22,5 +22,6 @@ export const chatApi = {
   togglePin: chat.togglePin,
   applyPersona: chat.applyPersona,
   contextStore: chat.contextStore,
+  forkConversation: chat.forkConversation,
   applyDefaultPersona: chat.applyDefaultPersona
 };

@@ -308,6 +308,9 @@ A owns — B only replaces that node's content via router contract).
   now additionally yields `reasoning` and `toolCalls` fields alongside
   `delta`/`finish` (additive — existing consumers unaffected). Needed by the
   agentic loop; no renumbering of codes.
+- 2026-08-05 — `db.upsertMessage()` added (insert-or-update, needed by the
+  streaming assistant row; `updateMessage` alone was a silent no-op on new
+  rows).
 
 ## 5. Phases
 

@@ -47,6 +47,13 @@ export async function updateMessage(id, patch) {
   return db.messages.update(id, patch);
 }
 
+/** Insert or update a message row (used for streaming assistant rows). */
+export async function upsertMessage(message) {
+  const existing = await db.messages.get(message.id);
+  if (existing) return db.messages.update(message.id, message);
+  return db.messages.add(message);
+}
+
 export async function deleteMessage(id) {
   return db.messages.delete(id);
 }

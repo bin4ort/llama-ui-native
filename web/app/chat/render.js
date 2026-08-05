@@ -44,6 +44,10 @@ export function renderChatPage(container) {
 function renderList(listEl) {
   const msgs = messagesStore.get();
   const streaming = streamingStore.get();
+  if (msgs.length === 0) {
+    listEl.replaceChildren(renderEmptyState());
+    return;
+  }
   const fragment = document.createDocumentFragment();
   for (const m of msgs) {
     fragment.appendChild(renderMessage(m, streaming));
@@ -51,6 +55,16 @@ function renderList(listEl) {
   listEl.replaceChildren(fragment);
   renderExtras(listEl).catch(() => {});
   if (scrolled) scrollToBottom(listEl);
+}
+
+function renderEmptyState() {
+  const el = document.createElement('div');
+  el.className = 'flex h-full flex-col items-center justify-center gap-3 text-center';
+  el.innerHTML = `
+    <div class="text-4xl">🦙</div>
+    <h2 class="text-lg font-semibold">${escapeHtml(t('Llama UI'))}</h2>
+    <p class="max-w-sm text-sm text-muted-foreground">${escapeHtml(t('Start a conversation with your local model. Ask anything, attach files, or pick a personality preset.'))}</p>`;
+  return el;
 }
 
 function scrollToBottom(listEl) {
@@ -90,7 +104,13 @@ function renderMessage(m, streaming) {
   const hasImages = Array.isArray(m.attachments) && m.attachments.length > 0;
   const attachmentHtml = hasImages
     ? `<div class="mt-1 flex flex-wrap gap-1">${m.attachments
-        .map((a) => (a.dataUrl ? `<img src="${a.dataUrl}" class="h-24 w-24 rounded-md object-cover" alt="" />` : ''))
+        .map((a) => {
+          if (!a.dataUrl) return '';
+          if (a.type?.startsWith('image/')) return `<img src="${a.dataUrl}" class="h-24 w-24 rounded-md object-cover" alt="" />`;
+          if (a.type?.startsWith('audio/')) return `<audio src="${a.dataUrl}" controls class="h-9 w-52"></audio>`;
+          if (a.type?.startsWith('video/')) return `<video src="${a.dataUrl}" controls class="h-24 w-44 rounded-md object-cover"></video>`;
+          return `<div class="flex items-center gap-2 rounded-md border border-border/50 px-2 py-1 text-xs">📄<span class="truncate">${escapeHtml(a.name ?? '')}</span></div>`;
+        })
         .join('')}</div>`
     : '';
   const showActions = !streaming && (isAssistant || m.role === 'user');
@@ -185,7 +205,7 @@ function renderComposer() {
   const attachments = [];
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
-  fileInput.accept = 'image/*';
+  fileInput.accept = 'image/*,audio/*,video/*,text/*,application/pdf,.md,.json,.txt';
   fileInput.multiple = true;
   fileInput.className = 'hidden';
   wrap.appendChild(fileInput);
@@ -215,7 +235,7 @@ function renderComposer() {
   attachBtn.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', async () => {
     for (const file of fileInput.files ?? []) {
-      if (!file.type.startsWith('image/')) continue;
+      if (file.size > 25 * 1024 * 1024) continue; // 25 MB cap
       const dataUrl = await readFileAsDataUrl(file);
       attachments.push({ name: file.name, type: file.type, dataUrl });
     }
@@ -223,19 +243,31 @@ function renderComposer() {
     renderAttachments();
   });
 
+  function attachmentChip(att, index) {
+    const chip = document.createElement('div');
+    chip.className = 'relative overflow-hidden rounded-md border border-border/50';
+    const remove = () => {
+      attachments.splice(index, 1);
+      renderAttachments();
+    };
+    let inner;
+    if (att.type.startsWith('image/')) {
+      inner = `<img src="${att.dataUrl}" class="h-16 w-16 object-cover" alt="" />`;
+    } else if (att.type.startsWith('audio/')) {
+      inner = `<audio src="${att.dataUrl}" controls class="h-10 w-48"></audio>`;
+    } else if (att.type.startsWith('video/')) {
+      inner = `<video src="${att.dataUrl}" controls class="h-16 w-40 rounded object-cover"></video>`;
+    } else {
+      inner = `<div class="flex h-16 w-40 items-center gap-2 px-2 text-xs">📄<span class="truncate">${escapeHtml(att.name)}</span></div>`;
+    }
+    chip.innerHTML = inner + `<button class="absolute top-0 right-0 bg-background/80 px-1 text-xs" title="${t('Remove')}">×</button>`;
+    chip.querySelector('button').addEventListener('click', remove);
+    return chip;
+  }
+
   function renderAttachments() {
     attList.replaceChildren();
-    for (let i = 0; i < attachments.length; i++) {
-      const chip = document.createElement('div');
-      chip.className = 'relative h-16 w-16 overflow-hidden rounded-md border border-border/50';
-      chip.innerHTML = `<img src="${attachments[i].dataUrl}" class="h-full w-full object-cover" alt="" />
-        <button class="absolute top-0 right-0 bg-background/80 px-1 text-xs" title="${t('Remove')}">×</button>`;
-      chip.querySelector('button').addEventListener('click', () => {
-        attachments.splice(i, 1);
-        renderAttachments();
-      });
-      attList.appendChild(chip);
-    }
+    attachments.forEach((att, i) => attList.appendChild(attachmentChip(att, i)));
   }
 
   function updateState() {

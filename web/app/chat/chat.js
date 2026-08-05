@@ -5,6 +5,7 @@
  * LLMUI-TL-*.
  */
 import * as kernel from '../../kernel/index.js';
+const t = kernel.t;
 import { streamChatCompletion } from '../../kernel/api.js';
 import { runAgenticLoop } from './tools.js';
 
@@ -131,7 +132,13 @@ function toApiMessages(msgs) {
       if (m.attachments?.length) {
         const parts = [{ type: 'text', text: m.content || '' }];
         for (const att of m.attachments) {
-          if (att.dataUrl) parts.push({ type: 'image_url', image_url: { url: att.dataUrl } });
+          if (att.dataUrl && att.type?.startsWith('image/')) {
+            parts.push({ type: 'image_url', image_url: { url: att.dataUrl } });
+          }
+        }
+        const files = m.attachments.filter((a) => !a.type?.startsWith('image/'));
+        if (files.length) {
+          parts[0].text += `\n\n[Attached: ${files.map((f) => f.name).join(', ')}]`;
         }
         out.push({ role: 'user', content: parts });
       } else {
@@ -187,6 +194,33 @@ export async function applyPersona(content) {
 /** "Default" persona: the settings default system message (or none). */
 export function applyDefaultPersona() {
   return applyPersona(kernel.config().systemMessage ?? '');
+}
+
+/**
+ * Fork the active conversation: copy all messages into a new conversation
+ * named "<original> (fork)". Returns the new conversation id.
+ */
+export async function forkConversation() {
+  const convs = conversationsStore.get();
+  const conv = convs.find((c) => c.id === activeId);
+  if (!conv) return null;
+  const msgs = messagesStore.get();
+
+  const now = Date.now();
+  const newConv = {
+    id: crypto.randomUUID(),
+    name: `${conv.name ?? conv.title ?? ''} (${t('fork')})`,
+    pinned: false,
+    createdAt: now,
+    lastModified: now
+  };
+  await db.addConversation(newConv);
+  for (const m of msgs) {
+    await db.addMessage({ ...m, id: crypto.randomUUID(), convId: newConv.id, children: [] });
+  }
+  await loadConversations();
+  await openConversation(newConv.id);
+  return newConv.id;
 }
 
 /** Truncate all descendants of a message (the active branch after it). */
@@ -293,7 +327,8 @@ export async function sendMessage(content, attachments = []) {
     assistant.toolCalls = result.toolCalls ?? [];
     streamContentStore.set(assistant.content);
     messagesStore.update((msgs) => msgs.map((m) => (m.id === assistant.id ? { ...assistant } : m)));
-    await db.updateMessage(assistant.id, {
+    await db.upsertMessage({
+      ...assistant,
       content: assistant.content,
       reasoning: assistant.reasoning,
       toolCalls: assistant.toolCalls
@@ -302,8 +337,11 @@ export async function sendMessage(content, attachments = []) {
     loadConversations();
     refreshContext();
   } catch (err) {
-    if (err?.code) log.error(err.code, err.message, err.detail);
-    else log.error('LLMUI-STR-004', 'chat: stream failed', String(err));
+    const msg = err?.message ?? String(err);
+    if (err?.code) log.error(err.code, msg, err.detail);
+    else log.error('LLMUI-STR-004', 'chat: stream failed', msg);
+    const { toast } = await import('../../kernel/index.js');
+    toast(t('Request failed') + ': ' + msg, 'error', 6000);
   } finally {
     streamingStore.set(false);
     streamContentStore.set('');

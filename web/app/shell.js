@@ -61,8 +61,18 @@ function renderConversationList() {
     row.addEventListener('click', () => {
       router.navigate(`/chat/${conv.id}`);
     });
+    const forkBtn = document.createElement('button');
+    forkBtn.className = 'ml-auto text-muted-foreground hover:text-foreground';
+    forkBtn.textContent = '⑂';
+    forkBtn.title = t('Fork conversation');
+    forkBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      await chatApi.openConversation(conv.id);
+      await chatApi.forkConversation();
+    });
     const pin = document.createElement('button');
-    pin.className = 'ml-auto text-muted-foreground hover:text-foreground';
+    pin.className = 'ml-1 text-muted-foreground hover:text-foreground';
     pin.textContent = conv.pinned ? '📌' : '';
     pin.title = t('Pin');
     pin.addEventListener('click', (e) => {
@@ -70,7 +80,7 @@ function renderConversationList() {
       e.stopPropagation();
       chatApi.togglePin(conv.id);
     });
-    row.appendChild(pin);
+    row.append(pin, forkBtn);
     fragment.appendChild(row);
   }
 
