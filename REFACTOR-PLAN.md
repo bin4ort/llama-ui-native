@@ -311,6 +311,13 @@ A owns — B only replaces that node's content via router contract).
 - 2026-08-05 — `db.upsertMessage()` added (insert-or-update, needed by the
   streaming assistant row; `updateMessage` alone was a silent no-op on new
   rows).
+- 2026-08-05 — Phase 3 parity run: all 23 baseline views captured against the
+  vanilla build (pre-swap, static server). Theme sweep measured stale pages
+  (identical-URL `page.goto` no-ops) — fixed in parity-screenshots.mjs. Final
+  diffs: chat/search/mcp ~1.4–1.7%, settings 3.5–6.8% and theme views
+  ~5–14.8% (theme-dark) — all documented intentional changes (settings +
+  theme token rewrites, same sections/behavior). No pixel-identical gate on
+  the settings rewrite; chat parity is within tolerance.
 
 ## 5. Phases
 
