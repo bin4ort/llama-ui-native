@@ -1,0 +1,82 @@
+{
+  "base": "http://localhost:8765",
+  "captured": [
+    {
+      "name": "01-chat-seeded",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/01-chat-seeded.png"
+    },
+    {
+      "name": "02-chat-empty",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/02-chat-empty.png"
+    },
+    {
+      "name": "03-settings-general",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/03-settings-general.png"
+    },
+    {
+      "name": "03-settings-display",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/03-settings-display.png"
+    },
+    {
+      "name": "03-settings-sampling",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/03-settings-sampling.png"
+    },
+    {
+      "name": "03-settings-penalties",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/03-settings-penalties.png"
+    },
+    {
+      "name": "03-settings-tools",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/03-settings-tools.png"
+    },
+    {
+      "name": "03-settings-agentic",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/03-settings-agentic.png"
+    },
+    {
+      "name": "03-settings-developer",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/03-settings-developer.png"
+    },
+    {
+      "name": "03-settings-import-export",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/03-settings-import-export.png"
+    },
+    {
+      "name": "04-mcp-servers",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/04-mcp-servers.png"
+    },
+    {
+      "name": "05-search",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/05-search.png"
+    },
+    {
+      "name": "06-theme-dark",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/06-theme-dark.png"
+    },
+    {
+      "name": "06-theme-light",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/06-theme-light.png"
+    },
+    {
+      "name": "06-theme-nord",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/06-theme-nord.png"
+    },
+    {
+      "name": "06-theme-amoled",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/06-theme-amoled.png"
+    },
+    {
+      "name": "06-theme-snow",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/06-theme-snow.png"
+    },
+    {
+      "name": "07-preset-picker",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/07-preset-picker.png"
+    },
+    {
+      "name": "08-preset-picker-full",
+      "path": "/home/stry4ok/Development/Projects/LlamaUI-Native/tests/baseline/08-preset-picker-full.png"
+    }
+  ],
+  "date": "2026-08-05T03:13:16.732Z"
+}
