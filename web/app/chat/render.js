@@ -59,11 +59,10 @@ function renderList(listEl) {
 
 function renderEmptyState() {
   const el = document.createElement('div');
-  el.className = 'flex h-full flex-col items-center justify-center gap-3 text-center';
+  el.className = 'flex h-full flex-col items-center justify-center gap-3 text-center px-4';
   el.innerHTML = `
-    <div class="text-4xl">🦙</div>
-    <h2 class="text-lg font-semibold">${escapeHtml(t('Llama UI'))}</h2>
-    <p class="max-w-sm text-sm text-muted-foreground">${escapeHtml(t('Start a conversation with your local model. Ask anything, attach files, or pick a personality preset.'))}</p>`;
+    <h2 class="mb-2 text-2xl font-semibold tracking-tight md:text-3xl">${escapeHtml(t('What can I help you with?'))}</h2>
+    <p class="max-w-md text-muted-foreground md:text-lg">${escapeHtml(t('Start a conversation with your local model. Ask anything, attach files, or pick a personality preset.'))}</p>`;
   return el;
 }
 
@@ -73,12 +72,14 @@ function scrollToBottom(listEl) {
 
 function renderMessage(m, streaming) {
   const wrap = document.createElement('div');
-  wrap.className = 'mx-auto my-4 max-w-3xl';
 
   if (m.type === 'persona' || m.type === 'system') {
+    // Spec §3.3: right-aligned system/persona bubble, dashed border, muted bg
+    wrap.className = 'group flex flex-col items-end gap-3 md:gap-2';
     const content = document.createElement('div');
-    content.className = 'rounded-2xl border-2 border-dashed border-border/50 bg-muted px-3 py-1.5 text-sm';
-    content.innerHTML = `<div class="message-content whitespace-pre-wrap">${escapeHtml(m.content ?? '')}</div>
+    content.className =
+      'relative max-w-[80%] overflow-y-auto rounded-[1.125rem] !border-2 !border-dashed !border-border/50 bg-muted px-3.75 py-1.5 data-[multiline]:py-2.5';
+    content.innerHTML = `<div class="message-content markdown-system-content whitespace-pre-wrap text-sm">${escapeHtml(m.content ?? '')}</div>
       <div class="mt-1 flex gap-1 text-xs text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
         <button data-act="edit" class="rounded px-1.5 py-0.5 hover:bg-accent hover:text-foreground">${t('Edit')}</button>
         <button data-act="delete" class="rounded px-1.5 py-0.5 hover:bg-accent hover:text-foreground">${t('Delete')}</button>
@@ -86,11 +87,11 @@ function renderMessage(m, streaming) {
     content.querySelector('[data-act="edit"]').addEventListener('click', () => promptEdit(m, content));
     content.querySelector('[data-act="delete"]').addEventListener('click', () => chatApi.deleteMessage(m.id).catch(() => {}));
     wrap.appendChild(content);
-    wrap.className += ' group';
     return wrap;
   }
 
   if (m.type === 'tool') {
+    wrap.className = 'my-2';
     wrap.innerHTML = `
       <div class="rounded-lg border border-border/40 bg-muted/40 px-3 py-2 text-xs font-mono whitespace-pre-wrap">
         <div class="mb-1 text-[10px] uppercase tracking-wide text-muted-foreground">${t('Tool calls')}</div>
@@ -129,26 +130,35 @@ function renderMessage(m, streaming) {
     body = `<div class="message-content">${renderMarkdown(m.content ?? '')}</div>${attachmentHtml}`;
   }
 
-  wrap.className += ` group flex ${isAssistant ? 'justify-start' : 'justify-end'}`;
-  wrap.innerHTML = `
-    <div class="max-w-[80%] rounded-2xl px-3 py-2 text-sm ${isAssistant ? 'bg-muted/60' : 'bg-primary text-primary-foreground'}" ${isStreaming ? 'data-streaming=""' : ''}>
-      ${body}
-      ${showActions ? renderActions(m, isAssistant) : ''}
-    </div>`;
+  if (isAssistant) {
+    // Spec §3.5: assistant messages are full-width, no bubble
+    wrap.className = 'chat-message-assistant group w-full leading-7.5';
+    wrap.innerHTML = body;
+    if (showActions) wrap.appendChild(renderActionsNode(m, isAssistant));
+    return wrap;
+  }
 
+  // Spec §3.4: user message — right-aligned, primary/5 tinted bubble
+  wrap.className = 'chat-message-user group flex flex-col items-end gap-3 md:gap-2';
+  const bubble = document.createElement('div');
+  bubble.className =
+    'chat-message-user-bubble max-w-[80%] overflow-y-auto rounded-[1.125rem] border-none bg-primary/5 px-3.75 py-1.5 backdrop-blur-md data-[multiline]:py-2.5';
+  bubble.innerHTML = body;
   if (m.toolCalls?.length && !isStreaming) {
     for (const tc of m.toolCalls) {
       const row = document.createElement('div');
       row.className = 'mt-1 rounded bg-background/60 px-2 py-1 font-mono text-xs';
       row.textContent = `${tc.function?.name ?? ''}(${(tc.function?.arguments ?? '').slice(0, 120)})`;
-      wrap.querySelector('div').appendChild(row);
+      bubble.appendChild(row);
     }
   }
+  wrap.appendChild(bubble);
+  if (showActions) wrap.appendChild(renderActionsNode(m, isAssistant));
 
   return wrap;
 }
 
-function renderActions(m, isAssistant) {
+function renderActionsNode(m, isAssistant) {
   const { editMessage, deleteMessage, regenerateMessage } = chatApi;
   const actions = document.createElement('div');
   actions.className = 'mt-1 flex gap-1 text-xs text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100';
@@ -165,7 +175,7 @@ function renderActions(m, isAssistant) {
   addBtn(t('Edit'), () => promptEdit(m, actions));
   addBtn(t('Delete'), () => deleteMessage(m.id).catch(() => {}));
   if (isAssistant) addBtn(t('Regenerate'), () => regenerateMessage(m.id).catch(() => {}));
-  return actions.outerHTML;
+  return actions;
 }
 
 function promptEdit(m, actionsRow) {
@@ -188,19 +198,22 @@ function promptEdit(m, actionsRow) {
 
 function renderComposer() {
   const wrap = document.createElement('div');
-  wrap.className = 'mx-auto flex max-w-3xl flex-col items-end gap-2';
+  // Spec §05.1: floating composer — rounded-4xl (mobile) / rounded-3xl (md),
+  // shadow-sm -> shadow-md on focus-within, backdrop blur
+  wrap.className = 'mx-auto w-full max-w-3xl';
   wrap.innerHTML = `
-    <div data-role="attachments" class="flex w-full flex-wrap gap-2"></div>
-    <div class="flex w-full items-end gap-2">
-      <button class="shrink-0 rounded-xl border border-input px-3 py-2 text-sm hover:bg-accent" data-role="attach" title="${t('Attach file')}">📎</button>
-      <button class="shrink-0 rounded-xl border border-input px-3 py-2 text-sm hover:bg-accent" data-role="persona" title="${t('Choose a personality preset')}">🧑‍🎤</button>
-      <textarea
-        rows="1"
-        class="min-h-[40px] w-full resize-none rounded-xl border border-input bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-        placeholder="${t('Type a message...')}"
-      ></textarea>
-      <button class="shrink-0 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-        data-role="send">${t('Send')}</button>
+    <div data-role="attachments" class="mb-2 flex w-full flex-wrap gap-2"></div>
+    <div class="flex-column relative min-h-12 items-center rounded-4xl md:rounded-3xl py-2 pb-2.25 shadow-sm transition-all focus-within:shadow-md md:py-3!">
+      <div class="flex items-end gap-1 px-3">
+        <button class="group h-8 w-8 shrink-0 rounded-full p-0 flex items-center justify-center text-muted-foreground hover:bg-accent hover:text-foreground" data-role="attach" title="${t('Attach file')}">📎</button>
+        <button class="group h-8 w-8 shrink-0 rounded-full p-0 flex items-center justify-center text-muted-foreground hover:bg-accent hover:text-foreground" data-role="persona" title="${t('Choose a personality preset')}">🧑‍🎤</button>
+        <textarea
+          rows="1"
+          class="min-h-[40px] w-full resize-none bg-transparent px-1 py-1.5 text-sm outline-none placeholder:text-muted-foreground"
+          placeholder="${t('Type a message...')}"
+        ></textarea>
+        <button class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 disabled:opacity-50" data-role="send" title="${t('Send')}">↑</button>
+      </div>
     </div>`;
   const attachments = [];
   const fileInput = document.createElement('input');

@@ -23,7 +23,7 @@ const VIEWS = [
   ['settings-import-export', '#/settings/import-export']
 ];
 
-const THEMES = ['dark', 'light', 'system', 'nord', 'amoled', 'cobalt', 'dracula', 'gruvbox', 'gruvbox-light', 'ionized', 'solarized'];
+const THEMES = ['dark', 'light', 'system', 'nord', 'amoled', 'cobalt', 'dracula', 'gruvbox', 'gruvbox-light', 'ionized-purple', 'solarized'];
 
 mkdirSync(OUT, { recursive: true });
 const browser = await chromium.launch();
@@ -34,7 +34,7 @@ await page.addInitScript(() => {
   localStorage.setItem('lang', 'en');
   localStorage.setItem('mode-watcher-mode', 'dark');
   localStorage.setItem('mode-watcher-theme', 'dark');
-  localStorage.setItem('LlamaUi.config', JSON.stringify({ theme: 'dark' }));
+  localStorage.setItem('LlamaUi.config', JSON.stringify({ theme: 'light' }));
 });
 
 for (const [name, hash] of VIEWS) {
@@ -51,10 +51,11 @@ for (const [name, hash] of VIEWS) {
 for (const theme of THEMES) {
   try {
     await page.addInitScript((th) => {
+      localStorage.setItem('LlamaUi.config', JSON.stringify({ theme: th }));
       localStorage.setItem('mode-watcher-theme', th);
       localStorage.setItem('mode-watcher-mode', th === 'light' || th === 'gruvbox-light' ? 'light' : 'dark');
     }, theme);
-    await page.goto(`${BASE}/#/settings/general`, { waitUntil: 'networkidle' });
+    await page.goto(`${BASE}/?t=${theme}#/settings/general`, { waitUntil: 'networkidle' });
     await page.waitForTimeout(1200);
     await page.screenshot({ path: join(OUT, `theme-${theme}.png`) });
     console.log('captured: theme-' + theme);
