@@ -15,8 +15,8 @@ const WEB = path.join(ROOT, 'web');
 const OUT = path.join(ROOT, 'dist-web');
 const WATCH = process.argv.includes('--watch');
 
-const APP_VERSION = process.env.APP_VERSION || '0.4.3';
-const APP_BUILD = process.env.APP_BUILD || '0x07D21';
+const APP_VERSION = process.env.APP_VERSION || '0.5.0';
+const APP_BUILD = process.env.APP_BUILD || '0x07D22';
 
 // ---- 1. generate embedded i18n dicts from lang/*.json (source of truth) ----
 function genDicts() {

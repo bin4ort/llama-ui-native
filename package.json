@@ -1,7 +1,7 @@
 {
   "name": "llama-ui",
   "private": true,
-  "version": "0.4.3",
+  "version": "0.5.0",
   "license": "GPL-3.0-or-later",
   "type": "module",
   "scripts": {
@@ -24,7 +24,10 @@
     "test:ui": "vitest --project=ui",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "cleanup": "rm -rf .svelte-kit build node_modules test-results dist dev-dist debug-storybook.log static/pwa-*.png static/maskable-icon-*.png static/apple-touch-icon-*.png static/apple-splash-*.png static/favicon*.ico"
+    "cleanup": "rm -rf .svelte-kit build node_modules test-results dist dev-dist debug-storybook.log static/pwa-*.png static/maskable-icon-*.png static/apple-touch-icon-*.png static/apple-splash-*.png static/favicon*.ico",
+    "build:web": "node web/build.mjs",
+    "build:web:watch": "node web/build.mjs --watch",
+    "gen:tokens": "node scripts/gen-tokens.mjs"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "5.0.0",
@@ -42,6 +45,7 @@
     "@sveltejs/adapter-static": "3.0.10",
     "@sveltejs/kit": "2.60.1",
     "@sveltejs/vite-plugin-svelte": "6.2.1",
+    "@tailwindcss/cli": "^4.3.3",
     "@tailwindcss/forms": "0.5.10",
     "@tailwindcss/typography": "0.5.16",
     "@tailwindcss/vite": "4.1.11",
@@ -54,18 +58,18 @@
     "bits-ui": "2.18.1",
     "clsx": "2.1.1",
     "dexie": "4.4.3",
-    "dompurify": "3.4.11",
+    "dompurify": "^3.4.11",
     "eslint": "9.39.4",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-storybook": "10.4.2",
     "eslint-plugin-svelte": "3.19.0",
     "fflate": "0.8.3",
     "globals": "16.5.0",
-    "highlight.js": "11.11.1",
+    "highlight.js": "^11.11.1",
     "http-server": "14.1.1",
     "mdast": "3.0.0",
     "mdsvex": "0.12.7",
-    "mermaid": "11.15.0",
+    "mermaid": "^11.15.0",
     "mode-watcher": "1.1.0",
     "pdfjs-dist": "5.4.54",
     "playwright": "1.56.1",
@@ -103,5 +107,9 @@
   },
   "overrides": {
     "cookie": "1.1.1"
+  },
+  "dependencies": {
+    "katex": "^0.18.1",
+    "marked": "^18.0.9"
   }
 }

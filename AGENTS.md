@@ -1,48 +1,75 @@
 # AGENTS.md — Rules for agents working on this project
 
 ## Project structure
-- `src/` — SvelteKit 5 source (edit here, then `npm run build`)
-- `frontend/v2/` — Compiled static output (served by C server)
+- `web/` — **vanilla frontend source** (no framework, no TypeScript; plain
+  ES modules). Edit here, then `npm run build:web`
+  - `web/kernel/` — shared foundation, **frozen** (router, stores, i18n,
+    theme, settings-store, db, presets, permissions, api, error-codes,
+    logger, modal, toast). Changes are contract changes — log them in
+    REFACTOR-PLAN.md §4 changelog
+  - `web/app/` — **Agent A tree** (shell, chat, streaming, markdown,
+    chatbar, search) — do not edit as Agent B
+  - `web/settings/` — **Agent B tree** (settings sections, MCP, presets,
+    dialogs, PWA) — do not edit as Agent A
+- `frontend/v3/` — compiled vanilla output (served by C server;
+  `cp -a dist-web/. frontend/v3/` after `npm run build:web`)
+- `frontend/v2/` + `src/` — **legacy SvelteKit** output/source, kept as
+  migration fallback (v0.5.0 early alpha; delete after the parity gate)
 - `main.c` + `server.c` — GTK window + self-contained HTTP server
-- Single `npm run build` compiles the frontend
+- `ISSUES.md` — bug tracker (check before merging); `REFACTOR-PLAN.md` —
+  migration plan + contract-changes log
 
 ## Modification workflow
-1. Edit source files in `src/`
-2. Run `npm run build` from project root
-3. Output goes to `dist/` — copy it to `frontend/v2/`:
-   `cp -a dist/. frontend/v2/ && rm -rf frontend/v2/_app && cp -a dist/_app frontend/v2/_app`
-   (keeps `frontend/v2/lang/*.json` and `i18n.js`, which are not part of the build)
+1. Edit source files in `web/` (only your owned tree + frozen-kernel contract
+   changes)
+2. `npm run build:web` from project root (esbuild + Tailwind CLI + i18n dict
+   generation from `frontend/v2/lang/*.json`)
+3. Copy to the served dir: `cp -a dist-web/. frontend/v3/`
 4. Rebuild C: `gcc -o llama-ui-native main.c server.c $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) -ljxl -lpthread -lm -lcurl -Wall`
-5. Never edit files in `frontend/v2/` directly (except `lang/*.json` and `i18n.js`)
+5. Never edit files in `frontend/v3/` or `dist-web/` directly
 
 ## Frontend technology
-- SvelteKit 5 with Svelte 5 runes ($state, $derived, $effect)
-- Static adapter (`@sveltejs/adapter-static`)
-- Single-page app mode (fallback: `index.html`)
+- Plain HTML + vanilla ES modules (esbuild bundles, Tailwind CSS v4 for
+  utilities, kernel tokens for theming)
+- SPA with hash router (`#/`, `#/chat/{id}`, `#/search`, `#/mcp-servers`,
+  `#/settings/{section}`, `#/settings/presets`)
+- Reactive state via `web/kernel/store.js` (pub/sub); i18n via `t()` with
+  embedded dicts (generated into `web/kernel/dicts.generated.js`)
+
+## Error codes & logging
+- Every failure site logs a stable code `LLMUI-<AREA>-<NNN>` — registry in
+  `web/kernel/error-codes.js` (frontend) and `web/kernel/error-codes.h`
+  (native C server). **Append-only** — never reuse or renumber codes.
+- Logger: `log.error/warn/info/debug/trace(code, msg, detail)`; threshold set
+  by the Developer-settings log-level slider (`logLevel`, 0 Errors … 4 Trace)
+  or `LLMUI_LOG_LEVEL` env (0/1/2) for the C server.
+- `LlmUiError(code, msg, detail)` — throws carry the code; render
+  "Error LLMUI-…" for the user.
 
 ## Translations (i18n)
-- Core translations in `src/lib/stores/i18n.svelte.ts`
-- `tr` is a $state object with named properties and `tr.dict` for dynamic strings
-- Full dicts embedded inline (DE_FULL, RU_FULL, EN_FULL) — loaded synchronously
-- Language files in `frontend/v2/lang/*.json` serve as reference/source for the inline dicts
-- Adding a language: see README section "Adding a Language"
-- UI templates use `{tr.dict["key"] || "key"}` for reactive translation
+- Source of truth: `frontend/v2/lang/*.json` (12 languages). The build
+  regenerates `web/kernel/dicts.generated.js` from them automatically.
+- `t('key')` with key-fallback; `tr.dict` for dynamic lookups.
+- Adding a language: add `{code}.json` to `frontend/v2/lang/`, rebuild.
 
 ## Native wrapper (C code)
 - Compile: `gcc -o llama-ui-native main.c server.c $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) -ljxl -lpthread -lm -lcurl -Wall`
 - Dependencies: gtk+-3.0, webkit2gtk-4.1, libcurl
-- Server port: 8765 (defined in `server.h`)
-- `server.c` is a self-contained minimal HTTP server (thread-per-connection) — no embedded web server library
-- Frontend served from `frontend/v2/` directory
+- Server port: 8765 (defined in `server.h`); `FRONTEND_DIR` = `frontend/v3`
+- `server.c` is a self-contained minimal HTTP server (thread-per-connection)
+- Logs `[LLMUI-SRV-NNN]` stderr lines; `LLMUI_LOG_LEVEL` env filter (0/1/2)
 - Proxies `/v1/chat/completions` to `http://localhost:8080`
 
 ## Versioning convention
-- Patch bump per shipped feature batch (0.4.0 translation system → 0.4.1
-  languages → 0.4.2 personality presets). Bump `APP_VERSION`/`APP_BUILD` in
-  `src/lib/constants/app.ts`, mirror in `server.h` and `package.json`, add a
-  CHANGELOG entry, then rebuild the C binary (server.h feeds /health).
+- Bump per shipped batch (0.5.0 early alpha = vanilla frontend swap). Bump
+  `VERSION`/`BUILD` in `server.h` (source of truth — feeds /health and
+  build.json), mirror the fallback in `web/index.js` and `web/build.mjs`
+  defaults, set `package.json` version, add a CHANGELOG entry, rebuild the
+  frontend + C binary.
 
 ## Git workflow
 - All work in the project root — the repo is self-contained
 - node_modules is symlinked from external tools but gitignored
 - Commit meaningful changes, keep commits focused
+- Two agents work in parallel: Agent A owns `web/app/**`, Agent B owns
+  `web/settings/**`. Never stage/commit the other agent's uncommitted files.

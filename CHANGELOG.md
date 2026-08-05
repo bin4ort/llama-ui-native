@@ -1,7 +1,44 @@
 # Changelog
 
 All notable changes to Llama UI Native are documented here.
-Version is kept in `src/lib/constants/app.ts` (mirrored in `server.h` and `package.json`).
+Version is kept in `server.h` (mirrored in `web/index.js` fallback,
+`web/build.mjs` and `package.json`).
+
+## [0.5.0] - 2026-08-05 — Early Alpha
+
+**The native executable now ships the vanilla HTML/JS/CSS frontend** (`web/`
+tree, served from `frontend/v3`) instead of the SvelteKit build
+(`frontend/v2`, kept as fallback during the migration). No TypeScript, no
+framework — plain ES modules + esbuild + Tailwind CLI.
+
+### Chat (Agent A vertical)
+- Conversation tree (root/persona/system/user/assistant), branching, fork
+- Streaming SSE completions (abort/continue), pending messages during stream
+- Markdown pipeline: GFM, syntax highlighting, LaTeX (katex, lazy),
+  mermaid (lazy inline SVG), reasoning blocks, tool-call rendering
+- Attachments: image/audio/video/text (multi-type), persona quick-picker
+  shell, context gauge, auto-scroll
+- Agentic loop with built-in tool execution + permissions (verify dialog)
+
+### Settings (Agent B vertical)
+- All 8 sections: General (12 languages, 11 themes, model), Display,
+  Sampling/Penalties sliders, Tools (toggles + staged always-allow),
+  Agentic, Developer, Import-Export (settings JSON + conversations zip)
+- MCP servers page (CRUD + test), preset manager + wizard + full picker
+- **Log-level slider** (0 Errors … 4 Trace, persisted as `logLevel`) +
+  live debug-log view + Copy debug log
+
+### Error codes & logging (new)
+- `LLMUI-<AREA>-<NNN>` registry (frontend `error-codes.js`, native
+  `error-codes.h`); C server logs `[LLMUI-SRV-NNN]` with `LLMUI_LOG_LEVEL`
+  env filter (0/1/2)
+- `LlmUiError` carries codes; user-visible errors show the code
+
+### Native / platform
+- PWA manifest + service worker (skipped in the native window)
+- `server.h`: FRONTEND_DIR → `frontend/v3`, VERSION 0.5.0 / BUILD 0x07D22
+- Legacy Svelte sources (`src/`) remain for reference until the migration
+  gate completes (screenshot parity + e2e)
 
 ## [0.4.2] - 2026-08-03
 
@@ -40,7 +77,7 @@ Version is kept in `src/lib/constants/app.ts` (mirrored in `server.h` and `packa
 - Tooltips: fixed native-title suppression (now the app tooltip with a 300ms
   delay) and width-filling text (removed text-wrap balancing)
 
-## Unreleased
+## [0.4.3] - 2026-08-04
 
 ### Licensing
 

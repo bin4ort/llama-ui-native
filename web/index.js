@@ -6,11 +6,28 @@ import * as kernel from './kernel/index.js';
 
 const { router, theme, settings, i18n, presets, permissions, log, mountToasts, mountModalHost } = kernel;
 
-globalThis.APP_VERSION = '0.4.3';
-globalThis.APP_BUILD = '0x07D21';
+// Version: single source is build.json (written by build.mjs from server.h);
+// hardcoded fallback matches the native binary.
+const FALLBACK_VERSION = '0.5.0';
+const FALLBACK_BUILD = '0x07D22';
+globalThis.APP_VERSION = FALLBACK_VERSION;
+globalThis.APP_BUILD = FALLBACK_BUILD;
+
+async function loadVersion() {
+  try {
+    const res = await fetch('/build.json', { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.version) globalThis.APP_BUILD = data.version;
+    }
+  } catch {
+    /* native server always serves build.json; fall back to constants */
+  }
+}
 
 async function boot() {
   try {
+    await loadVersion();
     const cfg = settings.loadConfig();
     i18n.setLang(cfg.language ?? 'en');
     theme.initTheme(cfg.theme ?? 'system');

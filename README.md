@@ -5,7 +5,9 @@ A native GTK desktop application wrapping the llama.cpp Web UI in a WebKitGTK wi
 ## Overview
 
 - **Native wrapper**: C + GTK 3 + WebKitGTK 4.1
-- **Frontend**: SvelteKit 5 static build served by the embedded minimal HTTP server (thread-per-connection, no third-party server library)
+- **Frontend**: plain HTML/JS/CSS (vanilla ES modules, no framework, no
+  TypeScript) served by the embedded minimal HTTP server (thread-per-connection,
+  no third-party server library)
 - **Backend**: Proxies `/v1/chat/completions` to a local llama.cpp server
 - **Ports**: UI on `localhost:8765`, llama.cpp server expected on `localhost:8080`
 
@@ -13,14 +15,19 @@ A native GTK desktop application wrapping the llama.cpp Web UI in a WebKitGTK wi
 
 ```
 ├── main.c / server.c     # GTK window + minimal HTTP server + API proxy
-├── src/                  # SvelteKit source (edit here, then build)
-├── frontend/v2/          # Compiled static output (served by C server)
-│   ├── index.html
-│   ├── _app/             # Bundled JS/CSS
-│   ├── lang/             # Translation JSON files (12 languages)
-│   └── i18n.js           # DOM-walking i18n fallback
-├── scripts/              # Vite build plugins
+├── web/                  # Vanilla frontend source (edit here, then build)
+│   ├── kernel/           # Shared foundation (frozen — router, stores, i18n,
+│   │                     #   theme, settings, db, presets, permissions,
+│   │                     #   error-codes.js/h, logger, modal, toast, api)
+│   ├── app/              # Chat vertical (shell, chat, streaming, markdown)
+│   ├── settings/         # Settings vertical (8 sections, MCP, presets, PWA)
+│   └── build.mjs         # esbuild + Tailwind CLI + dict generation
+├── frontend/v3/          # Compiled vanilla output (served by C server)
+├── frontend/v2/          # Legacy SvelteKit output (kept as fallback)
+├── src/                  # Legacy SvelteKit source (migration reference)
+├── scripts/              # Build helpers + screenshot baseline harness
 ├── ISSUES.md             # Known bugs & errors tracker
+├── REFACTOR-PLAN.md      # Vanilla-rewrite plan (phases, parity gate)
 ├── install.sh            # Build + install
 └── launch.sh             # Launcher (sets LD_LIBRARY_PATH)
 ```
@@ -42,15 +49,17 @@ sudo apt install gcc libgtk-3-dev libwebkit2gtk-4.1-dev libcurl4-openssl-dev pkg
 ### Build
 
 ```bash
-# Frontend
+# Frontend (vanilla)
 npm install
-npm run build
-# Output goes to dist/ — already copied to frontend/v2/
+npm run build:web            # -> dist-web/ (esbuild + tailwind + i18n dicts)
+cp -a dist-web/. frontend/v3/
 
 # C binary
 ./install.sh
 # Or: gcc -o llama-ui-native main.c server.c $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) -lpthread -lm -lcurl -Wall
 ```
+
+Dev mode: `npm run build:web:watch` (rebuilds on change).
 
 ### Run
 
@@ -94,26 +103,33 @@ switched mid-conversation by the model via the `list_presets` /
   Creative Writing Editor. They are seeded once on first run (marker:
   `systemPromptPresetsSeeded` in localStorage) and behave exactly like
   user-created presets: editable, starrable, deletable. Deleting them is
-  permanent — the seed never runs twice. Dormant drafts (Language Tutor,
-  Life Decision Advisor, Relationship Coach) live in
-  `src/lib/constants/presets.ts` but are not shipped.
+  permanent — the seed never runs twice.
 - **Preset wizard**: describe a role in plain language and the model drafts a
   detailed, structured system prompt (ROLE / METHOD / RESPONSE FORMAT / RULES,
-  concrete techniques, answer formats). The wizard meta-prompt is
-  `PRESET_WIZARD_META_PROMPT` in `src/lib/constants/presets.ts` — it forbids
-  robotic filler and "see a specialist" cop-outs, and the result is always
-  shown for review (never auto-saved).
+  concrete techniques, answer formats). The wizard meta-prompt lives in
+  `web/settings/presets-wizard.js` — it forbids robotic filler and
+  "see a specialist" cop-outs, and the result is always shown for review
+  (never auto-saved).
 - **Persona + context rows**: applying a preset sets the conversation's
   *persona* row; the per-conversation system message (*context* row) set via
   "Edit system message…" stacks underneath — both are sent, persona first.
+
+## Logging & error codes
+
+- Every failure site carries a stable code `LLMUI-<AREA>-<NNN>` — registry in
+  `web/kernel/error-codes.js` (frontend) and `web/kernel/error-codes.h`
+  (native server; stderr lines `[LLMUI-SRV-NNN]`).
+- **Log level**: Developer settings → "Log level" slider (0 Errors … 4 Trace,
+  default Info). Native server: `LLMUI_LOG_LEVEL` env var (0/1/2).
+- The in-memory ring buffer (last 500 entries) can be copied from Developer
+  settings ("Copy debug log") — include it in bug reports.
 
 ## Notes
 
 - Known bugs and code-quality issues are tracked in [ISSUES.md](ISSUES.md) —
   check it before merging feature work.
-- The frontend is scheduled to be rewritten from SvelteKit/TypeScript to plain
-  HTML/JS/CSS — see [REFACTOR-PLAN.md](REFACTOR-PLAN.md) (two-agent parallel
-  plan, zero feature loss).
+- The migration from SvelteKit/TypeScript to the vanilla frontend is tracked
+  in [REFACTOR-PLAN.md](REFACTOR-PLAN.md) (phases, parity gate).
 - Change `BACKEND_URL` in `server.h` to point to a different llama.cpp server
 - The binary must run from the project directory (uses relative paths)
 - `launch.sh` handles `LD_LIBRARY_PATH` for bundled libraries
