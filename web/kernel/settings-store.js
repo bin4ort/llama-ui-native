@@ -45,6 +45,17 @@ export function loadConfig() {
     const raw = localStorage.getItem(CONFIG_KEY);
     const saved = raw ? JSON.parse(raw) : {};
     const merged = { ...DEFAULTS, ...saved };
+    // Legacy theme migration (v0.4.x): the old app stored the theme in
+    // mode-watcher keys; the config only ever saw a copy. Honor the live
+    // value and persist it back into config so the theme survives the swap.
+    if (saved.theme === undefined) {
+      const legacyTheme =
+        localStorage.getItem('mode-watcher-theme') || localStorage.getItem('mode-watcher-mode');
+      if (legacyTheme && legacyTheme !== 'system') {
+        merged.theme = legacyTheme;
+        localStorage.setItem(CONFIG_KEY, JSON.stringify(merged));
+      }
+    }
     configStore.set(merged);
     const savedOverrides = JSON.parse(localStorage.getItem(OVERRIDES_KEY) || '[]');
     overridesStore.set(new Set(Array.isArray(savedOverrides) ? savedOverrides : []));

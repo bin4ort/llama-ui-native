@@ -124,6 +124,114 @@ export function textField(label, value, help, onChange, opts = {}) {
   return row(label, inp, help);
 }
 
+/**
+ * Registry-driven field renderer — ports the old app's field markup 1:1:
+ *   <div class="flex items-center gap-2"><label class="flex items-center
+ *     gap-1.5 text-sm font-medium">…</label></div>
+ *   <input class="w-full"> / <textarea class="min-h-[10rem] w-full
+ *     md:max-w-3xl"> / checkbox row
+ *   <p class="mt-1 text-xs text-muted-foreground">help</p>
+ * Optionally shows a "Default: …" placeholder and a reset button when the
+ * value differs from the server prop (currentModelParams).
+ */
+export function registrySection(fields, opts = {}) {
+  const { config, updateConfig, props = {}, translate = (s) => s } = opts;
+  const root = document.createElement('div');
+  root.className = 'space-y-1.5';
+
+  for (const field of fields) {
+    const wrap = document.createElement('div');
+    wrap.className = 'space-y-1.5 py-3 first:pt-0 last:pb-0';
+
+    const serverDefault = props[field.key];
+    const current = config()[field.key];
+    const currentStr = String(current ?? '');
+    const isCustom =
+      serverDefault != null &&
+      currentStr !== '' &&
+      Math.round((parseFloat(currentStr) || 0) * 1e6) / 1e6 !==
+        Math.round(serverDefault * 1e6) / 1e6;
+
+    if (field.type === 'checkbox') {
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+      box.checked = !!current;
+      box.className = 'h-4 w-4 rounded border-border bg-background';
+      box.addEventListener('change', () => updateConfig({ [field.key]: box.checked }));
+      const labelRow = document.createElement('div');
+      labelRow.className = 'flex items-center gap-2';
+      const lab = document.createElement('label');
+      lab.className = 'flex items-center gap-1.5 text-sm font-medium';
+      lab.textContent = translate(field.label);
+      labelRow.appendChild(lab);
+      wrap.appendChild(labelRow);
+      wrap.appendChild(box);
+    } else {
+      const labelRow = document.createElement('div');
+      labelRow.className = 'flex items-center gap-2';
+      const lab = document.createElement('label');
+      lab.className = 'flex items-center gap-1.5 text-sm font-medium';
+      lab.textContent = translate(field.label);
+      labelRow.appendChild(lab);
+      wrap.appendChild(labelRow);
+
+      if (field.type === 'select') {
+        const sel = document.createElement('select');
+        sel.className = 'w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm';
+        for (const [val, text] of field.options || []) {
+          const o = document.createElement('option');
+          o.value = val;
+          o.textContent = text;
+          o.selected = String(val) === currentStr;
+          sel.appendChild(o);
+        }
+        sel.addEventListener('change', () => updateConfig({ [field.key]: sel.value }));
+        wrap.appendChild(sel);
+      } else if (field.type === 'textarea') {
+        const ta = document.createElement('textarea');
+        ta.className = 'min-h-[10rem] w-full md:max-w-3xl rounded-md border border-input bg-background p-2 text-sm';
+        ta.value = currentStr;
+        ta.addEventListener('input', () => updateConfig({ [field.key]: ta.value }));
+        wrap.appendChild(ta);
+      } else {
+        const rel = document.createElement('div');
+        rel.className = 'relative w-full';
+        const inp = document.createElement('input');
+        inp.type = field.isPositiveInteger ? 'number' : 'text';
+        inp.value = currentStr;
+        inp.className = 'w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm' + (isCustom ? ' pr-8' : '');
+        inp.placeholder = serverDefault != null ? `Default: ${serverDefault}` : '';
+        inp.addEventListener('input', () => updateConfig({ [field.key]: inp.value }));
+        rel.appendChild(inp);
+        if (isCustom) {
+          const reset = document.createElement('button');
+          reset.type = 'button';
+          reset.className =
+            'absolute top-1/2 right-2 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center rounded transition-colors hover:bg-muted';
+          reset.title = 'Reset to default';
+          reset.textContent = '↺';
+          reset.addEventListener('click', () => {
+            updateConfig({ [field.key]: '' });
+            inp.value = '';
+          });
+          rel.appendChild(reset);
+        }
+        wrap.appendChild(rel);
+      }
+    }
+
+    if (field.help) {
+      const p = document.createElement('p');
+      p.className = 'mt-1 text-xs text-muted-foreground';
+      p.textContent = translate(field.help);
+      wrap.appendChild(p);
+    }
+
+    root.appendChild(wrap);
+  }
+  return root;
+}
+
 export function button(text, onClick, variant = 'default') {
   const b = document.createElement('button');
   b.type = 'button';
