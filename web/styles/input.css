@@ -2,6 +2,7 @@
 @import 'tailwindcss';
 @import '../kernel/tokens.css';
 @import './base.css';
+@import './settings.css'; /* Agent B — settings pages */
 
 /* Class scanning sources (vanilla JS trees) */
 @source '../app/**/*.js';

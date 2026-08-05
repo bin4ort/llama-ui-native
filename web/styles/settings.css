@@ -1,0 +1,22 @@
+/* settings.css — Agent B owned (web/styles/). Settings pages: scrollbars,
+   log view, range input polish. Everything else uses kernel tokens +
+   Tailwind utilities. */
+
+#settings-content::-webkit-scrollbar,
+.settings-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+#settings-content::-webkit-scrollbar-thumb,
+.settings-scroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+pre.settings-log {
+  scrollbar-width: thin;
+}
+
+input[type='range'] {
+  cursor: pointer;
+}

@@ -29,8 +29,24 @@ async function boot() {
       shell.renderSearch().then((node) => el.replaceChildren(node));
       return el;
     });
-    router.register(/^\/mcp-servers$/, () => shell.placeholder('MCP Servers'));
-    router.register(/^\/settings\/(.+)$/, () => shell.placeholder('Settings'));
+    router.register(/^\/mcp-servers$/, () => {
+      const el = document.createElement('div');
+      el.className = 'h-full';
+      import('./settings/index.js').then((m) => m.renderMcpRoute(el));
+      return el;
+    });
+    router.register(/^\/settings\/presets$/, () => {
+      const el = document.createElement('div');
+      el.className = 'h-full';
+      import('./settings/index.js').then((m) => m.renderPresetsRoute(el));
+      return el;
+    });
+    router.register(/^\/settings\/(.+)$/, (params) => {
+      const el = document.createElement('div');
+      el.className = 'h-full';
+      import('./settings/index.js').then((m) => m.renderSettingsPage(el, params));
+      return el;
+    });
 
     shell.mountShell(document.getElementById('sidebar'), document.getElementById('page-root'));
     router.init();

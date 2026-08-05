@@ -39,6 +39,12 @@ export const CODES = {
   'LLMUI-CFG-002': { area: 'CFG', msg: 'settings: server prop sync failed', status: 'active' },
   'LLMUI-CFG-003': { area: 'CFG', msg: 'settings: reset to defaults failed', status: 'active' },
   'LLMUI-CFG-004': { area: 'CFG', msg: 'settings: import rejected (bad payload)', status: 'active' },
+  'LLMUI-CFG-005': { area: 'CFG', msg: 'settings: export failed', status: 'active' },
+  'LLMUI-CFG-006': { area: 'CFG', msg: 'settings: import failed', status: 'active' },
+  'LLMUI-CFG-007': { area: 'CFG', msg: 'settings: model select persisted', status: 'active' },
+  'LLMUI-CFG-008': { area: 'CFG', msg: 'settings: custom JSON invalid (saved anyway)', status: 'active' },
+  'LLMUI-CFG-009': { area: 'CFG', msg: 'settings: MCP servers payload invalid', status: 'active' },
+  'LLMUI-CFG-010': { area: 'CFG', msg: 'settings: debug log copied to clipboard', status: 'active' },
 
   /* DB */
   'LLMUI-DB-000': { area: 'DB', msg: 'dexie: database open failed', status: 'active' },
@@ -124,6 +130,7 @@ export const CODES = {
   'LLMUI-MCP-005': { area: 'MCP', msg: 'mcp: tool call failed', status: 'active' },
   'LLMUI-MCP-006': { area: 'MCP', msg: 'mcp: resource read failed', status: 'active' },
   'LLMUI-MCP-007': { area: 'MCP', msg: 'mcp: prompt get failed', status: 'active' },
+  'LLMUI-MCP-008': { area: 'MCP', msg: 'mcp: connection test failed', status: 'active' },
 
   /* TL */
   'LLMUI-TL-000': { area: 'TL', msg: 'tools: agentic loop exceeded max turns', status: 'active' },
@@ -133,6 +140,7 @@ export const CODES = {
   'LLMUI-TL-004': { area: 'TL', msg: 'tools: built-in executor failed', status: 'active' },
   'LLMUI-TL-005': { area: 'TL', msg: 'tools: sandbox execution failed', status: 'active' },
   'LLMUI-TL-006': { area: 'TL', msg: 'tools: steering message inject failed', status: 'active' },
+  'LLMUI-TL-007': { area: 'TL', msg: 'tools: always-allow grants applied', status: 'active' },
 
   /* PRS */
   'LLMUI-PRS-000': { area: 'PRS', msg: 'presets: library parse failed', status: 'active' },
