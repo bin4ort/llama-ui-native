@@ -26,11 +26,13 @@ function row(label, control, help) {
 }
 
 function sectionCard(title) {
+  // Parity: the old settings render fields as plain groups (h3 + space-y-8),
+  // not bordered cards.
   const card = document.createElement('div');
-  card.className = 'rounded-lg border border-border/60 bg-card p-4';
+  card.className = 'space-y-6';
   if (title) {
     const h = document.createElement('h3');
-    h.className = 'text-sm font-semibold mb-2';
+    h.className = 'mb-6 text-base font-semibold';
     h.textContent = title;
     card.appendChild(h);
   }
@@ -41,7 +43,7 @@ export function checkboxField(label, checked, help, onChange) {
   const box = document.createElement('input');
   box.type = 'checkbox';
   box.checked = !!checked;
-  box.className = 'mt-1 h-4 w-4 rounded border-border bg-background';
+  box.className = 'mt-1 h-4 w-4 rounded border-border/30 bg-muted/60 dark:bg-muted/75 shadow-sm';
   box.addEventListener('change', () => onChange(box.checked));
   const wrap = document.createElement('div');
   wrap.className = 'flex items-start gap-3 py-3 first:pt-0 last:pb-0';
@@ -64,7 +66,7 @@ export function checkboxField(label, checked, help, onChange) {
 
 export function selectField(label, value, options, help, onChange) {
   const sel = document.createElement('select');
-  sel.className = 'h-9 rounded-md border border-input bg-background px-3 text-sm';
+  sel.className = 'bg-muted/60 dark:bg-muted/75 border border-border/30 shadow-sm outline-none text-foreground rounded-md px-3 py-2 text-sm';
   for (const [val, text] of options) {
     const o = document.createElement('option');
     o.value = val;
@@ -119,7 +121,7 @@ export function textField(label, value, help, onChange, opts = {}) {
   inp.type = opts.type || 'text';
   inp.value = value ?? '';
   inp.placeholder = opts.placeholder || '';
-  inp.className = 'h-9 rounded-md border border-input bg-background px-3 text-sm';
+  inp.className = 'w-full bg-muted/60 dark:bg-muted/75 border border-border/30 shadow-sm outline-none text-foreground rounded-md px-3 py-2 text-sm';
   inp.addEventListener('input', () => onChange(inp.value));
   return row(label, inp, help);
 }
@@ -156,7 +158,7 @@ export function registrySection(fields, opts = {}) {
       const box = document.createElement('input');
       box.type = 'checkbox';
       box.checked = !!current;
-      box.className = 'h-4 w-4 rounded border-border bg-background';
+      box.className = 'h-4 w-4 rounded border-border/30 bg-muted/60 dark:bg-muted/75 shadow-sm';
       box.addEventListener('change', () => updateConfig({ [field.key]: box.checked }));
       const labelRow = document.createElement('div');
       labelRow.className = 'flex items-center gap-2';
@@ -177,7 +179,7 @@ export function registrySection(fields, opts = {}) {
 
       if (field.type === 'select') {
         const sel = document.createElement('select');
-        sel.className = 'w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm';
+        sel.className = 'w-full bg-muted/60 dark:bg-muted/75 border border-border/30 shadow-sm outline-none text-foreground rounded-md px-3 py-2 text-sm';
         for (const [val, text] of field.options || []) {
           const o = document.createElement('option');
           o.value = val;
@@ -189,7 +191,7 @@ export function registrySection(fields, opts = {}) {
         wrap.appendChild(sel);
       } else if (field.type === 'textarea') {
         const ta = document.createElement('textarea');
-        ta.className = 'min-h-[10rem] w-full md:max-w-3xl rounded-md border border-input bg-background p-2 text-sm';
+        ta.className = 'min-h-[10rem] w-full md:max-w-3xl bg-muted/60 dark:bg-muted/75 border border-border/30 shadow-sm outline-none text-foreground rounded-md p-3 text-sm';
         ta.value = currentStr;
         ta.addEventListener('input', () => updateConfig({ [field.key]: ta.value }));
         wrap.appendChild(ta);
@@ -199,7 +201,7 @@ export function registrySection(fields, opts = {}) {
         const inp = document.createElement('input');
         inp.type = field.isPositiveInteger ? 'number' : 'text';
         inp.value = currentStr;
-        inp.className = 'w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm' + (isCustom ? ' pr-8' : '');
+        inp.className = 'w-full bg-muted/60 dark:bg-muted/75 border border-border/30 shadow-sm outline-none text-foreground rounded-md px-3 py-2 text-sm' + (isCustom ? ' pr-8' : '');
         inp.placeholder = serverDefault != null ? `Default: ${serverDefault}` : '';
         inp.addEventListener('input', () => updateConfig({ [field.key]: inp.value }));
         rel.appendChild(inp);
