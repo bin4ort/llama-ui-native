@@ -14,18 +14,21 @@ component-level port of the shadcn-style primitives pending (see §5).
 
 ## 1. Design tokens (global)
 
-### 1.1 Radius scale (Tailwind v4 computed from `--radius: 0.625rem`)
+### 1.1 Radius scale (computed from `--radius: 0.625rem` with the v0.4.3
+`@theme` overrides: `--radius-sm: calc(var(--radius) - 4px)`,
+`--radius-md: calc(var(--radius) - 2px)`, `--radius-lg: var(--radius)`,
+`--radius-xl: calc(var(--radius) + 4px)`)
 
 | Token | Value | Usage |
 |---|---|---|
 | `rounded-xs` | 0.125rem (2 px) | small inner elements (dialog close button, checkbox indicators) |
-| `rounded-sm` | 0.25rem (4 px) | dropdown items, icon-sm buttons, checkbox (`rounded-[4px]` = 4 px) |
-| `rounded-md` | 0.375rem (6 px) | buttons, inputs, textareas, select trigger, tooltip, skeleton |
-| `rounded-lg` | 0.5rem (8 px) | dialogs, alert dialogs, size-lg buttons |
-| `rounded-xl` | 0.75rem (12 px) | cards |
+| `rounded-sm` | calc(10px − 4px) = **6 px** | dropdown items, icon-sm buttons |
+| `rounded-md` | calc(10px − 2px) = **8 px** | buttons, inputs, textareas, select trigger, tooltip, skeleton, checkbox (`rounded-[4px]` = 4 px fixed) |
+| `rounded-lg` | **10 px** | dialogs, alert dialogs, size-lg buttons |
+| `rounded-xl` | calc(10px + 4px) = **14 px** | cards |
 | `rounded-2xl` | 1rem (16 px) | sidebar (md), icon strip |
-| `rounded-3xl` | 1.5rem (24 px) | sidebar (mobile), composer (`rounded-4xl` mobile = 2rem / 32 px) |
-| `rounded-[4px]` | 4 px fixed | checkbox |
+| `rounded-3xl` | 1.5rem (24 px) | sidebar (mobile), composer (md) |
+| `rounded-4xl` | 2rem (32 px) | composer (mobile) |
 
 ### 1.2 Shadows
 
