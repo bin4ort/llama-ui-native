@@ -7,7 +7,19 @@ demands it). Build tooling becomes minimal (esbuild + Tailwind CLI). The plan
 is structured so **two agents can work in parallel without touching each
 other's files**.
 
-Status: PLANNED — no implementation started.
+Status: IN PROGRESS — Phase 0 done (baseline + data snapshot, committed
+f7bf252; plus a seeded-content baseline with verification harness, committed
+cd845db). Phase 1 kernel foundation built, bootable and committed (c710ac7):
+`web/` tree with build.mjs (esbuild + tailwind CLI + dict generation +
+version stamp + watch), kernel/* (store, router, i18n w/ 12 embedded dicts,
+theme w/ all 11 palettes ported, settings-store incl. logLevel, Dexie db,
+presets-store w/ seeding, permissions w/ staging + verify contract,
+error-codes.js registry + logger w/ ring buffer, modal/toast), tokens.css
+generated from app.css, base.css, bootable shell (sidebar + chat empty state
++ settings placeholder) verified in a headless browser (build + boot green,
+no console errors). `error-codes.h` (C side) added.
+Phase 2 starts: Agent B vertical (web/settings/**) and Agent A chat vertical
+(web/app/**) — only `web/app/shell.js` exists so far.
 
 ---
 
