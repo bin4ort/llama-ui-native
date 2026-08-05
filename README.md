@@ -50,7 +50,7 @@ sudo apt install gcc libgtk-3-dev libwebkit2gtk-4.1-dev libcurl4-openssl-dev pkg
 # Frontend (vanilla)
 npm install
 npm run build:web            # -> dist-web/ (esbuild + tailwind + i18n dicts)
-cp -a dist-web/. frontend/v3/
+rm -rf frontend/v3 && cp -a dist-web/. frontend/v3/
 
 # C binary
 ./install.sh

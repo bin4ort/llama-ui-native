@@ -12,7 +12,7 @@
   - `web/settings/` — **Agent B tree** (settings sections, MCP, presets,
     dialogs, PWA) — do not edit as Agent A
 - `frontend/v3/` — compiled vanilla output (served by C server;
-  `cp -a dist-web/. frontend/v3/` after `npm run build:web`)
+  `rm -rf frontend/v3 && cp -a dist-web/. frontend/v3/` after `npm run build:web` — clean sync, stale chunks are never served)
 - `main.c` + `server.c` — GTK window + self-contained HTTP server
 - `ISSUES.md` — bug tracker (check before merging); `REFACTOR-PLAN.md` —
   migration plan + contract-changes log
@@ -22,7 +22,8 @@
    changes)
 2. `npm run build:web` from project root (esbuild + Tailwind CLI + i18n dict
    generation from `web/lang/*.json`)
-3. Copy to the served dir: `cp -a dist-web/. frontend/v3/`
+3. Copy to the served dir (clean sync — stale chunks must not survive):
+   `rm -rf frontend/v3 && cp -a dist-web/. frontend/v3/`
 4. Rebuild C: `gcc -o llama-ui-native main.c server.c $(pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1) -ljxl -lpthread -lm -lcurl -Wall`
 5. Never edit files in `frontend/v3/` or `dist-web/` directly
 
