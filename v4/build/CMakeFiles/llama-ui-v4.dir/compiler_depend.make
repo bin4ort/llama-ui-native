@@ -2485,6 +2485,7 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: /home/stry4ok/Development/Proje
   /usr/include/qt6/QtGui/qpaintdevice.h \
   /usr/include/qt6/QtGui/qpalette.h \
   /usr/include/qt6/QtGui/qpen.h \
+  /usr/include/qt6/QtGui/qpicture.h \
   /usr/include/qt6/QtGui/qpixelformat.h \
   /usr/include/qt6/QtGui/qpixmap.h \
   /usr/include/qt6/QtGui/qpolygon.h \
@@ -2505,10 +2506,12 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: /home/stry4ok/Development/Proje
   /usr/include/qt6/QtWidgets/QComboBox \
   /usr/include/qt6/QtWidgets/QDialog \
   /usr/include/qt6/QtWidgets/QHBoxLayout \
+  /usr/include/qt6/QtWidgets/QLabel \
   /usr/include/qt6/QtWidgets/QLineEdit \
   /usr/include/qt6/QtWidgets/QMainWindow \
   /usr/include/qt6/QtWidgets/QMenu \
   /usr/include/qt6/QtWidgets/QMessageBox \
+  /usr/include/qt6/QtWidgets/QPushButton \
   /usr/include/qt6/QtWidgets/QScrollArea \
   /usr/include/qt6/QtWidgets/QToolButton \
   /usr/include/qt6/QtWidgets/QWidget \
@@ -2524,12 +2527,14 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: /home/stry4ok/Development/Proje
   /usr/include/qt6/QtWidgets/qdialogbuttonbox.h \
   /usr/include/qt6/QtWidgets/qframe.h \
   /usr/include/qt6/QtWidgets/qgridlayout.h \
+  /usr/include/qt6/QtWidgets/qlabel.h \
   /usr/include/qt6/QtWidgets/qlayout.h \
   /usr/include/qt6/QtWidgets/qlayoutitem.h \
   /usr/include/qt6/QtWidgets/qlineedit.h \
   /usr/include/qt6/QtWidgets/qmainwindow.h \
   /usr/include/qt6/QtWidgets/qmenu.h \
   /usr/include/qt6/QtWidgets/qmessagebox.h \
+  /usr/include/qt6/QtWidgets/qpushbutton.h \
   /usr/include/qt6/QtWidgets/qrubberband.h \
   /usr/include/qt6/QtWidgets/qscrollarea.h \
   /usr/include/qt6/QtWidgets/qsizepolicy.h \
@@ -7190,17 +7195,11 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
 
 /usr/include/qt6/QtWidgets/qscrollbar.h:
 
-/usr/include/qt6/QtWidgets/qlabel.h:
-
 /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/MessageView.cpp:
 
 /usr/include/qt6/QtWidgets/qtextedit.h:
 
-/usr/include/qt6/QtWidgets/qpushbutton.h:
-
 /usr/include/qt6/QtWidgets/QTextEdit:
-
-/usr/include/qt6/QtWidgets/QPushButton:
 
 /usr/include/qt6/QtGui/qinputdevice.h:
 
@@ -7242,17 +7241,23 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
 
 /usr/include/qt6/QtWidgets/qtoolbutton.h:
 
+/usr/include/qt6/QtWidgets/qpushbutton.h:
+
 /usr/include/qt6/QtWidgets/qmenu.h:
 
 /usr/include/qt6/QtWidgets/qlayoutitem.h:
 
 /usr/include/qt6/QtWidgets/qlayout.h:
 
+/usr/include/qt6/QtWidgets/qlabel.h:
+
 /usr/include/qt6/QtWidgets/qgridlayout.h:
 
 /usr/include/qt6/QtWidgets/qapplication.h:
 
 /usr/include/qt6/QtWidgets/QToolButton:
+
+/usr/include/qt6/QtWidgets/QPushButton:
 
 /usr/include/qt6/QtWidgets/QMessageBox:
 

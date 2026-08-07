@@ -7,6 +7,7 @@
  */
 #include "MainWindow.h"
 #include <QApplication>
+#include <cstdio>
 #include <QGuiApplication>
 #include <QTimer>
 #include <QScreen>
@@ -29,6 +30,32 @@ int main(int argc, char *argv[]) {
 
     const QStringList args = app.arguments();
     const int idx = args.indexOf(QStringLiteral("--screenshot"));
+
+    // --pixel-report <x>,<y>: sample the window pixel at (x,y) and print
+    // its RGB (deterministic ground truth for the vision loop).
+    const int pxIdx = args.indexOf(QStringLiteral("--pixel-report"));
+    if (pxIdx != -1 && pxIdx + 1 < args.size()) {
+        const QStringList xy = args.at(pxIdx + 1).split(',');
+        if (xy.size() == 2) {
+            const QPoint pt(xy.at(0).toInt(), xy.at(1).toInt());
+            QTimer::singleShot(900, [&window, &app, pt]() {
+                const QImage img = window.grab().toImage();
+                const QColor c = img.pixelColor(pt);
+                // average over a 20x20 patch around the point
+                double r = 0, g = 0, b = 0; int n = 0;
+                for (int dx = -10; dx <= 10; dx += 2)
+                    for (int dy = -10; dy <= 10; dy += 2) {
+                        const QColor p = img.pixelColor(pt + QPoint(dx, dy));
+                        r += p.red(); g += p.green(); b += p.blue(); ++n;
+                    }
+                fprintf(stderr, "PIXEL %d,%d = rgb(%d,%d,%d) avg24 rgb(%d,%d,%d)\n",
+                        pt.x(), pt.y(), c.red(), c.green(), c.blue(),
+                        int(r / n), int(g / n), int(b / n));
+                app.exit(0);
+            });
+            return app.exec();
+        }
+    }
 
     // --selftest "<message>" [--screenshot <path>]: E2E — new chat, send a
     // message, wait for the reply, screenshot, exit.

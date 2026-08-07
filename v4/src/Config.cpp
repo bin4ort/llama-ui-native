@@ -16,18 +16,11 @@ QString path() {
 
 QJsonObject load() {
     QFile f(path());
-    if (f.open(QIODevice::ReadOnly)) {
-        const auto doc = QJsonDocument::fromJson(f.readAll());
-        if (doc.isObject()) {
-            g_cfg = doc.object();
-            return g_cfg;
-        }
-    }
     // Defaults (same keys/defaults as the web app's settings-store)
-    g_cfg = QJsonObject{
+    QJsonObject defaults{
         {QStringLiteral("language"), QStringLiteral("en")},
         {QStringLiteral("theme"), QStringLiteral("system")},
-        {QStringLiteral("serverEndpoint"), QStringLiteral("http://localhost:8080")},
+        {QStringLiteral("serverEndpoint"), QStringLiteral("http://127.0.0.1:8080")},
         {QStringLiteral("systemMessage"), QString()},
         {QStringLiteral("temperature"), QString()},
         {QStringLiteral("top_k"), QString()},
@@ -37,6 +30,18 @@ QJsonObject load() {
         {QStringLiteral("logLevel"), 2},
         {QStringLiteral("model"), QString()},
     };
+    if (f.open(QIODevice::ReadOnly)) {
+        const auto doc = QJsonDocument::fromJson(f.readAll());
+        if (doc.isObject()) {
+            // merge: file wins, defaults fill missing keys
+            const QJsonObject saved = doc.object();
+            for (auto it = saved.begin(); it != saved.end(); ++it)
+                defaults.insert(it.key(), it.value());
+            g_cfg = defaults;
+            return g_cfg;
+        }
+    }
+    g_cfg = defaults;
     save(g_cfg);
     return g_cfg;
 }
