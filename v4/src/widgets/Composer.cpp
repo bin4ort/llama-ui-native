@@ -7,6 +7,7 @@
 Composer::Composer(QWidget *parent) : QWidget(parent) {
     setObjectName(QStringLiteral("composer"));
     setFixedHeight(72);
+    setMaximumWidth(768); // spec: max-w-3xl, centered floating bar
 
     auto *layout = new QHBoxLayout(this);
     layout->setContentsMargins(12, 10, 12, 10);
@@ -17,10 +18,11 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
     attach->setToolTip(QStringLiteral("Attach file"));
     layout->addWidget(attach);
 
-    auto *persona = new QPushButton(QStringLiteral("✧"), this);
-    persona->setProperty("round", true);
-    persona->setToolTip(QStringLiteral("Choose a personality preset"));
-    layout->addWidget(persona);
+    m_persona = new QPushButton(QStringLiteral("✧"), this);
+    m_persona->setProperty("round", true);
+    m_persona->setToolTip(QStringLiteral("Choose a personality preset"));
+    connect(m_persona, &QPushButton::clicked, this, &Composer::personaRequested);
+    layout->addWidget(m_persona);
 
     m_input = new QTextEdit(this);
     m_input->setPlaceholderText(QStringLiteral("Type a message..."));

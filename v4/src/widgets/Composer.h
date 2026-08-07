@@ -20,6 +20,7 @@ public:
 
 signals:
     void sendRequested(const QString &text);
+    void personaRequested();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *ev) override;
@@ -27,4 +28,5 @@ protected:
 private:
     QTextEdit *m_input;
     QPushButton *m_send;
+    QPushButton *m_persona;
 };

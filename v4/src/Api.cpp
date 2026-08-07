@@ -78,6 +78,33 @@ void Api::startCompletion(const QJsonArray &messages, const QString &model,
     });
 }
 
+void Api::complete(const QJsonArray &messages, const QString &model,
+                   double temperature, int maxTokens) {
+    QJsonObject body{
+        {QStringLiteral("model"), model},
+        {QStringLiteral("messages"), messages},
+        {QStringLiteral("temperature"), temperature},
+        {QStringLiteral("max_tokens"), maxTokens},
+        {QStringLiteral("stream"), false},
+    };
+    QNetworkRequest req{QUrl(m_base + QStringLiteral("/v1/chat/completions"))};
+    req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
+    auto *reply = m_nam->post(req, QJsonDocument(body).toJson(QJsonDocument::Compact));
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        reply->deleteLater();
+        if (reply->error() != QNetworkReply::NoError) {
+            emit requestFailed(QStringLiteral("LLMUI-API-018"), reply->errorString());
+            return;
+        }
+        const auto doc = QJsonDocument::fromJson(reply->readAll());
+        const auto content = doc.object()
+            .value(QStringLiteral("choices")).toArray().first().toObject()
+            .value(QStringLiteral("message")).toObject()
+            .value(QStringLiteral("content")).toString();
+        emit completionReady(content);
+    });
+}
+
 void Api::abort() {
     if (m_stream) {
         m_stream->abort();

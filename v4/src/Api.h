@@ -26,6 +26,10 @@ public:
     void startCompletion(const QJsonArray &messages, const QString &model,
                          double temperature = 0.7);
 
+    /** One-shot completion; emits completionReady with the full content. */
+    void complete(const QJsonArray &messages, const QString &model,
+                  double temperature = 0.4, int maxTokens = 1200);
+
     void abort();
 
 signals:
@@ -33,6 +37,7 @@ signals:
     void requestFailed(const QString &code, const QString &message);
     void chunkReceived(const QString &delta);
     void contentDone();
+    void completionReady(const QString &content);
 
 private:
     QString m_base;

@@ -302,6 +302,15 @@ QPushButton[ghost="true"]:hover { background-color: %7; color: %3; }
 QPushButton[destructive="true"] { background-color: %23; color: white; }
 QPushButton[destructive="true"]:hover { background-color: %24; }
 
+/* Expanded sidebar (UI-SPEC §3.17) */
+#sidebarExpanded { background-color: %4; border: 1px solid %5; border-radius: 16px; }
+QPushButton[convRow="true"] {
+  background: transparent; border: none; border-radius: 8px;
+  color: %3; text-align: left; padding: 6px 10px;
+}
+QPushButton[convRow="true"]:hover { background-color: %7; }
+QPushButton[full="true"] { width: 100%%; }
+
 /* Dialogs (UI-SPEC §3.7) */
 QDialog#appDialog { background-color: %21; border: 1px solid %5; border-radius: 10px; }
 QDialog QLabel#dialogTitle { font-size: 18px; font-weight: 600; }

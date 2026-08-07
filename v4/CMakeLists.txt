@@ -22,6 +22,10 @@ add_executable(llama-ui-v4
   src/i18n.h
   src/Config.cpp
   src/Config.h
+  src/ConversationStore.cpp
+  src/ConversationStore.h
+  src/Presets.cpp
+  src/Presets.h
   src/widgets/Sidebar.cpp
   src/widgets/Sidebar.h
   src/widgets/Composer.cpp
@@ -30,6 +34,8 @@ add_executable(llama-ui-v4
   src/widgets/MessageView.h
   src/widgets/SettingsDialog.cpp
   src/widgets/SettingsDialog.h
+  src/widgets/WizardDialog.cpp
+  src/widgets/WizardDialog.h
 )
 
 target_link_libraries(llama-ui-v4 PRIVATE Qt6::Widgets Qt6::Network)

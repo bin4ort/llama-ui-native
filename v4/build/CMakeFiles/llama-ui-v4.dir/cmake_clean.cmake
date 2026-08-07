@@ -1,0 +1,41 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/llama-ui-v4.dir/link.d"
+  "CMakeFiles/llama-ui-v4_autogen.dir/AutogenUsed.txt"
+  "CMakeFiles/llama-ui-v4_autogen.dir/ParseCache.txt"
+  "llama-ui-v4_autogen"
+  "CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/Api.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/Api.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/Theme.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/Theme.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/i18n.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/i18n.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/main.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/main.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.o.d"
+  "llama-ui-v4"
+  "llama-ui-v4.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/llama-ui-v4.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

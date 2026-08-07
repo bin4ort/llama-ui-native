@@ -1,0 +1,5 @@
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles/llama-ui-v4.dir
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles/edit_cache.dir
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles/rebuild_cache.dir
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles/llama-ui-v4_autogen_timestamp_deps.dir
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles/llama-ui-v4_autogen.dir

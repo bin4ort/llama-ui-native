@@ -5,7 +5,9 @@
  */
 #pragma once
 #include <QScrollArea>
+#include <QString>
 #include <QVector>
+class QLabel;
 
 struct ChatMessage {
     enum Role { User, Assistant, System } role = Assistant;
@@ -24,10 +26,12 @@ public:
     void addMessage(const ChatMessage &msg);
     void updateStreaming(const QString &delta);
     void showGreeting();
+    QString lastAssistantHtml() const;
     void clear();
 
 private:
     QWidget *m_container;
     QVBoxLayout *m_layout;
     QLabel *m_streamingLabel = nullptr;
+    QString m_streamRaw;
 };
