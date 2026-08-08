@@ -8254,7 +8254,6 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: /home/stry4ok/Development/
   /usr/include/qt6/QtCore/qversiontagging.h \
   /usr/include/qt6/QtCore/qxptype_traits.h \
   /usr/include/qt6/QtCore/qyieldcpu.h \
-  /usr/include/qt6/QtGui/QFont \
   /usr/include/qt6/QtGui/qaction.h \
   /usr/include/qt6/QtGui/qbitmap.h \
   /usr/include/qt6/QtGui/qbrush.h \
@@ -8269,6 +8268,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: /home/stry4ok/Development/
   /usr/include/qt6/QtGui/qkeysequence.h \
   /usr/include/qt6/QtGui/qpaintdevice.h \
   /usr/include/qt6/QtGui/qpalette.h \
+  /usr/include/qt6/QtGui/qpen.h \
   /usr/include/qt6/QtGui/qpicture.h \
   /usr/include/qt6/QtGui/qpixelformat.h \
   /usr/include/qt6/QtGui/qpixmap.h \
@@ -8276,7 +8276,10 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: /home/stry4ok/Development/
   /usr/include/qt6/QtGui/qregion.h \
   /usr/include/qt6/QtGui/qrgb.h \
   /usr/include/qt6/QtGui/qrgba64.h \
+  /usr/include/qt6/QtGui/qtextcursor.h \
   /usr/include/qt6/QtGui/qtextdocument.h \
+  /usr/include/qt6/QtGui/qtextformat.h \
+  /usr/include/qt6/QtGui/qtextoption.h \
   /usr/include/qt6/QtGui/qtgui-config.h \
   /usr/include/qt6/QtGui/qtguiexports.h \
   /usr/include/qt6/QtGui/qtguiglobal.h \
@@ -8285,6 +8288,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: /home/stry4ok/Development/
   /usr/include/qt6/QtWidgets/QFileDialog \
   /usr/include/qt6/QtWidgets/QHBoxLayout \
   /usr/include/qt6/QtWidgets/QLabel \
+  /usr/include/qt6/QtWidgets/QLineEdit \
   /usr/include/qt6/QtWidgets/QMenu \
   /usr/include/qt6/QtWidgets/QPushButton \
   /usr/include/qt6/QtWidgets/QScrollArea \
@@ -8301,6 +8305,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: /home/stry4ok/Development/
   /usr/include/qt6/QtWidgets/qlabel.h \
   /usr/include/qt6/QtWidgets/qlayout.h \
   /usr/include/qt6/QtWidgets/qlayoutitem.h \
+  /usr/include/qt6/QtWidgets/qlineedit.h \
   /usr/include/qt6/QtWidgets/qmenu.h \
   /usr/include/qt6/QtWidgets/qpushbutton.h \
   /usr/include/qt6/QtWidgets/qscrollarea.h \

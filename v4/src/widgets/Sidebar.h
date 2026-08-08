@@ -1,8 +1,9 @@
 /*
- * Sidebar.h — spec sidebar (UI-SPEC §3.17): collapsed icon strip (w-12)
- * that expands (w-72) into a conversation list panel with pinned header,
- * active highlight, per-row context menu (rename/delete) and a
- * server-status footer (UI-SPEC §2.5).
+ * Sidebar.h — v2 SidebarNavigation: floating rounded panel, w-12 collapsed
+ * (transparent) / w-72 expanded (bg-muted/60 + border + shadow). Ghost
+ * action rows (New chat / Search / MCP / Settings) with kbd hints, inline
+ * search mode, conversation list, pinned headers, active highlight,
+ * context menu (pin/edit/export/delete).
  */
 #pragma once
 #include <QWidget>
@@ -10,6 +11,7 @@
 class ConversationStore;
 class QPushButton;
 class QVBoxLayout;
+class QLineEdit;
 class QLabel;
 
 class Sidebar : public QWidget {
@@ -22,6 +24,7 @@ public:
     void setActiveConversation(const QString &id);
     void setServerStatus(bool online, const QString &address);
     void toggleExpanded() { setExpanded(!m_expanded); }
+    void activateSearchMode();
 
 signals:
     void newChatClicked();
@@ -35,15 +38,19 @@ signals:
 
 private:
     void setExpanded(bool expanded);
-    bool event(QEvent *event) override;
+    void rebuildActions();
+    void rebuildList();
+    void applyPanelStyle();
 
     ConversationStore *m_store;
+    QVBoxLayout *m_outer;
     QPushButton *m_logo;
-    QVBoxLayout *m_expandedLayout;
-    QWidget *m_expandedPanel;
-    QLabel *m_statusDot;
-    QLabel *m_statusLabel;
+    QPushButton *m_closeBtn;
+    QVBoxLayout *m_actionsLayout;
+    QVBoxLayout *m_listLayout;
+    QLineEdit *m_searchInput = nullptr;
+    QLabel *m_statusLabel = nullptr;
     QString m_activeId;
     bool m_expanded = false;
-    bool m_hoverExpand = false;
+    bool m_searchMode = false;
 };

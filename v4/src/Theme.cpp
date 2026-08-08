@@ -214,19 +214,41 @@ QString stylesheet(const QString &paletteId) {
     const bool dark = t.background.lightnessF() < 0.5;
     const QColor formBg = alphaMix(t.muted, t.background, dark ? 0.75 : 0.60);
     const QColor formBorder = alphaMix(t.border, t.background, 0.20);
+    // v2 sidebar panel: bg-muted/60 + border
+    const QColor sideBg = alphaMix(t.muted, t.background, 0.60);
+    const QColor sideBorder = alphaMix(t.sidebarBorder, t.background, 0.35);
     const QString s = QStringLiteral(R"QSS(
 * { font-family: %1; font-size: 14px; }
 QMainWindow, QDialog { background-color: %2; color: %3; }
 
-/* Sidebar (UI-SPEC §3.17) — collapsed icon strip */
-#sidebar { background-color: %4; border: 1px solid %5; border-radius: 16px; }
+/* Sidebar (v2 SidebarNavigation) — floating rounded panel; transparent
+ * strip collapsed, muted/60 panel expanded */
+#sidebar { background: transparent; border: none; border-radius: 16px; }
+#sidebar[expanded="true"] {
+  background-color: %27; border: 1px solid %28; border-radius: 16px;
+}
 #sidebar QPushButton[strip="true"] {
-  background: transparent; border: none; border-radius: 8px;
-  color: %6; font-size: 14px;
+  background: transparent; border: none; border-radius: 10px;
+  color: %6; font-size: 14px; padding: 6px;
 }
 #sidebar QPushButton[strip="true"]:hover { background-color: %7; color: %3; }
-#sidebar QPushButton[strip="true"][active="true"] { background-color: %8; color: %9; }
+#sidebar QPushButton[sideAction="true"] {
+  background: transparent; border: none; border-radius: 8px;
+  color: %6; text-align: left; padding: 7px 10px; font-size: 14px;
+}
+#sidebar QPushButton[sideAction="true"]:hover { background-color: %7; color: %3; }
 #sidebar QLabel { color: %6; }
+#sidebarSearch {
+  margin: 0 2px 2px 2px;
+}
+#sidebar QPushButton[convRow="true"] {
+  background: transparent; border: none; border-radius: 8px;
+  color: %3; text-align: left; padding: 6px 10px; font-size: 13px;
+}
+#sidebar QPushButton[convRow="true"]:hover { background-color: %7; }
+#sidebar QPushButton[convRow="true"][active="true"] {
+  background-color: %8; color: %9; font-weight: 600;
+}
 
 /* Chat area */
 #chatRoot { background-color: %2; }
@@ -468,7 +490,9 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: trans
                  hex(t.destructive),        // 23
                  hex(t.destructive.lighter(115)), // 24
                  hex(formBg),               // 25 (composer bg)
-                 hex(formBorder));          // 26 (composer border)
+                 hex(formBorder),           // 26 (composer border)
+                 hex(sideBg),               // 27 (sidebar panel bg)
+                 hex(sideBorder));          // 28 (sidebar panel border)
 }
 
 } // namespace Theme

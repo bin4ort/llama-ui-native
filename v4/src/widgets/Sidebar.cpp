@@ -1,20 +1,20 @@
 #include "Sidebar.h"
 #include "../ConversationStore.h"
 #include "../i18n.h"
-#include <QFont>
+#include <QEvent>
+#include <QFile>
+#include <QFileDialog>
 #include <QHBoxLayout>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMenu>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QStyle>
 #include <QVBoxLayout>
-#include <QEvent>
-#include <QFile>
-#include <QFileDialog>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include <algorithm>
 
 namespace {
@@ -24,175 +24,201 @@ const char *kVersion = "0.6.0-dev";
 Sidebar::Sidebar(ConversationStore *store, QWidget *parent)
     : QWidget(parent), m_store(store) {
     setObjectName(QStringLiteral("sidebar"));
-    setFixedWidth(56);
+    setAttribute(Qt::WA_StyledBackground);
+    setFixedWidth(48); // v2: collapsed strip w-12
 
-    auto *layout = new QVBoxLayout(this);
-    layout->setContentsMargins(6, 10, 6, 10);
-    layout->setSpacing(4);
+    m_outer = new QVBoxLayout(this);
+    m_outer->setContentsMargins(4, 6, 4, 6);
+    m_outer->setSpacing(2);
 
-    auto makeStrip = [this](const QString &icon, const QString &tip,
-                            const QString &shortcut = QString()) {
-        auto *b = new QPushButton(icon);
-        b->setProperty("strip", true);
-        b->setFixedSize(36, 36);
-        b->setFont(QFont(QStringLiteral("DejaVu Sans"), 15));
-        b->setToolTip(shortcut.isEmpty() ? tip : tip + QStringLiteral("  (%1)").arg(shortcut));
-        return b;
-    };
-
-    // Logo: expand/collapse toggle (spec: click expands the strip)
-    m_logo = makeStrip(QStringLiteral("◆"), QStringLiteral("Expand navigation"),
-                       I18n::t(QStringLiteral("Ctrl+B")));
+    // logo row: expand/collapse toggle + close button when expanded
+    auto *topRow = new QHBoxLayout;
+    topRow->setContentsMargins(0, 0, 0, 0);
+    topRow->setSpacing(0);
+    m_logo = new QPushButton(QStringLiteral("◆"), this);
+    m_logo->setProperty("strip", true);
+    m_logo->setFixedSize(36, 36);
+    m_logo->setToolTip(I18n::t(QStringLiteral("Expand navigation")));
     connect(m_logo, &QPushButton::clicked, this, [this]() { setExpanded(!m_expanded); });
-    layout->addWidget(m_logo, 0, Qt::AlignHCenter);
+    topRow->addWidget(m_logo);
+    m_closeBtn = new QPushButton(QStringLiteral("◁"), this);
+    m_closeBtn->setProperty("strip", true);
+    m_closeBtn->setFixedSize(36, 36);
+    m_closeBtn->setToolTip(I18n::t(QStringLiteral("Collapse navigation")));
+    m_closeBtn->setVisible(false);
+    connect(m_closeBtn, &QPushButton::clicked, this, [this]() { setExpanded(false); });
+    topRow->addWidget(m_closeBtn);
+    m_outer->addLayout(topRow);
 
-    layout->addStretch(1);
+    // action rows (v2 SIDEBAR_ACTIONS_ITEMS: New chat / Search / MCP / Settings)
+    m_actionsLayout = new QVBoxLayout;
+    m_actionsLayout->setContentsMargins(0, 4, 0, 0);
+    m_actionsLayout->setSpacing(2);
+    m_outer->addLayout(m_actionsLayout);
+    rebuildActions();
 
-    auto *newChat = makeStrip(QStringLiteral("✚"),
-                              I18n::t(QStringLiteral("New chat")),
-                              I18n::t(QStringLiteral("Ctrl+Shift+O")));
-    connect(newChat, &QPushButton::clicked, this, &Sidebar::newChatClicked);
-    layout->addWidget(newChat, 0, Qt::AlignHCenter);
-
-    auto *search = makeStrip(QStringLiteral("⌕"), I18n::t(QStringLiteral("Search")),
-                             I18n::t(QStringLiteral("Ctrl+K")));
-    connect(search, &QPushButton::clicked, this, &Sidebar::searchClicked);
-    layout->addWidget(search, 0, Qt::AlignHCenter);
-
-    auto *mcp = makeStrip(QStringLiteral("◫"), I18n::t(QStringLiteral("MCP Servers")));
-    connect(mcp, &QPushButton::clicked, this, &Sidebar::mcpClicked);
-    layout->addWidget(mcp, 0, Qt::AlignHCenter);
-
-    auto *settings = makeStrip(QStringLiteral("⚙"), I18n::t(QStringLiteral("Settings")));
-    connect(settings, &QPushButton::clicked, this, &Sidebar::settingsClicked);
-    layout->addWidget(settings, 0, Qt::AlignHCenter);
-
-    layout->addStretch(1);
-
-    // Expanded panel (conversation list)
-    m_expandedPanel = new QWidget(this);
-    m_expandedPanel->setObjectName(QStringLiteral("sidebarExpanded"));
-    auto *el = new QVBoxLayout(m_expandedPanel);
-    el->setContentsMargins(8, 8, 8, 8);
-    el->setSpacing(4);
-    m_expandedLayout = new QVBoxLayout;
-    m_expandedLayout->setContentsMargins(0, 0, 0, 0);
-    m_expandedLayout->setSpacing(2);
-    auto *scroll = new QScrollArea(m_expandedPanel);
+    // conversation list
+    auto *scroll = new QScrollArea(this);
     scroll->setWidgetResizable(true);
     scroll->setFrameShape(QFrame::NoFrame);
     auto *listHost = new QWidget;
-    listHost->setLayout(m_expandedLayout);
+    m_listLayout = new QVBoxLayout(listHost);
+    m_listLayout->setContentsMargins(0, 4, 0, 0);
+    m_listLayout->setSpacing(2);
     scroll->setWidget(listHost);
-    el->addWidget(scroll, 1);
+    m_outer->addWidget(scroll, 1);
+    rebuildList();
 
-    // Server status footer (UI-SPEC §2.5)
-    auto *footer = new QWidget(m_expandedPanel);
-    footer->setObjectName(QStringLiteral("sidebarFooter"));
-    auto *fl = new QHBoxLayout(footer);
-    fl->setContentsMargins(4, 6, 4, 2);
-    fl->setSpacing(6);
-    m_statusDot = new QLabel(QStringLiteral("●"), footer);
-    m_statusDot->setObjectName(QStringLiteral("statusDot"));
-    m_statusDot->setProperty("state", QStringLiteral("off"));
-    fl->addWidget(m_statusDot);
-    m_statusLabel = new QLabel(I18n::t(QStringLiteral("Server offline")), footer);
+    // server status footer (kept subtle, spec §2.5)
+    m_statusLabel = new QLabel(this);
     m_statusLabel->setObjectName(QStringLiteral("statusLabel"));
-    fl->addWidget(m_statusLabel, 1);
-    auto *ver = new QLabel(QStringLiteral("v%1").arg(kVersion), footer);
-    ver->setObjectName(QStringLiteral("versionLabel"));
-    fl->addWidget(ver);
-    el->addWidget(footer);
+    m_statusLabel->setVisible(false);
+    m_outer->addWidget(m_statusLabel);
 
-    m_expandedPanel->setVisible(false);
-    layout->addWidget(m_expandedPanel, 1);
+    applyPanelStyle();
+}
 
-    setExpanded(false);
+/** v2: collapsed strip is a transparent floating panel; expanded gets the
+ *  muted/60 background + border + shadow. */
+void Sidebar::applyPanelStyle() {
+    setProperty("expanded", m_expanded);
+    style()->unpolish(this);
+    style()->polish(this);
 }
 
 void Sidebar::setExpanded(bool expanded) {
     m_expanded = expanded;
-    setFixedWidth(expanded ? 288 : 56);
-    m_expandedPanel->setVisible(expanded);
+    setFixedWidth(expanded ? 288 : 48); // v2: w-72 / w-12
+    m_closeBtn->setVisible(expanded);
     m_logo->setToolTip(expanded ? I18n::t(QStringLiteral("Collapse navigation"))
                                 : I18n::t(QStringLiteral("Expand navigation")));
-    if (expanded) refreshConversations();
-}
-
-void Sidebar::setActiveConversation(const QString &id) {
-    m_activeId = id;
-    refreshConversations();
-}
-
-void Sidebar::setServerStatus(bool online, const QString &address) {
-    m_statusDot->setProperty("state", online ? QStringLiteral("online") : QStringLiteral("off"));
-    m_statusDot->style()->unpolish(m_statusDot);
-    m_statusDot->style()->polish(m_statusDot);
-    m_statusLabel->setText(online
-                               ? I18n::t(QStringLiteral("Server online")) +
-                                     QStringLiteral(" · ") + address
-                               : I18n::t(QStringLiteral("Server offline")));
-}
-
-/** v2 SidebarNavigation: hovering the collapsed strip expands the panel;
- *  leaving the sidebar collapses it again (unless pinned open by click). */
-bool Sidebar::event(QEvent *event) {
-    if (event->type() == QEvent::Enter) {
-        if (!m_expanded) {
-            m_hoverExpand = true;
-            setExpanded(true);
-        }
-    } else if (event->type() == QEvent::Leave) {
-        if (m_hoverExpand) {
-            m_hoverExpand = false;
-            setExpanded(false);
-        }
+    applyPanelStyle();
+    if (expanded) {
+        refreshConversations();
+        rebuildActions();
     }
-    return QWidget::event(event);
+}
+
+void Sidebar::activateSearchMode() {
+    if (!m_expanded) setExpanded(true);
+    m_searchMode = true;
+    rebuildActions();
+    if (m_searchInput) {
+        m_searchInput->setFocus();
+        m_searchInput->show();
+    }
+    rebuildList();
+}
+
+void Sidebar::rebuildActions() {
+    while (m_actionsLayout->count()) {
+        auto *item = m_actionsLayout->takeAt(0);
+        if (item->widget()) item->widget()->deleteLater();
+        delete item;
+    }
+    // v2: SearchInput appears above the actions in search mode
+    if (m_searchMode && m_expanded) {
+        m_searchInput = new QLineEdit(this);
+        m_searchInput->setObjectName(QStringLiteral("sidebarSearch"));
+        m_searchInput->setPlaceholderText(I18n::t(QStringLiteral("Search conversations...")));
+        m_actionsLayout->addWidget(m_searchInput);
+    } else {
+        m_searchInput = nullptr;
+    }
+
+    struct Action {
+        QString icon, label, kbd, slot;
+    };
+    const QList<Action> actions{
+        {QStringLiteral("✚"), I18n::t(QStringLiteral("New chat")),
+         I18n::t(QStringLiteral("Ctrl+Shift+O")), QStringLiteral("new")},
+        {QStringLiteral("⌕"), I18n::t(QStringLiteral("Search")),
+         I18n::t(QStringLiteral("Ctrl+K")), QStringLiteral("search")},
+        {QStringLiteral("◫"), I18n::t(QStringLiteral("MCP Servers")),
+         QString(), QStringLiteral("mcp")},
+        {QStringLiteral("⚙"), I18n::t(QStringLiteral("Settings")),
+         QString(), QStringLiteral("settings")},
+    };
+    for (const auto &a : actions) {
+        auto *btn = new QPushButton(this);
+        btn->setProperty("sideAction", true);
+        if (m_expanded) {
+            btn->setText(a.icon + QStringLiteral("  ") + a.label);
+            if (!a.kbd.isEmpty())
+                btn->setText(btn->text() + QStringLiteral("    ") + a.kbd);
+        } else {
+            btn->setText(a.icon);
+        }
+        btn->setToolTip(a.label + (a.kbd.isEmpty() ? QString() : QStringLiteral("  (%1)").arg(a.kbd)));
+        connect(btn, &QPushButton::clicked, this, [this, a]() {
+            if (a.slot == QStringLiteral("new")) emit newChatClicked();
+            else if (a.slot == QStringLiteral("search")) {
+                if (m_expanded) {
+                    m_searchMode = !m_searchMode;
+                    if (!m_searchMode) m_searchInput = nullptr;
+                    rebuildActions();
+                    rebuildList();
+                    if (m_searchMode && m_searchInput) m_searchInput->setFocus();
+                } else {
+                    emit searchClicked();
+                }
+            } else if (a.slot == QStringLiteral("mcp")) emit mcpClicked();
+            else emit settingsClicked();
+        });
+        m_actionsLayout->addWidget(btn);
+    }
+    if (m_searchMode && m_expanded && m_searchInput)
+        connect(m_searchInput, &QLineEdit::textChanged, this, [this]() { rebuildList(); });
 }
 
 void Sidebar::refreshConversations() {
     if (!m_expanded) return;
-    while (m_expandedLayout->count()) {
-        auto *item = m_expandedLayout->takeAt(0);
+    rebuildList();
+}
+
+void Sidebar::rebuildList() {
+    if (!m_listLayout) return;
+    while (m_listLayout->count()) {
+        auto *item = m_listLayout->takeAt(0);
         if (item->widget()) item->widget()->deleteLater();
         delete item;
     }
 
-    auto *newChatBtn = new QPushButton(I18n::t(QStringLiteral("New Chat")));
-    newChatBtn->setProperty("primary", true);
-    newChatBtn->setProperty("full", true);
-    connect(newChatBtn, &QPushButton::clicked, this, &Sidebar::newChatClicked);
-    m_expandedLayout->addWidget(newChatBtn);
-
+    const QString needle = m_searchInput ? m_searchInput->text().trimmed() : QString();
     const auto &convs = m_store->conversations();
-    if (convs.isEmpty()) {
-        auto *empty = new QLabel(I18n::t(QStringLiteral("No conversations yet")));
+    QList<Conversation> filtered;
+    for (const auto &c : convs) {
+        if (!needle.isEmpty() &&
+            !c.name.contains(needle, Qt::CaseInsensitive))
+            continue;
+        filtered.append(c);
+    }
+    if (filtered.isEmpty()) {
+        auto *empty = new QLabel(
+            needle.isEmpty() ? I18n::t(QStringLiteral("No conversations yet"))
+                             : I18n::t(QStringLiteral("No results found")));
         empty->setObjectName(QStringLiteral("convEmpty"));
         empty->setWordWrap(true);
-        m_expandedLayout->addWidget(empty);
-        m_expandedLayout->addStretch(1);
+        m_listLayout->addWidget(empty);
+        m_listLayout->addStretch(1);
         return;
     }
-
-    // pinned first, then recents (UI-SPEC §2.1)
-    auto sorted = convs;
+    auto sorted = filtered;
     std::stable_sort(sorted.begin(), sorted.end(),
                      [](const Conversation &a, const Conversation &b) {
                          return a.pinned && !b.pinned;
                      });
-    const bool anyPinned = !sorted.isEmpty() && sorted.first().pinned;
-    bool inPinned = anyPinned;
-    if (anyPinned) {
+    bool inPinned = !sorted.isEmpty() && sorted.first().pinned;
+    if (inPinned) {
         auto *l = new QLabel(I18n::t(QStringLiteral("Pinned")));
         l->setObjectName(QStringLiteral("convHeader"));
-        m_expandedLayout->addWidget(l);
+        m_listLayout->addWidget(l);
     }
     for (const auto &c : sorted) {
         if (inPinned && !c.pinned) {
             auto *l = new QLabel(I18n::t(QStringLiteral("Recent conversations")));
             l->setObjectName(QStringLiteral("convHeader"));
-            m_expandedLayout->addWidget(l);
+            m_listLayout->addWidget(l);
             inPinned = false;
         }
         auto *row = new QPushButton(c.name);
@@ -238,7 +264,22 @@ void Sidebar::refreshConversations() {
                            this, [this, id = c.id]() { emit conversationDeleteRequested(id); });
             menu.exec(QCursor::pos());
         });
-        m_expandedLayout->addWidget(row);
+        m_listLayout->addWidget(row);
     }
-    m_expandedLayout->addStretch(1);
+    m_listLayout->addStretch(1);
+}
+
+void Sidebar::setActiveConversation(const QString &id) {
+    m_activeId = id;
+    refreshConversations();
+}
+
+void Sidebar::setServerStatus(bool online, const QString &address) {
+    if (m_statusLabel) {
+        m_statusLabel->setText(online
+                                   ? I18n::t(QStringLiteral("Server online")) +
+                                         QStringLiteral(" · ") + address
+                                   : I18n::t(QStringLiteral("Server offline")));
+        m_statusLabel->setVisible(true);
+    }
 }

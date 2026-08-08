@@ -360,31 +360,14 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: \
  /usr/include/qt6/QtCore/QString /usr/include/qt6/QtCore/QStringList \
  /usr/include/qt6/QtCore/QObject \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/../i18n.h \
- /usr/include/qt6/QtGui/QFont /usr/include/qt6/QtWidgets/QHBoxLayout \
- /usr/include/qt6/QtWidgets/qboxlayout.h \
- /usr/include/qt6/QtWidgets/qlayout.h \
- /usr/include/qt6/QtWidgets/qlayoutitem.h \
- /usr/include/qt6/QtWidgets/qgridlayout.h \
- /usr/include/qt6/QtWidgets/QLabel /usr/include/qt6/QtWidgets/qlabel.h \
- /usr/include/qt6/QtWidgets/qframe.h /usr/include/qt6/QtGui/qpicture.h \
- /usr/include/qt6/QtCore/qiodevice.h \
- /usr/include/qt6/QtGui/qtextdocument.h /usr/include/qt6/QtWidgets/QMenu \
- /usr/include/qt6/QtWidgets/qmenu.h \
- /usr/include/qt6/QtWidgets/QPushButton \
- /usr/include/qt6/QtWidgets/qpushbutton.h \
- /usr/include/qt6/QtWidgets/qabstractbutton.h \
- /usr/include/qt6/QtWidgets/QScrollArea \
- /usr/include/qt6/QtWidgets/qscrollarea.h \
- /usr/include/qt6/QtWidgets/qabstractscrollarea.h \
- /usr/include/qt6/QtWidgets/QStyle /usr/include/qt6/QtWidgets/qstyle.h \
- /usr/include/qt6/QtWidgets/QVBoxLayout /usr/include/qt6/QtCore/QEvent \
- /usr/include/qt6/QtCore/qcoreevent.h \
+ /usr/include/qt6/QtCore/QEvent /usr/include/qt6/QtCore/qcoreevent.h \
  /usr/include/qt6/QtCore/qbasictimer.h \
  /usr/include/qt6/QtCore/qabstracteventdispatcher.h \
  /usr/include/qt6/QtCore/qeventloop.h \
  /usr/include/qt6/QtCore/qdeadlinetimer.h /usr/include/qt6/QtCore/QFile \
  /usr/include/qt6/QtCore/qfile.h /usr/include/qt6/QtCore/qfiledevice.h \
- /usr/include/c++/15.2.1/filesystem /usr/include/c++/15.2.1/bits/fs_fwd.h \
+ /usr/include/qt6/QtCore/qiodevice.h /usr/include/c++/15.2.1/filesystem \
+ /usr/include/c++/15.2.1/bits/fs_fwd.h \
  /usr/include/c++/15.2.1/bits/fs_path.h /usr/include/c++/15.2.1/locale \
  /usr/include/c++/15.2.1/bits/locale_facets.h \
  /usr/include/c++/15.2.1/cwctype /usr/include/wctype.h \
@@ -414,4 +397,25 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: \
  /usr/include/qt6/QtCore/qdirlisting.h \
  /usr/include/qt6/QtCore/qfileinfo.h /usr/include/qt6/QtCore/qtimezone.h \
  /usr/include/qt6/QtWidgets/qdialog.h \
- /usr/include/qt6/QtCore/QJsonDocument
+ /usr/include/qt6/QtWidgets/QHBoxLayout \
+ /usr/include/qt6/QtWidgets/qboxlayout.h \
+ /usr/include/qt6/QtWidgets/qlayout.h \
+ /usr/include/qt6/QtWidgets/qlayoutitem.h \
+ /usr/include/qt6/QtWidgets/qgridlayout.h \
+ /usr/include/qt6/QtCore/QJsonDocument /usr/include/qt6/QtWidgets/QLabel \
+ /usr/include/qt6/QtWidgets/qlabel.h /usr/include/qt6/QtWidgets/qframe.h \
+ /usr/include/qt6/QtGui/qpicture.h /usr/include/qt6/QtGui/qtextdocument.h \
+ /usr/include/qt6/QtWidgets/QLineEdit \
+ /usr/include/qt6/QtWidgets/qlineedit.h \
+ /usr/include/qt6/QtGui/qtextcursor.h \
+ /usr/include/qt6/QtGui/qtextformat.h /usr/include/qt6/QtGui/qpen.h \
+ /usr/include/qt6/QtGui/qtextoption.h /usr/include/qt6/QtWidgets/QMenu \
+ /usr/include/qt6/QtWidgets/qmenu.h \
+ /usr/include/qt6/QtWidgets/QPushButton \
+ /usr/include/qt6/QtWidgets/qpushbutton.h \
+ /usr/include/qt6/QtWidgets/qabstractbutton.h \
+ /usr/include/qt6/QtWidgets/QScrollArea \
+ /usr/include/qt6/QtWidgets/qscrollarea.h \
+ /usr/include/qt6/QtWidgets/qabstractscrollarea.h \
+ /usr/include/qt6/QtWidgets/QStyle /usr/include/qt6/QtWidgets/qstyle.h \
+ /usr/include/qt6/QtWidgets/QVBoxLayout
