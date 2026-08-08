@@ -407,7 +407,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o: \
  /usr/include/qt6/QtWidgets/qgridlayout.h \
  /usr/include/qt6/QtGui/QKeyEvent /usr/include/qt6/QtWidgets/QLabel \
  /usr/include/qt6/QtWidgets/qlabel.h /usr/include/qt6/QtGui/qpicture.h \
- /usr/include/qt6/QtWidgets/QPushButton \
+ /usr/include/qt6/QtGui/QPixmap /usr/include/qt6/QtWidgets/QPushButton \
  /usr/include/qt6/QtWidgets/qpushbutton.h \
  /usr/include/qt6/QtWidgets/qabstractbutton.h \
  /usr/include/qt6/QtGui/QTextDocument \

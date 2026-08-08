@@ -4917,6 +4917,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o: /home/stry4ok/Development
   /usr/include/qt6/QtCore/qyieldcpu.h \
   /usr/include/qt6/QtGui/QAbstractTextDocumentLayout \
   /usr/include/qt6/QtGui/QKeyEvent \
+  /usr/include/qt6/QtGui/QPixmap \
   /usr/include/qt6/QtGui/QTextDocument \
   /usr/include/qt6/QtGui/QTransform \
   /usr/include/qt6/QtGui/qabstracttextdocumentlayout.h \
@@ -7508,6 +7509,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: /home/stry4ok/Development/
   /usr/include/locale.h \
   /usr/include/math.h \
   /usr/include/pthread.h \
+  /usr/include/qt6/QtCore/QEvent \
   /usr/include/qt6/QtCore/QJsonArray \
   /usr/include/qt6/QtCore/QJsonObject \
   /usr/include/qt6/QtCore/QList \
@@ -7523,6 +7525,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: /home/stry4ok/Development/
   /usr/include/qt6/QtCore/q20utility.h \
   /usr/include/qt6/QtCore/q23type_traits.h \
   /usr/include/qt6/QtCore/q23utility.h \
+  /usr/include/qt6/QtCore/qabstracteventdispatcher.h \
   /usr/include/qt6/QtCore/qalgorithms.h \
   /usr/include/qt6/QtCore/qalloc.h \
   /usr/include/qt6/QtCore/qanystringview.h \
@@ -7533,6 +7536,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: /home/stry4ok/Development/
   /usr/include/qt6/QtCore/qatomic.h \
   /usr/include/qt6/QtCore/qatomic_cxx11.h \
   /usr/include/qt6/QtCore/qbasicatomic.h \
+  /usr/include/qt6/QtCore/qbasictimer.h \
   /usr/include/qt6/QtCore/qbindingstorage.h \
   /usr/include/qt6/QtCore/qbytearray.h \
   /usr/include/qt6/QtCore/qbytearrayalgorithms.h \
@@ -7553,11 +7557,14 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: /home/stry4ok/Development/
   /usr/include/qt6/QtCore/qcontainerinfo.h \
   /usr/include/qt6/QtCore/qcontainertools_impl.h \
   /usr/include/qt6/QtCore/qcontiguouscache.h \
+  /usr/include/qt6/QtCore/qcoreevent.h \
   /usr/include/qt6/QtCore/qdarwinhelpers.h \
   /usr/include/qt6/QtCore/qdatastream.h \
   /usr/include/qt6/QtCore/qdatetime.h \
+  /usr/include/qt6/QtCore/qdeadlinetimer.h \
   /usr/include/qt6/QtCore/qdebug.h \
   /usr/include/qt6/QtCore/qendian.h \
+  /usr/include/qt6/QtCore/qeventloop.h \
   /usr/include/qt6/QtCore/qexceptionhandling.h \
   /usr/include/qt6/QtCore/qflags.h \
   /usr/include/qt6/QtCore/qfloat16.h \
@@ -8351,8 +8358,6 @@ CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o:
 
 CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o:
 
-CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
-
 /usr/lib/liburing.so.2:
 
 /usr/lib/libssh2.so.1:
@@ -8429,6 +8434,10 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
 
 /usr/lib/Scrt1.o:
 
+CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
+
+/usr/include/qt6/QtCore/QEvent:
+
 /usr/include/qt6/QtWidgets/qplaintextedit.h:
 
 /usr/include/qt6/QtWidgets/qformlayout.h:
@@ -8482,6 +8491,8 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
 /usr/include/qt6/QtGui/qglyphrun.h:
 
 /usr/include/qt6/QtGui/qfontdatabase.h:
+
+/usr/include/qt6/QtGui/QPixmap:
 
 /usr/include/qt6/QtGui/QKeyEvent:
 

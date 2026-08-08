@@ -9,6 +9,7 @@
 #include <QScrollArea>
 #include <QStyle>
 #include <QVBoxLayout>
+#include <QEvent>
 #include <algorithm>
 
 namespace {
@@ -126,6 +127,23 @@ void Sidebar::setServerStatus(bool online, const QString &address) {
                                ? I18n::t(QStringLiteral("Server online")) +
                                      QStringLiteral(" · ") + address
                                : I18n::t(QStringLiteral("Server offline")));
+}
+
+/** v2 SidebarNavigation: hovering the collapsed strip expands the panel;
+ *  leaving the sidebar collapses it again (unless pinned open by click). */
+bool Sidebar::event(QEvent *event) {
+    if (event->type() == QEvent::Enter) {
+        if (!m_expanded) {
+            m_hoverExpand = true;
+            setExpanded(true);
+        }
+    } else if (event->type() == QEvent::Leave) {
+        if (m_hoverExpand) {
+            m_hoverExpand = false;
+            setExpanded(false);
+        }
+    }
+    return QWidget::event(event);
 }
 
 void Sidebar::refreshConversations() {

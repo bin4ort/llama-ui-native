@@ -55,6 +55,7 @@ protected:
 private:
     void updateHeight();
     void rebuildChips();
+    static QString formatSize(qint64 bytes);
 
     QTextEdit *m_input;
     QPushButton *m_send;

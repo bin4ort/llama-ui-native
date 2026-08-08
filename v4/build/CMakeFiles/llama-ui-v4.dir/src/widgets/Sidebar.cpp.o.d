@@ -377,4 +377,9 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: \
  /usr/include/qt6/QtWidgets/qscrollarea.h \
  /usr/include/qt6/QtWidgets/qabstractscrollarea.h \
  /usr/include/qt6/QtWidgets/QStyle /usr/include/qt6/QtWidgets/qstyle.h \
- /usr/include/qt6/QtWidgets/QVBoxLayout
+ /usr/include/qt6/QtWidgets/QVBoxLayout /usr/include/qt6/QtCore/QEvent \
+ /usr/include/qt6/QtCore/qcoreevent.h \
+ /usr/include/qt6/QtCore/qbasictimer.h \
+ /usr/include/qt6/QtCore/qabstracteventdispatcher.h \
+ /usr/include/qt6/QtCore/qeventloop.h \
+ /usr/include/qt6/QtCore/qdeadlinetimer.h

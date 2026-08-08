@@ -35,6 +35,7 @@ signals:
 
 private:
     void setExpanded(bool expanded);
+    bool event(QEvent *event) override;
 
     ConversationStore *m_store;
     QPushButton *m_logo;
@@ -44,4 +45,5 @@ private:
     QLabel *m_statusLabel;
     QString m_activeId;
     bool m_expanded = false;
+    bool m_hoverExpand = false;
 };

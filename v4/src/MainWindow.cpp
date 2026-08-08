@@ -50,6 +50,7 @@ static QJsonObject encodeAttachment(const QString &path) {
     att.insert(QStringLiteral("name"), QFileInfo(path).fileName());
     att.insert(QStringLiteral("mime"), QString());
     att.insert(QStringLiteral("image"), image);
+    att.insert(QStringLiteral("size"), qint64(QFileInfo(path).size()));
     if (image) {
         QImage img(path);
         if (img.isNull()) {
@@ -165,10 +166,59 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         }
     });
     connect(m_composer, &Composer::attachRequested, this, [this]() {
-        const QStringList files = QFileDialog::getOpenFileNames(
-            this, I18n::t(QStringLiteral("Attach file")),
-            QString(), I18n::t(QStringLiteral("Images (*.png *.jpg *.jpeg *.webp *.gif);;All files (*)")));
-        if (!files.isEmpty()) attachFiles(files);
+        // v2 ChatFormActionAddDropdown: Add files / System message
+        QMenu menu(this);
+        const auto filesSub = menu.addMenu(QStringLiteral("📎 ") +
+                                           I18n::t(QStringLiteral("Add files")));
+        filesSub->addAction(I18n::t(QStringLiteral("Images")),
+                            this, [this]() {
+                                const QStringList files = QFileDialog::getOpenFileNames(
+                                    this, I18n::t(QStringLiteral("Images")),
+                                    QString(),
+                                    QStringLiteral("Images (*.png *.jpg *.jpeg *.webp *.gif)"));
+                                if (!files.isEmpty()) attachFiles(files);
+                            });
+        filesSub->addAction(I18n::t(QStringLiteral("Text Files")),
+                            this, [this]() {
+                                const QStringList files = QFileDialog::getOpenFileNames(
+                                    this, I18n::t(QStringLiteral("Text Files")),
+                                    QString(), QStringLiteral("Text (*.txt *.md *.json *.csv *.log)"));
+                                if (!files.isEmpty()) attachFiles(files);
+                            });
+        filesSub->addAction(I18n::t(QStringLiteral("PDF Files")),
+                            this, [this]() {
+                                const QStringList files = QFileDialog::getOpenFileNames(
+                                    this, I18n::t(QStringLiteral("PDF Files")),
+                                    QString(), QStringLiteral("PDF (*.pdf)"));
+                                if (!files.isEmpty()) attachFiles(files);
+                            });
+        filesSub->addAction(I18n::t(QStringLiteral("All files")),
+                            this, [this]() {
+                                const QStringList files = QFileDialog::getOpenFileNames(
+                                    this, I18n::t(QStringLiteral("Add files")),
+                                    QString(), QStringLiteral("All files (*)"));
+                                if (!files.isEmpty()) attachFiles(files);
+                            });
+        menu.addSeparator();
+        menu.addAction(QStringLiteral("💬 ") + I18n::t(QStringLiteral("System Message")),
+                       this, [this]() {
+                           bool ok = false;
+                           const QString text = QInputDialog::getMultiLineText(
+                               this, I18n::t(QStringLiteral("System Message")),
+                               I18n::t(QStringLiteral("Message")), QString(), &ok);
+                           if (ok && !text.trimmed().isEmpty()) {
+                               auto *conv = m_store->active();
+                               if (!conv) newChat();
+                               conv = m_store->active();
+                               ConvMsg sm{uid(), QStringLiteral("system"),
+                                          QStringLiteral("system"), text.trimmed()};
+                               m_store->appendMessage(conv, sm);
+                               ChatMessage cm{ChatMessage::System, sm.id, text.trimmed(),
+                                              QStringLiteral("system"), QJsonArray(), false};
+                               m_messages->addMessage(cm);
+                           }
+                       });
+        menu.exec(QCursor::pos());
     });
     setAcceptDrops(true);
 
@@ -571,8 +621,8 @@ void MainWindow::runSelfTest(const QString &message, const QString &shotPath) {
             if (dbg.open(QIODevice::WriteOnly))
                 dbg.write(m_messages->lastAssistantHtml().toUtf8());
         }
-        const auto img = grab().toImage().scaledToWidth(420, Qt::SmoothTransformation);
-        img.save(shotPath, "JPG", 65);
+        const auto img = grab().toImage().scaledToWidth(900, Qt::SmoothTransformation);
+        img.save(shotPath, "JPG", 70);
         emit selfTestDone();
     });
     sendMessageWithHistory(message);
@@ -586,48 +636,66 @@ void MainWindow::openSearch() {
     dlg->resize(480, 560);
     auto *lay = new QVBoxLayout(dlg);
     auto *input = new QLineEdit(dlg);
-    input->setPlaceholderText(I18n::t(QStringLiteral("Search conversations and messages")));
+    input->setPlaceholderText(I18n::t(QStringLiteral("Search conversations...")));
     lay->addWidget(input);
-    auto *results = new QLabel(I18n::t(QStringLiteral("Type to search your conversations.")), dlg);
-    results->setWordWrap(true);
-    lay->addWidget(results);
+    auto *results = new QListWidget(dlg);
+    results->setObjectName(QStringLiteral("searchResults"));
+    lay->addWidget(results, 1);
     auto *closeBtn = new QPushButton(I18n::t(QStringLiteral("Close")), dlg);
     closeBtn->setProperty("outline", true);
     connect(closeBtn, &QPushButton::clicked, dlg, &QDialog::close);
     lay->addWidget(closeBtn, 0, Qt::AlignRight);
-    connect(input, &QLineEdit::textChanged, dlg, [results, this](const QString &q) {
+
+    auto populate = [results, this](const QString &q) {
+        results->clear();
         const QString needle = q.trimmed();
         if (needle.isEmpty()) {
-            results->setText(I18n::t(QStringLiteral("Type to search your conversations.")));
+            auto *hint = new QListWidgetItem(I18n::t(QStringLiteral("Start typing to see results")));
+            hint->setFlags(Qt::NoItemFlags);
+            results->addItem(hint);
             return;
         }
-        QStringList hits;
-        int convHits = 0;
-        int msgHits = 0;
+        int convHits = 0, msgHits = 0;
+        // conversation rows (v2: sidebar conversation rows, name match)
         for (const auto &c : m_store->conversations()) {
             if (c.name.contains(needle, Qt::CaseInsensitive)) {
                 ++convHits;
-                hits << QStringLiteral("▸ ") + c.name;
+                auto *item = new QListWidgetItem(QStringLiteral("💬 ") + c.name);
+                item->setData(Qt::UserRole, c.id);
+                results->addItem(item);
             }
         }
+        // message hits with snippets
         for (const auto &c : m_store->conversations()) {
             for (const auto &m : c.messages) {
                 if (m.content.contains(needle, Qt::CaseInsensitive)) {
                     ++msgHits;
-                    const QString snippet = m.content.mid(0, 90).replace('\n', ' ') +
-                                            (m.content.size() > 90 ? QStringLiteral("…") : QString());
-                    hits << QStringLiteral("  ↳ %1: “%2”").arg(c.name, snippet);
+                    QString snippet = m.content.mid(0, 90).replace('\n', ' ') +
+                                      (m.content.size() > 90 ? QStringLiteral("…") : QString());
+                    auto *item = new QListWidgetItem(
+                        QStringLiteral("↳ %1: “%2”").arg(c.name, snippet));
+                    item->setData(Qt::UserRole, c.id);
+                    results->addItem(item);
                 }
             }
         }
-        if (hits.isEmpty())
-            results->setText(I18n::t(QStringLiteral("No matches.")));
-        else
-            results->setText(QStringLiteral("%1 conversations, %2 messages\n\n%3")
-                                 .arg(convHits)
-                                 .arg(msgHits)
-                                 .arg(hits.join('\n')));
+        if (convHits + msgHits == 0) {
+            auto *none = new QListWidgetItem(I18n::t(QStringLiteral("No results found")));
+            none->setFlags(Qt::NoItemFlags);
+            results->addItem(none);
+        }
+    };
+    connect(input, &QLineEdit::textChanged, dlg, [populate](const QString &q) {
+        populate(q);
     });
+    connect(results, &QListWidget::itemClicked, this, [this, dlg](QListWidgetItem *item) {
+        const QString id = item->data(Qt::UserRole).toString();
+        if (!id.isEmpty()) {
+            selectConversation(id);
+            dlg->close();
+        }
+    });
+    populate(QString());
     dlg->exec();
     dlg->deleteLater();
 }

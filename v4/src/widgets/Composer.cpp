@@ -8,10 +8,19 @@
 #include <QJsonObject>
 #include <QKeyEvent>
 #include <QLabel>
+#include <QPixmap>
 #include <QPushButton>
 #include <QTextDocument>
 #include <QTextEdit>
 #include <QVBoxLayout>
+
+QString Composer::formatSize(qint64 bytes) {
+    if (bytes < 1024) return QStringLiteral("%1 B").arg(bytes);
+    if (bytes < 1024 * 1024) return QStringLiteral("%1 KB").arg(bytes / 1024.0, 0, 'f', 1);
+    if (bytes < 1024 * 1024 * 1024)
+        return QStringLiteral("%1 MB").arg(bytes / (1024.0 * 1024.0), 0, 'f', 1);
+    return QStringLiteral("%1 GB").arg(bytes / (1024.0 * 1024.0 * 1024.0), 0, 'f', 1);
+}
 
 Composer::Composer(QWidget *parent) : QWidget(parent) {
     setObjectName(QStringLiteral("composer"));
@@ -159,11 +168,39 @@ void Composer::rebuildChips() {
         auto *chip = new QWidget(this);
         chip->setObjectName(QStringLiteral("attChip"));
         auto *hl = new QHBoxLayout(chip);
-        hl->setContentsMargins(6, 2, 6, 2);
-        hl->setSpacing(4);
-        auto *lbl = new QLabel((image ? QStringLiteral("🖼 ") : QStringLiteral("📄 ")) + name, chip);
+        hl->setContentsMargins(6, 4, 6, 4);
+        hl->setSpacing(6);
+        if (image) {
+            // real thumbnail (v2 ChatAttachmentsListItemThumbnailImage, h-24)
+            const QByteArray b64 = obj.value(QStringLiteral("data")).toString().toLatin1();
+            QPixmap pm;
+            pm.loadFromData(QByteArray::fromBase64(b64), "PNG");
+            if (!pm.isNull()) {
+                auto *thumb = new QLabel(chip);
+                thumb->setPixmap(pm.scaled(64, 64, Qt::KeepAspectRatio,
+                                           Qt::SmoothTransformation));
+                thumb->setObjectName(QStringLiteral("attThumb"));
+                hl->addWidget(thumb);
+            }
+        } else {
+            auto *icon = new QLabel(QStringLiteral("📄"), chip);
+            icon->setObjectName(QStringLiteral("attIcon"));
+            icon->setFixedSize(32, 32);
+            hl->addWidget(icon);
+        }
+        auto *txt = new QVBoxLayout;
+        txt->setContentsMargins(0, 0, 0, 0);
+        txt->setSpacing(0);
+        auto *lbl = new QLabel(name, chip);
         lbl->setObjectName(QStringLiteral("attChipLabel"));
-        hl->addWidget(lbl);
+        txt->addWidget(lbl);
+        const qint64 size = obj.value(QStringLiteral("size")).toDouble();
+        if (size > 0) {
+            auto *sizeLbl = new QLabel(formatSize(size), chip);
+            sizeLbl->setObjectName(QStringLiteral("attSizeLabel"));
+            txt->addWidget(sizeLbl);
+        }
+        hl->addLayout(txt);
         auto *rm = new QPushButton(QStringLiteral("✕"), chip);
         rm->setProperty("ghost", true);
         rm->setFixedSize(18, 18);
