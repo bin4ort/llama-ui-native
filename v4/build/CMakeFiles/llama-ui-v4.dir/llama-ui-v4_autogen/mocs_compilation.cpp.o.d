@@ -384,6 +384,11 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o: \
  /usr/include/qt6/QtWidgets/qabstractscrollarea.h \
  /usr/include/qt6/QtWidgets/qframe.h /usr/include/qt6/QtCore/QVector \
  /usr/include/qt6/QtCore/qvector.h \
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/moc_ModelsSelector.cpp \
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/../../../src/widgets/ModelsSelector.h \
+ /usr/include/qt6/QtWidgets/QToolButton \
+ /usr/include/qt6/QtWidgets/qtoolbutton.h \
+ /usr/include/qt6/QtWidgets/qabstractbutton.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/moc_SettingsDialog.cpp \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/../../../src/widgets/SettingsDialog.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/moc_Sidebar.cpp \

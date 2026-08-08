@@ -637,6 +637,12 @@
 			null
 		],
 		[
+			"/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ModelsSelector.h",
+			"Mu",
+			"RZ4CM6YYJ6/moc_ModelsSelector.cpp",
+			null
+		],
+		[
 			"/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/SettingsDialog.h",
 			"Mu",
 			"RZ4CM6YYJ6/moc_SettingsDialog.cpp",
@@ -782,6 +788,11 @@
 		],
 		[
 			"/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/MessageView.cpp",
+			"Mu",
+			null
+		],
+		[
+			"/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ModelsSelector.cpp",
 			"Mu",
 			null
 		],

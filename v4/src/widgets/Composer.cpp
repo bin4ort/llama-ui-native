@@ -2,14 +2,15 @@
 #include "../Config.h"
 #include "../i18n.h"
 #include "ContextGauge.h"
+#include "ModelsSelector.h"
 #include <QAbstractTextDocumentLayout>
-#include <QComboBox>
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QPixmap>
 #include <QPushButton>
+#include <QStyle>
 #include <QTextDocument>
 #include <QTextEdit>
 #include <QVBoxLayout>
@@ -66,16 +67,10 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
     m_gauge->setVisible(false); // hidden until tokens processed (v2)
     bar->addWidget(m_gauge);
 
-    m_modelSelect = new QComboBox(this);
-    m_modelSelect->setProperty("modelSelect", true);
-    m_modelSelect->setMaximumWidth(220);
-    m_modelSelect->setMinimumWidth(140);
-    m_modelSelect->setToolTip(I18n::t(QStringLiteral("Model")));
-    connect(m_modelSelect, &QComboBox::currentTextChanged, this,
-            [this](const QString &) {
-                const QString raw = m_modelSelect->currentData().toString();
-                if (!raw.isEmpty()) emit modelSelected(raw);
-            });
+    m_modelSelect = new ModelsSelector(this);
+    m_modelSelect->setFixedSize(150, 30);
+    connect(m_modelSelect, &ModelsSelector::modelSelected, this,
+            &Composer::modelSelected);
     bar->addWidget(m_modelSelect);
 
     bar->addWidget(m_send);
@@ -134,20 +129,13 @@ void Composer::setAttachments(const QJsonArray &atts) {
 
 void Composer::setModels(const QStringList &displayItems, const QStringList &rawIds,
                          const QString &currentRaw) {
-    m_modelSelect->blockSignals(true);
-    m_modelSelect->clear();
-    for (int i = 0; i < displayItems.size(); ++i) {
-        m_modelSelect->addItem(displayItems.at(i),
-                               i < rawIds.size() ? rawIds.at(i) : displayItems.at(i));
-    }
-    const int idx = qMax(0, m_modelSelect->findData(currentRaw));
-    m_modelSelect->setCurrentIndex(idx);
-    m_modelSelect->blockSignals(false);
-    emit modelSelected(m_modelSelect->currentData().toString());
+    m_modelSelect->setModels(displayItems, rawIds, currentRaw);
+    emit modelSelected(currentRaw.isEmpty() ? (rawIds.isEmpty() ? QString() : rawIds.first())
+                                            : currentRaw);
 }
 
 QString Composer::model() const {
-    return m_modelSelect->currentData().toString();
+    return m_modelSelect->model();
 }
 
 void Composer::setPersonaName(const QString &name) {

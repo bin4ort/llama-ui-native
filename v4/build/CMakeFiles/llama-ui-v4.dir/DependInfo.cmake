@@ -21,6 +21,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ContextGauge.cpp" "CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o.d"
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/McpPage.cpp" "CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o.d"
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/MessageView.cpp" "CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o.d"
+  "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ModelsSelector.cpp" "CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.o.d"
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/SettingsDialog.cpp" "CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o.d"
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Sidebar.cpp" "CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o.d"
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/WizardDialog.cpp" "CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.o.d"

@@ -394,6 +394,16 @@ QPushButton[convRow="true"] {
 QPushButton[convRow="true"]:hover { background-color: %7; }
 QPushButton[full="true"] { width: 100%%; }
 
+/* Models selector trigger (v2 ModelsSelectorDropdown) */
+#modelSelect {
+  background-color: %19; border: 1px solid %20; border-radius: 8px;
+  color: %3;
+}
+#modelSelect:hover { border-color: %12; }
+#modelList { background: transparent; border: none; font-size: 13px; }
+#modelList::item { padding: 6px 8px; border-radius: 6px; }
+#modelList::item:selected { background-color: %7; color: %3; }
+
 /* Dialogs (UI-SPEC §3.7) */
 QDialog#appDialog { background-color: %21; border: 1px solid %5; border-radius: 10px; }
 QDialog QLabel#dialogTitle { font-size: 18px; font-weight: 600; }

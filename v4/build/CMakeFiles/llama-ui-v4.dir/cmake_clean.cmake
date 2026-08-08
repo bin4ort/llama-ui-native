@@ -29,6 +29,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o.d"
   "CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o"
   "CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.o.d"
   "CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o"
   "CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o.d"
   "CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o"

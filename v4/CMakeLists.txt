@@ -38,6 +38,8 @@ add_executable(llama-ui-v4
   src/widgets/WizardDialog.h
   src/widgets/ContextGauge.cpp
   src/widgets/ContextGauge.h
+  src/widgets/ModelsSelector.cpp
+  src/widgets/ModelsSelector.h
   src/widgets/McpPage.cpp
   src/widgets/McpPage.h
 )

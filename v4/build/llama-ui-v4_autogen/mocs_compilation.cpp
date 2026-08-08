@@ -6,6 +6,7 @@
 #include "RZ4CM6YYJ6/moc_ContextGauge.cpp"
 #include "RZ4CM6YYJ6/moc_McpPage.cpp"
 #include "RZ4CM6YYJ6/moc_MessageView.cpp"
+#include "RZ4CM6YYJ6/moc_ModelsSelector.cpp"
 #include "RZ4CM6YYJ6/moc_SettingsDialog.cpp"
 #include "RZ4CM6YYJ6/moc_Sidebar.cpp"
 #include "RZ4CM6YYJ6/moc_WizardDialog.cpp"

@@ -467,6 +467,30 @@ src/widgets/MessageView.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.s
 .PHONY : src/widgets/MessageView.cpp.s
 
+src/widgets/ModelsSelector.o: src/widgets/ModelsSelector.cpp.o
+.PHONY : src/widgets/ModelsSelector.o
+
+# target to build an object file
+src/widgets/ModelsSelector.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.o
+.PHONY : src/widgets/ModelsSelector.cpp.o
+
+src/widgets/ModelsSelector.i: src/widgets/ModelsSelector.cpp.i
+.PHONY : src/widgets/ModelsSelector.i
+
+# target to preprocess a source file
+src/widgets/ModelsSelector.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.i
+.PHONY : src/widgets/ModelsSelector.cpp.i
+
+src/widgets/ModelsSelector.s: src/widgets/ModelsSelector.cpp.s
+.PHONY : src/widgets/ModelsSelector.s
+
+# target to generate assembly for a file
+src/widgets/ModelsSelector.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.s
+.PHONY : src/widgets/ModelsSelector.cpp.s
+
 src/widgets/SettingsDialog.o: src/widgets/SettingsDialog.cpp.o
 .PHONY : src/widgets/SettingsDialog.o
 
@@ -589,6 +613,9 @@ help:
 	@echo "... src/widgets/MessageView.o"
 	@echo "... src/widgets/MessageView.i"
 	@echo "... src/widgets/MessageView.s"
+	@echo "... src/widgets/ModelsSelector.o"
+	@echo "... src/widgets/ModelsSelector.i"
+	@echo "... src/widgets/ModelsSelector.s"
 	@echo "... src/widgets/SettingsDialog.o"
 	@echo "... src/widgets/SettingsDialog.i"
 	@echo "... src/widgets/SettingsDialog.s"

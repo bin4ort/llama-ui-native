@@ -12,7 +12,7 @@ class QPushButton;
 class QTextEdit;
 class QVBoxLayout;
 class QHBoxLayout;
-class QComboBox;
+class ModelsSelector;
 class ContextGauge;
 
 class Composer : public QWidget {
@@ -63,7 +63,7 @@ private:
     QTextEdit *m_input;
     QPushButton *m_send;
     QPushButton *m_persona;
-    QComboBox *m_modelSelect = nullptr;
+    ModelsSelector *m_modelSelect = nullptr;
     ContextGauge *m_gauge = nullptr;
     QVBoxLayout *m_outer;
     QHBoxLayout *m_chipsRow;

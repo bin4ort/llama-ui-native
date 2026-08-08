@@ -360,6 +360,10 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o: \
  /usr/include/qt6/QtCore/qjsonobject.h /usr/include/qt6/QtCore/QString \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/../i18n.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ContextGauge.h \
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ModelsSelector.h \
+ /usr/include/qt6/QtWidgets/QToolButton \
+ /usr/include/qt6/QtWidgets/qtoolbutton.h \
+ /usr/include/qt6/QtWidgets/qabstractbutton.h \
  /usr/include/qt6/QtGui/QAbstractTextDocumentLayout \
  /usr/include/qt6/QtGui/qabstracttextdocumentlayout.h \
  /usr/include/qt6/QtGui/qtextlayout.h /usr/include/qt6/QtGui/qevent.h \
@@ -388,28 +392,17 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o: \
  /usr/include/qt6/QtGui/qtextdocument.h \
  /usr/include/qt6/QtGui/qtextformat.h /usr/include/qt6/QtGui/qpen.h \
  /usr/include/qt6/QtGui/qtextoption.h \
- /usr/include/qt6/QtWidgets/QComboBox \
- /usr/include/qt6/QtWidgets/qcombobox.h \
- /usr/include/qt6/QtWidgets/qabstractitemdelegate.h \
- /usr/include/qt6/QtWidgets/qstyleoption.h \
- /usr/include/qt6/QtWidgets/qabstractspinbox.h \
- /usr/include/qt6/QtGui/qvalidator.h /usr/include/qt6/QtWidgets/qslider.h \
- /usr/include/qt6/QtWidgets/qabstractslider.h \
- /usr/include/qt6/QtWidgets/qstyle.h /usr/include/qt6/QtWidgets/qtabbar.h \
- /usr/include/qt6/QtWidgets/qtabwidget.h \
- /usr/include/qt6/QtWidgets/qrubberband.h \
- /usr/include/qt6/QtWidgets/qframe.h \
- /usr/include/qt6/QtCore/qabstractitemmodel.h \
  /usr/include/qt6/QtWidgets/QHBoxLayout \
  /usr/include/qt6/QtWidgets/qboxlayout.h \
  /usr/include/qt6/QtWidgets/qlayout.h \
  /usr/include/qt6/QtWidgets/qlayoutitem.h \
  /usr/include/qt6/QtWidgets/qgridlayout.h \
  /usr/include/qt6/QtGui/QKeyEvent /usr/include/qt6/QtWidgets/QLabel \
- /usr/include/qt6/QtWidgets/qlabel.h /usr/include/qt6/QtGui/qpicture.h \
- /usr/include/qt6/QtGui/QPixmap /usr/include/qt6/QtWidgets/QPushButton \
+ /usr/include/qt6/QtWidgets/qlabel.h /usr/include/qt6/QtWidgets/qframe.h \
+ /usr/include/qt6/QtGui/qpicture.h /usr/include/qt6/QtGui/QPixmap \
+ /usr/include/qt6/QtWidgets/QPushButton \
  /usr/include/qt6/QtWidgets/qpushbutton.h \
- /usr/include/qt6/QtWidgets/qabstractbutton.h \
+ /usr/include/qt6/QtWidgets/QStyle /usr/include/qt6/QtWidgets/qstyle.h \
  /usr/include/qt6/QtGui/QTextDocument \
  /usr/include/qt6/QtWidgets/QTextEdit \
  /usr/include/qt6/QtWidgets/qtextedit.h \

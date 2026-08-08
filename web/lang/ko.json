@@ -722,5 +722,8 @@
   "Message": "Message",
   "Search presets…": "Search presets…",
   "Export conversation": "Export conversation",
-  "Image preview unavailable": "Image preview unavailable"
+  "Image preview unavailable": "Image preview unavailable",
+  "Search models...": "Search models...",
+  "Loaded models": "Loaded models",
+  "Available models": "Available models"
 }

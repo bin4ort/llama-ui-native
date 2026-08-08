@@ -26,6 +26,8 @@ llama-ui-v4_autogen/timestamp: \
 	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/McpPage.h \
 	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/MessageView.cpp \
 	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/MessageView.h \
+	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ModelsSelector.cpp \
+	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ModelsSelector.h \
 	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/SettingsDialog.cpp \
 	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/SettingsDialog.h \
 	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Sidebar.cpp \
@@ -477,7 +479,9 @@ llama-ui-v4_autogen/timestamp: \
 	/usr/include/qt6/QtWidgets/QDialog \
 	/usr/include/qt6/QtWidgets/QMainWindow \
 	/usr/include/qt6/QtWidgets/QScrollArea \
+	/usr/include/qt6/QtWidgets/QToolButton \
 	/usr/include/qt6/QtWidgets/QWidget \
+	/usr/include/qt6/QtWidgets/qabstractbutton.h \
 	/usr/include/qt6/QtWidgets/qabstractscrollarea.h \
 	/usr/include/qt6/QtWidgets/qdialog.h \
 	/usr/include/qt6/QtWidgets/qframe.h \
@@ -485,6 +489,7 @@ llama-ui-v4_autogen/timestamp: \
 	/usr/include/qt6/QtWidgets/qscrollarea.h \
 	/usr/include/qt6/QtWidgets/qsizepolicy.h \
 	/usr/include/qt6/QtWidgets/qtabwidget.h \
+	/usr/include/qt6/QtWidgets/qtoolbutton.h \
 	/usr/include/qt6/QtWidgets/qtwidgets-config.h \
 	/usr/include/qt6/QtWidgets/qtwidgetsexports.h \
 	/usr/include/qt6/QtWidgets/qtwidgetsglobal.h \
