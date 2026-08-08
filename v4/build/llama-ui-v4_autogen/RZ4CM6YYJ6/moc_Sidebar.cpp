@@ -45,7 +45,10 @@ template <> constexpr inline auto Sidebar::qt_create_metaobjectdata<qt_meta_tag_
         "searchClicked",
         "mcpClicked",
         "conversationSelected",
-        "id"
+        "id",
+        "conversationRenameRequested",
+        "conversationDeleteRequested",
+        "toggleExpandedRequested"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -61,6 +64,16 @@ template <> constexpr inline auto Sidebar::qt_create_metaobjectdata<qt_meta_tag_
         QtMocHelpers::SignalData<void(const QString &)>(6, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::QString, 7 },
         }}),
+        // Signal 'conversationRenameRequested'
+        QtMocHelpers::SignalData<void(const QString &)>(8, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 7 },
+        }}),
+        // Signal 'conversationDeleteRequested'
+        QtMocHelpers::SignalData<void(const QString &)>(9, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 7 },
+        }}),
+        // Signal 'toggleExpandedRequested'
+        QtMocHelpers::SignalData<void()>(10, 2, QMC::AccessPublic, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -89,6 +102,9 @@ void Sidebar::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 2: _t->searchClicked(); break;
         case 3: _t->mcpClicked(); break;
         case 4: _t->conversationSelected((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 5: _t->conversationRenameRequested((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 6: _t->conversationDeleteRequested((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 7: _t->toggleExpandedRequested(); break;
         default: ;
         }
     }
@@ -102,6 +118,12 @@ void Sidebar::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         if (QtMocHelpers::indexOfMethod<void (Sidebar::*)()>(_a, &Sidebar::mcpClicked, 3))
             return;
         if (QtMocHelpers::indexOfMethod<void (Sidebar::*)(const QString & )>(_a, &Sidebar::conversationSelected, 4))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (Sidebar::*)(const QString & )>(_a, &Sidebar::conversationRenameRequested, 5))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (Sidebar::*)(const QString & )>(_a, &Sidebar::conversationDeleteRequested, 6))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (Sidebar::*)()>(_a, &Sidebar::toggleExpandedRequested, 7))
             return;
     }
 }
@@ -125,14 +147,14 @@ int Sidebar::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 5)
+        if (_id < 8)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 5;
+        _id -= 8;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 5)
+        if (_id < 8)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 5;
+        _id -= 8;
     }
     return _id;
 }
@@ -165,5 +187,23 @@ void Sidebar::mcpClicked()
 void Sidebar::conversationSelected(const QString & _t1)
 {
     QMetaObject::activate<void>(this, &staticMetaObject, 4, nullptr, _t1);
+}
+
+// SIGNAL 5
+void Sidebar::conversationRenameRequested(const QString & _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 5, nullptr, _t1);
+}
+
+// SIGNAL 6
+void Sidebar::conversationDeleteRequested(const QString & _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 6, nullptr, _t1);
+}
+
+// SIGNAL 7
+void Sidebar::toggleExpandedRequested()
+{
+    QMetaObject::activate(this, &staticMetaObject, 7, nullptr);
 }
 QT_WARNING_POP

@@ -1,22 +1,24 @@
 /*
- * MessageView.h — spec message rendering (UI-SPEC §3.3–3.5): user bubble
- * (primary/5, rounded 18px), assistant full-width text, persona/system
- * dashed bubble.
+ * MessageView.h — spec message rendering (UI-SPEC §3.3–3.5, §07): user
+ * bubble (primary/5), assistant full-width text with hover actions
+ * (copy/regenerate/edit/delete), collapsible reasoning block, greeting
+ * with suggestion chips.
  */
 #pragma once
 #include <QScrollArea>
 #include <QString>
 #include <QVector>
 class QLabel;
+class QVBoxLayout;
+class QPushButton;
 
 struct ChatMessage {
     enum Role { User, Assistant, System } role = Assistant;
+    QString id;
     QString content;
+    QString type;      // text / persona / system
     bool streaming = false;
 };
-
-class QVBoxLayout;
-class QLabel;
 
 class MessageView : public QScrollArea {
     Q_OBJECT
@@ -25,13 +27,29 @@ public:
 
     void addMessage(const ChatMessage &msg);
     void updateStreaming(const QString &delta);
+    void updateReasoning(const QString &delta);
     void showGreeting();
     QString lastAssistantHtml() const;
     void clear();
 
+signals:
+    void copyRequested(const QString &id, const QString &content);
+    void regenerateRequested(const QString &id);
+    void editRequested(const QString &id);
+    void deleteRequested(const QString &id);
+    void suggestionClicked(const QString &text);
+
 private:
+    void clearLayout();
+    void showActionsFor(QLabel *label, bool visible);
+
     QWidget *m_container;
     QVBoxLayout *m_layout;
     QLabel *m_streamingLabel = nullptr;
+    QLabel *m_streamingReasoning = nullptr;
+    QPushButton *m_reasoningToggle = nullptr;
     QString m_streamRaw;
+    QString m_streamReasoning;
+    QString m_streamId;
+    bool m_streamReasoningVisible = true;
 };

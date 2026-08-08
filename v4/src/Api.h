@@ -22,7 +22,7 @@ public:
     /** Fetch the model list; emits modelsLoaded/requestFailed. */
     void fetchModels();
 
-    /** Start a streaming completion; emits chunkReceived/contentDone. */
+    /** Start a streaming completion; emits chunkReceived/reasoningReceived/contentDone. */
     void startCompletion(const QJsonArray &messages, const QString &model,
                          double temperature = 0.7);
 
@@ -32,12 +32,17 @@ public:
 
     void abort();
 
+    /** Poll server health; emits healthChanged on every answer. */
+    void checkHealth();
+
 signals:
     void modelsLoaded(const QJsonArray &models);
     void requestFailed(const QString &code, const QString &message);
     void chunkReceived(const QString &delta);
+    void reasoningReceived(const QString &delta);
     void contentDone();
     void completionReady(const QString &content);
+    void healthChanged(bool online);
 
 private:
     QString m_base;

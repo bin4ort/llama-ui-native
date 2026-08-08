@@ -42,6 +42,7 @@ template <> constexpr inline auto Composer::qt_create_metaobjectdata<qt_meta_tag
         "sendRequested",
         "",
         "text",
+        "stopRequested",
         "personaRequested"
     };
 
@@ -50,8 +51,10 @@ template <> constexpr inline auto Composer::qt_create_metaobjectdata<qt_meta_tag
         QtMocHelpers::SignalData<void(const QString &)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::QString, 3 },
         }}),
-        // Signal 'personaRequested'
+        // Signal 'stopRequested'
         QtMocHelpers::SignalData<void()>(4, 2, QMC::AccessPublic, QMetaType::Void),
+        // Signal 'personaRequested'
+        QtMocHelpers::SignalData<void()>(5, 2, QMC::AccessPublic, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -76,14 +79,17 @@ void Composer::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: _t->sendRequested((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
-        case 1: _t->personaRequested(); break;
+        case 1: _t->stopRequested(); break;
+        case 2: _t->personaRequested(); break;
         default: ;
         }
     }
     if (_c == QMetaObject::IndexOfMethod) {
         if (QtMocHelpers::indexOfMethod<void (Composer::*)(const QString & )>(_a, &Composer::sendRequested, 0))
             return;
-        if (QtMocHelpers::indexOfMethod<void (Composer::*)()>(_a, &Composer::personaRequested, 1))
+        if (QtMocHelpers::indexOfMethod<void (Composer::*)()>(_a, &Composer::stopRequested, 1))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (Composer::*)()>(_a, &Composer::personaRequested, 2))
             return;
     }
 }
@@ -107,14 +113,14 @@ int Composer::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 2)
+        if (_id < 3)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 2;
+        _id -= 3;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 2)
+        if (_id < 3)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 2;
+        _id -= 3;
     }
     return _id;
 }
@@ -126,8 +132,14 @@ void Composer::sendRequested(const QString & _t1)
 }
 
 // SIGNAL 1
-void Composer::personaRequested()
+void Composer::stopRequested()
 {
     QMetaObject::activate(this, &staticMetaObject, 1, nullptr);
+}
+
+// SIGNAL 2
+void Composer::personaRequested()
+{
+    QMetaObject::activate(this, &staticMetaObject, 2, nullptr);
 }
 QT_WARNING_POP

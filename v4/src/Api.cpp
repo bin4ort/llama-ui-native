@@ -58,12 +58,17 @@ void Api::startCompletion(const QJsonArray &messages, const QString &model,
                     continue;
                 }
                 const auto doc = QJsonDocument::fromJson(payload);
-                const auto delta = doc.object()
+                const auto deltaObj = doc.object()
                     .value(QStringLiteral("choices"))
                     .toArray().first().toObject()
-                    .value(QStringLiteral("delta")).toObject()
-                    .value(QStringLiteral("content")).toString();
+                    .value(QStringLiteral("delta")).toObject();
+                const QString delta = deltaObj.value(QStringLiteral("content")).toString();
                 if (!delta.isEmpty()) emit chunkReceived(delta);
+                // reasoning deltas (Qwen thinking models): shown in a
+                // collapsible "Thought" block (UI-SPEC §3.6)
+                const QString reasoning =
+                    deltaObj.value(QStringLiteral("reasoning_content")).toString();
+                if (!reasoning.isEmpty()) emit reasoningReceived(reasoning);
             }
         }
     });
@@ -110,4 +115,15 @@ void Api::abort() {
         m_stream->abort();
         m_stream = nullptr;
     }
+}
+
+void Api::checkHealth() {
+    QNetworkRequest req{QUrl(m_base + QStringLiteral("/health"))};
+    auto *reply = m_nam->get(req);
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        reply->deleteLater();
+        const bool ok = reply->error() == QNetworkReply::NoError &&
+                        reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 200;
+        emit healthChanged(ok);
+    });
 }

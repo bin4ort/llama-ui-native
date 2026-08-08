@@ -16,6 +16,9 @@ QJsonObject load();
 /** Persist the whole config object. */
 void save(const QJsonObject &cfg);
 
+/** Get one setting (defaults applied; QJsonValue::Undefined if unknown). */
+QJsonValue value(const QString &key);
+
 /** Path of the config file (~/.config/llama-ui-native/config.json). */
 QString path();
 

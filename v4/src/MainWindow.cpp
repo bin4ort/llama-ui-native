@@ -11,16 +11,20 @@
 #include "widgets/WizardDialog.h"
 #include "widgets/Sidebar.h"
 #include <QApplication>
+#include <QClipboard>
 #include <QFile>
 #include <QHBoxLayout>
+#include <QInputDialog>
 #include <QJsonArray>
 #include <QJsonObject>
-#include <QLineEdit>
 #include <QLabel>
 #include <QMenu>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QShortcut>
+#include <QTimer>
 #include <QToolButton>
+#include <QUrl>
 #include <QWidget>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
@@ -54,6 +58,27 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_modelCombo->setMaximumWidth(420);
     chatCol->addWidget(m_modelCombo, 0, Qt::AlignLeft);
 
+    // server error banner (UI-SPEC §6.6) — replaces the old modal nag
+    auto *bannerHost = new QWidget(central);
+    bannerHost->setObjectName(QStringLiteral("bannerHost"));
+    auto *bl = new QHBoxLayout(bannerHost);
+    bl->setContentsMargins(0, 0, 0, 0);
+    bl->setSpacing(8);
+    m_errorBanner = new QLabel(bannerHost);
+    m_errorBanner->setObjectName(QStringLiteral("errorBanner"));
+    m_errorBanner->setWordWrap(true);
+    bl->addWidget(m_errorBanner, 1);
+    auto *retryBtn = new QPushButton(I18n::t(QStringLiteral("Retry")), bannerHost);
+    retryBtn->setProperty("outline", true);
+    connect(retryBtn, &QPushButton::clicked, this, [this]() {
+        hideErrorBanner();
+        m_api->fetchModels();
+        if (m_store->active()) m_api->checkHealth();
+    });
+    bl->addWidget(retryBtn);
+    bannerHost->setVisible(false);
+    chatCol->addWidget(bannerHost);
+
     m_messages = new MessageView(central);
     chatCol->addWidget(m_messages, 1);
 
@@ -63,34 +88,48 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     layout->addLayout(chatCol, 1);
     setCentralWidget(central);
 
+    // sidebar wiring
     connect(m_sidebar, &Sidebar::newChatClicked, this, &MainWindow::newChat);
     connect(m_sidebar, &Sidebar::settingsClicked, this, &MainWindow::openSettings);
     connect(m_sidebar, &Sidebar::conversationSelected, this, &MainWindow::selectConversation);
-    connect(m_composer, &Composer::sendRequested, this, &MainWindow::onSend);
-    connect(m_composer, &Composer::personaRequested, this, &MainWindow::openPersonaMenu);
+    connect(m_sidebar, &Sidebar::conversationRenameRequested, this, &MainWindow::onRenameConversation);
+    connect(m_sidebar, &Sidebar::conversationDeleteRequested, this, &MainWindow::onDeleteConversation);
     connect(m_sidebar, &Sidebar::searchClicked, this, &MainWindow::openSearch);
     connect(m_sidebar, &Sidebar::mcpClicked, this, &MainWindow::openMcp);
 
+    // composer wiring
+    connect(m_composer, &Composer::sendRequested, this, &MainWindow::onSend);
+    connect(m_composer, &Composer::stopRequested, this, [this]() {
+        m_api->abort();
+        m_composer->setBusy(false);
+    });
+    connect(m_composer, &Composer::personaRequested, this, &MainWindow::openPersonaMenu);
+
+    // message actions (UI-SPEC §3.9)
+    connect(m_messages, &MessageView::copyRequested, this, &MainWindow::onCopy);
+    connect(m_messages, &MessageView::regenerateRequested, this, &MainWindow::onRegenerate);
+    connect(m_messages, &MessageView::editRequested, this, &MainWindow::onEdit);
+    connect(m_messages, &MessageView::deleteRequested, this, &MainWindow::onDelete);
+    connect(m_messages, &MessageView::suggestionClicked, this,
+            [this](const QString &t) { sendMessageWithHistory(t); });
 
     // streaming
     connect(m_api, &Api::chunkReceived, this, [this](const QString &delta) {
+        hideErrorBanner();
         m_messages->updateStreaming(delta);
         if (m_store->active() && !m_store->active()->messages.isEmpty()) {
             auto &last = m_store->active()->messages.last();
             last.content += delta;
         }
     });
-    connect(m_api, &Api::contentDone, this, [this]() {
-        m_streaming = false;
-        m_composer->setBusy(false);
-        if (m_store->active()) m_store->save();
-        m_sidebar->refreshConversations();
-    });
+    connect(m_api, &Api::reasoningReceived, this,
+            [this](const QString &delta) { m_messages->updateReasoning(delta); });
+    connect(m_api, &Api::contentDone, this, &MainWindow::onStreamFinished);
     connect(m_api, &Api::requestFailed, this, [this](const QString &code, const QString &msg) {
         m_streaming = false;
         m_composer->setBusy(false);
-        QMessageBox::warning(this, QStringLiteral("Llama UI Native"),
-                             QStringLiteral("Error %1 — %2").arg(code, msg));
+        showErrorBanner(QStringLiteral("LLMUI-") + code +
+                        QStringLiteral(" — ") + msg);
     });
 
     // models
@@ -99,14 +138,39 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         for (const auto &m : models)
             m_modelCombo->addItem(m.toObject().value(QStringLiteral("id")).toString());
         if (!models.isEmpty()) {
-            m_model = models.first().toObject().value(QStringLiteral("id")).toString();
-            m_modelCombo->setCurrentIndex(0);
+            const QString preferred = Config::value(QStringLiteral("model")).toString();
+            int found = m_modelCombo->findText(preferred);
+            if (found < 0) found = 0;
+            m_model = m_modelCombo->itemText(found);
+            m_modelCombo->setCurrentIndex(found);
         }
     });
     connect(m_modelCombo, &QComboBox::currentTextChanged, this, [this](const QString &t) {
         m_model = t;
+        if (!t.isEmpty()) {
+            m_config.insert(QStringLiteral("model"), t);
+            Config::save(m_config);
+        }
     });
     m_api->fetchModels();
+
+    // server status (UI-SPEC §2.5) — health poll
+    connect(m_api, &Api::healthChanged, this, [this](bool ok) {
+        setServerStatus(ok);
+    });
+    auto *healthTimer = new QTimer(this);
+    connect(healthTimer, &QTimer::timeout, m_api, &Api::checkHealth);
+    healthTimer->start(10000);
+    m_api->checkHealth();
+
+    // keyboard shortcuts (UI-SPEC §2.1): Ctrl+K search, Ctrl+B sidebar,
+    // Ctrl+Shift+O new chat
+    auto *kSearch = new QShortcut(QKeySequence(QStringLiteral("Ctrl+K")), this);
+    connect(kSearch, &QShortcut::activated, this, &MainWindow::openSearch);
+    auto *kSidebar = new QShortcut(QKeySequence(QStringLiteral("Ctrl+B")), this);
+    connect(kSidebar, &QShortcut::activated, m_sidebar, &Sidebar::toggleExpanded);
+    auto *kNew = new QShortcut(QKeySequence(QStringLiteral("Ctrl+Shift+O")), this);
+    connect(kNew, &QShortcut::activated, this, &MainWindow::newChat);
 
     // restore last conversation if any
     if (!m_store->conversations().isEmpty()) {
@@ -131,30 +195,39 @@ void MainWindow::applyTheme(const QString &paletteId) {
 void MainWindow::newChat() {
     m_store->create(QString());
     m_messages->clear();
+    m_sidebar->setActiveConversation(m_store->active()->id);
     refreshTitle();
     m_sidebar->refreshConversations();
+    m_composer->focusInput();
 }
 
 void MainWindow::selectConversation(const QString &id) {
     for (auto &c : m_store->conversations()) {
         if (c.id == id) {
             m_store->setActive(&c);
-            m_messages->clear();
-            if (c.persona.isEmpty() && c.messages.isEmpty()) {
-                m_messages->showGreeting();
-            } else {
-                for (const auto &m : c.messages) {
-                    ChatMessage cm;
-                    cm.role = m.role == QStringLiteral("user")    ? ChatMessage::User
-                              : m.role == QStringLiteral("system") ? ChatMessage::System
-                                                                   : ChatMessage::Assistant;
-                    cm.content = m.content;
-                    m_messages->addMessage(cm);
-                }
-            }
+            m_sidebar->setActiveConversation(id);
+            renderConversation(&c);
             refreshTitle();
             return;
         }
+    }
+}
+
+void MainWindow::renderConversation(Conversation *conv) {
+    m_messages->clear();
+    if (conv->persona.isEmpty() && conv->messages.isEmpty()) {
+        m_messages->showGreeting();
+        return;
+    }
+    for (const auto &m : conv->messages) {
+        ChatMessage cm;
+        cm.id = m.id;
+        cm.type = m.type;
+        cm.role = m.role == QStringLiteral("user")    ? ChatMessage::User
+                  : m.role == QStringLiteral("system") ? ChatMessage::System
+                                                       : ChatMessage::Assistant;
+        cm.content = m.content;
+        m_messages->addMessage(cm);
     }
 }
 
@@ -165,25 +238,32 @@ void MainWindow::refreshTitle() {
 }
 
 void MainWindow::onSend(const QString &text) {
-    sendMessage(text);
+    sendMessageWithHistory(text);
 }
 
-void MainWindow::sendMessage(const QString &text) {
+void MainWindow::sendMessageWithHistory(const QString &text) {
     if (m_streaming) return;
     if (!m_store->active()) newChat();
     auto *conv = m_store->active();
     m_streaming = true;
     m_composer->setBusy(true);
+    m_composer->clear();
+    hideErrorBanner();
+
+    // auto-title from first message (like the web app)
+    if (conv->messages.isEmpty() && conv->name == QStringLiteral("New chat")) {
+        conv->name = text.left(32) + (text.size() > 32 ? QStringLiteral("…") : QString());
+        refreshTitle();
+    }
 
     ConvMsg user{uid(), QStringLiteral("user"), QStringLiteral("text"), text};
     m_store->appendMessage(conv, user);
     ConvMsg assistant{uid(), QStringLiteral("assistant"), QStringLiteral("text"), QString()};
     m_store->appendMessage(conv, assistant);
 
-    ChatMessage cm{ChatMessage::User, text, false};
+    ChatMessage cm{ChatMessage::User, user.id, text, QStringLiteral("text"), false};
     m_messages->addMessage(cm);
-    m_composer->clear();
-    ChatMessage ph{ChatMessage::Assistant, QString(), true};
+    ChatMessage ph{ChatMessage::Assistant, assistant.id, QString(), QStringLiteral("text"), true};
     m_messages->addMessage(ph);
 
     QJsonArray messages;
@@ -197,6 +277,127 @@ void MainWindow::sendMessage(const QString &text) {
                                      {QStringLiteral("content"), m.content}});
     }
     m_api->startCompletion(messages, m_model);
+}
+
+void MainWindow::onStreamFinished() {
+    m_streaming = false;
+    m_composer->setBusy(false);
+    if (m_store->active()) {
+        // drop an empty assistant message left by a user stop
+        auto &msgs = m_store->active()->messages;
+        if (!msgs.isEmpty() && msgs.last().role == QStringLiteral("assistant") &&
+            msgs.last().content.trimmed().isEmpty())
+            msgs.removeLast();
+        m_store->save();
+    }
+    m_sidebar->refreshConversations();
+    m_api->checkHealth();
+}
+
+void MainWindow::showErrorBanner(const QString &text) {
+    m_errorBanner->setText(text);
+    m_errorBanner->parentWidget()->setVisible(true);
+    setServerStatus(false);
+}
+
+void MainWindow::hideErrorBanner() {
+    if (m_errorBanner) m_errorBanner->parentWidget()->setVisible(false);
+}
+
+void MainWindow::setServerStatus(bool online) {
+    m_sidebar->setServerStatus(
+        online, QUrl(m_api->baseUrl()).host() + QStringLiteral(":") +
+                    QString::number(QUrl(m_api->baseUrl()).port(8080)));
+}
+
+void MainWindow::onCopy(const QString &, const QString &content) {
+    QApplication::clipboard()->setText(content);
+}
+
+void MainWindow::onRegenerate(const QString &id) {
+    auto *conv = m_store->active();
+    if (!conv) return;
+    int idx = -1;
+    for (int i = 0; i < conv->messages.size(); ++i)
+        if (conv->messages.at(i).id == id) { idx = i; break; }
+    if (idx < 0) return;
+    // truncate at the regenerated message; resend the preceding user prompt
+    conv->messages = conv->messages.mid(0, idx);
+    QString prompt;
+    if (!conv->messages.isEmpty() &&
+        conv->messages.last().role == QStringLiteral("user"))
+        prompt = conv->messages.last().content;
+    m_store->save();
+    renderConversation(conv);
+    if (!prompt.isEmpty()) sendMessageWithHistory(prompt);
+}
+
+void MainWindow::onEdit(const QString &id) {
+    auto *conv = m_store->active();
+    if (!conv) return;
+    int idx = -1;
+    for (int i = 0; i < conv->messages.size(); ++i)
+        if (conv->messages.at(i).id == id) { idx = i; break; }
+    if (idx < 0) return;
+    const QString text = conv->messages.at(idx).content;
+    // truncate: remove this message and everything after
+    conv->messages = conv->messages.mid(0, idx);
+    m_store->save();
+    renderConversation(conv);
+    m_composer->setTextForEdit(text);
+    m_composer->focusInput();
+}
+
+void MainWindow::onDelete(const QString &id) {
+    auto *conv = m_store->active();
+    if (!conv) return;
+    for (int i = 0; i < conv->messages.size(); ++i) {
+        if (conv->messages.at(i).id == id) {
+            conv->messages.removeAt(i);
+            break;
+        }
+    }
+    m_store->save();
+    renderConversation(conv);
+}
+
+void MainWindow::onRenameConversation(const QString &id) {
+    for (auto &c : m_store->conversations()) {
+        if (c.id == id) {
+            bool ok = false;
+            const QString name =
+                QInputDialog::getText(this, I18n::t(QStringLiteral("Rename conversation")),
+                                      I18n::t(QStringLiteral("Name")), QLineEdit::Normal,
+                                      c.name, &ok);
+            if (ok && !name.trimmed().isEmpty()) {
+                m_store->rename(&c, name.trimmed());
+                m_sidebar->refreshConversations();
+                refreshTitle();
+            }
+            return;
+        }
+    }
+}
+
+void MainWindow::onDeleteConversation(const QString &id) {
+    auto *conv = m_store->active();
+    if (!conv || conv->id != id) {
+        for (auto &c : m_store->conversations())
+            if (c.id == id) { conv = &c; break; }
+    }
+    if (!conv) return;
+    const auto ret = QMessageBox::question(
+        this, I18n::t(QStringLiteral("Delete conversation")),
+        I18n::t(QStringLiteral("Are you sure you want to delete this conversation?")));
+    if (ret != QMessageBox::Yes) return;
+    m_store->remove(conv);
+    m_sidebar->refreshConversations();
+    if (m_store->active())
+        selectConversation(m_store->active()->id);
+    else {
+        m_messages->clear();
+        refreshTitle();
+    }
 }
 
 void MainWindow::expandSidebarForTest() {
@@ -226,38 +427,58 @@ void MainWindow::runSelfTest(const QString &message, const QString &shotPath) {
         img.save(shotPath, "JPG", 65);
         emit selfTestDone();
     });
-    sendMessage(message);
+    sendMessageWithHistory(message);
 }
-
 
 void MainWindow::openSearch() {
     auto *dlg = new QDialog(this);
     dlg->setObjectName(QStringLiteral("appDialog"));
-    dlg->setWindowTitle(QStringLiteral("Search"));
+    dlg->setWindowTitle(I18n::t(QStringLiteral("Search")));
     dlg->setModal(true);
     dlg->resize(480, 560);
     auto *lay = new QVBoxLayout(dlg);
     auto *input = new QLineEdit(dlg);
-    input->setPlaceholderText(QStringLiteral("Search conversations…"));
+    input->setPlaceholderText(I18n::t(QStringLiteral("Search conversations and messages")));
     lay->addWidget(input);
-    auto *results = new QLabel(QStringLiteral("Type to search your conversations."), dlg);
+    auto *results = new QLabel(I18n::t(QStringLiteral("Type to search your conversations.")), dlg);
     results->setWordWrap(true);
     lay->addWidget(results);
-    auto *closeBtn = new QPushButton(QStringLiteral("Close"), dlg);
+    auto *closeBtn = new QPushButton(I18n::t(QStringLiteral("Close")), dlg);
     closeBtn->setProperty("outline", true);
     connect(closeBtn, &QPushButton::clicked, dlg, &QDialog::close);
     lay->addWidget(closeBtn, 0, Qt::AlignRight);
     connect(input, &QLineEdit::textChanged, dlg, [results, this](const QString &q) {
         const QString needle = q.trimmed();
         if (needle.isEmpty()) {
-            results->setText(QStringLiteral("Type to search your conversations."));
+            results->setText(I18n::t(QStringLiteral("Type to search your conversations.")));
             return;
         }
         QStringList hits;
-        for (const auto &c : m_store->conversations())
-            if (c.name.contains(needle, Qt::CaseInsensitive)) hits << c.name;
-        results->setText(hits.isEmpty() ? QStringLiteral("No matches.")
-                                        : QStringLiteral("Found:\n") + hits.join(QStringLiteral("\n")));
+        int convHits = 0;
+        int msgHits = 0;
+        for (const auto &c : m_store->conversations()) {
+            if (c.name.contains(needle, Qt::CaseInsensitive)) {
+                ++convHits;
+                hits << QStringLiteral("▸ ") + c.name;
+            }
+        }
+        for (const auto &c : m_store->conversations()) {
+            for (const auto &m : c.messages) {
+                if (m.content.contains(needle, Qt::CaseInsensitive)) {
+                    ++msgHits;
+                    const QString snippet = m.content.mid(0, 90).replace('\n', ' ') +
+                                            (m.content.size() > 90 ? QStringLiteral("…") : QString());
+                    hits << QStringLiteral("  ↳ %1: “%2”").arg(c.name, snippet);
+                }
+            }
+        }
+        if (hits.isEmpty())
+            results->setText(I18n::t(QStringLiteral("No matches.")));
+        else
+            results->setText(QStringLiteral("%1 conversations, %2 messages\n\n%3")
+                                 .arg(convHits)
+                                 .arg(msgHits)
+                                 .arg(hits.join('\n')));
     });
     dlg->exec();
     dlg->deleteLater();
@@ -266,16 +487,16 @@ void MainWindow::openSearch() {
 void MainWindow::openMcp() {
     auto *dlg = new QDialog(this);
     dlg->setObjectName(QStringLiteral("appDialog"));
-    dlg->setWindowTitle(QStringLiteral("MCP Servers"));
+    dlg->setWindowTitle(I18n::t(QStringLiteral("MCP Servers")));
     dlg->setModal(true);
     dlg->resize(480, 320);
     auto *lay = new QVBoxLayout(dlg);
     auto *info = new QLabel(
-        QStringLiteral("MCP servers are configured in Settings (Tools). The server list will appear here once MCP support lands in this build."),
+        I18n::t(QStringLiteral("MCP servers are configured in Settings (Tools). The server list will appear here once MCP support lands in this build.")),
         dlg);
     info->setWordWrap(true);
     lay->addWidget(info);
-    auto *closeBtn = new QPushButton(QStringLiteral("Close"), dlg);
+    auto *closeBtn = new QPushButton(I18n::t(QStringLiteral("Close")), dlg);
     closeBtn->setProperty("outline", true);
     connect(closeBtn, &QPushButton::clicked, dlg, &QDialog::close);
     lay->addWidget(closeBtn, 0, Qt::AlignRight);
@@ -307,7 +528,7 @@ void MainWindow::openPersonaMenu() {
             // persona row shown in the chat
             ConvMsg pm{uid(), QStringLiteral("system"), QStringLiteral("persona"), p.content};
             m_store->appendMessage(conv, pm);
-            ChatMessage cm{ChatMessage::System, p.content, false};
+            ChatMessage cm{ChatMessage::System, pm.id, p.content, QStringLiteral("persona"), false};
             m_messages->addMessage(cm);
         });
     }

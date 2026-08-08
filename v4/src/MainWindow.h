@@ -10,10 +10,12 @@
 
 class Api;
 class ConversationStore;
+class Conversation;
 class MessageView;
 class Composer;
 class Sidebar;
 class SettingsDialog;
+class QLabel;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -42,9 +44,21 @@ private slots:
 private:
     void applyTheme(const QString &paletteId);
     void sendMessage(const QString &text);
+    void sendMessageWithHistory(const QString &text);
     void newChat();
     void selectConversation(const QString &id);
+    void renderConversation(Conversation *conv);
     void refreshTitle();
+    void showErrorBanner(const QString &text);
+    void hideErrorBanner();
+    void setServerStatus(bool online);
+    void onStreamFinished();
+    void onCopy(const QString &id, const QString &content);
+    void onRegenerate(const QString &id);
+    void onEdit(const QString &id);
+    void onDelete(const QString &id);
+    void onRenameConversation(const QString &id);
+    void onDeleteConversation(const QString &id);
 
     Api *m_api;
     ConversationStore *m_store;
@@ -52,6 +66,7 @@ private:
     MessageView *m_messages;
     Composer *m_composer;
     QComboBox *m_modelCombo = nullptr;
+    QLabel *m_errorBanner = nullptr;
     QJsonObject m_config;
     QString m_model;
     bool m_streaming = false;

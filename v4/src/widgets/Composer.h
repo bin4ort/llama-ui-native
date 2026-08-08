@@ -17,16 +17,22 @@ public:
     QString text() const;
     void clear();
     void setBusy(bool busy);
+    void focusInput();
+    void setTextForEdit(const QString &text);
 
 signals:
     void sendRequested(const QString &text);
+    void stopRequested();
     void personaRequested();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *ev) override;
 
 private:
+    void updateHeight();
+
     QTextEdit *m_input;
     QPushButton *m_send;
     QPushButton *m_persona;
+    bool m_busy = false;
 };

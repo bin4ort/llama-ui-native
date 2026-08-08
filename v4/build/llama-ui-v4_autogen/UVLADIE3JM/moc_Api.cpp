@@ -48,9 +48,12 @@ template <> constexpr inline auto Api::qt_create_metaobjectdata<qt_meta_tag_ZN3A
         "message",
         "chunkReceived",
         "delta",
+        "reasoningReceived",
         "contentDone",
         "completionReady",
-        "content"
+        "content",
+        "healthChanged",
+        "online"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -66,11 +69,19 @@ template <> constexpr inline auto Api::qt_create_metaobjectdata<qt_meta_tag_ZN3A
         QtMocHelpers::SignalData<void(const QString &)>(8, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::QString, 9 },
         }}),
+        // Signal 'reasoningReceived'
+        QtMocHelpers::SignalData<void(const QString &)>(10, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 9 },
+        }}),
         // Signal 'contentDone'
-        QtMocHelpers::SignalData<void()>(10, 2, QMC::AccessPublic, QMetaType::Void),
+        QtMocHelpers::SignalData<void()>(11, 2, QMC::AccessPublic, QMetaType::Void),
         // Signal 'completionReady'
-        QtMocHelpers::SignalData<void(const QString &)>(11, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QString, 12 },
+        QtMocHelpers::SignalData<void(const QString &)>(12, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 13 },
+        }}),
+        // Signal 'healthChanged'
+        QtMocHelpers::SignalData<void(bool)>(14, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Bool, 15 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -98,8 +109,10 @@ void Api::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **
         case 0: _t->modelsLoaded((*reinterpret_cast<std::add_pointer_t<QJsonArray>>(_a[1]))); break;
         case 1: _t->requestFailed((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2]))); break;
         case 2: _t->chunkReceived((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
-        case 3: _t->contentDone(); break;
-        case 4: _t->completionReady((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 3: _t->reasoningReceived((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 4: _t->contentDone(); break;
+        case 5: _t->completionReady((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 6: _t->healthChanged((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
         default: ;
         }
     }
@@ -110,9 +123,13 @@ void Api::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **
             return;
         if (QtMocHelpers::indexOfMethod<void (Api::*)(const QString & )>(_a, &Api::chunkReceived, 2))
             return;
-        if (QtMocHelpers::indexOfMethod<void (Api::*)()>(_a, &Api::contentDone, 3))
+        if (QtMocHelpers::indexOfMethod<void (Api::*)(const QString & )>(_a, &Api::reasoningReceived, 3))
             return;
-        if (QtMocHelpers::indexOfMethod<void (Api::*)(const QString & )>(_a, &Api::completionReady, 4))
+        if (QtMocHelpers::indexOfMethod<void (Api::*)()>(_a, &Api::contentDone, 4))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (Api::*)(const QString & )>(_a, &Api::completionReady, 5))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (Api::*)(bool )>(_a, &Api::healthChanged, 6))
             return;
     }
 }
@@ -136,14 +153,14 @@ int Api::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 5)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 5;
+        _id -= 7;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 5)
+        if (_id < 7)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 5;
+        _id -= 7;
     }
     return _id;
 }
@@ -167,14 +184,26 @@ void Api::chunkReceived(const QString & _t1)
 }
 
 // SIGNAL 3
-void Api::contentDone()
+void Api::reasoningReceived(const QString & _t1)
 {
-    QMetaObject::activate(this, &staticMetaObject, 3, nullptr);
+    QMetaObject::activate<void>(this, &staticMetaObject, 3, nullptr, _t1);
 }
 
 // SIGNAL 4
+void Api::contentDone()
+{
+    QMetaObject::activate(this, &staticMetaObject, 4, nullptr);
+}
+
+// SIGNAL 5
 void Api::completionReady(const QString & _t1)
 {
-    QMetaObject::activate<void>(this, &staticMetaObject, 4, nullptr, _t1);
+    QMetaObject::activate<void>(this, &staticMetaObject, 5, nullptr, _t1);
+}
+
+// SIGNAL 6
+void Api::healthChanged(bool _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 6, nullptr, _t1);
 }
 QT_WARNING_POP

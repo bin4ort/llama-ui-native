@@ -21,6 +21,7 @@ struct Conversation {
     QString id;
     QString name;
     QString persona;      // system prompt (persona row)
+    bool pinned = false;
     QList<ConvMsg> messages;
 };
 
@@ -42,6 +43,7 @@ public:
     Conversation *create(const QString &name);
     void remove(Conversation *c);
     void appendMessage(Conversation *c, const ConvMsg &msg);
+    void rename(Conversation *c, const QString &name);
 
     QString storagePath() const;
 

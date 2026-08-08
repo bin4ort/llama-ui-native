@@ -31,6 +31,7 @@ void ConversationStore::load() {
         c.id = obj.value(QStringLiteral("id")).toString();
         c.name = obj.value(QStringLiteral("name")).toString();
         c.persona = obj.value(QStringLiteral("persona")).toString();
+        c.pinned = obj.value(QStringLiteral("pinned")).toBool();
         for (const auto &mv : obj.value(QStringLiteral("messages")).toArray()) {
             const auto mo = mv.toObject();
             ConvMsg m;
@@ -56,6 +57,7 @@ void ConversationStore::save() const {
         arr.append(QJsonObject{{QStringLiteral("id"), c.id},
                                {QStringLiteral("name"), c.name},
                                {QStringLiteral("persona"), c.persona},
+                               {QStringLiteral("pinned"), c.pinned},
                                {QStringLiteral("messages"), msgs}});
     }
     QFile f(storagePath());
@@ -85,4 +87,11 @@ void ConversationStore::remove(Conversation *c) {
 void ConversationStore::appendMessage(Conversation *c, const ConvMsg &msg) {
     c->messages.append(msg);
     save();
+}
+
+void ConversationStore::rename(Conversation *c, const QString &name) {
+    if (c) {
+        c->name = name;
+        save();
+    }
 }

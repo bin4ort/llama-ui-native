@@ -38,10 +38,39 @@ template <> constexpr inline auto MessageView::qt_create_metaobjectdata<qt_meta_
 {
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
-        "MessageView"
+        "MessageView",
+        "copyRequested",
+        "",
+        "id",
+        "content",
+        "regenerateRequested",
+        "editRequested",
+        "deleteRequested",
+        "suggestionClicked",
+        "text"
     };
 
     QtMocHelpers::UintData qt_methods {
+        // Signal 'copyRequested'
+        QtMocHelpers::SignalData<void(const QString &, const QString &)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 3 }, { QMetaType::QString, 4 },
+        }}),
+        // Signal 'regenerateRequested'
+        QtMocHelpers::SignalData<void(const QString &)>(5, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 3 },
+        }}),
+        // Signal 'editRequested'
+        QtMocHelpers::SignalData<void(const QString &)>(6, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 3 },
+        }}),
+        // Signal 'deleteRequested'
+        QtMocHelpers::SignalData<void(const QString &)>(7, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 3 },
+        }}),
+        // Signal 'suggestionClicked'
+        QtMocHelpers::SignalData<void(const QString &)>(8, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::QString, 9 },
+        }}),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -63,10 +92,28 @@ Q_CONSTINIT const QMetaObject MessageView::staticMetaObject = { {
 void MessageView::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     auto *_t = static_cast<MessageView *>(_o);
-    (void)_t;
-    (void)_c;
-    (void)_id;
-    (void)_a;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: _t->copyRequested((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QString>>(_a[2]))); break;
+        case 1: _t->regenerateRequested((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 2: _t->editRequested((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 3: _t->deleteRequested((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 4: _t->suggestionClicked((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        default: ;
+        }
+    }
+    if (_c == QMetaObject::IndexOfMethod) {
+        if (QtMocHelpers::indexOfMethod<void (MessageView::*)(const QString & , const QString & )>(_a, &MessageView::copyRequested, 0))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (MessageView::*)(const QString & )>(_a, &MessageView::regenerateRequested, 1))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (MessageView::*)(const QString & )>(_a, &MessageView::editRequested, 2))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (MessageView::*)(const QString & )>(_a, &MessageView::deleteRequested, 3))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (MessageView::*)(const QString & )>(_a, &MessageView::suggestionClicked, 4))
+            return;
+    }
 }
 
 const QMetaObject *MessageView::metaObject() const
@@ -85,6 +132,48 @@ void *MessageView::qt_metacast(const char *_clname)
 int MessageView::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QScrollArea::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        if (_id < 5)
+            qt_static_metacall(this, _c, _id, _a);
+        _id -= 5;
+    }
+    if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
+        if (_id < 5)
+            *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
+        _id -= 5;
+    }
     return _id;
+}
+
+// SIGNAL 0
+void MessageView::copyRequested(const QString & _t1, const QString & _t2)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1, _t2);
+}
+
+// SIGNAL 1
+void MessageView::regenerateRequested(const QString & _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 1, nullptr, _t1);
+}
+
+// SIGNAL 2
+void MessageView::editRequested(const QString & _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 2, nullptr, _t1);
+}
+
+// SIGNAL 3
+void MessageView::deleteRequested(const QString & _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 3, nullptr, _t1);
+}
+
+// SIGNAL 4
+void MessageView::suggestionClicked(const QString & _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 4, nullptr, _t1);
 }
 QT_WARNING_POP

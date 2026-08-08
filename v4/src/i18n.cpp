@@ -43,6 +43,12 @@ QString t(const QString &key) {
         const auto v = it.value().value(key);
         if (v.isString()) return v.toString();
     }
+    // fall back to English, then to the key itself
+    const auto en = g_dicts.constFind(QStringLiteral("en"));
+    if (en != g_dicts.constEnd()) {
+        const auto v = en.value().value(key);
+        if (v.isString()) return v.toString();
+    }
     return key;
 }
 

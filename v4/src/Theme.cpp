@@ -303,6 +303,50 @@ QPushButton[ghost="true"] {
 QPushButton[ghost="true"]:hover { background-color: %7; color: %3; }
 QPushButton[destructive="true"] { background-color: %23; color: white; }
 QPushButton[destructive="true"]:hover { background-color: %24; }
+QPushButton[primary="true"] { background-color: %13; color: %14; }
+QPushButton[primary="true"]:hover { background-color: %15; }
+
+/* Greeting suggestion chips (UI-SPEC §6.2) */
+QPushButton[chip="true"] {
+  background-color: transparent; border: 1px solid %5; border-radius: 16px;
+  color: %3; padding: 8px 14px; font-size: 13px;
+}
+QPushButton[chip="true"]:hover { background-color: %7; border-color: %12; }
+
+/* Server error banner (UI-SPEC §6.6) */
+#bannerHost { background-color: %23; border-radius: 10px; padding: 2px; }
+#errorBanner { color: white; font-size: 13px; padding: 4px 8px; }
+#bannerHost QPushButton[outline="true"] { border-color: rgba(255,255,255,0.5); color: white; }
+
+/* Reasoning block (UI-SPEC §3.6) */
+QPushButton[reasoningToggle="true"] {
+  background: transparent; border: none; color: %10; font-size: 13px;
+  padding: 2px 4px; text-align: left; font-weight: 600;
+}
+QPushButton[reasoningToggle="true"]:hover { color: %3; }
+#reasoningText {
+  color: %10; font-size: 13px; border-left: 2px solid %5;
+  padding-left: 10px;
+}
+
+/* System message pill (UI-SPEC §3.3) */
+#systemPill {
+  color: %10; font-size: 11px; font-weight: 600;
+  background-color: %7; border-radius: 8px; padding: 2px 8px;
+  max-width: 160px;
+}
+
+/* Sidebar footer + headers (UI-SPEC §2.5) */
+#sidebarFooter { border-top: 1px solid %5; }
+#statusDot { color: %23; font-size: 10px; }
+#statusDot[state="online"] { color: #2ecc71; }
+#statusLabel { color: %10; font-size: 11px; }
+#versionLabel { color: %10; font-size: 11px; opacity: 0.5; }
+#convHeader { color: %10; font-size: 11px; font-weight: 600; padding: 6px 4px 2px 4px; }
+#convEmpty { color: %10; font-size: 13px; padding: 12px 4px; }
+QPushButton[convRow="true"][active="true"] {
+  background-color: %8; color: %9; font-weight: 600;
+}
 
 /* Expanded sidebar (UI-SPEC §3.17) */
 #sidebarExpanded { background-color: %4; border: 1px solid %5; border-radius: 16px; }

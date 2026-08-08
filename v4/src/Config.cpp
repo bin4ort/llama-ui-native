@@ -54,4 +54,9 @@ void save(const QJsonObject &cfg) {
     }
 }
 
+QJsonValue value(const QString &key) {
+    if (g_cfg.isEmpty()) load();
+    return g_cfg.value(key);
+}
+
 } // namespace Config
