@@ -396,11 +396,7 @@ void MessageView::addMessage(const ChatMessage &msg) {
         label->setText(QStringLiteral("…"));
     }
     // keep the view pinned to the bottom
-    QTimer::singleShot(0, this, [this, row, label]() {
-        if (label && row)
-            fprintf(stderr, "[MSGDBG] labelW=%d rowW=%d text=%s\n",
-                    label->width(), row->width(),
-                    qPrintable(label->text().left(30)));
+    QTimer::singleShot(0, this, [this]() {
         verticalScrollBar()->setValue(verticalScrollBar()->maximum());
     });
 }
