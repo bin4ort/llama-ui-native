@@ -15,6 +15,7 @@ struct ConvMsg {
     QString role;   // user / assistant / system
     QString type;   // text / persona / system
     QString content;
+    QJsonArray attachments; // [{name, mime, data(base64), image: bool}]
 };
 
 struct Conversation {

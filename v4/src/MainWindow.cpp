@@ -11,21 +11,67 @@
 #include "widgets/WizardDialog.h"
 #include "widgets/Sidebar.h"
 #include <QApplication>
+#include <QBuffer>
 #include <QClipboard>
+#include <QDragEnterEvent>
+#include <QDropEvent>
 #include <QFile>
+#include <QFileDialog>
+#include <QFileInfo>
 #include <QHBoxLayout>
+#include <QImage>
 #include <QInputDialog>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QLabel>
 #include <QMenu>
 #include <QMessageBox>
+#include <QMimeData>
 #include <QPushButton>
 #include <QShortcut>
 #include <QTimer>
 #include <QToolButton>
 #include <QUrl>
 #include <QWidget>
+
+/** Encode a file for the multimodal payload (UI-SPEC §4): images become
+ *  base64 data URLs, other files keep their raw name (text extraction
+ *  would need per-type parsing — the model sees images natively). */
+static QJsonObject encodeAttachment(const QString &path) {
+    const QString lower = path.toLower();
+    const bool image = lower.endsWith(QStringLiteral(".png")) ||
+                       lower.endsWith(QStringLiteral(".jpg")) ||
+                       lower.endsWith(QStringLiteral(".jpeg")) ||
+                       lower.endsWith(QStringLiteral(".webp")) ||
+                       lower.endsWith(QStringLiteral(".gif"));
+    QJsonObject att;
+    att.insert(QStringLiteral("name"), QFileInfo(path).fileName());
+    att.insert(QStringLiteral("mime"), QString());
+    att.insert(QStringLiteral("image"), image);
+    if (image) {
+        QImage img(path);
+        if (img.isNull()) {
+            att.insert(QStringLiteral("error"), true);
+            return att;
+        }
+        // downscale to <=1.5 MP (maxImageMPixels-ish default)
+        if (img.width() * img.height() > 1500000)
+            img = img.scaled(1600, 1600, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        QByteArray bytes;
+        QBuffer buffer(&bytes);
+        buffer.open(QIODevice::WriteOnly);
+        img.save(&buffer, "PNG");
+        att.insert(QStringLiteral("data"),
+                   QString::fromLatin1(bytes.toBase64()));
+    } else {
+        QFile f(path);
+        if (f.open(QIODevice::ReadOnly)) {
+            att.insert(QStringLiteral("data"),
+                       QString::fromLatin1(f.readAll().toBase64()));
+        }
+    }
+    return att;
+}
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setWindowTitle(QStringLiteral("Llama UI Native"));
@@ -104,6 +150,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_composer->setBusy(false);
     });
     connect(m_composer, &Composer::personaRequested, this, &MainWindow::openPersonaMenu);
+    connect(m_composer, &Composer::attachRequested, this, [this]() {
+        const QStringList files = QFileDialog::getOpenFileNames(
+            this, I18n::t(QStringLiteral("Attach file")),
+            QString(), I18n::t(QStringLiteral("Images (*.png *.jpg *.jpeg *.webp *.gif);;All files (*)")));
+        if (!files.isEmpty()) attachFiles(files);
+    });
+    setAcceptDrops(true);
 
     // message actions (UI-SPEC §3.9)
     connect(m_messages, &MessageView::copyRequested, this, &MainWindow::onCopy);
@@ -227,6 +280,7 @@ void MainWindow::renderConversation(Conversation *conv) {
                   : m.role == QStringLiteral("system") ? ChatMessage::System
                                                        : ChatMessage::Assistant;
         cm.content = m.content;
+        cm.attachments = m.attachments;
         m_messages->addMessage(cm);
     }
 }
@@ -241,14 +295,35 @@ void MainWindow::onSend(const QString &text) {
     sendMessageWithHistory(text);
 }
 
+void MainWindow::attachFiles(const QStringList &paths) {
+    for (const auto &p : paths)
+        m_composer->addAttachment(encodeAttachment(p));
+    m_composer->setAttachments(m_composer->attachments());
+    m_composer->focusInput();
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
+    if (event->mimeData()->hasUrls()) event->acceptProposedAction();
+}
+
+void MainWindow::dropEvent(QDropEvent *event) {
+    QStringList files;
+    for (const auto &u : event->mimeData()->urls()) {
+        if (u.isLocalFile()) files << u.toLocalFile();
+    }
+    if (!files.isEmpty()) attachFiles(files);
+}
+
 void MainWindow::sendMessageWithHistory(const QString &text) {
     if (m_streaming) return;
     if (!m_store->active()) newChat();
     auto *conv = m_store->active();
     m_streaming = true;
     m_composer->setBusy(true);
-    m_composer->clear();
     hideErrorBanner();
+
+    const QJsonArray atts = m_composer->attachments();
+    m_composer->clear();
 
     // auto-title from first message (like the web app)
     if (conv->messages.isEmpty() && conv->name == QStringLiteral("New chat")) {
@@ -256,14 +331,14 @@ void MainWindow::sendMessageWithHistory(const QString &text) {
         refreshTitle();
     }
 
-    ConvMsg user{uid(), QStringLiteral("user"), QStringLiteral("text"), text};
+    ConvMsg user{uid(), QStringLiteral("user"), QStringLiteral("text"), text, atts};
     m_store->appendMessage(conv, user);
     ConvMsg assistant{uid(), QStringLiteral("assistant"), QStringLiteral("text"), QString()};
     m_store->appendMessage(conv, assistant);
 
-    ChatMessage cm{ChatMessage::User, user.id, text, QStringLiteral("text"), false};
+    ChatMessage cm{ChatMessage::User, user.id, text, QStringLiteral("text"), atts, false};
     m_messages->addMessage(cm);
-    ChatMessage ph{ChatMessage::Assistant, assistant.id, QString(), QStringLiteral("text"), true};
+    ChatMessage ph{ChatMessage::Assistant, assistant.id, QString(), QStringLiteral("text"), QJsonArray(), true};
     m_messages->addMessage(ph);
 
     QJsonArray messages;
@@ -273,8 +348,34 @@ void MainWindow::sendMessageWithHistory(const QString &text) {
     for (const auto &m : conv->messages) {
         if (m.role == QStringLiteral("assistant") && m.content.isEmpty()) continue;
         if (m.role == QStringLiteral("system")) continue;
+        QJsonValue content = m.content;
+        if (!m.attachments.isEmpty()) {
+            // multimodal parts (OpenAI image_url format, UI-SPEC §4)
+            QJsonArray parts;
+            parts.append(QJsonObject{{QStringLiteral("type"), QStringLiteral("text")},
+                                     {QStringLiteral("text"), m.content}});
+            for (const auto &a : m.attachments) {
+                const auto att = a.toObject();
+                if (att.value(QStringLiteral("image")).toBool()) {
+                    parts.append(QJsonObject{
+                        {QStringLiteral("type"), QStringLiteral("image_url")},
+                        {QStringLiteral("image_url"),
+                         QJsonObject{{QStringLiteral("url"),
+                                      QStringLiteral("data:image/png;base64,") +
+                                          att.value(QStringLiteral("data")).toString()}}}});
+                } else {
+                    parts.append(QJsonObject{
+                        {QStringLiteral("type"), QStringLiteral("text")},
+                        {QStringLiteral("text"),
+                         QStringLiteral("[attachment: ") +
+                             att.value(QStringLiteral("name")).toString() +
+                             QStringLiteral("]")}});
+                }
+            }
+            content = parts;
+        }
         messages.append(QJsonObject{{QStringLiteral("role"), m.role},
-                                     {QStringLiteral("content"), m.content}});
+                                     {QStringLiteral("content"), content}});
     }
     m_api->startCompletion(messages, m_model);
 }
@@ -528,7 +629,8 @@ void MainWindow::openPersonaMenu() {
             // persona row shown in the chat
             ConvMsg pm{uid(), QStringLiteral("system"), QStringLiteral("persona"), p.content};
             m_store->appendMessage(conv, pm);
-            ChatMessage cm{ChatMessage::System, pm.id, p.content, QStringLiteral("persona"), false};
+            ChatMessage cm{ChatMessage::System, pm.id, p.content, QStringLiteral("persona"),
+                           QJsonArray(), false};
             m_messages->addMessage(cm);
         });
     }

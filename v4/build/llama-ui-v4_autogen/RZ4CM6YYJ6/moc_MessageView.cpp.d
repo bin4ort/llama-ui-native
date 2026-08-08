@@ -118,6 +118,7 @@
   /usr/include/c++/15.2.1/bits/localefwd.h \
   /usr/include/c++/15.2.1/bits/memory_resource.h \
   /usr/include/c++/15.2.1/bits/memoryfwd.h \
+  /usr/include/c++/15.2.1/bits/monostate.h \
   /usr/include/c++/15.2.1/bits/move.h \
   /usr/include/c++/15.2.1/bits/nested_exception.h \
   /usr/include/c++/15.2.1/bits/new_allocator.h \
@@ -210,6 +211,8 @@
   /usr/include/c++/15.2.1/numeric \
   /usr/include/c++/15.2.1/optional \
   /usr/include/c++/15.2.1/pstl/execution_defs.h \
+  /usr/include/c++/15.2.1/pstl/glue_algorithm_defs.h \
+  /usr/include/c++/15.2.1/pstl/glue_memory_defs.h \
   /usr/include/c++/15.2.1/pstl/glue_numeric_defs.h \
   /usr/include/c++/15.2.1/pstl/pstl_config.h \
   /usr/include/c++/15.2.1/ratio \
@@ -265,6 +268,7 @@
   /usr/include/linux/types.h \
   /usr/include/locale.h \
   /usr/include/pthread.h \
+  /usr/include/qt6/QtCore/QJsonArray \
   /usr/include/qt6/QtCore/QString \
   /usr/include/qt6/QtCore/QVector \
   /usr/include/qt6/QtCore/q17memory.h \
@@ -291,6 +295,9 @@
   /usr/include/qt6/QtCore/qbytearrayalgorithms.h \
   /usr/include/qt6/QtCore/qbytearraylist.h \
   /usr/include/qt6/QtCore/qbytearrayview.h \
+  /usr/include/qt6/QtCore/qcalendar.h \
+  /usr/include/qt6/QtCore/qcborcommon.h \
+  /usr/include/qt6/QtCore/qcborvalue.h \
   /usr/include/qt6/QtCore/qchar.h \
   /usr/include/qt6/QtCore/qcheckedint_impl.h \
   /usr/include/qt6/QtCore/qcompare.h \
@@ -305,6 +312,7 @@
   /usr/include/qt6/QtCore/qcontiguouscache.h \
   /usr/include/qt6/QtCore/qdarwinhelpers.h \
   /usr/include/qt6/QtCore/qdatastream.h \
+  /usr/include/qt6/QtCore/qdatetime.h \
   /usr/include/qt6/QtCore/qdebug.h \
   /usr/include/qt6/QtCore/qendian.h \
   /usr/include/qt6/QtCore/qexceptionhandling.h \
@@ -321,9 +329,14 @@
   /usr/include/qt6/QtCore/qiodevicebase.h \
   /usr/include/qt6/QtCore/qiterable.h \
   /usr/include/qt6/QtCore/qiterator.h \
+  /usr/include/qt6/QtCore/qjsonarray.h \
+  /usr/include/qt6/QtCore/qjsondocument.h \
+  /usr/include/qt6/QtCore/qjsonparseerror.h \
+  /usr/include/qt6/QtCore/qjsonvalue.h \
   /usr/include/qt6/QtCore/qlatin1stringview.h \
   /usr/include/qt6/QtCore/qline.h \
   /usr/include/qt6/QtCore/qlist.h \
+  /usr/include/qt6/QtCore/qlocale.h \
   /usr/include/qt6/QtCore/qlogging.h \
   /usr/include/qt6/QtCore/qmalloc.h \
   /usr/include/qt6/QtCore/qmap.h \
@@ -344,6 +357,7 @@
   /usr/include/qt6/QtCore/qprocessordetection.h \
   /usr/include/qt6/QtCore/qrect.h \
   /usr/include/qt6/QtCore/qrefcount.h \
+  /usr/include/qt6/QtCore/qregularexpression.h \
   /usr/include/qt6/QtCore/qscopedpointer.h \
   /usr/include/qt6/QtCore/qscopeguard.h \
   /usr/include/qt6/QtCore/qset.h \
@@ -389,7 +403,9 @@
   /usr/include/qt6/QtCore/qtversionchecks.h \
   /usr/include/qt6/QtCore/qtypeinfo.h \
   /usr/include/qt6/QtCore/qtypes.h \
+  /usr/include/qt6/QtCore/qurl.h \
   /usr/include/qt6/QtCore/qutf8stringview.h \
+  /usr/include/qt6/QtCore/quuid.h \
   /usr/include/qt6/QtCore/qvariant.h \
   /usr/include/qt6/QtCore/qvarlengtharray.h \
   /usr/include/qt6/QtCore/qvector.h \

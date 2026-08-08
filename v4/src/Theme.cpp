@@ -306,6 +306,13 @@ QPushButton[destructive="true"]:hover { background-color: %24; }
 QPushButton[primary="true"] { background-color: %13; color: %14; }
 QPushButton[primary="true"]:hover { background-color: %15; }
 
+/* Attachment chips (UI-SPEC §4.2) */
+#attChip {
+  background-color: %7; border: 1px solid %5; border-radius: 10px;
+}
+#attChipLabel { color: %3; font-size: 12px; }
+#attChip QPushButton { min-width: 18px; max-width: 18px; min-height: 18px; max-height: 18px; padding: 0; }
+
 /* Greeting suggestion chips (UI-SPEC §6.2) */
 QPushButton[chip="true"] {
   background-color: transparent; border: 1px solid %5; border-radius: 16px;

@@ -39,6 +39,7 @@ void ConversationStore::load() {
             m.role = mo.value(QStringLiteral("role")).toString();
             m.type = mo.value(QStringLiteral("type")).toString();
             m.content = mo.value(QStringLiteral("content")).toString();
+            m.attachments = mo.value(QStringLiteral("attachments")).toArray();
             c.messages.append(m);
         }
         m_convs.append(c);
@@ -53,7 +54,8 @@ void ConversationStore::save() const {
             msgs.append(QJsonObject{{QStringLiteral("id"), m.id},
                                     {QStringLiteral("role"), m.role},
                                     {QStringLiteral("type"), m.type},
-                                    {QStringLiteral("content"), m.content}});
+                                    {QStringLiteral("content"), m.content},
+                                    {QStringLiteral("attachments"), m.attachments}});
         arr.append(QJsonObject{{QStringLiteral("id"), c.id},
                                {QStringLiteral("name"), c.name},
                                {QStringLiteral("persona"), c.persona},

@@ -404,11 +404,21 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: \
  /usr/include/qt6/QtGui/qguiapplication.h \
  /usr/include/qt6/QtGui/qinputmethod.h \
  /usr/include/qt6/QtGui/qguiapplication_platform.h \
- /usr/include/qt6/QtGui/QClipboard /usr/include/qt6/QtGui/qclipboard.h \
- /usr/include/qt6/QtCore/QFile /usr/include/qt6/QtCore/qfile.h \
- /usr/include/qt6/QtCore/qfiledevice.h \
- /usr/include/qt6/QtCore/qiodevice.h /usr/include/c++/15.2.1/filesystem \
- /usr/include/c++/15.2.1/bits/fs_fwd.h \
+ /usr/include/qt6/QtCore/QBuffer /usr/include/qt6/QtCore/qbuffer.h \
+ /usr/include/qt6/QtCore/qiodevice.h /usr/include/qt6/QtGui/QClipboard \
+ /usr/include/qt6/QtGui/qclipboard.h \
+ /usr/include/qt6/QtGui/QDragEnterEvent /usr/include/qt6/QtGui/qevent.h \
+ /usr/include/qt6/QtGui/qeventpoint.h /usr/include/qt6/QtGui/qvector2d.h \
+ /usr/include/qt6/QtGui/qvectornd.h \
+ /usr/include/qt6/QtGui/qpointingdevice.h \
+ /usr/include/qt6/QtGui/qinputdevice.h /usr/include/qt6/QtGui/qscreen.h \
+ /usr/include/qt6/QtCore/QList /usr/include/qt6/QtCore/QObject \
+ /usr/include/qt6/QtCore/QRect /usr/include/qt6/QtCore/QSize \
+ /usr/include/qt6/QtCore/QSizeF /usr/include/qt6/QtGui/QTransform \
+ /usr/include/qt6/QtGui/qscreen_platform.h \
+ /usr/include/qt6/QtGui/QDropEvent /usr/include/qt6/QtCore/QFile \
+ /usr/include/qt6/QtCore/qfile.h /usr/include/qt6/QtCore/qfiledevice.h \
+ /usr/include/c++/15.2.1/filesystem /usr/include/c++/15.2.1/bits/fs_fwd.h \
  /usr/include/c++/15.2.1/bits/fs_path.h /usr/include/c++/15.2.1/locale \
  /usr/include/c++/15.2.1/bits/locale_facets.h \
  /usr/include/c++/15.2.1/cwctype /usr/include/wctype.h \
@@ -433,11 +443,15 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: \
  /usr/include/c++/15.2.1/bits/sstream.tcc /usr/include/c++/15.2.1/codecvt \
  /usr/include/c++/15.2.1/bits/fs_dir.h \
  /usr/include/c++/15.2.1/bits/fs_ops.h \
- /usr/include/qt6/QtWidgets/QHBoxLayout \
+ /usr/include/qt6/QtWidgets/QFileDialog \
+ /usr/include/qt6/QtWidgets/qfiledialog.h /usr/include/qt6/QtCore/qdir.h \
+ /usr/include/qt6/QtCore/qdirlisting.h \
+ /usr/include/qt6/QtCore/qfileinfo.h /usr/include/qt6/QtCore/qtimezone.h \
+ /usr/include/qt6/QtCore/QFileInfo /usr/include/qt6/QtWidgets/QHBoxLayout \
  /usr/include/qt6/QtWidgets/qboxlayout.h \
  /usr/include/qt6/QtWidgets/qlayout.h \
  /usr/include/qt6/QtWidgets/qlayoutitem.h \
- /usr/include/qt6/QtWidgets/qgridlayout.h \
+ /usr/include/qt6/QtWidgets/qgridlayout.h /usr/include/qt6/QtGui/QImage \
  /usr/include/qt6/QtWidgets/QInputDialog \
  /usr/include/qt6/QtWidgets/qinputdialog.h \
  /usr/include/qt6/QtWidgets/qlineedit.h \
@@ -450,6 +464,7 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: \
  /usr/include/qt6/QtWidgets/QMessageBox \
  /usr/include/qt6/QtWidgets/qmessagebox.h \
  /usr/include/qt6/QtWidgets/qdialogbuttonbox.h \
+ /usr/include/qt6/QtCore/QMimeData /usr/include/qt6/QtCore/qmimedata.h \
  /usr/include/qt6/QtWidgets/QPushButton \
  /usr/include/qt6/QtWidgets/qpushbutton.h \
  /usr/include/qt6/QtWidgets/qabstractbutton.h \

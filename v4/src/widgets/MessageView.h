@@ -5,6 +5,7 @@
  * with suggestion chips.
  */
 #pragma once
+#include <QJsonArray>
 #include <QScrollArea>
 #include <QString>
 #include <QVector>
@@ -17,6 +18,7 @@ struct ChatMessage {
     QString id;
     QString content;
     QString type;      // text / persona / system
+    QJsonArray attachments;
     bool streaming = false;
 };
 

@@ -259,9 +259,17 @@ void MessageView::addMessage(const ChatMessage &msg) {
     auto *row = new MessageRow(this);
     row->setObjectName(QStringLiteral("chatRow"));
     QLabel *label = nullptr;
+    // attachment names shown above the bubble (UI-SPEC §4.2)
+    QStringList attNames;
+    for (const auto &a : msg.attachments)
+        attNames << a.toObject().value(QStringLiteral("name")).toString();
     if (msg.role == ChatMessage::User) {
         const bool md = Config::value(QStringLiteral("renderUserContentAsMarkdown")).toBool();
-        label = new QLabel(md ? mdToHtml(msg.content, link, thBg) : msg.content.toHtmlEscaped());
+        QString body = msg.content;
+        if (!attNames.isEmpty())
+            body = attNames.join(QStringLiteral("\n")) +
+                   (msg.content.isEmpty() ? QString() : QStringLiteral("\n\n") + msg.content);
+        label = new QLabel(md ? mdToHtml(body, link, thBg) : body.toHtmlEscaped());
         label->setObjectName(QStringLiteral("userBubble"));
         label->setTextFormat(md ? Qt::RichText : Qt::PlainText);
         label->setWordWrap(true);

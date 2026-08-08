@@ -2304,11 +2304,17 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: /home/stry4ok/Development/Proje
   /usr/include/locale.h \
   /usr/include/math.h \
   /usr/include/pthread.h \
+  /usr/include/qt6/QtCore/QBuffer \
   /usr/include/qt6/QtCore/QFile \
+  /usr/include/qt6/QtCore/QFileInfo \
   /usr/include/qt6/QtCore/QJsonArray \
   /usr/include/qt6/QtCore/QJsonObject \
   /usr/include/qt6/QtCore/QList \
+  /usr/include/qt6/QtCore/QMimeData \
   /usr/include/qt6/QtCore/QObject \
+  /usr/include/qt6/QtCore/QRect \
+  /usr/include/qt6/QtCore/QSize \
+  /usr/include/qt6/QtCore/QSizeF \
   /usr/include/qt6/QtCore/QString \
   /usr/include/qt6/QtCore/QStringList \
   /usr/include/qt6/QtCore/QTimer \
@@ -2337,6 +2343,7 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: /home/stry4ok/Development/Proje
   /usr/include/qt6/QtCore/qbasicatomic.h \
   /usr/include/qt6/QtCore/qbasictimer.h \
   /usr/include/qt6/QtCore/qbindingstorage.h \
+  /usr/include/qt6/QtCore/qbuffer.h \
   /usr/include/qt6/QtCore/qbytearray.h \
   /usr/include/qt6/QtCore/qbytearrayalgorithms.h \
   /usr/include/qt6/QtCore/qbytearraylist.h \
@@ -2364,11 +2371,14 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: /home/stry4ok/Development/Proje
   /usr/include/qt6/QtCore/qdatetime.h \
   /usr/include/qt6/QtCore/qdeadlinetimer.h \
   /usr/include/qt6/QtCore/qdebug.h \
+  /usr/include/qt6/QtCore/qdir.h \
+  /usr/include/qt6/QtCore/qdirlisting.h \
   /usr/include/qt6/QtCore/qendian.h \
   /usr/include/qt6/QtCore/qeventloop.h \
   /usr/include/qt6/QtCore/qexceptionhandling.h \
   /usr/include/qt6/QtCore/qfile.h \
   /usr/include/qt6/QtCore/qfiledevice.h \
+  /usr/include/qt6/QtCore/qfileinfo.h \
   /usr/include/qt6/QtCore/qflags.h \
   /usr/include/qt6/QtCore/qfloat16.h \
   /usr/include/qt6/QtCore/qforeach.h \
@@ -2399,6 +2409,7 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: /home/stry4ok/Development/Proje
   /usr/include/qt6/QtCore/qmath.h \
   /usr/include/qt6/QtCore/qmetacontainer.h \
   /usr/include/qt6/QtCore/qmetatype.h \
+  /usr/include/qt6/QtCore/qmimedata.h \
   /usr/include/qt6/QtCore/qminmax.h \
   /usr/include/qt6/QtCore/qnamespace.h \
   /usr/include/qt6/QtCore/qnativeinterface.h \
@@ -2450,6 +2461,7 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: /home/stry4ok/Development/Proje
   /usr/include/qt6/QtCore/qtextstream.h \
   /usr/include/qt6/QtCore/qtformat_impl.h \
   /usr/include/qt6/QtCore/qtimer.h \
+  /usr/include/qt6/QtCore/qtimezone.h \
   /usr/include/qt6/QtCore/qtmetamacros.h \
   /usr/include/qt6/QtCore/qtnoop.h \
   /usr/include/qt6/QtCore/qtpreprocessorsupport.h \
@@ -2471,13 +2483,19 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: /home/stry4ok/Development/Proje
   /usr/include/qt6/QtCore/qyieldcpu.h \
   /usr/include/qt6/QtGui/QClipboard \
   /usr/include/qt6/QtGui/QColor \
+  /usr/include/qt6/QtGui/QDragEnterEvent \
+  /usr/include/qt6/QtGui/QDropEvent \
+  /usr/include/qt6/QtGui/QImage \
   /usr/include/qt6/QtGui/QShortcut \
+  /usr/include/qt6/QtGui/QTransform \
   /usr/include/qt6/QtGui/qaction.h \
   /usr/include/qt6/QtGui/qbitmap.h \
   /usr/include/qt6/QtGui/qbrush.h \
   /usr/include/qt6/QtGui/qclipboard.h \
   /usr/include/qt6/QtGui/qcolor.h \
   /usr/include/qt6/QtGui/qcursor.h \
+  /usr/include/qt6/QtGui/qevent.h \
+  /usr/include/qt6/QtGui/qeventpoint.h \
   /usr/include/qt6/QtGui/qfont.h \
   /usr/include/qt6/QtGui/qfontinfo.h \
   /usr/include/qt6/QtGui/qfontmetrics.h \
@@ -2486,6 +2504,7 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: /home/stry4ok/Development/Proje
   /usr/include/qt6/QtGui/qguiapplication_platform.h \
   /usr/include/qt6/QtGui/qicon.h \
   /usr/include/qt6/QtGui/qimage.h \
+  /usr/include/qt6/QtGui/qinputdevice.h \
   /usr/include/qt6/QtGui/qinputmethod.h \
   /usr/include/qt6/QtGui/qkeysequence.h \
   /usr/include/qt6/QtGui/qpaintdevice.h \
@@ -2494,10 +2513,13 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: /home/stry4ok/Development/Proje
   /usr/include/qt6/QtGui/qpicture.h \
   /usr/include/qt6/QtGui/qpixelformat.h \
   /usr/include/qt6/QtGui/qpixmap.h \
+  /usr/include/qt6/QtGui/qpointingdevice.h \
   /usr/include/qt6/QtGui/qpolygon.h \
   /usr/include/qt6/QtGui/qregion.h \
   /usr/include/qt6/QtGui/qrgb.h \
   /usr/include/qt6/QtGui/qrgba64.h \
+  /usr/include/qt6/QtGui/qscreen.h \
+  /usr/include/qt6/QtGui/qscreen_platform.h \
   /usr/include/qt6/QtGui/qshortcut.h \
   /usr/include/qt6/QtGui/qtextcursor.h \
   /usr/include/qt6/QtGui/qtextdocument.h \
@@ -2508,10 +2530,13 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: /home/stry4ok/Development/Proje
   /usr/include/qt6/QtGui/qtguiglobal.h \
   /usr/include/qt6/QtGui/qtransform.h \
   /usr/include/qt6/QtGui/qvalidator.h \
+  /usr/include/qt6/QtGui/qvector2d.h \
+  /usr/include/qt6/QtGui/qvectornd.h \
   /usr/include/qt6/QtGui/qwindowdefs.h \
   /usr/include/qt6/QtWidgets/QApplication \
   /usr/include/qt6/QtWidgets/QComboBox \
   /usr/include/qt6/QtWidgets/QDialog \
+  /usr/include/qt6/QtWidgets/QFileDialog \
   /usr/include/qt6/QtWidgets/QHBoxLayout \
   /usr/include/qt6/QtWidgets/QInputDialog \
   /usr/include/qt6/QtWidgets/QLabel \
@@ -2532,6 +2557,7 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: /home/stry4ok/Development/Proje
   /usr/include/qt6/QtWidgets/qcombobox.h \
   /usr/include/qt6/QtWidgets/qdialog.h \
   /usr/include/qt6/QtWidgets/qdialogbuttonbox.h \
+  /usr/include/qt6/QtWidgets/qfiledialog.h \
   /usr/include/qt6/QtWidgets/qframe.h \
   /usr/include/qt6/QtWidgets/qgridlayout.h \
   /usr/include/qt6/QtWidgets/qinputdialog.h \
@@ -4745,6 +4771,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o: /home/stry4ok/Development
   /usr/include/locale.h \
   /usr/include/math.h \
   /usr/include/pthread.h \
+  /usr/include/qt6/QtCore/QJsonArray \
   /usr/include/qt6/QtCore/QJsonObject \
   /usr/include/qt6/QtCore/QList \
   /usr/include/qt6/QtCore/QObject \
@@ -4819,6 +4846,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o: /home/stry4ok/Development
   /usr/include/qt6/QtCore/qiodevicebase.h \
   /usr/include/qt6/QtCore/qiterable.h \
   /usr/include/qt6/QtCore/qiterator.h \
+  /usr/include/qt6/QtCore/qjsonarray.h \
   /usr/include/qt6/QtCore/qjsondocument.h \
   /usr/include/qt6/QtCore/qjsonobject.h \
   /usr/include/qt6/QtCore/qjsonparseerror.h \
@@ -4930,6 +4958,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o: /home/stry4ok/Development
   /usr/include/qt6/QtGui/qpaintdevice.h \
   /usr/include/qt6/QtGui/qpalette.h \
   /usr/include/qt6/QtGui/qpen.h \
+  /usr/include/qt6/QtGui/qpicture.h \
   /usr/include/qt6/QtGui/qpixelformat.h \
   /usr/include/qt6/QtGui/qpixmap.h \
   /usr/include/qt6/QtGui/qpointingdevice.h \
@@ -4953,14 +4982,17 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o: /home/stry4ok/Development
   /usr/include/qt6/QtGui/qvectornd.h \
   /usr/include/qt6/QtGui/qwindowdefs.h \
   /usr/include/qt6/QtWidgets/QHBoxLayout \
+  /usr/include/qt6/QtWidgets/QLabel \
   /usr/include/qt6/QtWidgets/QPushButton \
   /usr/include/qt6/QtWidgets/QTextEdit \
+  /usr/include/qt6/QtWidgets/QVBoxLayout \
   /usr/include/qt6/QtWidgets/QWidget \
   /usr/include/qt6/QtWidgets/qabstractbutton.h \
   /usr/include/qt6/QtWidgets/qabstractscrollarea.h \
   /usr/include/qt6/QtWidgets/qboxlayout.h \
   /usr/include/qt6/QtWidgets/qframe.h \
   /usr/include/qt6/QtWidgets/qgridlayout.h \
+  /usr/include/qt6/QtWidgets/qlabel.h \
   /usr/include/qt6/QtWidgets/qlayout.h \
   /usr/include/qt6/QtWidgets/qlayoutitem.h \
   /usr/include/qt6/QtWidgets/qpushbutton.h \
@@ -5277,6 +5309,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o: /home/stry4ok/Developm
   /usr/include/locale.h \
   /usr/include/math.h \
   /usr/include/pthread.h \
+  /usr/include/qt6/QtCore/QJsonArray \
   /usr/include/qt6/QtCore/QJsonObject \
   /usr/include/qt6/QtCore/QList \
   /usr/include/qt6/QtCore/QObject \
@@ -5355,6 +5388,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o: /home/stry4ok/Developm
   /usr/include/qt6/QtCore/qiodevicebase.h \
   /usr/include/qt6/QtCore/qiterable.h \
   /usr/include/qt6/QtCore/qiterator.h \
+  /usr/include/qt6/QtCore/qjsonarray.h \
   /usr/include/qt6/QtCore/qjsondocument.h \
   /usr/include/qt6/QtCore/qjsonobject.h \
   /usr/include/qt6/QtCore/qjsonparseerror.h \
@@ -6076,6 +6110,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o: /home/stry4ok/Devel
   /usr/include/qt6/QtGui/qvector2d.h \
   /usr/include/qt6/QtGui/qvectornd.h \
   /usr/include/qt6/QtGui/qwindowdefs.h \
+  /usr/include/qt6/QtWidgets/QApplication \
   /usr/include/qt6/QtWidgets/QCheckBox \
   /usr/include/qt6/QtWidgets/QComboBox \
   /usr/include/qt6/QtWidgets/QDialog \
@@ -6095,6 +6130,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o: /home/stry4ok/Devel
   /usr/include/qt6/QtWidgets/qabstractscrollarea.h \
   /usr/include/qt6/QtWidgets/qabstractslider.h \
   /usr/include/qt6/QtWidgets/qabstractspinbox.h \
+  /usr/include/qt6/QtWidgets/qapplication.h \
   /usr/include/qt6/QtWidgets/qboxlayout.h \
   /usr/include/qt6/QtWidgets/qcheckbox.h \
   /usr/include/qt6/QtWidgets/qcombobox.h \
@@ -7353,8 +7389,6 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
 
 /usr/include/qt6/QtWidgets/qformlayout.h:
 
-/usr/include/qt6/QtWidgets/qfiledialog.h:
-
 /usr/include/qt6/QtWidgets/qcheckbox.h:
 
 /usr/include/qt6/QtWidgets/QTabWidget:
@@ -7366,8 +7400,6 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
 /usr/include/qt6/QtWidgets/QLineEdit:
 
 /usr/include/qt6/QtWidgets/QFormLayout:
-
-/usr/include/qt6/QtWidgets/QFileDialog:
 
 /usr/include/qt6/QtWidgets/QCheckBox:
 
@@ -7387,13 +7419,9 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
 
 /usr/include/qt6/QtGui/qrawfont.h:
 
-/usr/include/qt6/QtGui/qinputdevice.h:
-
 /usr/include/qt6/QtGui/qglyphrun.h:
 
 /usr/include/qt6/QtGui/qfontdatabase.h:
-
-/usr/include/qt6/QtGui/qeventpoint.h:
 
 /usr/include/qt6/QtGui/QKeyEvent:
 
@@ -7403,25 +7431,11 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
 
 /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Composer.cpp:
 
-/usr/include/qt6/QtGui/qscreen_platform.h:
-
-/usr/include/qt6/QtGui/QTransform:
-
-/usr/lib/libgssapi_krb5.so.2:
-
-/usr/include/qt6/QtCore/QSizeF:
-
-/usr/include/qt6/QtCore/QSize:
-
-/usr/include/qt6/QtCore/QRect:
-
 /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/main.cpp:
 
 /usr/include/qt6/QtCore/QMap:
 
 /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/i18n.cpp:
-
-/usr/include/qt6/QtCore/QtMath:
 
 /usr/include/qt6/QtCore/QRegularExpression:
 
@@ -7445,6 +7459,8 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
 
 /usr/include/qt6/QtWidgets/qgridlayout.h:
 
+/usr/include/qt6/QtWidgets/qfiledialog.h:
+
 /usr/include/qt6/QtWidgets/qapplication.h:
 
 /usr/include/qt6/QtWidgets/QToolButton:
@@ -7454,6 +7470,8 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
 /usr/include/qt6/QtWidgets/QMessageBox:
 
 /usr/include/qt6/QtWidgets/QMenu:
+
+/usr/include/qt6/QtWidgets/QFileDialog:
 
 /usr/include/qt6/QtWidgets/QApplication:
 
@@ -7469,11 +7487,23 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
 
 /usr/include/qt6/QtGui/qshortcut.h:
 
+/usr/include/qt6/QtGui/qscreen_platform.h:
+
 /usr/include/qt6/QtGui/qpen.h:
+
+/usr/include/qt6/QtGui/qinputdevice.h:
 
 /usr/include/qt6/QtGui/qguiapplication_platform.h:
 
 /usr/include/qt6/QtGui/qguiapplication.h:
+
+/usr/include/qt6/QtGui/qeventpoint.h:
+
+/usr/include/qt6/QtGui/QTransform:
+
+/usr/include/qt6/QtGui/QImage:
+
+/usr/include/qt6/QtGui/QDragEnterEvent:
 
 /usr/include/qt6/QtGui/QColor:
 
@@ -7493,11 +7523,29 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
 
 /usr/include/qt6/QtCore/qcoreapplication.h:
 
+/usr/include/qt6/QtCore/qbuffer.h:
+
 /usr/include/qt6/QtWidgets/QHBoxLayout:
 
 /usr/include/qt6/QtCore/qabstracteventdispatcher.h:
 
 /usr/include/qt6/QtCore/QTimer:
+
+/usr/lib/libgssapi_krb5.so.2:
+
+/usr/include/qt6/QtCore/QSizeF:
+
+/usr/include/qt6/QtCore/QSize:
+
+/usr/include/qt6/QtCore/QRect:
+
+/usr/include/qt6/QtCore/QMimeData:
+
+/usr/include/qt6/QtCore/QFileInfo:
+
+/usr/include/qt6/QtCore/QtMath:
+
+/usr/include/qt6/QtCore/QBuffer:
 
 /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/i18n.h:
 
@@ -7590,6 +7638,8 @@ CMakeFiles/llama-ui-v4.dir/src/i18n.cpp.o:
 /usr/include/c++/15.2.1/ratio:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/limits.h:
+
+/usr/include/qt6/QtGui/QDropEvent:
 
 /usr/include/c++/15.2.1/numeric:
 
@@ -8002,6 +8052,8 @@ llama-ui-v4_autogen/mocs_compilation.cpp:
 /usr/include/qt6/QtGui/qkeysequence.h:
 
 /usr/include/qt6/QtGui/qpixelformat.h:
+
+/usr/include/qt6/QtCore/qmimedata.h:
 
 /usr/include/qt6/QtGui/qfontmetrics.h:
 

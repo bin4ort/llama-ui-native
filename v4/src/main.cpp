@@ -57,15 +57,23 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // --selftest "<message>" [--screenshot <path>]: E2E — new chat, send a
-    // message, wait for the reply, screenshot, exit.
+    // --selftest "<message>" [--attach <file>...] [--screenshot <path>]:
+    // E2E — new chat, send a message (with optional attachments), wait for
+    // the reply, screenshot, exit.
     const int stIdx = args.indexOf(QStringLiteral("--selftest"));
     if (stIdx != -1 && stIdx + 1 < args.size()) {
         const QString shot = (idx != -1 && idx + 1 < args.size()) ? args.at(idx + 1)
                                                                   : QString();
-        QTimer::singleShot(900, [&window, &app, &args, stIdx, shot]() {
+        QStringList attaches;
+        int aIdx = args.indexOf(QStringLiteral("--attach"));
+        while (aIdx != -1 && aIdx + 1 < args.size() && !args.at(aIdx + 1).startsWith(QStringLiteral("--"))) {
+            attaches << args.at(aIdx + 1);
+            aIdx = args.indexOf(QStringLiteral("--attach"), aIdx + 1);
+        }
+        QTimer::singleShot(900, [&window, &app, &args, stIdx, shot, attaches]() {
             QObject::connect(&window, &MainWindow::selfTestDone, &app,
                              [&app]() { app.exit(0); });
+            if (!attaches.isEmpty()) window.attachForTest(attaches);
             window.runSelfTest(args.at(stIdx + 1), shot);
         });
         return app.exec();

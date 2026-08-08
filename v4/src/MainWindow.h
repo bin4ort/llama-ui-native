@@ -16,15 +16,23 @@ class Composer;
 class Sidebar;
 class SettingsDialog;
 class QLabel;
+class QDragEnterEvent;
+class QDropEvent;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow() override = default;
 
     void expandSidebarForTest();
     void overrideThemeForTest(const QString &id);
     void openSettingsForTest();
+    void attachForTest(const QStringList &paths) { attachFiles(paths); }
+
+protected:
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 
 public slots:
     /** E2E self-test: new chat -> send message -> wait for reply -> save
@@ -59,6 +67,7 @@ private:
     void onDelete(const QString &id);
     void onRenameConversation(const QString &id);
     void onDeleteConversation(const QString &id);
+    void attachFiles(const QStringList &paths);
 
     Api *m_api;
     ConversationStore *m_store;

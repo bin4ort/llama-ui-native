@@ -3,39 +3,54 @@
 #include "../i18n.h"
 #include <QAbstractTextDocumentLayout>
 #include <QHBoxLayout>
+#include <QJsonObject>
 #include <QKeyEvent>
+#include <QLabel>
 #include <QPushButton>
 #include <QTextDocument>
 #include <QTextEdit>
+#include <QVBoxLayout>
 
 Composer::Composer(QWidget *parent) : QWidget(parent) {
     setObjectName(QStringLiteral("composer"));
     setMaximumWidth(768); // spec: max-w-3xl, centered floating bar
 
-    auto *layout = new QHBoxLayout(this);
-    layout->setContentsMargins(12, 10, 12, 10);
-    layout->setSpacing(6);
+    m_outer = new QVBoxLayout(this);
+    m_outer->setContentsMargins(12, 8, 12, 10);
+    m_outer->setSpacing(4);
+
+    // attachment chips row (UI-SPEC §4.2)
+    m_chipsRow = new QHBoxLayout;
+    m_chipsRow->setContentsMargins(0, 0, 0, 0);
+    m_chipsRow->setSpacing(6);
+    m_outer->addLayout(m_chipsRow);
+
+    auto *bar = new QHBoxLayout;
+    bar->setContentsMargins(0, 0, 0, 0);
+    bar->setSpacing(6);
 
     auto *attach = new QPushButton(QStringLiteral("📎"), this);
     attach->setProperty("round", true);
     attach->setToolTip(I18n::t(QStringLiteral("Attach file")));
-    layout->addWidget(attach);
+    connect(attach, &QPushButton::clicked, this, &Composer::attachRequested);
+    bar->addWidget(attach);
 
     m_persona = new QPushButton(QStringLiteral("✧"), this);
     m_persona->setProperty("round", true);
     m_persona->setToolTip(I18n::t(QStringLiteral("Choose a personality preset")));
     connect(m_persona, &QPushButton::clicked, this, &Composer::personaRequested);
-    layout->addWidget(m_persona);
+    bar->addWidget(m_persona);
 
     m_input = new QTextEdit(this);
     m_input->setPlaceholderText(I18n::t(QStringLiteral("Type a message...")));
     m_input->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_input->setTabChangesFocus(false);
-    layout->addWidget(m_input, 1);
+    bar->addWidget(m_input, 1);
 
     m_send = new QPushButton(QStringLiteral("↑"), this);
     m_send->setProperty("send", true);
-    layout->addWidget(m_send);
+    bar->addWidget(m_send);
+    m_outer->addLayout(bar);
 
     auto trySend = [this]() {
         if (m_busy) {
@@ -43,14 +58,14 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
             return;
         }
         const QString t = text().trimmed();
-        if (!t.isEmpty()) emit sendRequested(t);
+        if (!t.isEmpty() || !m_attachments.isEmpty()) emit sendRequested(t);
     };
     connect(m_send, &QPushButton::clicked, this, trySend);
     // Enter sends (sendOnEnter setting); Shift+Enter = newline
     m_input->installEventFilter(this);
     m_send->setEnabled(false);
     connect(m_input, &QTextEdit::textChanged, this, [this]() {
-        m_send->setEnabled(!m_busy && !text().trimmed().isEmpty());
+        m_send->setEnabled(!m_busy && (!text().trimmed().isEmpty() || !m_attachments.isEmpty()));
         updateHeight();
     });
     updateHeight();
@@ -58,7 +73,12 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
 
 QString Composer::text() const { return m_input->toPlainText(); }
 
-void Composer::clear() { m_input->clear(); }
+void Composer::clear() {
+    m_input->clear();
+    m_attachments = QJsonArray();
+    rebuildChips();
+    m_send->setEnabled(!m_busy);
+}
 
 void Composer::focusInput() {
     m_input->setFocus();
@@ -68,6 +88,51 @@ void Composer::focusInput() {
 void Composer::setTextForEdit(const QString &text) {
     m_input->setPlainText(text);
     focusInput();
+}
+
+void Composer::addAttachment(const QJsonObject &att) {
+    m_attachments.append(att);
+    rebuildChips();
+    m_send->setEnabled(!m_busy);
+    emit attachmentsChanged();
+}
+
+void Composer::setAttachments(const QJsonArray &atts) {
+    m_attachments = atts;
+    rebuildChips();
+    m_send->setEnabled(!m_busy && (!text().trimmed().isEmpty() || !m_attachments.isEmpty()));
+}
+
+void Composer::rebuildChips() {
+    while (m_chipsRow->count()) {
+        auto *item = m_chipsRow->takeAt(0);
+        if (item->widget()) item->widget()->deleteLater();
+        delete item;
+    }
+    for (int i = 0; i < m_attachments.size(); ++i) {
+        const auto obj = m_attachments.at(i).toObject();
+        const QString name = obj.value(QStringLiteral("name")).toString();
+        const bool image = obj.value(QStringLiteral("image")).toBool();
+        auto *chip = new QWidget(this);
+        chip->setObjectName(QStringLiteral("attChip"));
+        auto *hl = new QHBoxLayout(chip);
+        hl->setContentsMargins(6, 2, 6, 2);
+        hl->setSpacing(4);
+        auto *lbl = new QLabel((image ? QStringLiteral("🖼 ") : QStringLiteral("📄 ")) + name, chip);
+        lbl->setObjectName(QStringLiteral("attChipLabel"));
+        hl->addWidget(lbl);
+        auto *rm = new QPushButton(QStringLiteral("✕"), chip);
+        rm->setProperty("ghost", true);
+        rm->setFixedSize(18, 18);
+        connect(rm, &QPushButton::clicked, this, [this, i]() {
+            m_attachments.removeAt(i);
+            rebuildChips();
+            m_send->setEnabled(!m_busy && (!text().trimmed().isEmpty() || !m_attachments.isEmpty()));
+            emit attachmentsChanged();
+        });
+        hl->addWidget(rm);
+        m_chipsRow->addWidget(chip);
+    }
 }
 
 void Composer::setBusy(bool busy) {
@@ -81,7 +146,7 @@ void Composer::setBusy(bool busy) {
     } else {
         m_send->setText(QStringLiteral("↑"));
         m_send->setToolTip(I18n::t(QStringLiteral("Send")));
-        m_send->setEnabled(!text().trimmed().isEmpty());
+        m_send->setEnabled(!text().trimmed().isEmpty() || !m_attachments.isEmpty());
         m_input->setReadOnly(false);
     }
 }
@@ -91,7 +156,7 @@ void Composer::updateHeight() {
     const int docH = qCeil(m_input->document()->documentLayout()->documentSize().height());
     const int h = qBound(40, docH + 8, 160);
     m_input->setFixedHeight(h);
-    setFixedHeight(h + 32);
+    setFixedHeight(h + 32 + (m_attachments.isEmpty() ? 0 : 28));
 }
 
 bool Composer::eventFilter(QObject *obj, QEvent *ev) {
@@ -104,14 +169,14 @@ bool Composer::eventFilter(QObject *obj, QEvent *ev) {
         if (sendOnEnter && enter && !shift) {
             if (!m_busy) {
                 const QString t = text().trimmed();
-                if (!t.isEmpty()) emit sendRequested(t);
+                if (!t.isEmpty() || !m_attachments.isEmpty()) emit sendRequested(t);
             }
             return true;
         }
         if (!sendOnEnter && enter && ctrl && !shift) {
             if (!m_busy) {
                 const QString t = text().trimmed();
-                if (!t.isEmpty()) emit sendRequested(t);
+                if (!t.isEmpty() || !m_attachments.isEmpty()) emit sendRequested(t);
             }
             return true;
         }
