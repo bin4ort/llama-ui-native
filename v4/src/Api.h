@@ -35,6 +35,9 @@ public:
     /** Poll server health; emits healthChanged on every answer. */
     void checkHealth();
 
+    /** Fetch server props (context size); emits propsLoaded. */
+    void fetchProps();
+
 signals:
     void modelsLoaded(const QJsonArray &models);
     void requestFailed(const QString &code, const QString &message);
@@ -43,6 +46,7 @@ signals:
     void contentDone();
     void completionReady(const QString &content);
     void healthChanged(bool online);
+    void propsLoaded(int nCtx);
 
 private:
     QString m_base;

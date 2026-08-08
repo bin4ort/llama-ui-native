@@ -318,7 +318,6 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o
  /usr/include/qt6/QtCore/q20utility.h
  /usr/include/qt6/QtCore/q23type_traits.h
  /usr/include/qt6/QtCore/q23utility.h
- /usr/include/qt6/QtCore/qabstractitemmodel.h
  /usr/include/qt6/QtCore/qalgorithms.h
  /usr/include/qt6/QtCore/qalloc.h
  /usr/include/qt6/QtCore/qanystringview.h
@@ -478,28 +477,17 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o
  /usr/include/qt6/QtGui/qtguiexports.h
  /usr/include/qt6/QtGui/qtguiglobal.h
  /usr/include/qt6/QtGui/qtransform.h
- /usr/include/qt6/QtGui/qvalidator.h
  /usr/include/qt6/QtGui/qwindowdefs.h
- /usr/include/qt6/QtWidgets/QComboBox
  /usr/include/qt6/QtWidgets/QDialog
  /usr/include/qt6/QtWidgets/QMainWindow
  /usr/include/qt6/QtWidgets/QScrollArea
  /usr/include/qt6/QtWidgets/QWidget
- /usr/include/qt6/QtWidgets/qabstractitemdelegate.h
  /usr/include/qt6/QtWidgets/qabstractscrollarea.h
- /usr/include/qt6/QtWidgets/qabstractslider.h
- /usr/include/qt6/QtWidgets/qabstractspinbox.h
- /usr/include/qt6/QtWidgets/qcombobox.h
  /usr/include/qt6/QtWidgets/qdialog.h
  /usr/include/qt6/QtWidgets/qframe.h
  /usr/include/qt6/QtWidgets/qmainwindow.h
- /usr/include/qt6/QtWidgets/qrubberband.h
  /usr/include/qt6/QtWidgets/qscrollarea.h
  /usr/include/qt6/QtWidgets/qsizepolicy.h
- /usr/include/qt6/QtWidgets/qslider.h
- /usr/include/qt6/QtWidgets/qstyle.h
- /usr/include/qt6/QtWidgets/qstyleoption.h
- /usr/include/qt6/QtWidgets/qtabbar.h
  /usr/include/qt6/QtWidgets/qtabwidget.h
  /usr/include/qt6/QtWidgets/qtwidgets-config.h
  /usr/include/qt6/QtWidgets/qtwidgetsexports.h
@@ -2335,7 +2323,6 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o
  /usr/include/qt6/QtCore/q23type_traits.h
  /usr/include/qt6/QtCore/q23utility.h
  /usr/include/qt6/QtCore/qabstracteventdispatcher.h
- /usr/include/qt6/QtCore/qabstractitemmodel.h
  /usr/include/qt6/QtCore/qalgorithms.h
  /usr/include/qt6/QtCore/qalloc.h
  /usr/include/qt6/QtCore/qanystringview.h
@@ -2534,12 +2521,10 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o
  /usr/include/qt6/QtGui/qtguiexports.h
  /usr/include/qt6/QtGui/qtguiglobal.h
  /usr/include/qt6/QtGui/qtransform.h
- /usr/include/qt6/QtGui/qvalidator.h
  /usr/include/qt6/QtGui/qvector2d.h
  /usr/include/qt6/QtGui/qvectornd.h
  /usr/include/qt6/QtGui/qwindowdefs.h
  /usr/include/qt6/QtWidgets/QApplication
- /usr/include/qt6/QtWidgets/QComboBox
  /usr/include/qt6/QtWidgets/QDialog
  /usr/include/qt6/QtWidgets/QFileDialog
  /usr/include/qt6/QtWidgets/QHBoxLayout
@@ -2553,13 +2538,9 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o
  /usr/include/qt6/QtWidgets/QToolButton
  /usr/include/qt6/QtWidgets/QWidget
  /usr/include/qt6/QtWidgets/qabstractbutton.h
- /usr/include/qt6/QtWidgets/qabstractitemdelegate.h
  /usr/include/qt6/QtWidgets/qabstractscrollarea.h
- /usr/include/qt6/QtWidgets/qabstractslider.h
- /usr/include/qt6/QtWidgets/qabstractspinbox.h
  /usr/include/qt6/QtWidgets/qapplication.h
  /usr/include/qt6/QtWidgets/qboxlayout.h
- /usr/include/qt6/QtWidgets/qcombobox.h
  /usr/include/qt6/QtWidgets/qdialog.h
  /usr/include/qt6/QtWidgets/qdialogbuttonbox.h
  /usr/include/qt6/QtWidgets/qfiledialog.h
@@ -2574,13 +2555,8 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o
  /usr/include/qt6/QtWidgets/qmenu.h
  /usr/include/qt6/QtWidgets/qmessagebox.h
  /usr/include/qt6/QtWidgets/qpushbutton.h
- /usr/include/qt6/QtWidgets/qrubberband.h
  /usr/include/qt6/QtWidgets/qscrollarea.h
  /usr/include/qt6/QtWidgets/qsizepolicy.h
- /usr/include/qt6/QtWidgets/qslider.h
- /usr/include/qt6/QtWidgets/qstyle.h
- /usr/include/qt6/QtWidgets/qstyleoption.h
- /usr/include/qt6/QtWidgets/qtabbar.h
  /usr/include/qt6/QtWidgets/qtabwidget.h
  /usr/include/qt6/QtWidgets/qtoolbutton.h
  /usr/include/qt6/QtWidgets/qtwidgets-config.h
@@ -4279,7 +4255,6 @@ CMakeFiles/llama-ui-v4.dir/src/main.cpp.o
  /usr/include/qt6/QtCore/q23type_traits.h
  /usr/include/qt6/QtCore/q23utility.h
  /usr/include/qt6/QtCore/qabstracteventdispatcher.h
- /usr/include/qt6/QtCore/qabstractitemmodel.h
  /usr/include/qt6/QtCore/qalgorithms.h
  /usr/include/qt6/QtCore/qalloc.h
  /usr/include/qt6/QtCore/qanystringview.h
@@ -4451,24 +4426,12 @@ CMakeFiles/llama-ui-v4.dir/src/main.cpp.o
  /usr/include/qt6/QtGui/qtguiexports.h
  /usr/include/qt6/QtGui/qtguiglobal.h
  /usr/include/qt6/QtGui/qtransform.h
- /usr/include/qt6/QtGui/qvalidator.h
  /usr/include/qt6/QtGui/qwindowdefs.h
  /usr/include/qt6/QtWidgets/QApplication
- /usr/include/qt6/QtWidgets/QComboBox
  /usr/include/qt6/QtWidgets/QMainWindow
- /usr/include/qt6/QtWidgets/qabstractitemdelegate.h
- /usr/include/qt6/QtWidgets/qabstractslider.h
- /usr/include/qt6/QtWidgets/qabstractspinbox.h
  /usr/include/qt6/QtWidgets/qapplication.h
- /usr/include/qt6/QtWidgets/qcombobox.h
- /usr/include/qt6/QtWidgets/qframe.h
  /usr/include/qt6/QtWidgets/qmainwindow.h
- /usr/include/qt6/QtWidgets/qrubberband.h
  /usr/include/qt6/QtWidgets/qsizepolicy.h
- /usr/include/qt6/QtWidgets/qslider.h
- /usr/include/qt6/QtWidgets/qstyle.h
- /usr/include/qt6/QtWidgets/qstyleoption.h
- /usr/include/qt6/QtWidgets/qtabbar.h
  /usr/include/qt6/QtWidgets/qtabwidget.h
  /usr/include/qt6/QtWidgets/qtwidgets-config.h
  /usr/include/qt6/QtWidgets/qtwidgetsexports.h
@@ -4499,6 +4462,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Config.h
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/i18n.h
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Composer.h
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ContextGauge.h
  /usr/include/alloca.h
  /usr/include/asm-generic/bitsperlong.h
  /usr/include/asm-generic/errno-base.h
@@ -4800,6 +4764,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o
  /usr/include/qt6/QtCore/q23type_traits.h
  /usr/include/qt6/QtCore/q23utility.h
  /usr/include/qt6/QtCore/qabstracteventdispatcher.h
+ /usr/include/qt6/QtCore/qabstractitemmodel.h
  /usr/include/qt6/QtCore/qalgorithms.h
  /usr/include/qt6/QtCore/qalloc.h
  /usr/include/qt6/QtCore/qanystringview.h
@@ -4988,9 +4953,11 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o
  /usr/include/qt6/QtGui/qtguiexports.h
  /usr/include/qt6/QtGui/qtguiglobal.h
  /usr/include/qt6/QtGui/qtransform.h
+ /usr/include/qt6/QtGui/qvalidator.h
  /usr/include/qt6/QtGui/qvector2d.h
  /usr/include/qt6/QtGui/qvectornd.h
  /usr/include/qt6/QtGui/qwindowdefs.h
+ /usr/include/qt6/QtWidgets/QComboBox
  /usr/include/qt6/QtWidgets/QHBoxLayout
  /usr/include/qt6/QtWidgets/QLabel
  /usr/include/qt6/QtWidgets/QPushButton
@@ -4998,15 +4965,25 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o
  /usr/include/qt6/QtWidgets/QVBoxLayout
  /usr/include/qt6/QtWidgets/QWidget
  /usr/include/qt6/QtWidgets/qabstractbutton.h
+ /usr/include/qt6/QtWidgets/qabstractitemdelegate.h
  /usr/include/qt6/QtWidgets/qabstractscrollarea.h
+ /usr/include/qt6/QtWidgets/qabstractslider.h
+ /usr/include/qt6/QtWidgets/qabstractspinbox.h
  /usr/include/qt6/QtWidgets/qboxlayout.h
+ /usr/include/qt6/QtWidgets/qcombobox.h
  /usr/include/qt6/QtWidgets/qframe.h
  /usr/include/qt6/QtWidgets/qgridlayout.h
  /usr/include/qt6/QtWidgets/qlabel.h
  /usr/include/qt6/QtWidgets/qlayout.h
  /usr/include/qt6/QtWidgets/qlayoutitem.h
  /usr/include/qt6/QtWidgets/qpushbutton.h
+ /usr/include/qt6/QtWidgets/qrubberband.h
  /usr/include/qt6/QtWidgets/qsizepolicy.h
+ /usr/include/qt6/QtWidgets/qslider.h
+ /usr/include/qt6/QtWidgets/qstyle.h
+ /usr/include/qt6/QtWidgets/qstyleoption.h
+ /usr/include/qt6/QtWidgets/qtabbar.h
+ /usr/include/qt6/QtWidgets/qtabwidget.h
  /usr/include/qt6/QtWidgets/qtextedit.h
  /usr/include/qt6/QtWidgets/qtwidgets-config.h
  /usr/include/qt6/QtWidgets/qtwidgetsexports.h

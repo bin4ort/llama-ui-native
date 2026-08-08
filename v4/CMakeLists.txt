@@ -36,6 +36,8 @@ add_executable(llama-ui-v4
   src/widgets/SettingsDialog.h
   src/widgets/WizardDialog.cpp
   src/widgets/WizardDialog.h
+  src/widgets/ContextGauge.cpp
+  src/widgets/ContextGauge.h
 )
 
 target_link_libraries(llama-ui-v4 PRIVATE Qt6::Widgets Qt6::Network)

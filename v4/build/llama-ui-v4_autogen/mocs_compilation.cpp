@@ -3,6 +3,7 @@
 #include "UVLADIE3JM/moc_ConversationStore.cpp"
 #include "UVLADIE3JM/moc_MainWindow.cpp"
 #include "RZ4CM6YYJ6/moc_Composer.cpp"
+#include "RZ4CM6YYJ6/moc_ContextGauge.cpp"
 #include "RZ4CM6YYJ6/moc_MessageView.cpp"
 #include "RZ4CM6YYJ6/moc_SettingsDialog.cpp"
 #include "RZ4CM6YYJ6/moc_Sidebar.cpp"

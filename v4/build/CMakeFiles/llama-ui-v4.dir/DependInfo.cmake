@@ -18,6 +18,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/i18n.cpp" "CMakeFiles/llama-ui-v4.dir/src/i18n.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/i18n.cpp.o.d"
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/main.cpp" "CMakeFiles/llama-ui-v4.dir/src/main.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/main.cpp.o.d"
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Composer.cpp" "CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o.d"
+  "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ContextGauge.cpp" "CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o.d"
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/MessageView.cpp" "CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o.d"
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/SettingsDialog.cpp" "CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o.d"
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Sidebar.cpp" "CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o.d"

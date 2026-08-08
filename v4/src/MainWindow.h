@@ -4,7 +4,6 @@
  * conversation persistence.
  */
 #pragma once
-#include <QComboBox>
 #include <QJsonObject>
 #include <QMainWindow>
 
@@ -74,9 +73,13 @@ private:
     Sidebar *m_sidebar;
     MessageView *m_messages;
     Composer *m_composer;
-    QComboBox *m_modelCombo = nullptr;
     QLabel *m_errorBanner = nullptr;
     QJsonObject m_config;
     QString m_model;
     bool m_streaming = false;
+    qint64 m_promptChars = 0;
+    qint64 m_completionChars = 0;
+    int m_nCtx = 4096;
+
+    void updateGauge();
 };

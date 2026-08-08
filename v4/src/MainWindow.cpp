@@ -98,12 +98,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     chatCol->setContentsMargins(0, 0, 0, 0);
     chatCol->setSpacing(8);
 
-    // header bar: model selector (spec §11)
-    m_modelCombo = new QComboBox(central);
-    m_modelCombo->setMinimumWidth(240);
-    m_modelCombo->setMaximumWidth(420);
-    chatCol->addWidget(m_modelCombo, 0, Qt::AlignLeft);
-
     // server error banner (UI-SPEC §6.6) — replaces the old modal nag
     auto *bannerHost = new QWidget(central);
     bannerHost->setObjectName(QStringLiteral("bannerHost"));
@@ -150,6 +144,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_composer->setBusy(false);
     });
     connect(m_composer, &Composer::personaRequested, this, &MainWindow::openPersonaMenu);
+    connect(m_composer, &Composer::modelSelected, this, [this](const QString &id) {
+        m_model = id;
+        if (!id.isEmpty()) {
+            m_config.insert(QStringLiteral("model"), id);
+            Config::save(m_config);
+        }
+    });
     connect(m_composer, &Composer::attachRequested, this, [this]() {
         const QStringList files = QFileDialog::getOpenFileNames(
             this, I18n::t(QStringLiteral("Attach file")),
@@ -169,6 +170,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // streaming
     connect(m_api, &Api::chunkReceived, this, [this](const QString &delta) {
         hideErrorBanner();
+        m_completionChars += delta.size();
+        updateGauge();
         m_messages->updateStreaming(delta);
         if (m_store->active() && !m_store->active()->messages.isEmpty()) {
             auto &last = m_store->active()->messages.last();
@@ -187,25 +190,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     // models
     connect(m_api, &Api::modelsLoaded, this, [this](const QJsonArray &models) {
-        m_modelCombo->clear();
+        QStringList ids;
         for (const auto &m : models)
-            m_modelCombo->addItem(m.toObject().value(QStringLiteral("id")).toString());
-        if (!models.isEmpty()) {
+            ids << m.toObject().value(QStringLiteral("id")).toString();
+        if (!ids.isEmpty()) {
             const QString preferred = Config::value(QStringLiteral("model")).toString();
-            int found = m_modelCombo->findText(preferred);
-            if (found < 0) found = 0;
-            m_model = m_modelCombo->itemText(found);
-            m_modelCombo->setCurrentIndex(found);
-        }
-    });
-    connect(m_modelCombo, &QComboBox::currentTextChanged, this, [this](const QString &t) {
-        m_model = t;
-        if (!t.isEmpty()) {
-            m_config.insert(QStringLiteral("model"), t);
-            Config::save(m_config);
+            m_composer->setModels(ids, ids.contains(preferred) ? preferred : ids.first());
+            m_model = m_composer->model();
         }
     });
     m_api->fetchModels();
+
+    // context gauge (UI-SPEC §5.7) — n_ctx from /props, char-based tokens
+    m_nCtx = 4096;
+    connect(m_api, &Api::propsLoaded, this, [this](int nCtx) {
+        m_nCtx = nCtx;
+        updateGauge();
+    });
+    m_api->fetchProps();
 
     // server status (UI-SPEC §2.5) — health poll
     connect(m_api, &Api::healthChanged, this, [this](bool ok) {
@@ -291,6 +293,10 @@ void MainWindow::refreshTitle() {
                        : QStringLiteral("Llama UI Native"));
 }
 
+void MainWindow::updateGauge() {
+    m_composer->setContextUsage(m_promptChars, m_completionChars, m_nCtx);
+}
+
 void MainWindow::onSend(const QString &text) {
     sendMessageWithHistory(text);
 }
@@ -340,6 +346,13 @@ void MainWindow::sendMessageWithHistory(const QString &text) {
     m_messages->addMessage(cm);
     ChatMessage ph{ChatMessage::Assistant, assistant.id, QString(), QStringLiteral("text"), QJsonArray(), true};
     m_messages->addMessage(ph);
+
+    // token accounting for the context gauge: prompt = full history
+    m_promptChars = conv->persona.size();
+    m_completionChars = 0;
+    for (const auto &m : conv->messages)
+        m_promptChars += m.content.size();
+    updateGauge();
 
     QJsonArray messages;
     if (!conv->persona.isEmpty())

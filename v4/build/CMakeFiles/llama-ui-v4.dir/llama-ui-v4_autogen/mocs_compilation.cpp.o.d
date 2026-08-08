@@ -341,8 +341,8 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o: \
  /usr/include/qt6/QtCore/QStringList \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/UVLADIE3JM/moc_MainWindow.cpp \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/UVLADIE3JM/../../../src/MainWindow.h \
- /usr/include/qt6/QtWidgets/QComboBox \
- /usr/include/qt6/QtWidgets/qcombobox.h \
+ /usr/include/qt6/QtWidgets/QMainWindow \
+ /usr/include/qt6/QtWidgets/qmainwindow.h \
  /usr/include/qt6/QtWidgets/qtwidgetsglobal.h \
  /usr/include/qt6/QtGui/qtguiglobal.h \
  /usr/include/qt6/QtGui/qtgui-config.h \
@@ -368,27 +368,19 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o: \
  /usr/include/qt6/QtGui/qfontvariableaxis.h \
  /usr/include/qt6/QtWidgets/qsizepolicy.h \
  /usr/include/qt6/QtGui/qcursor.h /usr/include/qt6/QtGui/qbitmap.h \
- /usr/include/qt6/QtWidgets/qabstractitemdelegate.h \
- /usr/include/qt6/QtWidgets/qstyleoption.h \
- /usr/include/qt6/QtWidgets/qabstractspinbox.h \
- /usr/include/qt6/QtGui/qvalidator.h /usr/include/qt6/QtWidgets/qslider.h \
- /usr/include/qt6/QtWidgets/qabstractslider.h \
- /usr/include/qt6/QtWidgets/qstyle.h /usr/include/qt6/QtWidgets/qtabbar.h \
  /usr/include/qt6/QtWidgets/qtabwidget.h \
- /usr/include/qt6/QtWidgets/qrubberband.h \
- /usr/include/qt6/QtWidgets/qframe.h \
- /usr/include/qt6/QtCore/qabstractitemmodel.h \
- /usr/include/qt6/QtWidgets/QMainWindow \
- /usr/include/qt6/QtWidgets/qmainwindow.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/moc_Composer.cpp \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/../../../src/widgets/Composer.h \
  /usr/include/qt6/QtWidgets/QWidget \
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/moc_ContextGauge.cpp \
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/../../../src/widgets/ContextGauge.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/moc_MessageView.cpp \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/../../../src/widgets/MessageView.h \
  /usr/include/qt6/QtWidgets/QScrollArea \
  /usr/include/qt6/QtWidgets/qscrollarea.h \
  /usr/include/qt6/QtWidgets/qabstractscrollarea.h \
- /usr/include/qt6/QtCore/QVector /usr/include/qt6/QtCore/qvector.h \
+ /usr/include/qt6/QtWidgets/qframe.h /usr/include/qt6/QtCore/QVector \
+ /usr/include/qt6/QtCore/qvector.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/moc_SettingsDialog.cpp \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/../../../src/widgets/SettingsDialog.h \
  /usr/include/qt6/QtWidgets/QDialog /usr/include/qt6/QtWidgets/qdialog.h \

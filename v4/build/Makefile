@@ -395,6 +395,30 @@ src/widgets/Composer.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.s
 .PHONY : src/widgets/Composer.cpp.s
 
+src/widgets/ContextGauge.o: src/widgets/ContextGauge.cpp.o
+.PHONY : src/widgets/ContextGauge.o
+
+# target to build an object file
+src/widgets/ContextGauge.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o
+.PHONY : src/widgets/ContextGauge.cpp.o
+
+src/widgets/ContextGauge.i: src/widgets/ContextGauge.cpp.i
+.PHONY : src/widgets/ContextGauge.i
+
+# target to preprocess a source file
+src/widgets/ContextGauge.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.i
+.PHONY : src/widgets/ContextGauge.cpp.i
+
+src/widgets/ContextGauge.s: src/widgets/ContextGauge.cpp.s
+.PHONY : src/widgets/ContextGauge.s
+
+# target to generate assembly for a file
+src/widgets/ContextGauge.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.s
+.PHONY : src/widgets/ContextGauge.cpp.s
+
 src/widgets/MessageView.o: src/widgets/MessageView.cpp.o
 .PHONY : src/widgets/MessageView.o
 
@@ -532,6 +556,9 @@ help:
 	@echo "... src/widgets/Composer.o"
 	@echo "... src/widgets/Composer.i"
 	@echo "... src/widgets/Composer.s"
+	@echo "... src/widgets/ContextGauge.o"
+	@echo "... src/widgets/ContextGauge.i"
+	@echo "... src/widgets/ContextGauge.s"
 	@echo "... src/widgets/MessageView.o"
 	@echo "... src/widgets/MessageView.i"
 	@echo "... src/widgets/MessageView.s"

@@ -53,7 +53,9 @@ template <> constexpr inline auto Api::qt_create_metaobjectdata<qt_meta_tag_ZN3A
         "completionReady",
         "content",
         "healthChanged",
-        "online"
+        "online",
+        "propsLoaded",
+        "nCtx"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -82,6 +84,10 @@ template <> constexpr inline auto Api::qt_create_metaobjectdata<qt_meta_tag_ZN3A
         // Signal 'healthChanged'
         QtMocHelpers::SignalData<void(bool)>(14, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::Bool, 15 },
+        }}),
+        // Signal 'propsLoaded'
+        QtMocHelpers::SignalData<void(int)>(16, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 17 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -113,6 +119,7 @@ void Api::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **
         case 4: _t->contentDone(); break;
         case 5: _t->completionReady((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
         case 6: _t->healthChanged((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
+        case 7: _t->propsLoaded((*reinterpret_cast<std::add_pointer_t<int>>(_a[1]))); break;
         default: ;
         }
     }
@@ -130,6 +137,8 @@ void Api::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **
         if (QtMocHelpers::indexOfMethod<void (Api::*)(const QString & )>(_a, &Api::completionReady, 5))
             return;
         if (QtMocHelpers::indexOfMethod<void (Api::*)(bool )>(_a, &Api::healthChanged, 6))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (Api::*)(int )>(_a, &Api::propsLoaded, 7))
             return;
     }
 }
@@ -153,14 +162,14 @@ int Api::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 7)
+        if (_id < 8)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 7;
+        _id -= 8;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 7)
+        if (_id < 8)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 7;
+        _id -= 8;
     }
     return _id;
 }
@@ -205,5 +214,11 @@ void Api::completionReady(const QString & _t1)
 void Api::healthChanged(bool _t1)
 {
     QMetaObject::activate<void>(this, &staticMetaObject, 6, nullptr, _t1);
+}
+
+// SIGNAL 7
+void Api::propsLoaded(int _t1)
+{
+    QMetaObject::activate<void>(this, &staticMetaObject, 7, nullptr, _t1);
 }
 QT_WARNING_POP

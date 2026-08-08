@@ -16,6 +16,7 @@ llama-ui-v4: \
   CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o \
   CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o \
   CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.o \
+  CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o \
   /usr/lib/libQt6Widgets.so.6.11.0 \
   /usr/lib/libQt6Network.so.6.11.0 \
   /usr/lib/libQt6Gui.so.6.11.0 \
@@ -144,6 +145,8 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o:
 CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o:
 
 CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.o:
+
+CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o:
 
 /usr/lib/libQt6Widgets.so.6.11.0:
 

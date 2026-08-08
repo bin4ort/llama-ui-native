@@ -127,3 +127,16 @@ void Api::checkHealth() {
         emit healthChanged(ok);
     });
 }
+
+void Api::fetchProps() {
+    QNetworkRequest req{QUrl(m_base + QStringLiteral("/props"))};
+    auto *reply = m_nam->get(req);
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        reply->deleteLater();
+        if (reply->error() != QNetworkReply::NoError) return;
+        const auto doc = QJsonDocument::fromJson(reply->readAll());
+        const auto defs = doc.object().value(QStringLiteral("default_generation_settings")).toObject();
+        const int nCtx = defs.value(QStringLiteral("n_ctx")).toInt(4096);
+        emit propsLoaded(qMax(512, nCtx));
+    });
+}

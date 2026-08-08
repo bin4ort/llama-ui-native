@@ -1,7 +1,9 @@
 #include "Composer.h"
 #include "../Config.h"
 #include "../i18n.h"
+#include "ContextGauge.h"
 #include <QAbstractTextDocumentLayout>
+#include <QComboBox>
 #include <QHBoxLayout>
 #include <QJsonObject>
 #include <QKeyEvent>
@@ -41,6 +43,16 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
     connect(m_persona, &QPushButton::clicked, this, &Composer::personaRequested);
     bar->addWidget(m_persona);
 
+    // model selector (UI-SPEC §11.5) — compact, in the action bar
+    m_modelSelect = new QComboBox(this);
+    m_modelSelect->setProperty("modelSelect", true);
+    m_modelSelect->setMaximumWidth(220);
+    m_modelSelect->setMinimumWidth(140);
+    m_modelSelect->setToolTip(I18n::t(QStringLiteral("Model")));
+    connect(m_modelSelect, &QComboBox::currentTextChanged, this,
+            [this](const QString &t) { if (!t.isEmpty()) emit modelSelected(t); });
+    bar->addWidget(m_modelSelect);
+
     m_input = new QTextEdit(this);
     m_input->setPlaceholderText(I18n::t(QStringLiteral("Type a message...")));
     m_input->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -50,6 +62,8 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
     m_send = new QPushButton(QStringLiteral("↑"), this);
     m_send->setProperty("send", true);
     bar->addWidget(m_send);
+    m_gauge = new ContextGauge(this);
+    bar->addWidget(m_gauge);
     m_outer->addLayout(bar);
 
     auto trySend = [this]() {
@@ -101,6 +115,23 @@ void Composer::setAttachments(const QJsonArray &atts) {
     m_attachments = atts;
     rebuildChips();
     m_send->setEnabled(!m_busy && (!text().trimmed().isEmpty() || !m_attachments.isEmpty()));
+}
+
+void Composer::setModels(const QStringList &ids, const QString &current) {
+    m_modelSelect->blockSignals(true);
+    m_modelSelect->clear();
+    m_modelSelect->addItems(ids);
+    const int idx = qMax(0, m_modelSelect->findText(current));
+    m_modelSelect->setCurrentIndex(idx);
+    m_modelSelect->blockSignals(false);
+}
+
+QString Composer::model() const {
+    return m_modelSelect->currentText();
+}
+
+void Composer::setContextUsage(qint64 promptChars, qint64 completionChars, int maxCtx) {
+    if (m_gauge) m_gauge->setUsage(promptChars, completionChars, maxCtx);
 }
 
 void Composer::rebuildChips() {
