@@ -27,6 +27,8 @@ int main(int argc, char *argv[]) {
     window.show();
     if (a.contains(QStringLiteral("--open-settings")))
         QTimer::singleShot(700, &window, &MainWindow::openSettingsForTest);
+    if (a.contains(QStringLiteral("--open-mcp")))
+        QTimer::singleShot(700, &window, [&window]() { window.openMcpForTest(); });
 
     const QStringList args = app.arguments();
     const int idx = args.indexOf(QStringLiteral("--screenshot"));

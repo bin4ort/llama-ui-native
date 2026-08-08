@@ -27,6 +27,7 @@ public:
     void expandSidebarForTest();
     void overrideThemeForTest(const QString &id);
     void openSettingsForTest();
+    void openMcpForTest() { openMcp(); }
     void attachForTest(const QStringList &paths) { attachFiles(paths); }
     void abortForTest();
 
