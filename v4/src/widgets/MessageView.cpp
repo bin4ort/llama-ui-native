@@ -270,8 +270,13 @@ void MessageView::addMessage(const ChatMessage &msg) {
     }
 
     const QString palette = Config::value(QStringLiteral("theme")).toString();
-    const QColor link = Theme::tokens(palette).primary;
-    const QColor thBg = Theme::tokens(palette).muted;
+    const auto tk = Theme::tokens(palette);
+    const QColor link = tk.primary;
+    // v2 table header: muted-foreground at ~35% over the card (~87 gray)
+    const QColor thBg = QColor::fromRgbF(
+        tk.mutedForeground.redF() * 0.35 + tk.card.redF() * 0.65,
+        tk.mutedForeground.greenF() * 0.35 + tk.card.greenF() * 0.65,
+        tk.mutedForeground.blueF() * 0.35 + tk.card.blueF() * 0.65);
 
     auto *row = new MessageRow(this);
     row->setObjectName(QStringLiteral("chatRow"));

@@ -26,20 +26,34 @@
 namespace {
 // Registry tables (UI-SPEC §09 / §2 labels verbatim).
 const QList<SettingField> GENERAL = {
-    {"serverEndpoint", "Server Endpoint", "input"},
-    {"webUiAddress", "Web UI Address", "input"},
-    {"webUiEnabled", "Enable Web UI", "checkbox"},
-    {"apiKey", "API Key", "input"},
-    {"systemMessage", "Default system prompt", "textarea"},
-    {"pasteLongTextToFileLen", "Paste long text to file length", "input", true},
-    {"sendOnEnter", "Send message on Enter", "checkbox"},
-    {"autoMicOnEmpty", "Show microphone on empty input", "checkbox"},
-    {"enableContinueGeneration", "Enable \"Continue\" button", "checkbox"},
-    {"titleGenerationMode", "Conversation title", "titleradio"},
-    {"titleGenerationPrompt", "LLM title generation prompt", "textarea"},
-    {"copyTextAttachmentsAsPlainText", "Copy text attachments as plain text", "checkbox"},
-    {"pdfAsImage", "Parse PDF as image", "checkbox"},
-    {"maxImageMPixels", "Maximum image resolution (megapixels)", "input"},
+    {"serverEndpoint", "Server Endpoint", "input", false,
+     "Set the llama.cpp server or OpenAI-compatible API endpoint."},
+    {"webUiAddress", "Web UI Address", "input", false,
+     "The address where the Web UI is hosted."},
+    {"webUiEnabled", "Enable Web UI", "checkbox", false,
+     "Allow access to the Web UI from other devices."},
+    {"apiKey", "API Key", "input", false,
+     "Set the API Key if you are using the --api-key option for the server."},
+    {"systemMessage", "Default system prompt", "textarea", false,
+     "The default system prompt — the starting message that defines how the model should behave."},
+    {"pasteLongTextToFileLen", "Paste long text to file length", "input", true,
+     "Paste long text as a file attachment instead of inline."},
+    {"sendOnEnter", "Send message on Enter", "checkbox", false,
+     "Use Enter to send messages and Shift + Enter for new lines."},
+    {"autoMicOnEmpty", "Show microphone on empty input", "checkbox", false,
+     "Show the microphone button when the input is empty."},
+    {"enableContinueGeneration", "Enable \"Continue\" button", "checkbox", false,
+     "Show a button to continue the assistant response."},
+    {"titleGenerationMode", "Conversation title", "titleradio", false,
+     "How conversation titles are generated."},
+    {"titleGenerationPrompt", "LLM title generation prompt", "textarea", false,
+     "The prompt used to generate conversation titles with the LLM."},
+    {"copyTextAttachmentsAsPlainText", "Copy text attachments as plain text", "checkbox", false,
+     "Copy text attachments as plain text instead of files."},
+    {"pdfAsImage", "Parse PDF as image", "checkbox", false,
+     "Parse PDF files as images instead of text."},
+    {"maxImageMPixels", "Maximum image resolution (megapixels)", "input", false,
+     "Maximum resolution of uploaded images."},
 };
 const QList<SettingField> DISPLAY = {
     {"showMessageStats", "Show message generation statistics", "checkbox"},
@@ -245,12 +259,13 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     cl->addWidget(heading);
     cl->addSpacing(4);
 
-    auto addCard = [&](const QStringList &labels, const QList<QWidget *> &controls) {
+    auto addCard = [&](const QStringList &labels, const QList<QWidget *> &controls,
+                       const QStringList &helps = {}) {
         auto *card = new QWidget(center);
         card->setObjectName(QStringLiteral("settingsCard"));
         auto *cardL = new QVBoxLayout(card);
         cardL->setContentsMargins(16, 12, 16, 12);
-        cardL->setSpacing(8);
+        cardL->setSpacing(4);
         for (int i = 0; i < controls.size(); ++i) {
             auto *row = new QHBoxLayout;
             auto *lbl = new QLabel(labels.at(i), card);
@@ -258,6 +273,12 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             row->addWidget(lbl, 1);
             row->addWidget(controls.at(i), 2);
             cardL->addLayout(row);
+            if (i < helps.size() && !helps.at(i).isEmpty()) {
+                auto *help = new QLabel(helps.at(i), card);
+                help->setObjectName(QStringLiteral("settingsHelp"));
+                help->setWordWrap(true);
+                cardL->addWidget(help);
+            }
         }
         cl->addWidget(card);
     };
@@ -360,25 +381,31 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         addCard(labels, controls);
     }
 
-    // checkbox fields: grouped ~3 per card (v2 bundles toggles)
-    QList<const SettingField *> checks;
-    for (const auto &f : fields)
-        if (f.type == QStringLiteral("checkbox")) checks.append(&f);
-    for (int i = 0; i < checks.size(); i += 3) {
-        QStringList labels;
-        QList<QWidget *> controls;
-        for (int j = i; j < qMin(i + 3, checks.size()); ++j) {
-            labels << checks.at(j)->label;
-            controls << makeControl(*checks.at(j));
+    // fields render in registry order (v2 interleaves checkboxes and
+    // inputs); checkbox runs are bundled ~3 per card
+    QStringList checkLabels;
+    QStringList checkHelps;
+    QList<QWidget *> checkControls;
+    auto flushChecks = [&]() {
+        if (!checkControls.isEmpty()) {
+            addCard(checkLabels, checkControls, checkHelps);
+            checkLabels.clear();
+            checkControls.clear();
+            checkHelps.clear();
         }
-        addCard(labels, controls);
-    }
-
-    // input/textarea fields: one per card (v2)
+    };
     for (const auto &f : fields) {
-        if (f.type == QStringLiteral("checkbox")) continue;
-        addCard({f.label}, {makeControl(f)});
+        if (f.type == QStringLiteral("checkbox")) {
+            if (checkControls.size() >= 3) flushChecks();
+            checkLabels << f.label;
+            checkHelps << f.help;
+            checkControls << makeControl(f);
+        } else {
+            flushChecks();
+            addCard({f.label}, {makeControl(f)}, {f.help});
+        }
     }
+    flushChecks();
 
     cl->addStretch(1);
     col->addWidget(center, 0, Qt::AlignHCenter);

@@ -427,6 +427,7 @@ QPushButton[full="true"] { width: 100%%; }
   background-color: %11; border: 1px solid %5; border-radius: 10px;
 }
 #settingsFieldLabel { color: %3; font-size: 14px; font-weight: 500; }
+#settingsHelp { color: %10; font-size: 12px; }
 #settingsFooter { border-top: 1px solid %5; background-color: %21; padding: 8px 24px; }
 #settingsFooter QPushButton { padding: 4px 14px; min-height: 28px; font-size: 13px; }
 

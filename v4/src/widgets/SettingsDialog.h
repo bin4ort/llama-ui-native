@@ -19,6 +19,7 @@ struct SettingField {
     QString label;
     QString type; // input / checkbox / textarea
     bool positiveInt = false;
+    QString help;
 };
 
 class SettingsDialog : public QDialog {
