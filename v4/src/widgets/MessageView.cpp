@@ -268,7 +268,30 @@ void MessageView::addMessage(const ChatMessage &msg) {
         if (md) {
             label = makeRichLabel(mdToHtml(body, link, thBg, &m_codeBlocks),
                                   QStringLiteral("userBubble"), row, &m_codeBlocks);
-        } else {
+    } else if (msg.type == QStringLiteral("tool-call")) {
+        // v2 ToolCallBlock header (tool name + args)
+        const auto calls = QJsonDocument::fromJson(msg.content.toUtf8()).array();
+        QStringList parts;
+        for (const auto &c : calls) {
+            const auto o = c.toObject();
+            parts << o.value(QStringLiteral("function")).toObject()
+                         .value(QStringLiteral("name")).toString();
+        }
+        label = new QLabel(QStringLiteral("🔧 ") +
+                           parts.join(QStringLiteral(", ")));
+        label->setObjectName(QStringLiteral("toolCallRow"));
+        label->setWordWrap(true);
+        row->addLabel(label);
+        m_layout->addWidget(row);
+    } else if (msg.type == QStringLiteral("tool-result")) {
+        // v2 ToolCallBlock output row (compact)
+        label = new QLabel(msg.content.toHtmlEscaped());
+        label->setObjectName(QStringLiteral("toolResultRow"));
+        label->setWordWrap(true);
+        label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        row->addLabel(label);
+        m_layout->addWidget(row, 0, Qt::AlignLeft);
+    } else {
             label = new QLabel(body.toHtmlEscaped());
             label->setObjectName(QStringLiteral("userBubble"));
             label->setTextFormat(Qt::PlainText);

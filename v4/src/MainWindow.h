@@ -4,6 +4,7 @@
  * conversation persistence.
  */
 #pragma once
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QMainWindow>
 
@@ -69,6 +70,10 @@ private:
     void onRenameConversation(const QString &id);
     void onDeleteConversation(const QString &id);
     void attachFiles(const QStringList &paths);
+    void onToolCalls(const QJsonArray &toolCalls);
+    void runAgenticTurn(const QJsonArray &toolCalls);
+    QJsonObject executeTool(const QString &name, const QString &arguments);
+    QJsonArray buildHistoryPayload(Conversation *conv) const;
 
     Api *m_api;
     ConversationStore *m_store;
@@ -80,6 +85,8 @@ private:
     QJsonObject m_config;
     QString m_model;
     bool m_streaming = false;
+    int m_toolTurn = 0;
+    QJsonArray m_pendingTools;
     qint64 m_promptChars = 0;
     qint64 m_completionChars = 0;
     int m_nCtx = 4096;

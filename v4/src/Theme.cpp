@@ -306,6 +306,18 @@ QPushButton[destructive="true"]:hover { background-color: %24; }
 QPushButton[primary="true"] { background-color: %13; color: %14; }
 QPushButton[primary="true"]:hover { background-color: %15; }
 
+/* Tool call rows (v2 ToolCallBlock header) */
+#toolCallRow {
+  color: %13; font-size: 12px; font-weight: 600; padding: 4px 0;
+}
+
+/* Tool result rows (v2 ToolCallBlock output) */
+#toolResultRow {
+  background-color: rgba(128,128,128,0.10); border: 1px solid %5;
+  border-radius: 8px; color: %10; padding: 6px 10px;
+  font-size: 12px; font-family: monospace; max-width: 90%;
+}
+
 /* MCP server cards (UI-SPEC §10.2) */
 #mcpCard { background-color: %11; border: 1px solid %5; border-radius: 10px; }
 #mcpName { font-weight: 600; font-size: 14px; }

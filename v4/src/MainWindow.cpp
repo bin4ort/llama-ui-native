@@ -14,9 +14,14 @@
 #include <QApplication>
 #include <QBuffer>
 #include <QClipboard>
+#include <QDateTime>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QEventLoop>
 #include <QFile>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QHBoxLayout>
@@ -36,9 +41,114 @@
 #include <QUrl>
 #include <QWidget>
 
-/** Encode a file for the multimodal payload (UI-SPEC §4): images become
- *  base64 data URLs, other files keep their raw name (text extraction
- *  would need per-type parsing — the model sees images natively). */
+namespace {
+
+/** Recursive-descent evaluator for the calculator tool (safe subset:
+ *  digits + + - * / ( ) . — no eval(), no strings). */
+double parseSum(QStringView &s, bool *ok);
+
+double parseAtom(QStringView &s, bool *ok) {
+    s = s.trimmed();
+    if (s.startsWith('(')) {
+        s = s.mid(1);
+        const double v = parseSum(s, ok);
+        s = s.trimmed();
+        if (!s.startsWith(')')) { *ok = false; return 0; }
+        s = s.mid(1);
+        return v;
+    }
+    int i = 0;
+    bool dot = false;
+    while (i < s.size()) {
+        const QChar c = s.at(i);
+        if (c.isDigit()) ++i;
+        else if (c == '.' && !dot) { dot = true; ++i; }
+        else break;
+    }
+    if (i == 0) { *ok = false; return 0; }
+    const double v = s.left(i).toString().toDouble(ok);
+    s = s.mid(i);
+    return v;
+}
+
+double parseProd(QStringView &s, bool *ok) {
+    double v = parseAtom(s, ok);
+    while (*ok) {
+        s = s.trimmed();
+        if (s.startsWith('*')) { s = s.mid(1); v *= parseAtom(s, ok); }
+        else if (s.startsWith('/')) { s = s.mid(1); v /= parseAtom(s, ok); }
+        else break;
+    }
+    return v;
+}
+
+double parseSum(QStringView &s, bool *ok) {
+    double v = parseProd(s, ok);
+    while (*ok) {
+        s = s.trimmed();
+        if (s.startsWith('+')) { s = s.mid(1); v += parseProd(s, ok); }
+        else if (s.startsWith('-')) { s = s.mid(1); v -= parseProd(s, ok); }
+        else break;
+    }
+    return v;
+}
+
+double safeEval(const QString &expr, bool *ok) {
+    *ok = true;
+    QStringView s(expr);
+    const double v = parseSum(s, ok);
+    s = s.trimmed();
+    if (!s.isEmpty()) *ok = false;
+    return v;
+}
+
+/** Built-in tool schemas (v2 approved tools subset implemented natively). */
+QJsonArray toolSchemas() {
+    const auto fn = [](const QString &name, const QString &desc,
+                       const QJsonObject &props, const QStringList &req) {
+        return QJsonObject{{QStringLiteral("type"), QStringLiteral("function")},
+                           {QStringLiteral("function"),
+                            QJsonObject{
+                                {QStringLiteral("name"), name},
+                                {QStringLiteral("description"), desc},
+                                {QStringLiteral("parameters"),
+                                 QJsonObject{{QStringLiteral("type"), QStringLiteral("object")},
+                                             {QStringLiteral("properties"), props},
+                                             {QStringLiteral("required"), QJsonArray::fromStringList(req)}}}}}};
+    };
+    QJsonArray tools;
+    tools.append(fn(QStringLiteral("get_datetime"),
+                    QStringLiteral("Get the current date and time. Use this when the user asks what time or date it is."),
+                    QJsonObject{{QStringLiteral("format"),
+                                 QJsonObject{{QStringLiteral("type"), QStringLiteral("string")},
+                                             {QStringLiteral("description"), QStringLiteral("optional strftime format")}}}},
+                    {}));
+    tools.append(fn(QStringLiteral("calculate"),
+                    QStringLiteral("Evaluate a simple arithmetic expression (+, -, *, /, parentheses)."),
+                    QJsonObject{{QStringLiteral("expression"),
+                                 QJsonObject{{QStringLiteral("type"), QStringLiteral("string")},
+                                             {QStringLiteral("description"), QStringLiteral("the expression to evaluate")}}}},
+                    {QStringLiteral("expression")}));
+    tools.append(fn(QStringLiteral("fetch_url"),
+                    QStringLiteral("Fetch the text content of a URL (strips HTML)."),
+                    QJsonObject{{QStringLiteral("url"),
+                                 QJsonObject{{QStringLiteral("type"), QStringLiteral("string")},
+                                             {QStringLiteral("description"), QStringLiteral("http(s) URL")}}}},
+                    {QStringLiteral("url")}));
+    return tools;
+}
+
+} // namespace
+
+double v4SafeEval(const QString &expr, bool *ok) {
+    *ok = true;
+    QStringView s(expr);
+    const double v = parseSum(s, ok);
+    s = s.trimmed();
+    if (!s.isEmpty()) *ok = false;
+    return v;
+}
+
 static QJsonObject encodeAttachment(const QString &path) {
     const QString lower = path.toLower();
     const bool image = lower.endsWith(QStringLiteral(".png")) ||
@@ -274,6 +384,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(m_api, &Api::reasoningReceived, this,
             [this](const QString &delta) { m_messages->updateReasoning(delta); });
     connect(m_api, &Api::contentDone, this, &MainWindow::onStreamFinished);
+    connect(m_api, &Api::toolCallsReady, this, &MainWindow::onToolCalls);
     connect(m_api, &Api::requestFailed, this, [this](const QString &code, const QString &msg) {
         m_streaming = false;
         m_composer->setBusy(false);
@@ -479,6 +590,142 @@ void MainWindow::sendMessageWithHistory(const QString &text) {
         m_promptChars += m.content.size();
     updateGauge();
 
+    QJsonArray payload = buildHistoryPayload(conv);
+    m_api->startCompletion(payload, m_model, 0.7, toolSchemas());
+}
+
+void MainWindow::onStreamFinished() {
+    m_streaming = false;
+    m_composer->setBusy(false);
+    if (m_store->active()) {
+        // drop a placeholder assistant message left by a user stop (the
+        // agentic continuation placeholder follows a tool message — kept)
+        auto &msgs = m_store->active()->messages;
+        const bool prevIsUser =
+            msgs.size() >= 2 && msgs.at(msgs.size() - 2).role == QStringLiteral("user");
+        if (!msgs.isEmpty() && msgs.last().role == QStringLiteral("assistant") &&
+            msgs.last().content.trimmed().isEmpty() && (msgs.size() == 1 || prevIsUser))
+            msgs.removeLast();
+        m_store->save();
+    }
+    m_sidebar->refreshConversations();
+    m_api->checkHealth();
+}
+
+/** Agentic loop (v2 tool calling): the model emitted tool_calls — execute
+ *  them and continue the conversation (max 8 turns). */
+void MainWindow::onToolCalls(const QJsonArray &toolCalls) {
+    if (toolCalls.isEmpty()) return;
+    if (m_toolTurn >= 8) {
+        m_toolTurn = 0;
+        return;
+    }
+    ++m_toolTurn;
+    m_pendingTools = toolCalls;
+    runAgenticTurn(toolCalls);
+}
+
+void MainWindow::runAgenticTurn(const QJsonArray &toolCalls) {
+    auto *conv = m_store->active();
+    if (!conv) return;
+
+    // assistant turn that requested the tools (persisted as type tool-call)
+    QJsonArray callsPayload;
+    for (const auto &c : toolCalls) {
+        const auto o = c.toObject();
+        callsPayload.append(QJsonObject{
+            {QStringLiteral("id"), o.value(QStringLiteral("id")).toString()},
+            {QStringLiteral("type"), QStringLiteral("function")},
+            {QStringLiteral("function"),
+             QJsonObject{
+                 {QStringLiteral("name"), o.value(QStringLiteral("name")).toString()},
+                 {QStringLiteral("arguments"), o.value(QStringLiteral("arguments")).toString()}}}});
+    }
+    ConvMsg toolMsg{uid(), QStringLiteral("assistant"), QStringLiteral("tool-call"),
+                    QString::fromUtf8(QJsonDocument(callsPayload).toJson(QJsonDocument::Compact))};
+    m_store->appendMessage(conv, toolMsg);
+
+    // execute each tool, store the results, render them
+    for (const auto &c : toolCalls) {
+        const auto o = c.toObject();
+        const QString name = o.value(QStringLiteral("name")).toString();
+        const QString args = o.value(QStringLiteral("arguments")).toString();
+        const QJsonObject resObj = executeTool(name, args);
+        const QString result = resObj.value(QStringLiteral("result")).toString();
+        ConvMsg res{uid(), QStringLiteral("tool"), QStringLiteral("tool-result"), result};
+        m_store->appendMessage(conv, res);
+
+        ChatMessage cm;
+        cm.id = res.id;
+        cm.type = QStringLiteral("tool-result");
+        cm.role = ChatMessage::Assistant;
+        cm.content = QStringLiteral("🔧 %1 → %2").arg(name, result.left(200));
+        m_messages->addMessage(cm);
+    }
+
+    // continue: re-request with full history incl. tool results — with a
+    // streaming placeholder so chunks land in the right message
+    ConvMsg cont{uid(), QStringLiteral("assistant"), QStringLiteral("text"), QString()};
+    m_store->appendMessage(conv, cont);
+    ChatMessage ph{ChatMessage::Assistant, cont.id, QString(),
+                   QStringLiteral("text"), QJsonArray(), true};
+    m_messages->addMessage(ph);
+
+    m_streaming = true;
+    m_composer->setBusy(true);
+    QJsonArray payload = buildHistoryPayload(conv);
+    m_api->startCompletion(payload, m_model);
+}
+
+/** Execute a built-in tool app-side (no server round-trip). */
+QJsonObject MainWindow::executeTool(const QString &name, const QString &arguments) {
+    QJsonObject parsed = QJsonDocument::fromJson(arguments.toUtf8()).object();
+    if (name == QStringLiteral("get_datetime")) {
+        const QString fmt = parsed.value(QStringLiteral("format")).toString();
+        return QJsonObject{{QStringLiteral("result"),
+                            QDateTime::currentDateTime().toString(
+                                fmt.isEmpty() ? QStringLiteral("yyyy-MM-dd HH:mm:ss") : fmt)}};
+    }
+    if (name == QStringLiteral("calculate")) {
+        // safe arithmetic evaluator: digits/operators/parens only
+        const QString expr = parsed.value(QStringLiteral("expression")).toString();
+        QString e = expr;
+        e.remove(QRegularExpression(QStringLiteral("[^0-9+\\-*/(). ]")));
+        e.replace(QRegularExpression(QStringLiteral("(?<!\\d)-")), QStringLiteral("(0-1)*"));
+        bool ok = false;
+        const double r = safeEval(e, &ok);
+        return QJsonObject{{QStringLiteral("result"), ok ? QString::number(r, 'g', 12)
+                                                        : QStringLiteral("error: invalid expression")}};
+    }
+    if (name == QStringLiteral("fetch_url")) {
+        const QString url = parsed.value(QStringLiteral("url")).toString();
+        QNetworkRequest req{QUrl(url)};
+        auto *nam = new QNetworkAccessManager(this);
+        auto *reply = nam->get(req);
+        QEventLoop loop;
+        connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+        QTimer::singleShot(15000, &loop, &QEventLoop::quit);
+        loop.exec();
+        const QByteArray data = reply->readAll();
+        reply->deleteLater();
+        nam->deleteLater();
+        if (reply->error() != QNetworkReply::NoError)
+            return QJsonObject{{QStringLiteral("result"),
+                                QStringLiteral("error: ") + reply->errorString()}};
+        QString text = QString::fromUtf8(data);
+        text = text.left(4000);
+        text.remove(QRegularExpression(QStringLiteral("<script[\\s\\S]*?</script>")));
+        text.remove(QRegularExpression(QStringLiteral("<style[\\s\\S]*?</style>")));
+        text.remove(QRegularExpression(QStringLiteral("<[^>]+>")));
+        return QJsonObject{{QStringLiteral("result"), text.trimmed().left(3000)}};
+    }
+    return QJsonObject{{QStringLiteral("result"),
+                        QStringLiteral("error: unknown tool %1").arg(name)}};
+}
+
+/** Build the OpenAI payload from stored history, reconstructing assistant
+ *  tool_calls blocks and tool results (v2 agentic format). */
+QJsonArray MainWindow::buildHistoryPayload(Conversation *conv) const {
     QJsonArray messages;
     if (!conv->persona.isEmpty())
         messages.append(QJsonObject{{QStringLiteral("role"), QStringLiteral("system")},
@@ -486,6 +733,21 @@ void MainWindow::sendMessageWithHistory(const QString &text) {
     for (const auto &m : conv->messages) {
         if (m.role == QStringLiteral("assistant") && m.content.isEmpty()) continue;
         if (m.role == QStringLiteral("system")) continue;
+        if (m.type == QStringLiteral("tool-call")) {
+            const auto calls = QJsonDocument::fromJson(m.content.toUtf8()).array();
+            messages.append(QJsonObject{
+                {QStringLiteral("role"), QStringLiteral("assistant")},
+                {QStringLiteral("content"), QJsonValue(QJsonValue::Null)},
+                {QStringLiteral("tool_calls"), calls}});
+            continue;
+        }
+        if (m.role == QStringLiteral("tool")) {
+            messages.append(QJsonObject{
+                {QStringLiteral("role"), QStringLiteral("tool")},
+                {QStringLiteral("tool_call_id"), m.id},
+                {QStringLiteral("content"), m.content}});
+            continue;
+        }
         QJsonValue content = m.content;
         if (!m.attachments.isEmpty()) {
             // multimodal parts (OpenAI image_url format, UI-SPEC §4)
@@ -515,22 +777,7 @@ void MainWindow::sendMessageWithHistory(const QString &text) {
         messages.append(QJsonObject{{QStringLiteral("role"), m.role},
                                      {QStringLiteral("content"), content}});
     }
-    m_api->startCompletion(messages, m_model);
-}
-
-void MainWindow::onStreamFinished() {
-    m_streaming = false;
-    m_composer->setBusy(false);
-    if (m_store->active()) {
-        // drop an empty assistant message left by a user stop
-        auto &msgs = m_store->active()->messages;
-        if (!msgs.isEmpty() && msgs.last().role == QStringLiteral("assistant") &&
-            msgs.last().content.trimmed().isEmpty())
-            msgs.removeLast();
-        m_store->save();
-    }
-    m_sidebar->refreshConversations();
-    m_api->checkHealth();
+    return messages;
 }
 
 void MainWindow::showErrorBanner(const QString &text) {
@@ -654,7 +901,14 @@ void MainWindow::openSettingsForTest() {
 void MainWindow::runSelfTest(const QString &message, const QString &shotPath) {
     newChat();
     auto *conn = new QMetaObject::Connection;
+    // finish when the LAST assistant message has real content (the agentic
+    // loop may produce several intermediate turns without content)
     *conn = connect(m_api, &Api::contentDone, this, [this, conn, shotPath]() {
+        const auto &msgs = m_store->active()->messages;
+        const bool hasAnswer = !msgs.isEmpty() &&
+                               msgs.last().role == QStringLiteral("assistant") &&
+                               !msgs.last().content.trimmed().isEmpty();
+        if (!hasAnswer) return; // wait for the final turn
         QObject::disconnect(*conn);
         delete conn;
         {

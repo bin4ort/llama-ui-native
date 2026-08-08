@@ -88,6 +88,22 @@ int main(int argc, char *argv[]) {
         return app.exec();
     }
 
+    // --tool-test "<expr>": run the calculator tool and print the result
+    // (verifies the agentic tool execution path without a model)
+    const int ttIdx = args.indexOf(QStringLiteral("--tool-test"));
+    if (ttIdx != -1 && ttIdx + 1 < args.size()) {
+        QTimer::singleShot(500, [&app, &args, ttIdx]() {
+            const QString expr = args.at(ttIdx + 1);
+            bool ok = false;
+            extern double v4SafeEval(const QString &, bool *);
+            const double r = v4SafeEval(expr, &ok);
+            fprintf(stderr, "TOOLTEST %s = %s\n", expr.toUtf8().constData(),
+                    ok ? qPrintable(QString::number(r, 'g', 12)) : "ERROR");
+            app.exit(ok ? 0 : 1);
+        });
+        return app.exec();
+    }
+
     // --screenshot <path> [--shot-width <px>]: grab the window, downscale
     // and exit (used by the automated vision verification loop — small
     // JPEGs fit the local vision model's context window).

@@ -2,8 +2,7 @@ CMakeFiles/llama-ui-v4.dir/src/main.cpp.o: \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/main.cpp \
  /usr/include/stdc-predef.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/MainWindow.h \
- /usr/include/qt6/QtCore/QJsonObject \
- /usr/include/qt6/QtCore/qjsonobject.h \
+ /usr/include/qt6/QtCore/QJsonArray /usr/include/qt6/QtCore/qjsonarray.h \
  /usr/include/qt6/QtCore/qjsonvalue.h \
  /usr/include/qt6/QtCore/qcborvalue.h \
  /usr/include/qt6/QtCore/qbytearray.h /usr/include/qt6/QtCore/qrefcount.h \
@@ -330,6 +329,8 @@ CMakeFiles/llama-ui-v4.dir/src/main.cpp.o: \
  /usr/include/qt6/QtCore/qendian.h \
  /usr/include/qt6/QtCore/qjsondocument.h \
  /usr/include/qt6/QtCore/qjsonparseerror.h \
+ /usr/include/qt6/QtCore/QJsonObject \
+ /usr/include/qt6/QtCore/qjsonobject.h \
  /usr/include/qt6/QtWidgets/QMainWindow \
  /usr/include/qt6/QtWidgets/qmainwindow.h \
  /usr/include/qt6/QtWidgets/qtwidgetsglobal.h \

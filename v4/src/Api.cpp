@@ -27,17 +27,22 @@ void Api::fetchModels() {
 }
 
 void Api::startCompletion(const QJsonArray &messages, const QString &model,
-                          double temperature) {
+                          double temperature, const QJsonArray &tools) {
     if (m_stream) {
         m_stream->abort();
         m_stream = nullptr;
     }
+    m_toolAccum = QJsonArray();
     QJsonObject body{
         {QStringLiteral("model"), model},
         {QStringLiteral("messages"), messages},
         {QStringLiteral("temperature"), temperature},
         {QStringLiteral("stream"), true},
     };
+    if (!tools.isEmpty()) {
+        body.insert(QStringLiteral("tools"), tools);
+        body.insert(QStringLiteral("tool_choice"), QStringLiteral("auto"));
+    }
     QNetworkRequest req{QUrl(m_base + QStringLiteral("/v1/chat/completions"))};
     req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
     m_stream = m_nam->post(req, QJsonDocument(body).toJson(QJsonDocument::Compact));
@@ -54,8 +59,7 @@ void Api::startCompletion(const QJsonArray &messages, const QString &model,
                 if (!line.startsWith("data:")) continue;
                 const QByteArray payload = line.mid(5).trimmed();
                 if (payload == "[DONE]") {
-                    emit contentDone();
-                    continue;
+                    continue; // stream end is signalled by the finished handler
                 }
                 const auto doc = QJsonDocument::fromJson(payload);
                 const auto deltaObj = doc.object()
@@ -65,10 +69,32 @@ void Api::startCompletion(const QJsonArray &messages, const QString &model,
                 const QString delta = deltaObj.value(QStringLiteral("content")).toString();
                 if (!delta.isEmpty()) emit chunkReceived(delta);
                 // reasoning deltas (Qwen thinking models): shown in a
-                // collapsible "Thought" block (UI-SPEC §3.6)
+                // collapsible "Reasoning" block (v2 §3.6)
                 const QString reasoning =
                     deltaObj.value(QStringLiteral("reasoning_content")).toString();
                 if (!reasoning.isEmpty()) emit reasoningReceived(reasoning);
+                // streaming tool calls: accumulate by index
+                const auto calls = deltaObj.value(QStringLiteral("tool_calls")).toArray();
+                for (const auto &c : calls) {
+                    const auto co = c.toObject();
+                    const int idx = co.value(QStringLiteral("index")).toInt(0);
+                    while (m_toolAccum.size() <= idx)
+                        m_toolAccum.append(QJsonObject{
+                            {QStringLiteral("id"), QString()},
+                            {QStringLiteral("name"), QString()},
+                            {QStringLiteral("arguments"), QString()}});
+                    QJsonObject acc = m_toolAccum.at(idx).toObject();
+                    const QString id = co.value(QStringLiteral("id")).toString();
+                    if (!id.isEmpty()) acc.insert(QStringLiteral("id"), id);
+                    const auto fn = co.value(QStringLiteral("function")).toObject();
+                    const QString name = fn.value(QStringLiteral("name")).toString();
+                    if (!name.isEmpty()) acc.insert(QStringLiteral("name"), name);
+                    const QString args = fn.value(QStringLiteral("arguments")).toString();
+                    if (!args.isEmpty())
+                        acc.insert(QStringLiteral("arguments"),
+                                   acc.value(QStringLiteral("arguments")).toString() + args);
+                    m_toolAccum.replace(idx, acc);
+                }
             }
         }
     });
@@ -78,8 +104,11 @@ void Api::startCompletion(const QJsonArray &messages, const QString &model,
         r->deleteLater();
         if (r->error() != QNetworkReply::NoError && r->error() != QNetworkReply::OperationCanceledError)
             emit requestFailed(QStringLiteral("LLMUI-STR-000"), r->errorString());
-        else
+        else {
+            if (!m_toolAccum.isEmpty())
+                emit toolCallsReady(m_toolAccum);
             emit contentDone();
+        }
     });
 }
 
