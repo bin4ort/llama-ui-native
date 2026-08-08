@@ -314,6 +314,8 @@ QPushButton[primary="true"]:hover { background-color: %15; }
 #toolCallRow {
   color: %13; font-size: 12px; font-weight: 600; padding: 4px 0;
 }
+#messageActions { background-color: transparent; }
+#chatRow { background-color: transparent; }
 
 /* Tool result rows (v2 ToolCallBlock output) */
 #toolResultRow {

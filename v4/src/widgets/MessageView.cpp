@@ -326,6 +326,8 @@ void MessageView::addMessage(const ChatMessage &msg) {
     // action row (v2 ChatMessageActionIcons order: copy, edit, regenerate,
     // continue, delete) — always visible, aligned like v2
     auto *actions = new QWidget(row);
+    actions->setObjectName(QStringLiteral("messageActions"));
+    actions->setAttribute(Qt::WA_StyledBackground);
     auto *al = new QHBoxLayout(actions);
     al->setContentsMargins(0, 0, 0, 0);
     al->setSpacing(2);
