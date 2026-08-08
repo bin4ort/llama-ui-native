@@ -71,6 +71,7 @@ McpPage::McpPage(const QJsonObject &config, QWidget *parent)
     m_list = new QVBoxLayout(host);
     m_list->setContentsMargins(24, 8, 24, 24);
     m_list->setSpacing(10);
+    m_list->setProperty("emptyMode", false);
     scroll->setWidget(host);
     outer->addWidget(scroll, 1);
     rebuild();
@@ -85,6 +86,7 @@ void McpPage::rebuild() {
     const auto servers = serversOf(m_cfg);
     if (servers.isEmpty()) {
         // v2 empty state: Plus icon circle + title + desc + primary button
+        m_list->setSpacing(6);
         m_list->addStretch(1);
         auto *icon = new QLabel(QStringLiteral("＋"), this);
         icon->setObjectName(QStringLiteral("mcpEmptyIcon"));
