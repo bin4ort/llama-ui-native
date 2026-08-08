@@ -1,13 +1,21 @@
 #include "SettingsDialog.h"
 #include "../i18n.h"
 #include "../Theme.h"
+#include "../Config.h"
+#include <QApplication>
 #include <QCheckBox>
+#include <QClipboard>
 #include <QComboBox>
+#include <QFile>
+#include <QFileDialog>
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QIntValidator>
 #include <QJsonArray>
+#include <QJsonDocument>
 #include <QLineEdit>
+#include <QMessageBox>
+#include <QPlainTextEdit>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QTabWidget>
@@ -92,6 +100,8 @@ const QList<SettingField> DEVELOPER = {
     {"showRawOutputSwitch", "Enable raw output toggle", "checkbox"},
     {"jsSandboxEnabled", "JavaScript sandbox tool", "checkbox"},
     {"symbolicMathEnabled", "Symbolic math (nerdamer)", "checkbox"},
+    {"serverEndpoint", "Server endpoint", "input"},
+    {"logLevel", "Log level", "loglevel"},
 };
 } // namespace
 
@@ -114,14 +124,30 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, QWidget *parent)
     m_tabs->addTab(buildSection(QStringLiteral("Tools"), TOOLS), QStringLiteral("Tools"));
     m_tabs->addTab(buildSection(QStringLiteral("Agentic"), AGENTIC), QStringLiteral("Agentic"));
     m_tabs->addTab(buildSection(QStringLiteral("Developer"), DEVELOPER), QStringLiteral("Developer"));
+    m_tabs->addTab(buildImportExport(), I18n::t(QStringLiteral("Import/Export")));
     layout->addWidget(m_tabs, 1);
 
+    // footer: reset-to-default + cancel/save (UI-SPEC §9.4)
     auto *buttons = new QHBoxLayout;
+    auto *reset = new QPushButton(I18n::t(QStringLiteral("Reset to default")));
+    reset->setProperty("outline", true);
+    connect(reset, &QPushButton::clicked, this, [this]() {
+        const auto ret = QMessageBox::question(
+            this, I18n::t(QStringLiteral("Reset Settings to Default")),
+            I18n::t(QStringLiteral("Are you sure?")));
+        if (ret != QMessageBox::Yes) return;
+        QFile::remove(Config::path());
+        m_cfg = Config::load(); // fresh defaults (with merged file)
+        Config::save(m_cfg);
+        emit configChanged(m_cfg);
+        accept();
+    });
+    buttons->addWidget(reset);
+    buttons->addStretch(1);
     auto *cancel = new QPushButton(I18n::t(QStringLiteral("Cancel")));
     cancel->setProperty("outline", true);
     connect(cancel, &QPushButton::clicked, this, &QDialog::reject);
     buttons->addWidget(cancel);
-    buttons->addStretch(1);
     auto *save = new QPushButton(I18n::t(QStringLiteral("Save settings")));
     connect(save, &QPushButton::clicked, this, &SettingsDialog::apply);
     buttons->addWidget(save);
@@ -166,8 +192,20 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             cb->setChecked(m_cfg.value(f.key).toBool(false));
             control = cb;
         } else if (f.type == QStringLiteral("textarea")) {
-            auto *te = new QLineEdit(m_cfg.value(f.key).toString());
+            auto *te = new QPlainTextEdit(m_cfg.value(f.key).toString());
+            te->setMinimumHeight(100);
+            te->setMaximumHeight(200);
             control = te;
+        } else if (f.type == QStringLiteral("loglevel")) {
+            auto *combo = new QComboBox;
+            combo->addItem(I18n::t(QStringLiteral("Errors only")), 0);
+            combo->addItem(I18n::t(QStringLiteral("Warnings")), 1);
+            combo->addItem(I18n::t(QStringLiteral("Info")), 2);
+            combo->addItem(I18n::t(QStringLiteral("Debug")), 3);
+            combo->addItem(I18n::t(QStringLiteral("Trace")), 4);
+            const int lvl = m_cfg.value(f.key).toInt(2);
+            combo->setCurrentIndex(qBound(0, lvl, 4));
+            control = combo;
         } else {
             auto *le = new QLineEdit(m_cfg.value(f.key).toString());
             le->setPlaceholderText(QStringLiteral("Default"));
@@ -181,12 +219,69 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     return scroll;
 }
 
+QWidget *SettingsDialog::buildImportExport() {
+    auto *scroll = new QScrollArea;
+    scroll->setWidgetResizable(true);
+    scroll->setFrameShape(QFrame::NoFrame);
+    auto *host = new QWidget;
+    auto *v = new QVBoxLayout(host);
+    v->setContentsMargins(12, 12, 12, 12);
+    v->setSpacing(10);
+
+    auto *jsonText = new QPlainTextEdit;
+    jsonText->setPlainText(QJsonDocument(m_cfg).toJson(QJsonDocument::Indented));
+    jsonText->setMinimumHeight(280);
+    v->addWidget(jsonText);
+
+    auto *row = new QHBoxLayout;
+    auto *copyBtn = new QPushButton(I18n::t(QStringLiteral("Copy")));
+    copyBtn->setProperty("outline", true);
+    connect(copyBtn, &QPushButton::clicked, this, [jsonText]() {
+        QApplication::clipboard()->setText(jsonText->toPlainText());
+    });
+    row->addWidget(copyBtn);
+    auto *importBtn = new QPushButton(I18n::t(QStringLiteral("Import")));
+    importBtn->setProperty("outline", true);
+    connect(importBtn, &QPushButton::clicked, this, [this, jsonText]() {
+        const auto doc = QJsonDocument::fromJson(jsonText->toPlainText().toUtf8());
+        if (!doc.isObject()) {
+            QMessageBox::warning(this, QStringLiteral("Import"),
+                                 I18n::t(QStringLiteral("Invalid JSON — settings not imported.")));
+            return;
+        }
+        m_cfg = doc.object();
+        emit configChanged(m_cfg);
+        accept();
+    });
+    row->addWidget(importBtn);
+    auto *downloadBtn = new QPushButton(I18n::t(QStringLiteral("Download")));
+    downloadBtn->setProperty("outline", true);
+    connect(downloadBtn, &QPushButton::clicked, this, [this, jsonText]() {
+        const QString path = QFileDialog::getSaveFileName(
+            this, I18n::t(QStringLiteral("Export settings")),
+            QStringLiteral("llama-ui-settings.json"));
+        if (!path.isEmpty()) {
+            QFile f(path);
+            if (f.open(QIODevice::WriteOnly))
+                f.write(jsonText->toPlainText().toUtf8());
+        }
+    });
+    row->addWidget(downloadBtn);
+    row->addStretch(1);
+    v->addLayout(row);
+
+    scroll->setWidget(host);
+    return scroll;
+}
+
 void SettingsDialog::apply() {
     for (const auto &[key, w] : m_controls) {
         if (auto *cb = qobject_cast<QCheckBox *>(w)) {
             m_cfg.insert(key, cb->isChecked());
         } else if (auto *combo = qobject_cast<QComboBox *>(w)) {
-            m_cfg.insert(key, combo->currentData().toString());
+            m_cfg.insert(key, QJsonValue::fromVariant(combo->currentData()));
+        } else if (auto *te = qobject_cast<QPlainTextEdit *>(w)) {
+            m_cfg.insert(key, te->toPlainText().trimmed());
         } else if (auto *le = qobject_cast<QLineEdit *>(w)) {
             m_cfg.insert(key, le->text().trimmed());
         }

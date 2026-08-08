@@ -696,5 +696,12 @@
   "System message": "System message",
   "Ctrl+B": "Ctrl+B",
   "Ctrl+K": "Ctrl+K",
-  "Ctrl+Shift+O": "Ctrl+Shift+O"
+  "Ctrl+Shift+O": "Ctrl+Shift+O",
+  "Download": "Download",
+  "Invalid JSON — settings not imported.": "Invalid JSON — settings not imported.",
+  "Errors only": "Errors only",
+  "Warnings": "Warnings",
+  "Info": "Info",
+  "Debug": "Debug",
+  "Trace": "Trace"
 }

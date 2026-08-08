@@ -10,6 +10,7 @@
 class QComboBox;
 class QLineEdit;
 class QCheckBox;
+class QPlainTextEdit;
 class QTabWidget;
 
 struct SettingField {
@@ -32,6 +33,7 @@ signals:
 private:
     QWidget *buildSection(const QString &title, const QList<SettingField> &fields,
                           bool useComboLang = false, bool useComboTheme = false);
+    QWidget *buildImportExport();
     void apply();
 
     QJsonObject m_cfg;
