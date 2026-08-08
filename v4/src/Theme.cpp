@@ -210,6 +210,10 @@ QString stylesheet(const QString &paletteId) {
                                 1.0);
     };
     const QColor userBubble = alphaMix(t.primary, t.background, 0.05);
+    // v2 form: bg-muted/60 (light) / bg-muted/75 (dark), border/20
+    const bool dark = t.background.lightnessF() < 0.5;
+    const QColor formBg = alphaMix(t.muted, t.background, dark ? 0.75 : 0.60);
+    const QColor formBorder = alphaMix(t.border, t.background, 0.20);
     const QString s = QStringLiteral(R"QSS(
 * { font-family: %1; font-size: 14px; }
 QMainWindow, QDialog { background-color: %2; color: %3; }
@@ -230,9 +234,9 @@ QMainWindow, QDialog { background-color: %2; color: %3; }
 #greetingTitle { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; color: %3; }
 #greetingSub { font-size: 18px; color: %10; }
 
-/* Composer (UI-SPEC §3.18) */
+/* Composer (v2 ChatForm: bg-muted/60 dark:bg-muted/75, border/20, radius 24) */
 #composer {
-  background-color: %11; border: 1px solid %5; border-radius: 24px;
+  background-color: %25; border: 1px solid %26; border-radius: 24px;
 }
 #composer:focus-within { border-color: %12; }
 #composer QTextEdit {
@@ -439,7 +443,9 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: trans
                  hex(t.popover),            // 21
                  hex(t.card),               // 22
                  hex(t.destructive),        // 23
-                 hex(t.destructive.lighter(115))); // 24
+                 hex(t.destructive.lighter(115)), // 24
+                 hex(formBg),               // 25 (composer bg)
+                 hex(formBorder));          // 26 (composer border)
 }
 
 } // namespace Theme

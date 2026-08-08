@@ -113,7 +113,11 @@ int main(int argc, char *argv[]) {
                               ? args.at(wIdx + 1).toInt()
                               : 480;
         QTimer::singleShot(900, [&window, &app, &args, idx, width]() {
-            QImage img = window.grab().toImage();
+            // grab the active modal dialog when one is open (settings,
+            // MCP page, search) — window.grab() misses separate windows
+            QWidget *target = qApp->activeModalWidget();
+            if (!target) target = &window;
+            QImage img = target->grab().toImage();
             img = img.scaledToWidth(width, Qt::SmoothTransformation);
             const bool ok = img.save(args.at(idx + 1), "JPG", 65);
             app.exit(ok ? 0 : 1);

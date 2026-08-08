@@ -249,6 +249,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_composer = new Composer(central);
     chatCol->addWidget(m_composer, 0, Qt::AlignHCenter);
     chatCol->insertWidget(chatCol->indexOf(m_composer), bannerHost, 0, Qt::AlignHCenter); // v2: banner above the form
+    // v2 floats the form at ~50dvh on the empty chat (md:bottom-[calc(50dvh-7rem)])
+    // and pins it to the bottom once messages exist
+    m_formSpacer = new QWidget(central);
+    m_formSpacer->setVisible(false);
+    chatCol->addWidget(m_formSpacer);
+    chatCol->setStretch(chatCol->indexOf(m_messages), 1);
 
     layout->addLayout(chatCol, 1);
     setCentralWidget(central);
@@ -491,9 +497,38 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     if (!m_store->conversations().isEmpty()) {
         m_store->setActive(&m_store->conversations().first());
         selectConversation(m_store->active()->id);
+    } else {
+        setEmpty(true);
     }
 
     applyTheme(m_config.value(QStringLiteral("theme")).toString());
+}
+
+void MainWindow::resizeEvent(QResizeEvent *event) {
+    QMainWindow::resizeEvent(event);
+    // keep the floating form at ~50dvh on the empty chat (v2)
+    if (m_formSpacer && m_empty) {
+        const int h = height();
+        const int desiredBottom = h / 2 + 112;
+        const int spacer = h - desiredBottom - 8;
+        m_formSpacer->setFixedHeight(qMax(20, spacer));
+    }
+}
+
+/** v2: the composer floats at ~50dvh on the empty chat and pins to the
+ *  bottom once messages exist. */
+void MainWindow::setEmpty(bool empty) {
+    m_empty = empty;
+    if (m_formSpacer) {
+        m_formSpacer->setVisible(empty);
+        if (empty) {
+            // v2: form bottom sits at 50dvh - 7rem from the window bottom
+            const int h = height();
+            const int desiredBottom = h / 2 + 112; // bottom edge y of the form
+            const int spacer = h - desiredBottom - 8; // 8px bottom margin
+            m_formSpacer->setFixedHeight(qMax(20, spacer));
+        }
+    }
 }
 
 void MainWindow::applyTheme(const QString &paletteId) {
@@ -515,6 +550,7 @@ void MainWindow::newChat() {
     refreshTitle();
     m_sidebar->refreshConversations();
     m_composer->focusInput();
+    setEmpty(true);
 }
 
 void MainWindow::selectConversation(const QString &id) {
@@ -540,7 +576,9 @@ void MainWindow::selectConversation(const QString &id) {
 
 void MainWindow::renderConversation(Conversation *conv) {
     m_messages->clear();
-    if (conv->persona.isEmpty() && conv->messages.isEmpty()) {
+    const bool empty = conv->persona.isEmpty() && conv->messages.isEmpty();
+    setEmpty(empty);
+    if (empty) {
         m_messages->showGreeting();
         return;
     }
@@ -602,6 +640,7 @@ void MainWindow::sendMessageWithHistory(const QString &text) {
     m_streaming = true;
     m_composer->setBusy(true);
     hideErrorBanner();
+    setEmpty(false);
 
     const QJsonArray atts = m_composer->attachments();
     m_composer->clear();

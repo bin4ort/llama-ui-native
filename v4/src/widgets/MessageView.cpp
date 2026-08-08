@@ -218,6 +218,7 @@ void MessageView::clearLayout() {
         if (item->widget()) item->widget()->deleteLater();
         delete item;
     }
+    m_layout->setContentsMargins(24, 24, 24, 24);
     m_streamingLabel = nullptr;
     m_streamingReasoning = nullptr;
     m_reasoningToggle = nullptr;
@@ -228,6 +229,8 @@ void MessageView::clearLayout() {
 
 void MessageView::showGreeting() {
     clearLayout();
+    // v2: the greeting hugs the floating form (mb-6), not vertically centered
+    m_layout->setContentsMargins(24, 24, 24, 0);
     m_layout->addStretch(1);
     auto *title = new QLabel(I18n::t(QStringLiteral("Hello there")));
     title->setObjectName(QStringLiteral("greetingTitle"));
@@ -238,7 +241,9 @@ void MessageView::showGreeting() {
     sub->setAlignment(Qt::AlignCenter);
     sub->setWordWrap(true);
     m_layout->addWidget(sub);
-    m_layout->addStretch(1);
+    auto *bottomGap = new QWidget(this);
+    bottomGap->setFixedHeight(17);
+    m_layout->addWidget(bottomGap);
 }
 
 void MessageView::addMessage(const ChatMessage &msg) {

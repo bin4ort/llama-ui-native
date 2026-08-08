@@ -35,6 +35,7 @@ public:
 protected:
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 public slots:
     /** E2E self-test: new chat -> send message -> wait for reply -> save
@@ -58,6 +59,7 @@ private:
     void newChat();
     void selectConversation(const QString &id);
     void renderConversation(Conversation *conv);
+    void setEmpty(bool empty);
     void refreshTitle();
     void showErrorBanner(const QString &text);
     void hideErrorBanner();
@@ -82,6 +84,8 @@ private:
     Composer *m_composer;
     QLabel *m_errorBanner = nullptr;
     QLabel *m_errorBannerDetail = nullptr;
+    QWidget *m_formSpacer = nullptr;
+    bool m_empty = true;
     QJsonObject m_config;
     QString m_model;
     bool m_streaming = false;

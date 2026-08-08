@@ -25,6 +25,8 @@ QString Composer::formatSize(qint64 bytes) {
 
 Composer::Composer(QWidget *parent) : QWidget(parent) {
     setObjectName(QStringLiteral("composer"));
+    // QSS backgrounds on plain QWidget subclasses need this attribute
+    setAttribute(Qt::WA_StyledBackground);
     setMaximumWidth(768); // spec: max-w-3xl, centered floating bar
 
     m_outer = new QVBoxLayout(this);
@@ -234,9 +236,9 @@ void Composer::setBusy(bool busy) {
 /** Autosize the textarea (spec §5.1: field-sizing-content, min 64px). */
 void Composer::updateHeight() {
     const int docH = qCeil(m_input->document()->documentLayout()->documentSize().height());
-    const int h = qBound(40, docH + 8, 160);
+    const int h = qBound(48, docH + 8, 160);
     m_input->setFixedHeight(h);
-    setFixedHeight(h + 32 + (m_attachments.isEmpty() ? 0 : 28));
+    setFixedHeight(qMax(112, h + 40) + (m_attachments.isEmpty() ? 0 : 28));
 }
 
 bool Composer::eventFilter(QObject *obj, QEvent *ev) {
