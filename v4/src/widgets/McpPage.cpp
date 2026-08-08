@@ -64,15 +64,6 @@ McpPage::McpPage(const QJsonObject &config, QWidget *parent)
     hl->addWidget(closeBtn);
     outer->addWidget(header);
 
-    auto *desc = new QLabel(
-        I18n::t(QStringLiteral(
-            "Connect Model Context Protocol servers to give the assistant access to external tools and resources.")),
-        this);
-    desc->setObjectName(QStringLiteral("dialogDesc"));
-    desc->setWordWrap(true);
-    desc->setContentsMargins(24, 0, 24, 8);
-    outer->addWidget(desc);
-
     auto *scroll = new QScrollArea(this);
     scroll->setWidgetResizable(true);
     scroll->setFrameShape(QFrame::NoFrame);
@@ -93,8 +84,14 @@ void McpPage::rebuild() {
     }
     const auto servers = serversOf(m_cfg);
     if (servers.isEmpty()) {
-        // v2 empty state: centered text + primary button (no card)
+        // v2 empty state: Plus icon circle + title + desc + primary button
         m_list->addStretch(1);
+        auto *icon = new QLabel(QStringLiteral("＋"), this);
+        icon->setObjectName(QStringLiteral("mcpEmptyIcon"));
+        icon->setAlignment(Qt::AlignCenter);
+        icon->setFixedSize(48, 48);
+        m_list->addWidget(icon, 0, Qt::AlignHCenter);
+        m_list->addSpacing(4);
         auto *t1 = new QLabel(I18n::t(QStringLiteral("Add your first MCP server")), this);
         t1->setObjectName(QStringLiteral("mcpEmptyTitle"));
         t1->setAlignment(Qt::AlignCenter);
@@ -103,10 +100,10 @@ void McpPage::rebuild() {
         t2->setObjectName(QStringLiteral("mcpEmptyDesc"));
         t2->setAlignment(Qt::AlignCenter);
         m_list->addWidget(t2);
-        m_list->addSpacing(16);
+        m_list->addSpacing(8);
         auto *btn = new QPushButton(I18n::t(QStringLiteral("Add New Server")), this);
         btn->setProperty("primary", true);
-        btn->setMinimumWidth(140);
+        btn->setMinimumWidth(160);
         connect(btn, &QPushButton::clicked, this, &McpPage::addServer);
         m_list->addWidget(btn, 0, Qt::AlignHCenter);
         m_list->addStretch(1);

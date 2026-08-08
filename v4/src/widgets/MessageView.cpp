@@ -203,10 +203,11 @@ MessageView::MessageView(QWidget *parent) : QScrollArea(parent) {
     setObjectName(QStringLiteral("messages"));
     setWidgetResizable(true);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setFrameShape(QFrame::NoFrame); // v2: no frame lines around the chat
 
     m_container = new QWidget;
     m_layout = new QVBoxLayout(m_container);
-    m_layout->setContentsMargins(24, 24, 24, 24);
+    m_layout->setContentsMargins(16, 16, 16, 16);
     m_layout->setSpacing(12);
     setWidget(m_container);
     showGreeting();
@@ -218,7 +219,7 @@ void MessageView::clearLayout() {
         if (item->widget()) item->widget()->deleteLater();
         delete item;
     }
-    m_layout->setContentsMargins(24, 24, 24, 24);
+    m_layout->setContentsMargins(16, 16, 16, 16);
     m_streamingLabel = nullptr;
     m_streamingReasoning = nullptr;
     m_reasoningToggle = nullptr;
@@ -230,7 +231,7 @@ void MessageView::clearLayout() {
 void MessageView::showGreeting() {
     clearLayout();
     // v2: the greeting hugs the floating form (mb-6), not vertically centered
-    m_layout->setContentsMargins(24, 24, 24, 0);
+    m_layout->setContentsMargins(16, 16, 16, 0);
     m_layout->addStretch(1);
     auto *title = new QLabel(I18n::t(QStringLiteral("Hello there")));
     title->setObjectName(QStringLiteral("greetingTitle"));

@@ -333,6 +333,9 @@ QPushButton[primary="true"]:hover { background-color: %15; }
 #mcpState[on="false"] { color: %23; }
 #mcpEmptyTitle { font-size: 20px; font-weight: 600; color: %3; }
 #mcpEmptyDesc { font-size: 14px; color: %10; }
+#mcpEmptyIcon {
+  background-color: %7; border-radius: 24px; color: %3; font-size: 20px;
+}
 #mcpHeader { border-bottom: 1px solid %5; }
 #mcpTitle { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
 
