@@ -320,8 +320,9 @@ void MessageView::addMessage(const ChatMessage &msg) {
         if (msg.role == ChatMessage::Assistant) {
             makeAction(QStringLiteral("↻"), I18n::t(QStringLiteral("Regenerate")),
                        [this, id = msg.id]() { emit regenerateRequested(id); });
-            makeAction(QStringLiteral("→"), I18n::t(QStringLiteral("Continue")),
-                       [this, id = msg.id]() { emit continueRequested(id); });
+            if (Config::value(QStringLiteral("enableContinueGeneration")).toBool())
+                makeAction(QStringLiteral("→"), I18n::t(QStringLiteral("Continue")),
+                           [this, id = msg.id]() { emit continueRequested(id); });
         }
         if (msg.role != ChatMessage::System)
             makeAction(QStringLiteral("✕"), I18n::t(QStringLiteral("Delete")),

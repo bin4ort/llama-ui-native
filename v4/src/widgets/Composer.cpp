@@ -72,7 +72,10 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
     m_modelSelect->setMinimumWidth(140);
     m_modelSelect->setToolTip(I18n::t(QStringLiteral("Model")));
     connect(m_modelSelect, &QComboBox::currentTextChanged, this,
-            [this](const QString &t) { if (!t.isEmpty()) emit modelSelected(t); });
+            [this](const QString &) {
+                const QString raw = m_modelSelect->currentData().toString();
+                if (!raw.isEmpty()) emit modelSelected(raw);
+            });
     bar->addWidget(m_modelSelect);
 
     bar->addWidget(m_send);
@@ -129,17 +132,22 @@ void Composer::setAttachments(const QJsonArray &atts) {
     m_send->setEnabled(!m_busy && (!text().trimmed().isEmpty() || !m_attachments.isEmpty()));
 }
 
-void Composer::setModels(const QStringList &ids, const QString &current) {
+void Composer::setModels(const QStringList &displayItems, const QStringList &rawIds,
+                         const QString &currentRaw) {
     m_modelSelect->blockSignals(true);
     m_modelSelect->clear();
-    m_modelSelect->addItems(ids);
-    const int idx = qMax(0, m_modelSelect->findText(current));
+    for (int i = 0; i < displayItems.size(); ++i) {
+        m_modelSelect->addItem(displayItems.at(i),
+                               i < rawIds.size() ? rawIds.at(i) : displayItems.at(i));
+    }
+    const int idx = qMax(0, m_modelSelect->findData(currentRaw));
     m_modelSelect->setCurrentIndex(idx);
     m_modelSelect->blockSignals(false);
+    emit modelSelected(m_modelSelect->currentData().toString());
 }
 
 QString Composer::model() const {
-    return m_modelSelect->currentText();
+    return m_modelSelect->currentData().toString();
 }
 
 void Composer::setPersonaName(const QString &name) {

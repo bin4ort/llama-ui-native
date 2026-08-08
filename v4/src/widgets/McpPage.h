@@ -6,9 +6,19 @@
 #pragma once
 #include <QDialog>
 #include <QJsonObject>
+#include <QList>
 
 class QVBoxLayout;
 class QLabel;
+
+namespace McpServers {
+struct Server {
+    QString name;
+    QString url;
+    bool enabled = true;
+};
+QList<Server> list(const QJsonObject &cfg);
+} // namespace McpServers
 
 class McpPage : public QDialog {
     Q_OBJECT

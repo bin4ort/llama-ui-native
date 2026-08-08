@@ -75,6 +75,13 @@ int main(int argc, char *argv[]) {
                              [&app]() { app.exit(0); });
             if (!attaches.isEmpty()) window.attachForTest(attaches);
             window.runSelfTest(args.at(stIdx + 1), shot);
+            // --stop-after <ms>: abort the stream mid-flight (stop button
+            // equivalent) — verifies the abort path end to end
+            const int stopIdx = args.indexOf(QStringLiteral("--stop-after"));
+            if (stopIdx != -1 && stopIdx + 1 < args.size()) {
+                QTimer::singleShot(args.at(stopIdx + 1).toInt(),
+                                   &window, &MainWindow::abortForTest);
+            }
         });
         return app.exec();
     }

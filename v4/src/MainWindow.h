@@ -28,6 +28,7 @@ public:
     void overrideThemeForTest(const QString &id);
     void openSettingsForTest();
     void attachForTest(const QStringList &paths) { attachFiles(paths); }
+    void abortForTest();
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event) override;

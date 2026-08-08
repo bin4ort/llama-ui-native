@@ -355,7 +355,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o: \
  /usr/include/qt6/QtCore/qregularexpression.h \
  /usr/include/qt6/QtCore/qurl.h /usr/include/qt6/QtCore/quuid.h \
  /usr/include/qt6/QtCore/qjsondocument.h \
- /usr/include/qt6/QtCore/qjsonparseerror.h \
+ /usr/include/qt6/QtCore/qjsonparseerror.h /usr/include/qt6/QtCore/QList \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/../i18n.h \
  /usr/include/qt6/QtCore/QString /usr/include/qt6/QtCore/QStringList \
  /usr/include/qt6/QtWidgets/QHBoxLayout \

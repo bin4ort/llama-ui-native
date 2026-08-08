@@ -31,8 +31,10 @@ public:
     void addAttachment(const QJsonObject &att);
     void setAttachments(const QJsonArray &atts);
 
-    /** Model selector (UI-SPEC §11.5) */
-    void setModels(const QStringList &ids, const QString &current);
+    /** Model selector (UI-SPEC §11.5); displayItems may carry tags,
+     *  rawIds are the real model ids emitted on selection. */
+    void setModels(const QStringList &displayItems, const QStringList &rawIds,
+                   const QString &currentRaw);
     QString model() const;
 
     /** Persona trigger label (v2: sparkles + active name + chevron). */

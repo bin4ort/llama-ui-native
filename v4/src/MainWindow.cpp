@@ -200,6 +200,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
                                 if (!files.isEmpty()) attachFiles(files);
                             });
         menu.addSeparator();
+        // MCP servers submenu (v2: per-server switches + configure footer)
+        const auto servers = McpServers::list(m_config);
+        if (!servers.isEmpty()) {
+            auto *mcpSub = menu.addMenu(QStringLiteral("◫ ") +
+                                        I18n::t(QStringLiteral("MCP Servers")));
+            for (const auto &s : servers) {
+                auto *act = mcpSub->addAction(s.name, this, [this, s]() {
+                    // attach an MCP prompt marker so the model can use it
+                    Q_UNUSED(s);
+                    m_composer->focusInput();
+                });
+                act->setCheckable(true);
+                act->setChecked(s.enabled);
+            }
+            mcpSub->addSeparator();
+            mcpSub->addAction(I18n::t(QStringLiteral("Configure servers…")),
+                              this, [this]() { openMcp(); });
+        }
         menu.addAction(QStringLiteral("💬 ") + I18n::t(QStringLiteral("System Message")),
                        this, [this]() {
                            bool ok = false;
@@ -264,13 +282,31 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     // models
     connect(m_api, &Api::modelsLoaded, this, [this](const QJsonArray &models) {
-        QStringList ids;
+        QStringList rawIds;
         for (const auto &m : models)
-            ids << m.toObject().value(QStringLiteral("id")).toString();
-        if (!ids.isEmpty()) {
+            rawIds << m.toObject().value(QStringLiteral("id")).toString();
+        if (!rawIds.isEmpty()) {
             const QString preferred = Config::value(QStringLiteral("model")).toString();
-            m_composer->setModels(ids, ids.contains(preferred) ? preferred : ids.first());
-            m_model = m_composer->model();
+            // v2 ModelBadge: append quantization + modality tags to the
+            // short id (Q8_0/Q4_K_M, vision/reasoning)
+            QStringList items;
+            const QRegularExpression quant(R"((Q\d+_\d+_?(?:K_\d+|I_\d+|M)?|Q\d+_\d+|FP16|F16|BF16|IQ\d+_\w+))");
+            for (const auto &id : rawIds) {
+                QString shortId = id;
+                const int slash = shortId.lastIndexOf('/');
+                if (slash >= 0) shortId = shortId.mid(slash + 1);
+                shortId.replace(QStringLiteral(".gguf"), QString());
+                QString tags;
+                const auto qm = quant.match(shortId);
+                if (qm.hasMatch()) tags += QStringLiteral("  [") + qm.captured(1) + QStringLiteral("]");
+                if (shortId.contains(QStringLiteral("VL")) || shortId.contains(QStringLiteral("Vision")))
+                    tags += QStringLiteral(" · vision");
+                if (shortId.contains(QStringLiteral("Thinking")) || shortId.contains(QStringLiteral("Reasoning")))
+                    tags += QStringLiteral(" · reasoning");
+                items << shortId + tags;
+            }
+            m_composer->setModels(items, rawIds,
+                                  rawIds.contains(preferred) ? preferred : rawIds.first());
         }
     });
     m_api->fetchModels();
@@ -383,6 +419,11 @@ void MainWindow::updateGauge() {
 
 void MainWindow::onSend(const QString &text) {
     sendMessageWithHistory(text);
+}
+
+void MainWindow::abortForTest() {
+    m_api->abort();
+    m_composer->setBusy(false);
 }
 
 void MainWindow::attachFiles(const QStringList &paths) {

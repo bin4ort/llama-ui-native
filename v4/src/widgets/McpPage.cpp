@@ -14,8 +14,6 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 
-namespace {
-/** mcpServers is stored as a JSON *string* (same key as the web app). */
 QJsonArray serversOf(const QJsonObject &cfg) {
     const QJsonValue v = cfg.value(QStringLiteral("mcpServers"));
     if (v.isArray()) return v.toArray();
@@ -23,7 +21,21 @@ QJsonArray serversOf(const QJsonObject &cfg) {
         return QJsonDocument::fromJson(v.toString().toUtf8()).array();
     return QJsonArray();
 }
+
+namespace McpServers {
+QList<Server> list(const QJsonObject &cfg) {
+    QList<Server> out;
+    for (const auto &v : serversOf(cfg)) {
+        const auto o = v.toObject();
+        Server s;
+        s.name = o.value(QStringLiteral("name")).toString();
+        s.url = o.value(QStringLiteral("url")).toString();
+        s.enabled = o.value(QStringLiteral("enabled")).toBool(true);
+        out.append(s);
+    }
+    return out;
 }
+} // namespace McpServers
 
 McpPage::McpPage(const QJsonObject &config, QWidget *parent)
     : QDialog(parent), m_cfg(config) {
