@@ -395,7 +395,9 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o: \
  /usr/include/qt6/QtGui/qtextformat.h /usr/include/qt6/QtGui/qpen.h \
  /usr/include/qt6/QtGui/qtextoption.h \
  /usr/include/qt6/QtGui/QDesktopServices \
- /usr/include/qt6/QtGui/qdesktopservices.h /usr/include/qt6/QtGui/QFont \
+ /usr/include/qt6/QtGui/qdesktopservices.h \
+ /usr/include/qt6/QtGui/QGuiApplication /usr/include/qt6/QtGui/QClipboard \
+ /usr/include/qt6/QtGui/qclipboard.h /usr/include/qt6/QtGui/QFont \
  /usr/include/qt6/QtWidgets/QHBoxLayout \
  /usr/include/qt6/QtWidgets/qboxlayout.h \
  /usr/include/qt6/QtWidgets/qlayout.h \

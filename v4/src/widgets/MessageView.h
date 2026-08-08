@@ -53,5 +53,6 @@ private:
     QString m_streamRaw;
     QString m_streamReasoning;
     QString m_streamId;
+    QList<QString> m_codeBlocks;
     bool m_streamReasoningVisible = true;
 };

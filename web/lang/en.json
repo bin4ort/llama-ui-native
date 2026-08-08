@@ -721,5 +721,8 @@
   "Unreachable": "Unreachable",
   "Delete MCP server": "Delete MCP server",
   "History": "History",
-  "Completion": "Completion"
+  "Completion": "Completion",
+  "All files": "All files",
+  "Message": "Message",
+  "Search presets…": "Search presets…"
 }

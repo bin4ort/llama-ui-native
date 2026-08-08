@@ -59,10 +59,6 @@ McpPage::McpPage(const QJsonObject &config, QWidget *parent)
     rebuild();
 
     auto *bottom = new QHBoxLayout;
-    auto *addBtn = new QPushButton(QStringLiteral("+ ") + I18n::t(QStringLiteral("Add server")), this);
-    addBtn->setProperty("outline", true);
-    connect(addBtn, &QPushButton::clicked, this, &McpPage::addServer);
-    bottom->addWidget(addBtn);
     bottom->addStretch(1);
     auto *closeBtn = new QPushButton(I18n::t(QStringLiteral("Close")), this);
     closeBtn->setProperty("outline", true);
@@ -79,10 +75,24 @@ void McpPage::rebuild() {
     }
     const auto servers = serversOf(m_cfg);
     if (servers.isEmpty()) {
-        auto *empty = new QLabel(
-            I18n::t(QStringLiteral("No MCP servers configured yet. Add one to get started.")));
-        empty->setObjectName(QStringLiteral("convEmpty"));
-        empty->setWordWrap(true);
+        // v2 empty state: centered card with primary add button
+        auto *empty = new QWidget(this);
+        empty->setObjectName(QStringLiteral("mcpEmpty"));
+        auto *vl = new QVBoxLayout(empty);
+        vl->setContentsMargins(16, 24, 16, 24);
+        vl->setSpacing(8);
+        auto *t1 = new QLabel(I18n::t(QStringLiteral("Add your first MCP server")), empty);
+        t1->setObjectName(QStringLiteral("mcpEmptyTitle"));
+        t1->setAlignment(Qt::AlignCenter);
+        vl->addWidget(t1);
+        auto *t2 = new QLabel(I18n::t(QStringLiteral("Connect a remote MCP server by URL.")), empty);
+        t2->setObjectName(QStringLiteral("mcpEmptyDesc"));
+        t2->setAlignment(Qt::AlignCenter);
+        vl->addWidget(t2);
+        auto *btn = new QPushButton(I18n::t(QStringLiteral("Add New Server")), empty);
+        btn->setProperty("primary", true);
+        connect(btn, &QPushButton::clicked, this, &McpPage::addServer);
+        vl->addWidget(btn, 0, Qt::AlignCenter);
         m_list->addWidget(empty);
         return;
     }

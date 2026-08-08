@@ -4,6 +4,8 @@
 #include "../i18n.h"
 #include <QAbstractTextDocumentLayout>
 #include <QDesktopServices>
+#include <QGuiApplication>
+#include <QClipboard>
 #include <QFont>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -19,19 +21,30 @@
 namespace {
 
 /** Minimal markdown -> HTML (UI-SPEC §07). Theme-aware colors: links use
- *  the primary token, table headers use muted/50. */
-QString mdToHtml(const QString &md, const QColor &linkColor, const QColor &thBg) {
+ *  the primary token, table headers use muted/50. Fenced code blocks get a
+ *  language label + copy link (v2 SyntaxHighlightedCode header). */
+QString mdToHtml(const QString &md, const QColor &linkColor, const QColor &thBg,
+                 QList<QString> *codeBlocks) {
     QString html = md.toHtmlEscaped();
     // fenced code blocks
     QRegularExpression fence(R"(```(\w*)\n([\s\S]*?)```)");
     QString out;
     int pos = 0;
+    int codeIdx = 0;
     for (auto it = fence.globalMatch(html); it.hasNext();) {
         auto m = it.next();
         out += html.mid(pos, m.capturedStart() - pos);
+        if (codeBlocks) codeBlocks->append(m.captured(2));
+        const QString lang = m.captured(1).isEmpty()
+                                 ? QStringLiteral("code")
+                                 : m.captured(1);
         out += QStringLiteral("<pre style='background-color:rgba(128,128,128,0.15);"
                               "padding:8px;border-radius:8px;font-family:monospace'>") +
-               m.captured(2).replace("\n", "<br>") + QStringLiteral("</pre>");
+               m.captured(2).replace("\n", "<br>") + QStringLiteral("</pre>") +
+               QStringLiteral("<a href='copy-code://%1' style='color:%2;font-size:11px'>")
+                   .arg(codeIdx++).arg(linkColor.name()) +
+               QStringLiteral("⧉ %1 · %2</a><br>")
+                   .arg(I18n::t(QStringLiteral("Copy")), lang);
         pos = m.capturedEnd();
     }
     out += html.mid(pos);
@@ -141,6 +154,25 @@ QString mdToHtml(const QString &md, const QColor &linkColor, const QColor &thBg)
     return html;
 }
 
+QLabel *makeRichLabel(const QString &html, const QString &objName,
+                        QWidget *parent, QList<QString> *blocks) {
+    auto *l = new QLabel(html, parent);
+    l->setObjectName(objName);
+    l->setTextFormat(Qt::RichText);
+    l->setWordWrap(true);
+    l->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
+    QObject::connect(l, &QLabel::linkActivated, l, [l, blocks](const QString &href) {
+        if (href.startsWith(QStringLiteral("copy-code://"))) {
+            const int idx = href.mid(12).toInt();
+            if (blocks && idx >= 0 && idx < blocks->size())
+                QGuiApplication::clipboard()->setText(blocks->at(idx));
+        } else if (href.startsWith(QStringLiteral("http"))) {
+            QDesktopServices::openUrl(QUrl(href));
+        }
+    });
+    return l;
+}
+
 /** One chat message: label + action row (UI-SPEC §3.9, always visible like
  *  v2 — no hover reveal). */
 class MessageRow : public QWidget {
@@ -191,6 +223,7 @@ void MessageView::clearLayout() {
     m_reasoningToggle = nullptr;
     m_streamRaw.clear();
     m_streamReasoning.clear();
+    m_codeBlocks.clear();
 }
 
 void MessageView::showGreeting() {
@@ -232,11 +265,16 @@ void MessageView::addMessage(const ChatMessage &msg) {
         if (!attNames.isEmpty())
             body = attNames.join(QStringLiteral("\n")) +
                    (msg.content.isEmpty() ? QString() : QStringLiteral("\n\n") + msg.content);
-        label = new QLabel(md ? mdToHtml(body, link, thBg) : body.toHtmlEscaped());
-        label->setObjectName(QStringLiteral("userBubble"));
-        label->setTextFormat(md ? Qt::RichText : Qt::PlainText);
-        label->setWordWrap(true);
-        label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        if (md) {
+            label = makeRichLabel(mdToHtml(body, link, thBg, &m_codeBlocks),
+                                  QStringLiteral("userBubble"), row, &m_codeBlocks);
+        } else {
+            label = new QLabel(body.toHtmlEscaped());
+            label->setObjectName(QStringLiteral("userBubble"));
+            label->setTextFormat(Qt::PlainText);
+            label->setWordWrap(true);
+            label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        }
         row->addLabel(label);
         m_layout->addWidget(row, 0, Qt::AlignRight);
     } else if (msg.role == ChatMessage::System) {
@@ -246,19 +284,13 @@ void MessageView::addMessage(const ChatMessage &msg) {
             pill->setAlignment(Qt::AlignCenter);
             m_layout->addWidget(pill);
         }
-        label = new QLabel(mdToHtml(msg.content, link, thBg));
-        label->setObjectName(QStringLiteral("systemBubble"));
-        label->setTextFormat(Qt::RichText);
-        label->setWordWrap(true);
+        label = makeRichLabel(mdToHtml(msg.content, link, thBg, &m_codeBlocks),
+                              QStringLiteral("systemBubble"), row, &m_codeBlocks);
         row->addLabel(label);
         m_layout->addWidget(row, 0, Qt::AlignRight);
     } else {
-        label = new QLabel(mdToHtml(msg.content, link, thBg));
-        label->setObjectName(QStringLiteral("assistantText"));
-        label->setWordWrap(true);
-        label->setTextFormat(Qt::RichText);
-        label->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
-        label->setOpenExternalLinks(false);
+        label = makeRichLabel(mdToHtml(msg.content, link, thBg, &m_codeBlocks),
+                              QStringLiteral("assistantText"), row, &m_codeBlocks);
         row->addLabel(label);
         m_layout->addWidget(row);
     }
@@ -318,7 +350,7 @@ void MessageView::updateStreaming(const QString &delta) {
     const QString palette = Config::value(QStringLiteral("theme")).toString();
     const QColor link = Theme::tokens(palette).primary;
     const QColor thBg = Theme::tokens(palette).muted;
-    m_streamingLabel->setText(mdToHtml(m_streamRaw, link, thBg));
+    m_streamingLabel->setText(mdToHtml(m_streamRaw, link, thBg, &m_codeBlocks));
     verticalScrollBar()->setValue(verticalScrollBar()->maximum());
 }
 

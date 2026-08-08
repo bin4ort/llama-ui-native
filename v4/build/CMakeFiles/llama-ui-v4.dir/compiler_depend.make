@@ -6518,15 +6518,18 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o: /home/stry4ok/Developm
   /usr/include/qt6/QtCore/qxptype_traits.h \
   /usr/include/qt6/QtCore/qyieldcpu.h \
   /usr/include/qt6/QtGui/QAbstractTextDocumentLayout \
+  /usr/include/qt6/QtGui/QClipboard \
   /usr/include/qt6/QtGui/QColor \
   /usr/include/qt6/QtGui/QDesktopServices \
   /usr/include/qt6/QtGui/QFont \
+  /usr/include/qt6/QtGui/QGuiApplication \
   /usr/include/qt6/QtGui/QTextDocument \
   /usr/include/qt6/QtGui/QTransform \
   /usr/include/qt6/QtGui/qabstracttextdocumentlayout.h \
   /usr/include/qt6/QtGui/qaction.h \
   /usr/include/qt6/QtGui/qbitmap.h \
   /usr/include/qt6/QtGui/qbrush.h \
+  /usr/include/qt6/QtGui/qclipboard.h \
   /usr/include/qt6/QtGui/qcolor.h \
   /usr/include/qt6/QtGui/qcursor.h \
   /usr/include/qt6/QtGui/qdesktopservices.h \
