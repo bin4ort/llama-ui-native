@@ -217,17 +217,20 @@ MessageView::MessageView(QWidget *parent) : QScrollArea(parent) {
     m_layout = new QVBoxLayout(m_container);
     m_layout->setContentsMargins(16, 16, 16, 16);
     m_layout->setSpacing(12);
-
-    // v2: messages live in a centered max-w-[80%] column
-    m_column = new QWidget(m_container);
-    m_column->setObjectName(QStringLiteral("messagesColumn"));
-    m_column->setMaximumWidth(1120);
-    m_rows = new QVBoxLayout(m_column);
-    m_rows->setContentsMargins(0, 0, 0, 0);
-    m_rows->setSpacing(12);
-    m_layout->addWidget(m_column, 0, Qt::AlignHCenter);
+    m_rows = m_layout;
     setWidget(m_container);
     showGreeting();
+}
+
+/** v2: user rows sit in the right 80% — a 0.6L-wide centered row puts
+ *  its right edge exactly at 0.8L. */
+void MessageView::updateUserRowWidth(QWidget *row) {
+    row->setFixedWidth(qMax(500, int(0.6 * width())));
+}
+
+void MessageView::resizeEvent(QResizeEvent *event) {
+    QScrollArea::resizeEvent(event);
+    for (auto *row : m_userRows) updateUserRowWidth(row);
 }
 
 void MessageView::clearLayout() {
@@ -242,6 +245,7 @@ void MessageView::clearLayout() {
     m_streamRaw.clear();
     m_streamReasoning.clear();
     m_codeBlocks.clear();
+    m_userRows.clear();
 }
 
 void MessageView::showGreeting() {
@@ -258,7 +262,7 @@ void MessageView::showGreeting() {
     sub->setWordWrap(true);
     m_rows->addWidget(sub);
     auto *bottomGap = new QWidget(this);
-    bottomGap->setFixedHeight(17);
+    bottomGap->setFixedHeight(8);
     m_rows->addWidget(bottomGap);
 }
 
@@ -311,7 +315,9 @@ void MessageView::addMessage(const ChatMessage &msg) {
             }
         }
         row->addLabel(label);
-        m_rows->addWidget(row, 0, Qt::AlignRight);
+        m_userRows.append(row);
+        updateUserRowWidth(row);
+        m_rows->addWidget(row, 0, Qt::AlignHCenter);
     } else if (msg.role == ChatMessage::System) {
         if (msg.type == QStringLiteral("persona")) {
             auto *pill = new QLabel(I18n::t(QStringLiteral("System message")));

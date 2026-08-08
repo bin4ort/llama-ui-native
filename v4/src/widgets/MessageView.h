@@ -34,6 +34,9 @@ public:
     QString lastAssistantHtml() const;
     void clear();
 
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+
 signals:
     void copyRequested(const QString &id, const QString &content);
     void regenerateRequested(const QString &id);
@@ -44,11 +47,12 @@ signals:
 private:
     void clearLayout();
     void showActionsFor(QLabel *label, bool visible);
+    void updateUserRowWidth(QWidget *row);
 
     QWidget *m_container;
     QVBoxLayout *m_layout;
-    QWidget *m_column;
     QVBoxLayout *m_rows;
+    QList<QWidget *> m_userRows;
     QLabel *m_streamingLabel = nullptr;
     QLabel *m_streamingReasoning = nullptr;
     QPushButton *m_reasoningToggle = nullptr;
