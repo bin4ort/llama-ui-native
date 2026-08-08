@@ -258,12 +258,12 @@ QMainWindow, QDialog { background-color: %2; color: %3; }
 /* Message bubbles (UI-SPEC §3.3–3.5) */
 #userBubble {
   background-color: %17; border: none; border-radius: 18px;
-  color: %3; padding: 8px 12px; max-width: 80%;
+  color: %3; padding: 8px 12px; max-width: 1000px;
 }
 #assistantText { color: %3; font-size: 14px; line-height: 1.5; }
 #systemBubble {
   background-color: %18; border: 2px dashed %5; border-radius: 18px;
-  color: %3; padding: 8px 12px; max-width: 80%;
+  color: %3; padding: 8px 12px; max-width: 1000px;
 }
 
 /* Inputs (UI-SPEC §3.2) */
@@ -315,6 +315,7 @@ QPushButton[primary="true"]:hover { background-color: %15; }
   color: %13; font-size: 12px; font-weight: 600; padding: 4px 0;
 }
 #messageActions { background-color: transparent; }
+#msgTimestamp { color: %10; font-size: 12px; padding: 0 2px; }
 #chatRow { background-color: transparent; }
 
 /* Tool result rows (v2 ToolCallBlock output) */

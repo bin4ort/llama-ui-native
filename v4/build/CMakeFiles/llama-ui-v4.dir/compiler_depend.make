@@ -6554,6 +6554,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o: /home/stry4ok/Developm
   /usr/include/qt6/QtGui/QColor \
   /usr/include/qt6/QtGui/QDesktopServices \
   /usr/include/qt6/QtGui/QFont \
+  /usr/include/qt6/QtGui/QFontMetrics \
   /usr/include/qt6/QtGui/QGuiApplication \
   /usr/include/qt6/QtGui/QTextDocument \
   /usr/include/qt6/QtGui/QTransform \
@@ -10218,6 +10219,8 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o:
 /usr/include/ctype.h:
 
 /usr/lib/libgio-2.0.so.0:
+
+/usr/include/qt6/QtGui/QFontMetrics:
 
 /usr/include/gnu/stubs-64.h:
 

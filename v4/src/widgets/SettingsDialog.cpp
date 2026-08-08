@@ -26,17 +26,20 @@
 namespace {
 // Registry tables (UI-SPEC §09 / §2 labels verbatim).
 const QList<SettingField> GENERAL = {
-    {"sendOnEnter", "Send message on Enter", "checkbox"},
-    {"autoMicOnEmpty", "Show microphone on empty input", "checkbox"},
-    {"enableContinueGeneration", "Enable \"Continue\" button", "checkbox"},
-    {"pasteLongTextToFileLen", "Paste long text to file length", "input", true},
-    {"copyTextAttachmentsAsPlainText", "Copy text attachments as plain text", "checkbox"},
-    {"pdfAsImage", "Parse PDF as image", "checkbox"},
-    {"maxImageMPixels", "Maximum image resolution (megapixels)", "input"},
+    {"serverEndpoint", "Server Endpoint", "input"},
     {"webUiAddress", "Web UI Address", "input"},
     {"webUiEnabled", "Enable Web UI", "checkbox"},
     {"apiKey", "API Key", "input"},
     {"systemMessage", "Default system prompt", "textarea"},
+    {"pasteLongTextToFileLen", "Paste long text to file length", "input", true},
+    {"sendOnEnter", "Send message on Enter", "checkbox"},
+    {"autoMicOnEmpty", "Show microphone on empty input", "checkbox"},
+    {"enableContinueGeneration", "Enable \"Continue\" button", "checkbox"},
+    {"titleGenerationMode", "Conversation title", "titleradio"},
+    {"titleGenerationPrompt", "LLM title generation prompt", "textarea"},
+    {"copyTextAttachmentsAsPlainText", "Copy text attachments as plain text", "checkbox"},
+    {"pdfAsImage", "Parse PDF as image", "checkbox"},
+    {"maxImageMPixels", "Maximum image resolution (megapixels)", "input"},
 };
 const QList<SettingField> DISPLAY = {
     {"showMessageStats", "Show message generation statistics", "checkbox"},
@@ -102,7 +105,6 @@ const QList<SettingField> DEVELOPER = {
     {"showRawOutputSwitch", "Enable raw output toggle", "checkbox"},
     {"jsSandboxEnabled", "JavaScript sandbox tool", "checkbox"},
     {"symbolicMathEnabled", "Symbolic math (nerdamer)", "checkbox"},
-    {"serverEndpoint", "Server endpoint", "input"},
     {"logLevel", "Log level", "loglevel"},
 };
 } // namespace
@@ -271,6 +273,16 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             te->setMinimumHeight(100);
             te->setMaximumHeight(200);
             control = te;
+        } else if (f.type == QStringLiteral("titleradio")) {
+            // v2 'Conversation title': First line / LLM
+            auto *combo = new QComboBox;
+            combo->addItem(I18n::t(QStringLiteral("First line of the conversation")),
+                           QStringLiteral("first_line"));
+            combo->addItem(QStringLiteral("LLM"),
+                           QStringLiteral("llm"));
+            const QString mode = m_cfg.value(f.key).toString();
+            combo->setCurrentIndex(qMax(0, combo->findData(mode)));
+            control = combo;
         } else if (f.type == QStringLiteral("loglevel")) {
             auto *combo = new QComboBox;
             combo->addItem(I18n::t(QStringLiteral("Errors only")), 0);

@@ -6,7 +6,9 @@
 #include <QDesktopServices>
 #include <QGuiApplication>
 #include <QClipboard>
+#include <cstdio>
 #include <QFont>
+#include <QFontMetrics>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
@@ -188,6 +190,12 @@ public:
         m_actions->setVisible(true);
         m_layout->addWidget(actions, 0, align);
     }
+    void addTimestamp() {
+        // v2: muted timestamp under the bubble (my-2)
+        auto *ts = new QLabel(I18n::t(QStringLiteral("just now")), this);
+        ts->setObjectName(QStringLiteral("msgTimestamp"));
+        m_layout->addWidget(ts, 0, Qt::AlignLeft);
+    }
     void setActionsVisible(bool v) {
         if (m_actions) m_actions->setVisible(v && m_label && !m_label->text().isEmpty());
     }
@@ -209,17 +217,25 @@ MessageView::MessageView(QWidget *parent) : QScrollArea(parent) {
     m_layout = new QVBoxLayout(m_container);
     m_layout->setContentsMargins(16, 16, 16, 16);
     m_layout->setSpacing(12);
+
+    // v2: messages live in a centered max-w-[80%] column
+    m_column = new QWidget(m_container);
+    m_column->setObjectName(QStringLiteral("messagesColumn"));
+    m_column->setMaximumWidth(1120);
+    m_rows = new QVBoxLayout(m_column);
+    m_rows->setContentsMargins(0, 0, 0, 0);
+    m_rows->setSpacing(12);
+    m_layout->addWidget(m_column, 0, Qt::AlignHCenter);
     setWidget(m_container);
     showGreeting();
 }
 
 void MessageView::clearLayout() {
-    while (m_layout->count()) {
-        auto *item = m_layout->takeAt(0);
+    while (m_rows->count()) {
+        auto *item = m_rows->takeAt(0);
         if (item->widget()) item->widget()->deleteLater();
         delete item;
     }
-    m_layout->setContentsMargins(16, 16, 16, 16);
     m_streamingLabel = nullptr;
     m_streamingReasoning = nullptr;
     m_reasoningToggle = nullptr;
@@ -231,26 +247,25 @@ void MessageView::clearLayout() {
 void MessageView::showGreeting() {
     clearLayout();
     // v2: the greeting hugs the floating form (mb-6), not vertically centered
-    m_layout->setContentsMargins(16, 16, 16, 0);
-    m_layout->addStretch(1);
+    m_rows->addStretch(1);
     auto *title = new QLabel(I18n::t(QStringLiteral("Hello there")));
     title->setObjectName(QStringLiteral("greetingTitle"));
     title->setAlignment(Qt::AlignCenter);
-    m_layout->addWidget(title);
+    m_rows->addWidget(title);
     auto *sub = new QLabel(I18n::t(QStringLiteral("Type a message or upload files to get started")));
     sub->setObjectName(QStringLiteral("greetingSub"));
     sub->setAlignment(Qt::AlignCenter);
     sub->setWordWrap(true);
-    m_layout->addWidget(sub);
+    m_rows->addWidget(sub);
     auto *bottomGap = new QWidget(this);
     bottomGap->setFixedHeight(17);
-    m_layout->addWidget(bottomGap);
+    m_rows->addWidget(bottomGap);
 }
 
 void MessageView::addMessage(const ChatMessage &msg) {
     // drop greeting once real content arrives
-    if (m_layout->count() > 0) {
-        auto *w0 = m_layout->itemAt(0)->widget();
+    if (m_rows->count() > 0) {
+        auto *w0 = m_rows->itemAt(0)->widget();
         if (!w0 || w0->objectName() != QStringLiteral("chatRow")) clearLayout();
     }
 
@@ -274,6 +289,35 @@ void MessageView::addMessage(const ChatMessage &msg) {
         if (md) {
             label = makeRichLabel(mdToHtml(body, link, thBg, &m_codeBlocks),
                                   QStringLiteral("userBubble"), row, &m_codeBlocks);
+        } else {
+            label = new QLabel(body.toHtmlEscaped());
+            label->setObjectName(QStringLiteral("userBubble"));
+            label->setTextFormat(Qt::PlainText);
+            label->setWordWrap(true);
+            label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+            // bubble sizes to the text (v2): short texts stay single-line
+            // so the bubble hugs the content instead of wrapping at the
+            // widest word
+            if (!msg.content.isEmpty()) {
+                QFont f = label->font();
+                f.setPixelSize(14);
+                const int textW = QFontMetrics(f).horizontalAdvance(msg.content);
+                if (textW < 600) label->setWordWrap(false);
+            }
+        }
+        row->addLabel(label);
+        m_rows->addWidget(row, 0, Qt::AlignRight);
+    } else if (msg.role == ChatMessage::System) {
+        if (msg.type == QStringLiteral("persona")) {
+            auto *pill = new QLabel(I18n::t(QStringLiteral("System message")));
+            pill->setObjectName(QStringLiteral("systemPill"));
+            pill->setAlignment(Qt::AlignCenter);
+            m_rows->addWidget(pill);
+        }
+        label = makeRichLabel(mdToHtml(msg.content, link, thBg, &m_codeBlocks),
+                              QStringLiteral("systemBubble"), row, &m_codeBlocks);
+        row->addLabel(label);
+        m_rows->addWidget(row, 0, Qt::AlignRight);
     } else if (msg.type == QStringLiteral("tool-call")) {
         // v2 ToolCallBlock header (tool name + args)
         const auto calls = QJsonDocument::fromJson(msg.content.toUtf8()).array();
@@ -288,7 +332,7 @@ void MessageView::addMessage(const ChatMessage &msg) {
         label->setObjectName(QStringLiteral("toolCallRow"));
         label->setWordWrap(true);
         row->addLabel(label);
-        m_layout->addWidget(row);
+        m_rows->addWidget(row);
     } else if (msg.type == QStringLiteral("tool-result")) {
         // v2 ToolCallBlock output row (compact)
         label = new QLabel(msg.content.toHtmlEscaped());
@@ -296,32 +340,12 @@ void MessageView::addMessage(const ChatMessage &msg) {
         label->setWordWrap(true);
         label->setTextInteractionFlags(Qt::TextSelectableByMouse);
         row->addLabel(label);
-        m_layout->addWidget(row, 0, Qt::AlignLeft);
-    } else {
-            label = new QLabel(body.toHtmlEscaped());
-            label->setObjectName(QStringLiteral("userBubble"));
-            label->setTextFormat(Qt::PlainText);
-            label->setWordWrap(true);
-            label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-        }
-        row->addLabel(label);
-        m_layout->addWidget(row, 0, Qt::AlignRight);
-    } else if (msg.role == ChatMessage::System) {
-        if (msg.type == QStringLiteral("persona")) {
-            auto *pill = new QLabel(I18n::t(QStringLiteral("System message")));
-            pill->setObjectName(QStringLiteral("systemPill"));
-            pill->setAlignment(Qt::AlignCenter);
-            m_layout->addWidget(pill);
-        }
-        label = makeRichLabel(mdToHtml(msg.content, link, thBg, &m_codeBlocks),
-                              QStringLiteral("systemBubble"), row, &m_codeBlocks);
-        row->addLabel(label);
-        m_layout->addWidget(row, 0, Qt::AlignRight);
+        m_rows->addWidget(row, 0, Qt::AlignLeft);
     } else {
         label = makeRichLabel(mdToHtml(msg.content, link, thBg, &m_codeBlocks),
                               QStringLiteral("assistantText"), row, &m_codeBlocks);
         row->addLabel(label);
-        m_layout->addWidget(row);
+        m_rows->addWidget(row);
     }
 
     // action row (v2 ChatMessageActionIcons order: copy, edit, regenerate,
@@ -362,6 +386,7 @@ void MessageView::addMessage(const ChatMessage &msg) {
     al->addStretch(1);
     row->addActions(actions, msg.role == ChatMessage::User ? Qt::AlignRight : Qt::AlignLeft);
 
+    if (!msg.streaming) row->addTimestamp();
     if (msg.streaming) {
         m_streamingLabel = label;
         m_streamingReasoning = nullptr;
@@ -371,7 +396,11 @@ void MessageView::addMessage(const ChatMessage &msg) {
         label->setText(QStringLiteral("…"));
     }
     // keep the view pinned to the bottom
-    QTimer::singleShot(0, this, [this]() {
+    QTimer::singleShot(0, this, [this, row, label]() {
+        if (label && row)
+            fprintf(stderr, "[MSGDBG] labelW=%d rowW=%d text=%s\n",
+                    label->width(), row->width(),
+                    qPrintable(label->text().left(30)));
         verticalScrollBar()->setValue(verticalScrollBar()->maximum());
     });
 }
@@ -413,12 +442,12 @@ void MessageView::updateReasoning(const QString &delta) {
         m_streamingReasoning->setTextInteractionFlags(Qt::TextSelectableByMouse);
         vl->addWidget(m_streamingReasoning);
         // insert above the streaming label: find the row containing it
-        const int n = m_layout->count();
+        const int n = m_rows->count();
         for (int i = 0; i < n; ++i) {
-            auto *item = m_layout->itemAt(i);
+            auto *item = m_rows->itemAt(i);
             auto *w = item->widget();
             if (w && w->objectName() == QStringLiteral("chatRow")) {
-                m_layout->insertWidget(i, host);
+                m_rows->insertWidget(i, host);
                 break;
             }
         }

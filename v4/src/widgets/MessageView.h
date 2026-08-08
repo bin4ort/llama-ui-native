@@ -47,6 +47,8 @@ private:
 
     QWidget *m_container;
     QVBoxLayout *m_layout;
+    QWidget *m_column;
+    QVBoxLayout *m_rows;
     QLabel *m_streamingLabel = nullptr;
     QLabel *m_streamingReasoning = nullptr;
     QPushButton *m_reasoningToggle = nullptr;
