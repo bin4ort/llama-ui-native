@@ -74,6 +74,7 @@ private:
     MessageView *m_messages;
     Composer *m_composer;
     QLabel *m_errorBanner = nullptr;
+    QLabel *m_errorBannerDetail = nullptr;
     QJsonObject m_config;
     QString m_model;
     bool m_streaming = false;

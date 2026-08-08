@@ -35,6 +35,9 @@ public:
     void setModels(const QStringList &ids, const QString &current);
     QString model() const;
 
+    /** Persona trigger label (v2: sparkles + active name + chevron). */
+    void setPersonaName(const QString &name);
+
     /** Context usage for the gauge (UI-SPEC §5.7). */
     void setContextUsage(qint64 promptChars, qint64 completionChars, int maxCtx);
 

@@ -306,6 +306,21 @@ QPushButton[destructive="true"]:hover { background-color: %24; }
 QPushButton[primary="true"] { background-color: %13; color: %14; }
 QPushButton[primary="true"]:hover { background-color: %15; }
 
+/* MCP server cards (UI-SPEC §10.2) */
+#mcpCard { background-color: %11; border: 1px solid %5; border-radius: 10px; }
+#mcpName { font-weight: 600; font-size: 14px; }
+#mcpUrl { color: %10; font-size: 12px; }
+#mcpState { font-size: 11px; padding: 1px 8px; border-radius: 8px; color: %10; }
+#mcpState[on="true"] { color: #2ecc71; }
+#mcpState[on="false"] { color: %23; }
+
+QPushButton[persona="true"] {
+  background-color: transparent; border: 1px solid %5; border-radius: 14px;
+  color: %10; padding: 4px 10px; font-size: 12px;
+}
+QPushButton[persona="true"]:hover { background-color: %7; color: %3; }
+QPushButton[persona="true"][active="true"] { color: #fbbf24; }
+
 /* Attachment chips (UI-SPEC §4.2) */
 #attChip {
   background-color: %7; border: 1px solid %5; border-radius: 10px;

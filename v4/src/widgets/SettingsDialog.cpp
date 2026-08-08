@@ -121,9 +121,9 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, QWidget *parent)
     m_tabs->addTab(buildSection(QStringLiteral("Display"), DISPLAY), QStringLiteral("Display"));
     m_tabs->addTab(buildSection(QStringLiteral("Sampling"), SAMPLING), QStringLiteral("Sampling"));
     m_tabs->addTab(buildSection(QStringLiteral("Penalties"), PENALTIES), QStringLiteral("Penalties"));
-    m_tabs->addTab(buildSection(QStringLiteral("Tools"), TOOLS), QStringLiteral("Tools"));
     m_tabs->addTab(buildSection(QStringLiteral("Agentic"), AGENTIC), QStringLiteral("Agentic"));
     m_tabs->addTab(buildSection(QStringLiteral("Developer"), DEVELOPER), QStringLiteral("Developer"));
+    m_tabs->addTab(buildSection(QStringLiteral("Tools"), TOOLS), QStringLiteral("Tools"));
     m_tabs->addTab(buildImportExport(), I18n::t(QStringLiteral("Import/Export")));
     layout->addWidget(m_tabs, 1);
 
@@ -166,20 +166,49 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     form->setSpacing(10);
 
     if (useComboLang) {
+        // v2 human-readable language labels
+        const QMap<QString, QString> langNames{
+            {QStringLiteral("en"), QStringLiteral("English")},
+            {QStringLiteral("de"), QStringLiteral("Deutsch")},
+            {QStringLiteral("ru"), QStringLiteral("Русский")},
+            {QStringLiteral("es"), QStringLiteral("Español")},
+            {QStringLiteral("fr"), QStringLiteral("Français")},
+            {QStringLiteral("zh"), QStringLiteral("中文")},
+            {QStringLiteral("ja"), QStringLiteral("日本語")},
+            {QStringLiteral("ko"), QStringLiteral("한국어")},
+            {QStringLiteral("pt"), QStringLiteral("Português")},
+            {QStringLiteral("it"), QStringLiteral("Italiano")},
+            {QStringLiteral("tr"), QStringLiteral("Türkçe")},
+            {QStringLiteral("pl"), QStringLiteral("Polski")},
+        };
         auto *lang = new QComboBox;
         for (const auto &code : I18n::languages())
-            lang->addItem(code, code);
+            lang->addItem(langNames.value(code, code), code);
         lang->setCurrentIndex(qMax(0, lang->findData(m_cfg.value(QStringLiteral("language")).toString())));
         form->addRow(QStringLiteral("Language"), lang);
         m_controls.append({QStringLiteral("language"), lang});
     }
     if (useComboTheme) {
+        // v2 theme names (settings-registry order)
+        const QList<QPair<QString, QString>> themes{
+            {QStringLiteral("System"), QStringLiteral("system")},
+            {QStringLiteral("Light"), QStringLiteral("light")},
+            {QStringLiteral("Snow"), QStringLiteral("snow")},
+            {QStringLiteral("Dark"), QStringLiteral("dark")},
+            {QStringLiteral("AMOLED"), QStringLiteral("amoled")},
+            {QStringLiteral("Nord"), QStringLiteral("nord")},
+            {QStringLiteral("Dracula"), QStringLiteral("dracula")},
+            {QStringLiteral("Cobalt"), QStringLiteral("cobalt")},
+            {QStringLiteral("Solarized Dark"), QStringLiteral("solarized")},
+            {QStringLiteral("Gruvbox Dark"), QStringLiteral("gruvbox")},
+            {QStringLiteral("Gruvbox Light"), QStringLiteral("gruvbox-light")},
+            {QStringLiteral("Ionized Purple"), QStringLiteral("ionized-purple")},
+            {QStringLiteral("Ionized Red"), QStringLiteral("ionized-red")},
+            {QStringLiteral("Ionized Cyan"), QStringLiteral("ionized-cyan")},
+        };
         auto *theme = new QComboBox;
-        theme->addItem(QStringLiteral("System"), QStringLiteral("system"));
-        theme->addItem(QStringLiteral("Dark"), QStringLiteral("dark"));
-        theme->addItem(QStringLiteral("Light"), QStringLiteral("light"));
-        for (const auto &p : Theme::palettes())
-            theme->addItem(p.id, p.id);
+        for (const auto &[label, id] : themes)
+            theme->addItem(label, id);
         theme->setCurrentIndex(qMax(0, theme->findData(m_cfg.value(QStringLiteral("theme")).toString())));
         form->addRow(QStringLiteral("Theme"), theme);
         m_controls.append({QStringLiteral("theme"), theme});

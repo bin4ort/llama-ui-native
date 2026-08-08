@@ -37,21 +37,11 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
     connect(attach, &QPushButton::clicked, this, &Composer::attachRequested);
     bar->addWidget(attach);
 
-    m_persona = new QPushButton(QStringLiteral("✧"), this);
-    m_persona->setProperty("round", true);
+    m_persona = new QPushButton(QStringLiteral("✦ Default ▾"), this);
+    m_persona->setProperty("persona", true);
     m_persona->setToolTip(I18n::t(QStringLiteral("Choose a personality preset")));
     connect(m_persona, &QPushButton::clicked, this, &Composer::personaRequested);
     bar->addWidget(m_persona);
-
-    // model selector (UI-SPEC §11.5) — compact, in the action bar
-    m_modelSelect = new QComboBox(this);
-    m_modelSelect->setProperty("modelSelect", true);
-    m_modelSelect->setMaximumWidth(220);
-    m_modelSelect->setMinimumWidth(140);
-    m_modelSelect->setToolTip(I18n::t(QStringLiteral("Model")));
-    connect(m_modelSelect, &QComboBox::currentTextChanged, this,
-            [this](const QString &t) { if (!t.isEmpty()) emit modelSelected(t); });
-    bar->addWidget(m_modelSelect);
 
     m_input = new QTextEdit(this);
     m_input->setPlaceholderText(I18n::t(QStringLiteral("Type a message...")));
@@ -61,9 +51,22 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
 
     m_send = new QPushButton(QStringLiteral("↑"), this);
     m_send->setProperty("send", true);
-    bar->addWidget(m_send);
+
+    // right cluster (v2 ChatFormActions order): gauge -> model -> send
     m_gauge = new ContextGauge(this);
+    m_gauge->setVisible(false); // hidden until tokens processed (v2)
     bar->addWidget(m_gauge);
+
+    m_modelSelect = new QComboBox(this);
+    m_modelSelect->setProperty("modelSelect", true);
+    m_modelSelect->setMaximumWidth(220);
+    m_modelSelect->setMinimumWidth(140);
+    m_modelSelect->setToolTip(I18n::t(QStringLiteral("Model")));
+    connect(m_modelSelect, &QComboBox::currentTextChanged, this,
+            [this](const QString &t) { if (!t.isEmpty()) emit modelSelected(t); });
+    bar->addWidget(m_modelSelect);
+
+    bar->addWidget(m_send);
     m_outer->addLayout(bar);
 
     auto trySend = [this]() {
@@ -130,8 +133,17 @@ QString Composer::model() const {
     return m_modelSelect->currentText();
 }
 
+void Composer::setPersonaName(const QString &name) {
+    m_persona->setText(QStringLiteral("✦ ") + name + QStringLiteral(" ▾"));
+    m_persona->setProperty("active", !name.isEmpty() && name != I18n::t(QStringLiteral("Default")));
+    m_persona->style()->unpolish(m_persona);
+    m_persona->style()->polish(m_persona);
+}
+
 void Composer::setContextUsage(qint64 promptChars, qint64 completionChars, int maxCtx) {
-    if (m_gauge) m_gauge->setUsage(promptChars, completionChars, maxCtx);
+    if (!m_gauge) return;
+    m_gauge->setVisible(promptChars > 0 || completionChars > 0); // v2: only with tokens
+    m_gauge->setUsage(promptChars, completionChars, maxCtx);
 }
 
 void Composer::rebuildChips() {

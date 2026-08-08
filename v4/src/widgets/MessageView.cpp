@@ -141,11 +141,11 @@ QString mdToHtml(const QString &md, const QColor &linkColor, const QColor &thBg)
     return html;
 }
 
-/** One chat message: label + hover-revealed action row (UI-SPEC §3.9). */
+/** One chat message: label + action row (UI-SPEC §3.9, always visible like
+ *  v2 — no hover reveal). */
 class MessageRow : public QWidget {
 public:
     MessageRow(QWidget *parent) : QWidget(parent) {
-        setAttribute(Qt::WA_Hover);
         m_layout = new QVBoxLayout(this);
         m_layout->setContentsMargins(0, 0, 0, 0);
         m_layout->setSpacing(2);
@@ -153,16 +153,11 @@ public:
     void addLabel(QLabel *l) { m_label = l; m_layout->addWidget(l); }
     void addActions(QWidget *actions, Qt::Alignment align) {
         m_actions = actions;
-        m_actions->setVisible(false);
+        m_actions->setVisible(true);
         m_layout->addWidget(actions, 0, align);
     }
     void setActionsVisible(bool v) {
         if (m_actions) m_actions->setVisible(v && m_label && !m_label->text().isEmpty());
-    }
-    bool event(QEvent *ev) override {
-        if (ev->type() == QEvent::HoverEnter) setActionsVisible(true);
-        else if (ev->type() == QEvent::HoverLeave) setActionsVisible(false);
-        return QWidget::event(ev);
     }
 private:
     QVBoxLayout *m_layout;
@@ -201,47 +196,15 @@ void MessageView::clearLayout() {
 void MessageView::showGreeting() {
     clearLayout();
     m_layout->addStretch(1);
-    auto *title = new QLabel(I18n::t(QStringLiteral("What can I help you with?")));
+    auto *title = new QLabel(I18n::t(QStringLiteral("Hello there")));
     title->setObjectName(QStringLiteral("greetingTitle"));
     title->setAlignment(Qt::AlignCenter);
     m_layout->addWidget(title);
-    auto *sub = new QLabel(I18n::t(QStringLiteral(
-        "Start a conversation with your local AI — ask anything, upload files, or attach tools")));
+    auto *sub = new QLabel(I18n::t(QStringLiteral("Type a message or upload files to get started")));
     sub->setObjectName(QStringLiteral("greetingSub"));
     sub->setAlignment(Qt::AlignCenter);
     sub->setWordWrap(true);
     m_layout->addWidget(sub);
-    m_layout->addSpacing(16);
-    // suggestion chips (UI-SPEC §6.2)
-    const QStringList suggestions{
-        I18n::t(QStringLiteral("Write a poem about the ocean")),
-        I18n::t(QStringLiteral("Summarize the key ideas of a topic")),
-        I18n::t(QStringLiteral("Explain a concept simply")),
-        I18n::t(QStringLiteral("Help me write a function")),
-    };
-    auto *grid = new QWidget(this);
-    auto *gl = new QVBoxLayout(grid);
-    gl->setContentsMargins(0, 0, 0, 0);
-    gl->setSpacing(8);
-    for (int r = 0; r < 2; ++r) {
-        auto *rowW = new QWidget(grid);
-        auto *hl = new QHBoxLayout(rowW);
-        hl->setContentsMargins(0, 0, 0, 0);
-        hl->setSpacing(8);
-        hl->addStretch(1);
-        for (int c = 0; c < 2; ++c) {
-            const int idx = r * 2 + c;
-            if (idx >= suggestions.size()) break;
-            auto *chip = new QPushButton(QStringLiteral("✦  ") + suggestions.at(idx));
-            chip->setProperty("chip", true);
-            connect(chip, &QPushButton::clicked, this,
-                    [this, s = suggestions.at(idx)]() { emit suggestionClicked(s); });
-            hl->addWidget(chip);
-        }
-        hl->addStretch(1);
-        gl->addWidget(rowW);
-    }
-    m_layout->addWidget(grid);
     m_layout->addStretch(1);
 }
 
@@ -300,7 +263,8 @@ void MessageView::addMessage(const ChatMessage &msg) {
         m_layout->addWidget(row);
     }
 
-    // hover action row (UI-SPEC §3.9): copy / regenerate / edit / delete
+    // action row (v2 ChatMessageActionIcons order: copy, edit, regenerate,
+    // continue, delete) — always visible, aligned like v2
     auto *actions = new QWidget(row);
     auto *al = new QHBoxLayout(actions);
     al->setContentsMargins(0, 0, 0, 0);
@@ -317,14 +281,19 @@ void MessageView::addMessage(const ChatMessage &msg) {
                [this, id = msg.id, content = msg.content]() {
                    emit copyRequested(id, content);
                });
-    if (msg.role != ChatMessage::System) {
-        makeAction(QStringLiteral("↻"), I18n::t(QStringLiteral("Regenerate")),
-                   [this, id = msg.id]() { emit regenerateRequested(id); });
-        if (msg.role == ChatMessage::User)
+    if (!msg.streaming) {
+        if (msg.role != ChatMessage::System)
             makeAction(QStringLiteral("✎"), I18n::t(QStringLiteral("Edit")),
                        [this, id = msg.id]() { emit editRequested(id); });
-        makeAction(QStringLiteral("✕"), I18n::t(QStringLiteral("Delete")),
-                   [this, id = msg.id]() { emit deleteRequested(id); });
+        if (msg.role == ChatMessage::Assistant) {
+            makeAction(QStringLiteral("↻"), I18n::t(QStringLiteral("Regenerate")),
+                       [this, id = msg.id]() { emit regenerateRequested(id); });
+            makeAction(QStringLiteral("→"), I18n::t(QStringLiteral("Continue")),
+                       [this, id = msg.id]() { emit continueRequested(id); });
+        }
+        if (msg.role != ChatMessage::System)
+            makeAction(QStringLiteral("✕"), I18n::t(QStringLiteral("Delete")),
+                       [this, id = msg.id]() { emit deleteRequested(id); });
     }
     al->addStretch(1);
     row->addActions(actions, msg.role == ChatMessage::User ? Qt::AlignRight : Qt::AlignLeft);
@@ -363,15 +332,15 @@ void MessageView::updateReasoning(const QString &delta) {
         auto *vl = new QVBoxLayout(host);
         vl->setContentsMargins(0, 0, 0, 0);
         vl->setSpacing(2);
-        m_reasoningToggle = new QPushButton(QStringLiteral("▾ ") + I18n::t(QStringLiteral("Thought")),
+        m_reasoningToggle = new QPushButton(QStringLiteral("🧠 ") + I18n::t(QStringLiteral("Reasoning")),
                                             host);
         m_reasoningToggle->setProperty("reasoningToggle", true);
         connect(m_reasoningToggle, &QPushButton::clicked, this, [this]() {
             m_streamReasoningVisible = !m_streamReasoningVisible;
             if (m_streamingReasoning)
                 m_streamingReasoning->setVisible(m_streamReasoningVisible);
-            m_reasoningToggle->setText(QString(m_streamReasoningVisible ? "▾ " : "▸ ") +
-                                       I18n::t(QStringLiteral("Thought")));
+            m_reasoningToggle->setText(QString(m_streamReasoningVisible ? "🧠 " : "🧠 ") +
+                                       I18n::t(QStringLiteral("Reasoning")));
         });
         vl->addWidget(m_reasoningToggle);
         m_streamingReasoning = new QLabel(m_streamReasoning.toHtmlEscaped());

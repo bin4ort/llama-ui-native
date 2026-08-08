@@ -25,6 +25,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o.d"
   "CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o"
   "CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o.d"
   "CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o"
   "CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o.d"
   "CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o"

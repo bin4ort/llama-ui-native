@@ -625,6 +625,12 @@
 			null
 		],
 		[
+			"/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/McpPage.h",
+			"Mu",
+			"RZ4CM6YYJ6/moc_McpPage.cpp",
+			null
+		],
+		[
 			"/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/MessageView.h",
 			"Mu",
 			"RZ4CM6YYJ6/moc_MessageView.cpp",
@@ -766,6 +772,11 @@
 		],
 		[
 			"/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ContextGauge.cpp",
+			"Mu",
+			null
+		],
+		[
+			"/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/McpPage.cpp",
 			"Mu",
 			null
 		],

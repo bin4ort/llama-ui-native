@@ -22,6 +22,10 @@ llama-ui-v4_autogen/timestamp: /home/stry4ok/Development/Projects/LlamaUI-Native
   /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/main.cpp \
   /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Composer.cpp \
   /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Composer.h \
+  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ContextGauge.cpp \
+  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ContextGauge.h \
+  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/McpPage.cpp \
+  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/McpPage.h \
   /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/MessageView.cpp \
   /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/MessageView.h \
   /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/SettingsDialog.cpp \
@@ -1448,7 +1452,15 @@ llama-ui-v4_autogen/timestamp: /home/stry4ok/Development/Projects/LlamaUI-Native
 
 /usr/lib/cmake/Qt6/QtPublicSbomSystemDepHelpers.cmake:
 
-/usr/include/qt6/QtGui/qcolor.h:
+/usr/lib/cmake/Qt6Widgets/Qt6WidgetsVersionlessAliasTargets.cmake:
+
+/usr/lib/cmake/Qt6Gui/Qt6GuiVersionlessAliasTargets.cmake:
+
+/usr/lib/cmake/Qt6/QtPublicSbomQtEntityHelpers.cmake:
+
+/usr/lib/cmake/Qt6/QtPublicSbomPurlHelpers.cmake:
+
+/usr/lib/cmake/Qt6/QtPublicSbomOpsHelpers.cmake:
 
 /usr/include/c++/15.2.1/string_view:
 
@@ -1469,12 +1481,6 @@ llama-ui-v4_autogen/timestamp: /home/stry4ok/Development/Projects/LlamaUI-Native
 /usr/lib/cmake/Qt6Widgets/Qt6WidgetsDependencies.cmake:
 
 /usr/include/c++/15.2.1/variant:
-
-/usr/lib/cmake/Qt6Gui/Qt6QWaylandFullScreenShellV1IntegrationPluginTargets.cmake:
-
-/usr/include/c++/15.2.1/tr1/exp_integral.tcc:
-
-/usr/include/qt6/QtGui/qcursor.h:
 
 /usr/lib/cmake/Qt6Gui/Qt6QWaylandWlShellIntegrationPluginConfig.cmake:
 
@@ -1620,8 +1626,6 @@ llama-ui-v4_autogen/timestamp: /home/stry4ok/Development/Projects/LlamaUI-Native
 
 /usr/include/c++/15.2.1/tr1/bessel_function.tcc:
 
-/usr/lib/cmake/Qt6/QtPublicSbomOpsHelpers.cmake:
-
 /usr/lib/cmake/Qt6Gui/Qt6QEvdevTouchScreenPluginConfig.cmake:
 
 /usr/include/c++/15.2.1/bits/shared_ptr.h:
@@ -1654,8 +1658,6 @@ llama-ui-v4_autogen/timestamp: /home/stry4ok/Development/Projects/LlamaUI-Native
 
 /usr/include/qt6/QtCore/qsystemdetection.h:
 
-/usr/include/c++/15.2.1/bits/streambuf.tcc:
-
 /usr/lib/cmake/Qt6Gui/Qt6QMinimalEglIntegrationPluginConfig.cmake:
 
 /usr/include/bits/cpu-set.h:
@@ -1670,19 +1672,9 @@ llama-ui-v4_autogen/timestamp: /home/stry4ok/Development/Projects/LlamaUI-Native
 
 /usr/include/c++/15.2.1/bits/basic_string.tcc:
 
-/usr/include/c++/15.2.1/system_error:
-
-/usr/include/asm/errno.h:
-
-/usr/lib/cmake/Qt6Gui/Qt6QEglFSIntegrationPluginAdditionalTargetInfo.cmake:
-
-/usr/include/c++/15.2.1/bits/new_allocator.h:
-
 /usr/include/c++/15.2.1/cmath:
 
 /usr/include/c++/15.2.1/bits/stringfwd.h:
-
-/usr/lib/cmake/Qt6/QtPublicSbomPurlHelpers.cmake:
 
 /usr/include/c++/15.2.1/bits/nested_exception.h:
 
@@ -1703,10 +1695,6 @@ llama-ui-v4_autogen/timestamp: /home/stry4ok/Development/Projects/LlamaUI-Native
 /usr/include/qt6/QtCore/qtaggedpointer.h:
 
 /usr/include/c++/15.2.1/bits/memory_resource.h:
-
-/usr/include/c++/15.2.1/bits/localefwd.h:
-
-/usr/include/qt6/QtCore/qcborvalue.h:
 
 /usr/lib/cmake/Qt6GuiTools/Qt6GuiToolsVersionlessTargets.cmake:
 
@@ -1760,15 +1748,29 @@ llama-ui-v4_autogen/timestamp: /home/stry4ok/Development/Projects/LlamaUI-Native
 
 /usr/include/qt6/QtWidgets/QMainWindow:
 
-/usr/include/bits/pthreadtypes-arch.h:
+/usr/lib/cmake/Qt6Gui/Qt6QVirtualKeyboardPluginAdditionalTargetInfo.cmake:
 
-/usr/include/qt6/QtCore/qjsonparseerror.h:
+/usr/include/c++/15.2.1/bits/monostate.h:
 
-/usr/include/c++/15.2.1/bits/atomic_base.h:
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ContextGauge.cpp:
 
-/usr/include/c++/15.2.1/pstl/pstl_config.h:
+/usr/include/c++/15.2.1/bits/concept_check.h:
 
-/usr/include/qt6/QtCore/qpair.h:
+/usr/lib/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginTargetsPrecheck.cmake:
+
+/usr/include/c++/15.2.1/bits/stl_iterator_base_funcs.h:
+
+/usr/include/qt6/QtCore/qscopeguard.h:
+
+CMakeFiles/4.4.2/CMakeSystem.cmake:
+
+/usr/include/c++/15.2.1/bits/charconv.h:
+
+/usr/include/qt6/QtCore/qiterable.h:
+
+/usr/lib/cmake/Qt6GuiTools/Qt6GuiToolsTargets-relwithdebinfo.cmake:
+
+/usr/include/c++/15.2.1/bits/char_traits.h:
 
 /usr/lib/cmake/Qt6Core/Qt6CoreDependencies.cmake:
 
@@ -1808,10 +1810,6 @@ llama-ui-v4_autogen/timestamp: /home/stry4ok/Development/Projects/LlamaUI-Native
 
 /usr/lib/cmake/Qt6/QtPublicFinalizerHelpers.cmake:
 
-/usr/include/bits/posix1_lim.h:
-
-/usr/include/wchar.h:
-
 /usr/include/asm-generic/posix_types.h:
 
 /usr/include/c++/15.2.1/bits/stl_map.h:
@@ -1832,25 +1830,45 @@ llama-ui-v4_autogen/timestamp: /home/stry4ok/Development/Projects/LlamaUI-Native
 
 /usr/include/c++/15.2.1/iterator:
 
-/usr/include/c++/15.2.1/bits/stl_bvector.h:
-
-/usr/lib/cmake/Qt6Widgets/Qt6WidgetsVersionlessAliasTargets.cmake:
-
-/usr/lib/cmake/Qt6Gui/Qt6GuiVersionlessAliasTargets.cmake:
-
-/usr/lib/cmake/Qt6/QtPublicSbomQtEntityHelpers.cmake:
-
-/usr/lib/cmake/Qt6Gui/Qt6QEglFSKmsGbmIntegrationPluginTargets.cmake:
-
-/usr/include/c++/15.2.1/bits/stl_iterator.h:
-
-/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/i18n.h:
-
-/usr/include/qt6/QtCore/qtversion.h:
-
 /usr/lib/cmake/Qt6Gui/Qt6QEglFSIntegrationPluginConfig.cmake:
 
 llama-ui-v4_autogen/moc_predefs.h:
+
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/SettingsDialog.h:
+
+/usr/include/bits/types/struct_FILE.h:
+
+/usr/include/c++/15.2.1/streambuf:
+
+/usr/lib/cmake/Qt6Gui/Qt6QLinuxFbIntegrationPluginAdditionalTargetInfo.cmake:
+
+/usr/include/c++/15.2.1/bits/functexcept.h:
+
+/usr/include/c++/15.2.1/bits/align.h:
+
+/usr/lib/cmake/Qt6Gui/Qt6QWaylandXdgShellIntegrationPluginConfig.cmake:
+
+/usr/lib/cmake/Qt6/QtPublicTargetHelpers.cmake:
+
+/usr/include/c++/15.2.1/debug/debug.h:
+
+/usr/lib/cmake/Qt6Widgets/Qt6WidgetsTargets-relwithdebinfo.cmake:
+
+/usr/include/qt6/QtCore/qoverload.h:
+
+/usr/include/c++/15.2.1/bits/uses_allocator.h:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/cpu_defines.h:
+
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Sidebar.h:
+
+/usr/include/c++/15.2.1/bits/ostream_insert.h:
+
+/usr/include/qt6/QtCore/qbasicatomic.h:
+
+/usr/lib/cmake/Qt6Gui/Qt6GuiConfigVersion.cmake:
+
+/usr/include/bits/types/__fpos64_t.h:
 
 /usr/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginConfig.cmake:
 
@@ -1872,6 +1890,16 @@ llama-ui-v4_autogen/moc_predefs.h:
 
 /usr/include/bits/types/__locale_t.h:
 
+/usr/include/bits/endianness.h:
+
+/usr/lib/cmake/Qt6Gui/Qt6QGtk3ThemePluginTargets-relwithdebinfo.cmake:
+
+/usr/include/c++/15.2.1/bits/stl_vector.h:
+
+/usr/include/bits/time.h:
+
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Sidebar.cpp:
+
 /usr/lib/cmake/Qt6Gui/Qt6DrmEglServerBufferPluginConfig.cmake:
 
 /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/MainWindow.cpp:
@@ -1887,6 +1915,10 @@ llama-ui-v4_autogen/moc_predefs.h:
 /usr/lib/cmake/Qt6Gui/Qt6QVkKhrDisplayIntegrationPluginTargets-relwithdebinfo.cmake:
 
 /usr/include/c++/15.2.1/bits/stl_relops.h:
+
+/usr/include/bits/types/struct_timespec.h:
+
+/usr/include/c++/15.2.1/tr1/hypergeometric.tcc:
 
 /usr/include/qt6/QtCore/qjsonarray.h:
 
@@ -1906,33 +1938,21 @@ llama-ui-v4_autogen/moc_predefs.h:
 
 /usr/include/qt6/QtCore/qdebug.h:
 
+/usr/include/c++/15.2.1/bits/streambuf.tcc:
+
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ContextGauge.h:
+
 /usr/include/qt6/QtCore/qbytearray.h:
-
-/usr/lib/cmake/Qt6Widgets/Qt6WidgetsTargets-relwithdebinfo.cmake:
-
-/usr/include/qt6/QtCore/qoverload.h:
-
-/usr/include/c++/15.2.1/bits/uses_allocator.h:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/cpu_defines.h:
-
-/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Sidebar.h:
-
-/usr/include/c++/15.2.1/bits/ostream_insert.h:
-
-/usr/include/qt6/QtCore/qbasicatomic.h:
-
-/usr/lib/cmake/Qt6Gui/Qt6GuiConfigVersion.cmake:
-
-/usr/include/bits/types/__fpos64_t.h:
-
-/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/SettingsDialog.h:
-
-/usr/include/bits/types/struct_FILE.h:
 
 /usr/share/cmake/Modules/Compiler/GNU-CXX.cmake:
 
 /usr/include/c++/15.2.1/pstl/glue_memory_defs.h:
+
+/usr/include/sys/select.h:
+
+/usr/include/c++/15.2.1/bits/chrono.h:
+
+/usr/include/c++/15.2.1/bits/stl_function.h:
 
 /usr/include/qt6/QtCore/qscopedpointer.h:
 
@@ -1941,6 +1961,10 @@ llama-ui-v4_autogen/moc_predefs.h:
 /usr/include/c++/15.2.1/bits/invoke.h:
 
 /usr/include/bits/endian.h:
+
+/usr/include/asm/errno.h:
+
+/usr/include/c++/15.2.1/system_error:
 
 /usr/lib/cmake/Qt6Core/Qt6CoreConfig.cmake:
 
@@ -1954,27 +1978,11 @@ llama-ui-v4_autogen/moc_predefs.h:
 
 /usr/include/qt6/QtGui/qicon.h:
 
-CMakeFiles/4.4.2/CMakeSystem.cmake:
-
 /usr/include/c++/15.2.1/cstdint:
 
 /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/SettingsDialog.cpp:
 
 /usr/include/bits/stdint-least.h:
-
-/usr/include/c++/15.2.1/streambuf:
-
-/usr/lib/cmake/Qt6Gui/Qt6QLinuxFbIntegrationPluginAdditionalTargetInfo.cmake:
-
-/usr/include/c++/15.2.1/bits/functexcept.h:
-
-/usr/include/c++/15.2.1/bits/align.h:
-
-/usr/lib/cmake/Qt6Gui/Qt6QWaylandXdgShellIntegrationPluginConfig.cmake:
-
-/usr/lib/cmake/Qt6/QtPublicTargetHelpers.cmake:
-
-/usr/include/c++/15.2.1/debug/debug.h:
 
 /usr/include/c++/15.2.1/memory:
 
@@ -1982,7 +1990,15 @@ CMakeFiles/4.4.2/CMakeSystem.cmake:
 
 /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Api.cpp:
 
-/usr/include/qt6/QtCore/qsharedpointer_impl.h:
+/usr/include/c++/15.2.1/pstl/pstl_config.h:
+
+/usr/include/qt6/QtCore/qpair.h:
+
+/usr/lib/cmake/Qt6Gui/Qt6QEglFSIntegrationPluginAdditionalTargetInfo.cmake:
+
+/usr/include/c++/15.2.1/bits/new_allocator.h:
+
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/McpPage.cpp:
 
 /usr/include/c++/15.2.1/clocale:
 
@@ -2012,6 +2028,24 @@ CMakeFiles/4.4.2/CMakeSystem.cmake:
 
 /usr/include/bits/thread-shared-types.h:
 
+/usr/lib/cmake/Qt6Gui/Qt6QEglFSKmsEglDeviceIntegrationPluginConfig.cmake:
+
+/usr/include/qt6/QtGui/qpolygon.h:
+
+/usr/include/qt6/QtCore/qfunctionaltools_impl.h:
+
+/usr/include/qt6/QtCore/qsharedpointer_impl.h:
+
+/usr/include/c++/15.2.1/bit:
+
+/usr/include/bits/uintn-identity.h:
+
+/usr/lib/cmake/Qt6Gui/Qt6QWaylandEglClientBufferPluginAdditionalTargetInfo.cmake:
+
+/usr/lib/cmake/Qt6Gui/Qt6QComposePlatformInputContextPluginTargetsPrecheck.cmake:
+
+/usr/include/qt6/QtCore/qlist.h:
+
 /usr/lib/cmake/Qt6/QtPublicToolHelpers.cmake:
 
 /usr/include/qt6/QtGui/qfontmetrics.h:
@@ -2026,6 +2060,10 @@ CMakeFiles/4.4.2/CMakeSystem.cmake:
 
 /usr/include/c++/15.2.1/tr1/poly_hermite.tcc:
 
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/WizardDialog.cpp:
+
+/usr/include/qt6/QtCore/qvariant.h:
+
 /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Composer.cpp:
 
 /usr/lib/cmake/Qt6Gui/Qt6VulkanServerBufferPluginTargets.cmake:
@@ -2038,51 +2076,43 @@ CMakeFiles/4.4.2/CMakeSystem.cmake:
 
 /usr/include/c++/15.2.1/backward/auto_ptr.h:
 
+/usr/include/c++/15.2.1/bits/localefwd.h:
+
+/usr/include/qt6/QtCore/qcborvalue.h:
+
 /usr/include/bits/floatn.h:
 
 /usr/lib/cmake/Qt6DBus/Qt6DBusConfig.cmake:
 
 /usr/lib/cmake/Qt6/QtPublicSbomCpeHelpers.cmake:
 
+/usr/lib/cmake/Qt6Gui/Qt6QEglFSKmsGbmIntegrationPluginTargets.cmake:
+
+/usr/include/c++/15.2.1/bits/stl_iterator.h:
+
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/i18n.h:
+
+/usr/include/qt6/QtCore/qtversion.h:
+
+/usr/include/c++/15.2.1/bits/stl_bvector.h:
+
 /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/MessageView.h:
 
 /usr/include/bits/types/__FILE.h:
 
-/usr/include/c++/15.2.1/tr1/ell_integral.tcc:
+/usr/include/c++/15.2.1/ext/atomicity.h:
 
-/usr/include/c++/15.2.1/ext/numeric_traits.h:
+/usr/include/c++/15.2.1/bits/allocator.h:
 
-/usr/include/bits/xopen_lim.h:
+/usr/include/bits/posix1_lim.h:
 
-/usr/include/bits/endianness.h:
+/usr/include/wchar.h:
 
-/usr/include/qt6/QtCore/qvariant.h:
+/usr/include/bits/pthreadtypes-arch.h:
 
-/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/WizardDialog.cpp:
+/usr/include/qt6/QtCore/qjsonparseerror.h:
 
-/usr/include/bits/uintn-identity.h:
-
-/usr/lib/cmake/Qt6Gui/Qt6QWaylandEglClientBufferPluginAdditionalTargetInfo.cmake:
-
-/usr/lib/cmake/Qt6Gui/Qt6QComposePlatformInputContextPluginTargetsPrecheck.cmake:
-
-/usr/include/qt6/QtCore/qlist.h:
-
-/usr/include/c++/15.2.1/bit:
-
-/usr/lib/cmake/Qt6Gui/Qt6QGtk3ThemePluginTargets-relwithdebinfo.cmake:
-
-/usr/include/c++/15.2.1/bits/stl_vector.h:
-
-/usr/include/bits/time.h:
-
-/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Sidebar.cpp:
-
-/usr/lib/cmake/Qt6Gui/Qt6QEglFSKmsEglDeviceIntegrationPluginConfig.cmake:
-
-/usr/include/qt6/QtCore/qfunctionaltools_impl.h:
-
-/usr/include/qt6/QtGui/qpolygon.h:
+/usr/include/c++/15.2.1/bits/atomic_base.h:
 
 /usr/include/bits/pthreadtypes.h:
 
@@ -2093,6 +2123,8 @@ CMakeFiles/4.4.2/CMakeSystem.cmake:
 /usr/lib/cmake/Qt6Gui/Qt6DrmEglServerBufferPluginAdditionalTargetInfo.cmake:
 
 /usr/include/c++/15.2.1/bits/stl_algobase.h:
+
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/McpPage.h:
 
 /usr/include/bits/types/cookie_io_functions_t.h:
 
@@ -2154,6 +2186,12 @@ CMakeFiles/4.4.2/CMakeCXXCompiler.cmake:
 
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/atomic_word.h:
 
+/usr/lib/cmake/Qt6Core/Qt6CoreAdditionalTargetInfo.cmake:
+
+/usr/lib/cmake/Qt6/QtPublicSbomPythonHelpers.cmake:
+
+/usr/include/bits/types/locale_t.h:
+
 /usr/include/bits/types/mbstate_t.h:
 
 /usr/include/qt6/QtCore/qshareddata_impl.h:
@@ -2165,18 +2203,6 @@ CMakeFiles/4.4.2/CMakeCXXCompiler.cmake:
 /usr/include/bits/sched.h:
 
 /usr/include/bits/struct_rwlock.h:
-
-/usr/include/sys/select.h:
-
-/usr/include/c++/15.2.1/bits/stl_function.h:
-
-/usr/include/c++/15.2.1/bits/chrono.h:
-
-/usr/lib/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginTargetsPrecheck.cmake:
-
-/usr/include/c++/15.2.1/bits/stl_iterator_base_funcs.h:
-
-/usr/include/qt6/QtCore/qscopeguard.h:
 
 /usr/include/bits/types/struct_sched_param.h:
 
@@ -2198,16 +2224,6 @@ CMakeFiles/4.4.2/CMakeCXXCompiler.cmake:
 
 /usr/include/qt6/QtCore/qcompilerdetection.h:
 
-/usr/include/c++/15.2.1/tr1/hypergeometric.tcc:
-
-/usr/include/bits/types/struct_timespec.h:
-
-/usr/include/c++/15.2.1/bits/allocator.h:
-
-/usr/include/c++/15.2.1/ext/atomicity.h:
-
-/usr/include/qt6/QtCore/qiterable.h:
-
 /usr/include/bits/types/struct_tm.h:
 
 /usr/include/c++/15.2.1/bits/stl_tempbuf.h:
@@ -2215,10 +2231,6 @@ CMakeFiles/4.4.2/CMakeCXXCompiler.cmake:
 /usr/lib/cmake/Qt6Network/Qt6NetworkVersionlessAliasTargets.cmake:
 
 /usr/include/stdc-predef.h:
-
-/usr/lib/cmake/Qt6GuiTools/Qt6GuiToolsTargets-relwithdebinfo.cmake:
-
-/usr/include/c++/15.2.1/bits/char_traits.h:
 
 /usr/include/bits/types/wint_t.h:
 
@@ -2256,6 +2268,12 @@ CMakeFiles/4.4.2/CMakeCXXCompiler.cmake:
 
 /usr/include/c++/15.2.1/bits/postypes.h:
 
+/usr/include/c++/15.2.1/ext/numeric_traits.h:
+
+/usr/include/bits/xopen_lim.h:
+
+/usr/include/c++/15.2.1/tr1/ell_integral.tcc:
+
 /usr/include/c++/15.2.1/algorithm:
 
 /usr/include/asm/bitsperlong.h:
@@ -2280,13 +2298,13 @@ CMakeFiles/4.4.2/CMakeCXXCompiler.cmake:
 
 /usr/include/qt6/QtGui/qfontinfo.h:
 
-/usr/include/c++/15.2.1/bits/charconv.h:
+/usr/lib/cmake/Qt6Gui/Qt6QWaylandFullScreenShellV1IntegrationPluginTargets.cmake:
 
-/usr/lib/cmake/Qt6Gui/Qt6QVirtualKeyboardPluginAdditionalTargetInfo.cmake:
+/usr/include/qt6/QtGui/qcursor.h:
 
-/usr/include/c++/15.2.1/bits/monostate.h:
+/usr/include/c++/15.2.1/tr1/exp_integral.tcc:
 
-/usr/include/c++/15.2.1/bits/concept_check.h:
+/usr/include/qt6/QtGui/qcolor.h:
 
 /usr/include/c++/15.2.1/tr1/legendre_function.tcc:
 
@@ -2492,9 +2510,9 @@ CMakeFiles/4.4.2/CMakeCXXCompiler.cmake:
 
 /usr/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfig.cmake:
 
-/usr/include/qt6/QtCore/qrefcount.h:
-
 /usr/include/c++/15.2.1/cstdio:
+
+/usr/include/qt6/QtCore/qrefcount.h:
 
 /usr/include/qt6/QtCore/qcalendar.h:
 
@@ -2837,9 +2855,3 @@ CMakeFiles/4.4.2/CMakeCXXCompiler.cmake:
 /usr/include/qt6/QtCore/qxptype_traits.h:
 
 /usr/lib/cmake/Qt6/QtPublicSbomLicenseHelpers.cmake:
-
-/usr/lib/cmake/Qt6Core/Qt6CoreAdditionalTargetInfo.cmake:
-
-/usr/include/bits/types/locale_t.h:
-
-/usr/lib/cmake/Qt6/QtPublicSbomPythonHelpers.cmake:

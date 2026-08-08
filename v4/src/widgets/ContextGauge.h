@@ -1,7 +1,7 @@
 /*
- * ContextGauge.h — spec context gauge (UI-SPEC §5.7): circular dial
- * colored by context usage (green <70%, amber <90%, red beyond), a click
- * shows a popup with prompt / history / completion rows.
+ * ContextGauge.h — v2 context gauge (ChatFormActions / context-gauge.ts):
+ * 20px ring arc, grey / amber-400 (>=80%) / red-400 (>=95%), click popup
+ * "Context · used/total" + "% used / N remaining". Hidden until tokens.
  */
 #pragma once
 #include <QWidget>
@@ -24,5 +24,4 @@ private:
     qint64 m_prompt = 0;
     qint64 m_completion = 0;
     int m_maxCtx = 4096;
-    bool m_hover = false;
 };

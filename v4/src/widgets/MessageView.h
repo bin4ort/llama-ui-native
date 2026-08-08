@@ -39,7 +39,7 @@ signals:
     void regenerateRequested(const QString &id);
     void editRequested(const QString &id);
     void deleteRequested(const QString &id);
-    void suggestionClicked(const QString &text);
+    void continueRequested(const QString &id);
 
 private:
     void clearLayout();

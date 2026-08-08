@@ -374,6 +374,9 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o: \
  /usr/include/qt6/QtWidgets/QWidget \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/moc_ContextGauge.cpp \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/../../../src/widgets/ContextGauge.h \
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/moc_McpPage.cpp \
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/../../../src/widgets/McpPage.h \
+ /usr/include/qt6/QtWidgets/QDialog /usr/include/qt6/QtWidgets/qdialog.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/moc_MessageView.cpp \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/../../../src/widgets/MessageView.h \
  /usr/include/qt6/QtWidgets/QScrollArea \
@@ -383,7 +386,6 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o: \
  /usr/include/qt6/QtCore/qvector.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/moc_SettingsDialog.cpp \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/../../../src/widgets/SettingsDialog.h \
- /usr/include/qt6/QtWidgets/QDialog /usr/include/qt6/QtWidgets/qdialog.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/moc_Sidebar.cpp \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/../../../src/widgets/Sidebar.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/moc_WizardDialog.cpp \

@@ -10,6 +10,7 @@
 #include "widgets/SettingsDialog.h"
 #include "widgets/WizardDialog.h"
 #include "widgets/Sidebar.h"
+#include "widgets/McpPage.h"
 #include <QApplication>
 #include <QBuffer>
 #include <QClipboard>
@@ -24,6 +25,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QLabel>
+#include <QListWidget>
 #include <QMenu>
 #include <QMessageBox>
 #include <QMimeData>
@@ -98,17 +100,27 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     chatCol->setContentsMargins(0, 0, 0, 0);
     chatCol->setSpacing(8);
 
-    // server error banner (UI-SPEC §6.6) — replaces the old modal nag
+    // server error banner (v2 ChatScreenServerError) — above the composer
     auto *bannerHost = new QWidget(central);
     bannerHost->setObjectName(QStringLiteral("bannerHost"));
     auto *bl = new QHBoxLayout(bannerHost);
     bl->setContentsMargins(0, 0, 0, 0);
     bl->setSpacing(8);
-    m_errorBanner = new QLabel(bannerHost);
+    auto *warnIcon = new QLabel(QStringLiteral("⚠ "), bannerHost);
+    warnIcon->setObjectName(QStringLiteral("bannerIcon"));
+    bl->addWidget(warnIcon);
+    auto *bannerText = new QVBoxLayout;
+    bannerText->setContentsMargins(0, 0, 0, 0);
+    bannerText->setSpacing(0);
+    m_errorBanner = new QLabel(I18n::t(QStringLiteral("Server unavailable")), bannerHost);
     m_errorBanner->setObjectName(QStringLiteral("errorBanner"));
-    m_errorBanner->setWordWrap(true);
-    bl->addWidget(m_errorBanner, 1);
-    auto *retryBtn = new QPushButton(I18n::t(QStringLiteral("Retry")), bannerHost);
+    bannerText->addWidget(m_errorBanner);
+    m_errorBannerDetail = new QLabel(bannerHost);
+    m_errorBannerDetail->setObjectName(QStringLiteral("errorBannerDetail"));
+    m_errorBannerDetail->setWordWrap(true);
+    bannerText->addWidget(m_errorBannerDetail);
+    bl->addLayout(bannerText, 1);
+    auto *retryBtn = new QPushButton(QStringLiteral("↻ ") + I18n::t(QStringLiteral("Retry")), bannerHost);
     retryBtn->setProperty("outline", true);
     connect(retryBtn, &QPushButton::clicked, this, [this]() {
         hideErrorBanner();
@@ -116,14 +128,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         if (m_store->active()) m_api->checkHealth();
     });
     bl->addWidget(retryBtn);
+    bannerHost->setMaximumWidth(768);
     bannerHost->setVisible(false);
-    chatCol->addWidget(bannerHost);
 
     m_messages = new MessageView(central);
     chatCol->addWidget(m_messages, 1);
 
     m_composer = new Composer(central);
     chatCol->addWidget(m_composer, 0, Qt::AlignHCenter);
+    chatCol->insertWidget(chatCol->indexOf(m_composer), bannerHost, 0, Qt::AlignHCenter); // v2: banner above the form
 
     layout->addLayout(chatCol, 1);
     setCentralWidget(central);
@@ -159,13 +172,25 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     });
     setAcceptDrops(true);
 
-    // message actions (UI-SPEC §3.9)
+    // message actions (v2 ChatMessageActionIcons)
     connect(m_messages, &MessageView::copyRequested, this, &MainWindow::onCopy);
     connect(m_messages, &MessageView::regenerateRequested, this, &MainWindow::onRegenerate);
     connect(m_messages, &MessageView::editRequested, this, &MainWindow::onEdit);
     connect(m_messages, &MessageView::deleteRequested, this, &MainWindow::onDelete);
-    connect(m_messages, &MessageView::suggestionClicked, this,
-            [this](const QString &t) { sendMessageWithHistory(t); });
+    connect(m_messages, &MessageView::continueRequested, this, [this](const QString &id) {
+        auto *conv = m_store->active();
+        if (!conv) return;
+        int idx = -1;
+        for (int i = 0; i < conv->messages.size(); ++i)
+            if (conv->messages.at(i).id == id) { idx = i; break; }
+        if (idx < 0) return;
+        // v2 "continue generation": truncate after this message and ask
+        // the model to continue
+        conv->messages = conv->messages.mid(0, idx + 1);
+        m_store->save();
+        renderConversation(conv);
+        sendMessageWithHistory(QStringLiteral("Continue."));
+    });
 
     // streaming
     connect(m_api, &Api::chunkReceived, this, [this](const QString &delta) {
@@ -184,8 +209,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(m_api, &Api::requestFailed, this, [this](const QString &code, const QString &msg) {
         m_streaming = false;
         m_composer->setBusy(false);
-        showErrorBanner(QStringLiteral("LLMUI-") + code +
-                        QStringLiteral(" — ") + msg);
+        showErrorBanner(msg.isEmpty() ? QStringLiteral("LLMUI-") + code : msg);
     });
 
     // models
@@ -251,6 +275,7 @@ void MainWindow::newChat() {
     m_store->create(QString());
     m_messages->clear();
     m_sidebar->setActiveConversation(m_store->active()->id);
+    m_composer->setPersonaName(I18n::t(QStringLiteral("Default")));
     refreshTitle();
     m_sidebar->refreshConversations();
     m_composer->focusInput();
@@ -262,6 +287,15 @@ void MainWindow::selectConversation(const QString &id) {
             m_store->setActive(&c);
             m_sidebar->setActiveConversation(id);
             renderConversation(&c);
+            // persona trigger shows the active preset name (v2)
+            const auto raw = Presets::load(m_config);
+            QString name = I18n::t(QStringLiteral("Default"));
+            if (!c.persona.isEmpty()) {
+                name = QStringLiteral("Custom");
+                for (const auto &p : Presets::list(raw))
+                    if (p.content == c.persona) name = p.name;
+            }
+            m_composer->setPersonaName(name);
             refreshTitle();
             return;
         }
@@ -409,7 +443,7 @@ void MainWindow::onStreamFinished() {
 }
 
 void MainWindow::showErrorBanner(const QString &text) {
-    m_errorBanner->setText(text);
+    m_errorBannerDetail->setText(text);
     m_errorBanner->parentWidget()->setVisible(true);
     setServerStatus(false);
 }
@@ -599,23 +633,12 @@ void MainWindow::openSearch() {
 }
 
 void MainWindow::openMcp() {
-    auto *dlg = new QDialog(this);
-    dlg->setObjectName(QStringLiteral("appDialog"));
-    dlg->setWindowTitle(I18n::t(QStringLiteral("MCP Servers")));
-    dlg->setModal(true);
-    dlg->resize(480, 320);
-    auto *lay = new QVBoxLayout(dlg);
-    auto *info = new QLabel(
-        I18n::t(QStringLiteral("MCP servers are configured in Settings (Tools). The server list will appear here once MCP support lands in this build.")),
-        dlg);
-    info->setWordWrap(true);
-    lay->addWidget(info);
-    auto *closeBtn = new QPushButton(I18n::t(QStringLiteral("Close")), dlg);
-    closeBtn->setProperty("outline", true);
-    connect(closeBtn, &QPushButton::clicked, dlg, &QDialog::close);
-    lay->addWidget(closeBtn, 0, Qt::AlignRight);
-    dlg->exec();
-    dlg->deleteLater();
+    McpPage dlg(m_config, this);
+    connect(&dlg, &McpPage::configChanged, this, [this](const QJsonObject &cfg) {
+        m_config = cfg;
+        Config::save(cfg);
+    });
+    dlg.exec();
 }
 
 void MainWindow::openSettings() {
@@ -633,32 +656,120 @@ void MainWindow::openSettings() {
 void MainWindow::openPersonaMenu() {
     auto *menu = new QMenu(this);
     const auto raw = Presets::load(m_config);
-    for (const auto &p : Presets::list(raw)) {
-        menu->addAction(p.name, this, [this, p]() {
-            auto *conv = m_store->active();
+    const auto presets = Presets::list(raw);
+    auto *conv = m_store->active();
+
+    auto activeName = [&]() -> QString {
+        if (conv && !conv->persona.isEmpty()) {
+            for (const auto &p : presets)
+                if (p.content == conv->persona) return p.name;
+            return QStringLiteral("Custom");
+        }
+        return QString();
+    };
+
+    // v2 menu structure: label, Default (check), favorites, separator,
+    // "All presets…"
+    auto *label = menu->addAction(I18n::t(QStringLiteral("Prompt presets")));
+    label->setEnabled(false);
+    auto *def = menu->addAction(I18n::t(QStringLiteral("Default")));
+    def->setCheckable(true);
+    def->setChecked(conv && conv->persona.isEmpty());
+    connect(def, &QAction::triggered, this, [this, conv]() {
+        if (!conv) return;
+        conv->persona.clear();
+        m_store->save();
+        renderConversation(conv);
+        m_composer->setPersonaName(I18n::t(QStringLiteral("Default")));
+    });
+    menu->addSeparator();
+
+    const int favCount = qMin(presets.size(), 8);
+    const QString active = activeName();
+    for (int i = 0; i < favCount; ++i) {
+        const auto &p = presets.at(i);
+        auto *act = menu->addAction(p.name, this, [this, conv, p]() {
             if (!conv) return;
             conv->persona = p.content;
             m_store->save();
-            // persona row shown in the chat
             ConvMsg pm{uid(), QStringLiteral("system"), QStringLiteral("persona"), p.content};
             m_store->appendMessage(conv, pm);
             ChatMessage cm{ChatMessage::System, pm.id, p.content, QStringLiteral("persona"),
                            QJsonArray(), false};
             m_messages->addMessage(cm);
+            m_composer->setPersonaName(p.name);
         });
+        act->setCheckable(true);
+        act->setChecked(active == p.name);
     }
     menu->addSeparator();
-    menu->addAction(QStringLiteral("Create with wizard…"), this, [this]() {
-        WizardDialog dlg(m_api, m_model, this);
-        connect(&dlg, &WizardDialog::presetCreated, this, [this](const QString &name,
-                                                                  const QString &desc,
-                                                                  const QString &content) {
-            auto raw = Presets::load(m_config);
-            m_config.insert(QStringLiteral("systemPromptPresets"),
-                            Presets::add(raw, name, desc, content));
-            Config::save(m_config);
+    menu->addAction(I18n::t(QStringLiteral("All presets…")), this, [this, presets]() {
+        // picker dialog: searchable list + Default + create-with-wizard
+        auto *dlg = new QDialog(this);
+        dlg->setObjectName(QStringLiteral("appDialog"));
+        dlg->setWindowTitle(I18n::t(QStringLiteral("Prompt presets")));
+        dlg->setModal(true);
+        dlg->resize(420, 480);
+        auto *lay = new QVBoxLayout(dlg);
+        auto *search = new QLineEdit(dlg);
+        search->setPlaceholderText(I18n::t(QStringLiteral("Search presets…")));
+        lay->addWidget(search);
+        auto *list = new QListWidget(dlg);
+        list->setObjectName(QStringLiteral("presetList"));
+        auto populate = [list, presets](const QString &needle) {
+            list->clear();
+            for (const auto &p : presets) {
+                if (!needle.isEmpty() &&
+                    !p.name.contains(needle, Qt::CaseInsensitive) &&
+                    !p.description.contains(needle, Qt::CaseInsensitive))
+                    continue;
+                auto *item = new QListWidgetItem(p.name);
+                item->setData(Qt::UserRole, p.content);
+                item->setToolTip(p.description);
+                list->addItem(item);
+            }
+        };
+        populate(QString());
+        connect(search, &QLineEdit::textChanged, list, [populate](const QString &q) {
+            populate(q);
         });
-        dlg.exec();
+        lay->addWidget(list, 1);
+        auto *foot = new QHBoxLayout;
+        auto *wizardBtn = new QPushButton(QStringLiteral("✦ ") + I18n::t(QStringLiteral("Create with wizard…")), dlg);
+        wizardBtn->setProperty("ghost", true);
+        connect(wizardBtn, &QPushButton::clicked, dlg, [this, dlg]() {
+            WizardDialog wiz(m_api, m_model, dlg);
+            connect(&wiz, &WizardDialog::presetCreated, this,
+                    [this](const QString &name, const QString &desc, const QString &content) {
+                        auto raw = Presets::load(m_config);
+                        m_config.insert(QStringLiteral("systemPromptPresets"),
+                                        Presets::add(raw, name, desc, content));
+                        Config::save(m_config);
+                    });
+            wiz.exec();
+        });
+        foot->addWidget(wizardBtn);
+        foot->addStretch(1);
+        auto *closeBtn = new QPushButton(I18n::t(QStringLiteral("Close")), dlg);
+        closeBtn->setProperty("outline", true);
+        connect(closeBtn, &QPushButton::clicked, dlg, &QDialog::close);
+        foot->addWidget(closeBtn);
+        lay->addLayout(foot);
+        connect(list, &QListWidget::itemClicked, this, [this, dlg](QListWidgetItem *item) {
+            auto *conv = m_store->active();
+            if (!conv) return;
+            conv->persona = item->data(Qt::UserRole).toString();
+            m_store->save();
+            ConvMsg pm{uid(), QStringLiteral("system"), QStringLiteral("persona"), conv->persona};
+            m_store->appendMessage(conv, pm);
+            ChatMessage cm{ChatMessage::System, pm.id, conv->persona,
+                           QStringLiteral("persona"), QJsonArray(), false};
+            m_messages->addMessage(cm);
+            m_composer->setPersonaName(item->text());
+            dlg->close();
+        });
+        dlg->exec();
+        dlg->deleteLater();
     });
     menu->exec(QCursor::pos());
 }

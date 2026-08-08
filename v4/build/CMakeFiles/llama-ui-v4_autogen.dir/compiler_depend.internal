@@ -23,6 +23,10 @@
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/main.cpp
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Composer.cpp
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Composer.h
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ContextGauge.cpp
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ContextGauge.h
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/McpPage.cpp
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/McpPage.h
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/MessageView.cpp
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/MessageView.h
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/SettingsDialog.cpp

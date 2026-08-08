@@ -38,6 +38,8 @@ add_executable(llama-ui-v4
   src/widgets/WizardDialog.h
   src/widgets/ContextGauge.cpp
   src/widgets/ContextGauge.h
+  src/widgets/McpPage.cpp
+  src/widgets/McpPage.h
 )
 
 target_link_libraries(llama-ui-v4 PRIVATE Qt6::Widgets Qt6::Network)

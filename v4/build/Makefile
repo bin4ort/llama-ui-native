@@ -419,6 +419,30 @@ src/widgets/ContextGauge.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.s
 .PHONY : src/widgets/ContextGauge.cpp.s
 
+src/widgets/McpPage.o: src/widgets/McpPage.cpp.o
+.PHONY : src/widgets/McpPage.o
+
+# target to build an object file
+src/widgets/McpPage.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o
+.PHONY : src/widgets/McpPage.cpp.o
+
+src/widgets/McpPage.i: src/widgets/McpPage.cpp.i
+.PHONY : src/widgets/McpPage.i
+
+# target to preprocess a source file
+src/widgets/McpPage.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.i
+.PHONY : src/widgets/McpPage.cpp.i
+
+src/widgets/McpPage.s: src/widgets/McpPage.cpp.s
+.PHONY : src/widgets/McpPage.s
+
+# target to generate assembly for a file
+src/widgets/McpPage.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.s
+.PHONY : src/widgets/McpPage.cpp.s
+
 src/widgets/MessageView.o: src/widgets/MessageView.cpp.o
 .PHONY : src/widgets/MessageView.o
 
@@ -559,6 +583,9 @@ help:
 	@echo "... src/widgets/ContextGauge.o"
 	@echo "... src/widgets/ContextGauge.i"
 	@echo "... src/widgets/ContextGauge.s"
+	@echo "... src/widgets/McpPage.o"
+	@echo "... src/widgets/McpPage.i"
+	@echo "... src/widgets/McpPage.s"
 	@echo "... src/widgets/MessageView.o"
 	@echo "... src/widgets/MessageView.i"
 	@echo "... src/widgets/MessageView.s"

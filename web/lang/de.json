@@ -707,5 +707,19 @@
   "Warnings": "Warnings",
   "Info": "Info",
   "Debug": "Debug",
-  "Trace": "Trace"
+  "Trace": "Trace",
+  "Connect Model Context Protocol servers to give the assistant access to external tools and resources.": "Connect Model Context Protocol servers to give the assistant access to external tools and resources.",
+  "No MCP servers configured yet. Add one to get started.": "No MCP servers configured yet. Add one to get started.",
+  "Add server": "Add server",
+  "Add MCP server": "Add MCP server",
+  "Edit MCP server": "Edit MCP server",
+  "Server name": "Server name",
+  "Disabled": "Disabled",
+  "Test connection": "Test connection",
+  "Testing…": "Testing…",
+  "Reachable": "Reachable",
+  "Unreachable": "Unreachable",
+  "Delete MCP server": "Delete MCP server",
+  "History": "History",
+  "Completion": "Completion"
 }

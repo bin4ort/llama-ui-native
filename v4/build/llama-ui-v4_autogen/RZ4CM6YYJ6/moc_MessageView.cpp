@@ -46,8 +46,7 @@ template <> constexpr inline auto MessageView::qt_create_metaobjectdata<qt_meta_
         "regenerateRequested",
         "editRequested",
         "deleteRequested",
-        "suggestionClicked",
-        "text"
+        "continueRequested"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -67,9 +66,9 @@ template <> constexpr inline auto MessageView::qt_create_metaobjectdata<qt_meta_
         QtMocHelpers::SignalData<void(const QString &)>(7, 2, QMC::AccessPublic, QMetaType::Void, {{
             { QMetaType::QString, 3 },
         }}),
-        // Signal 'suggestionClicked'
+        // Signal 'continueRequested'
         QtMocHelpers::SignalData<void(const QString &)>(8, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::QString, 9 },
+            { QMetaType::QString, 3 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -98,7 +97,7 @@ void MessageView::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
         case 1: _t->regenerateRequested((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
         case 2: _t->editRequested((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
         case 3: _t->deleteRequested((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
-        case 4: _t->suggestionClicked((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
+        case 4: _t->continueRequested((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
         default: ;
         }
     }
@@ -111,7 +110,7 @@ void MessageView::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
             return;
         if (QtMocHelpers::indexOfMethod<void (MessageView::*)(const QString & )>(_a, &MessageView::deleteRequested, 3))
             return;
-        if (QtMocHelpers::indexOfMethod<void (MessageView::*)(const QString & )>(_a, &MessageView::suggestionClicked, 4))
+        if (QtMocHelpers::indexOfMethod<void (MessageView::*)(const QString & )>(_a, &MessageView::continueRequested, 4))
             return;
     }
 }
@@ -172,7 +171,7 @@ void MessageView::deleteRequested(const QString & _t1)
 }
 
 // SIGNAL 4
-void MessageView::suggestionClicked(const QString & _t1)
+void MessageView::continueRequested(const QString & _t1)
 {
     QMetaObject::activate<void>(this, &staticMetaObject, 4, nullptr, _t1);
 }

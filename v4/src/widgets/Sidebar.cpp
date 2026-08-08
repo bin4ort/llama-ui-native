@@ -172,7 +172,7 @@ void Sidebar::refreshConversations() {
             m_expandedLayout->addWidget(l);
             inPinned = false;
         }
-        auto *row = new QPushButton(c.pinned ? QStringLiteral("📌 ") + c.name : c.name);
+        auto *row = new QPushButton(c.name);
         row->setProperty("convRow", true);
         if (c.id == m_activeId) row->setProperty("active", true);
         row->setToolTip(c.name);
@@ -180,12 +180,21 @@ void Sidebar::refreshConversations() {
         connect(row, &QPushButton::clicked, this, [this, id = c.id]() {
             emit conversationSelected(id);
         });
-        connect(row, &QWidget::customContextMenuRequested, this, [this, row, id = c.id]() {
+        connect(row, &QWidget::customContextMenuRequested, this, [this, row, c]() {
             QMenu menu(row);
-            menu.addAction(I18n::t(QStringLiteral("Rename")),
-                           this, [this, id]() { emit conversationRenameRequested(id); });
+            menu.addAction(c.pinned ? I18n::t(QStringLiteral("Unpin"))
+                                    : I18n::t(QStringLiteral("Pin")),
+                           this, [this, id = c.id, pinned = c.pinned]() {
+                               for (auto &cc : m_store->conversations())
+                                   if (cc.id == id) cc.pinned = !pinned;
+                               m_store->save();
+                               refreshConversations();
+                           });
+            menu.addAction(I18n::t(QStringLiteral("Edit")),
+                           this, [this, id = c.id]() { emit conversationRenameRequested(id); });
+            menu.addSeparator();
             menu.addAction(I18n::t(QStringLiteral("Delete")),
-                           this, [this, id]() { emit conversationDeleteRequested(id); });
+                           this, [this, id = c.id]() { emit conversationDeleteRequested(id); });
             menu.exec(QCursor::pos());
         });
         m_expandedLayout->addWidget(row);
