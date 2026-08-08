@@ -36,6 +36,7 @@
 #include <QMimeData>
 #include <QPushButton>
 #include <QShortcut>
+#include <QTextEdit>
 #include <QTimer>
 #include <QToolButton>
 #include <QUrl>
@@ -348,6 +349,44 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
                        });
         menu.exec(QCursor::pos());
     });
+    connect(m_composer, &Composer::attachmentPreviewRequested, this, [this](int idx) {
+        const auto atts = m_composer->attachments();
+        if (idx < 0 || idx >= atts.size()) return;
+        const auto att = atts.at(idx).toObject();
+        auto *dlg = new QDialog(this);
+        dlg->setObjectName(QStringLiteral("appDialog"));
+        dlg->setWindowTitle(att.value(QStringLiteral("name")).toString());
+        dlg->setModal(true);
+        dlg->resize(520, 480);
+        auto *lay = new QVBoxLayout(dlg);
+        if (att.value(QStringLiteral("image")).toBool()) {
+            QPixmap pm;
+            pm.loadFromData(QByteArray::fromBase64(
+                                att.value(QStringLiteral("data")).toString().toLatin1()),
+                            "PNG");
+            auto *img = new QLabel(dlg);
+            img->setAlignment(Qt::AlignCenter);
+            if (!pm.isNull()) {
+                img->setPixmap(pm.scaled(480, 400, Qt::KeepAspectRatio,
+                                         Qt::SmoothTransformation));
+            } else {
+                img->setText(I18n::t(QStringLiteral("Image preview unavailable")));
+            }
+            lay->addWidget(img, 1);
+        } else {
+            auto *txt = new QTextEdit(dlg);
+            txt->setReadOnly(true);
+            txt->setPlainText(QString::fromUtf8(
+                QByteArray::fromBase64(att.value(QStringLiteral("data")).toString().toLatin1())));
+            lay->addWidget(txt, 1);
+        }
+        auto *closeBtn = new QPushButton(I18n::t(QStringLiteral("Close")), dlg);
+        closeBtn->setProperty("outline", true);
+        connect(closeBtn, &QPushButton::clicked, dlg, &QDialog::close);
+        lay->addWidget(closeBtn, 0, Qt::AlignRight);
+        dlg->exec();
+        dlg->deleteLater();
+    });
     setAcceptDrops(true);
 
     // message actions (v2 ChatMessageActionIcons)
@@ -628,6 +667,14 @@ void MainWindow::onToolCalls(const QJsonArray &toolCalls) {
 void MainWindow::runAgenticTurn(const QJsonArray &toolCalls) {
     auto *conv = m_store->active();
     if (!conv) return;
+
+    // the sendMessageWithHistory placeholder is empty after a pure
+    // tool-call turn — drop it so history stays clean
+    if (!conv->messages.isEmpty()) {
+        const auto &last = conv->messages.last();
+        if (last.role == QStringLiteral("assistant") && last.content.trimmed().isEmpty())
+            conv->messages.removeLast();
+    }
 
     // assistant turn that requested the tools (persisted as type tool-call)
     QJsonArray callsPayload;

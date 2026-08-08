@@ -10,6 +10,11 @@
 #include <QStyle>
 #include <QVBoxLayout>
 #include <QEvent>
+#include <QFile>
+#include <QFileDialog>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <algorithm>
 
 namespace {
@@ -210,6 +215,24 @@ void Sidebar::refreshConversations() {
                            });
             menu.addAction(I18n::t(QStringLiteral("Edit")),
                            this, [this, id = c.id]() { emit conversationRenameRequested(id); });
+            menu.addAction(QStringLiteral("⭳ ") + I18n::t(QStringLiteral("Export")),
+                           this, [this, c]() {
+                               const QString path = QFileDialog::getSaveFileName(
+                                   this, I18n::t(QStringLiteral("Export conversation")),
+                                   c.name + QStringLiteral(".json"));
+                               if (path.isEmpty()) return;
+                               QJsonArray msgs;
+                               for (const auto &m : c.messages)
+                                   msgs.append(QJsonObject{{QStringLiteral("role"), m.role},
+                                                           {QStringLiteral("type"), m.type},
+                                                           {QStringLiteral("content"), m.content}});
+                               QFile f(path);
+                               if (f.open(QIODevice::WriteOnly))
+                                   f.write(QJsonDocument(QJsonObject{
+                                       {QStringLiteral("name"), c.name},
+                                       {QStringLiteral("messages"), msgs}})
+                                               .toJson(QJsonDocument::Indented));
+                           });
             menu.addSeparator();
             menu.addAction(I18n::t(QStringLiteral("Delete")),
                            this, [this, id = c.id]() { emit conversationDeleteRequested(id); });

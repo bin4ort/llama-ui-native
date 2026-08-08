@@ -503,6 +503,7 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: \
  /usr/include/qt6/QtWidgets/qpushbutton.h \
  /usr/include/qt6/QtWidgets/qabstractbutton.h \
  /usr/include/qt6/QtGui/QShortcut /usr/include/qt6/QtGui/qshortcut.h \
- /usr/include/qt6/QtCore/QTimer /usr/include/qt6/QtCore/qtimer.h \
- /usr/include/qt6/QtWidgets/QToolButton \
+ /usr/include/qt6/QtWidgets/QTextEdit \
+ /usr/include/qt6/QtWidgets/qtextedit.h /usr/include/qt6/QtCore/QTimer \
+ /usr/include/qt6/QtCore/qtimer.h /usr/include/qt6/QtWidgets/QToolButton \
  /usr/include/qt6/QtWidgets/qtoolbutton.h /usr/include/qt6/QtCore/QUrl

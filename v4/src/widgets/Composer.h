@@ -49,6 +49,7 @@ signals:
     void personaRequested();
     void attachRequested();
     void attachmentsChanged();
+    void attachmentPreviewRequested(int index);
     void modelSelected(const QString &id);
 
 protected:

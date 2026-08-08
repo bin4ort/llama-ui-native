@@ -188,12 +188,16 @@ void Composer::rebuildChips() {
                 thumb->setPixmap(pm.scaled(64, 64, Qt::KeepAspectRatio,
                                            Qt::SmoothTransformation));
                 thumb->setObjectName(QStringLiteral("attThumb"));
+                thumb->setCursor(Qt::PointingHandCursor);
+                thumb->installEventFilter(this);
                 hl->addWidget(thumb);
             }
         } else {
             auto *icon = new QLabel(QStringLiteral("📄"), chip);
             icon->setObjectName(QStringLiteral("attIcon"));
             icon->setFixedSize(32, 32);
+            icon->setCursor(Qt::PointingHandCursor);
+            icon->installEventFilter(this);
             hl->addWidget(icon);
         }
         auto *txt = new QVBoxLayout;
@@ -267,6 +271,20 @@ bool Composer::eventFilter(QObject *obj, QEvent *ev) {
                 if (!t.isEmpty() || !m_attachments.isEmpty()) emit sendRequested(t);
             }
             return true;
+        }
+    }
+    if (ev->type() == QEvent::MouseButtonRelease) {
+        auto *me = static_cast<QMouseEvent *>(ev);
+        if (me->button() == Qt::LeftButton) {
+            // preview the attachment whose thumbnail/icon was clicked (v2 §4.3)
+            QWidget *w = qobject_cast<QWidget *>(obj);
+            while (w && w->parentWidget() != this && w->parentWidget()->parentWidget() != this)
+                w = w->parentWidget();
+            if (w && w->parentWidget() && w->parentWidget()->parentWidget() == this) {
+                const int idx = m_chipsRow->indexOf(w->parentWidget());
+                if (idx >= 0) emit attachmentPreviewRequested(idx);
+                return true;
+            }
         }
     }
     return QWidget::eventFilter(obj, ev);
