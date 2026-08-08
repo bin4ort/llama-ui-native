@@ -11,7 +11,8 @@ class QComboBox;
 class QLineEdit;
 class QCheckBox;
 class QPlainTextEdit;
-class QTabWidget;
+class QStackedWidget;
+class QListWidget;
 
 struct SettingField {
     QString key;
@@ -37,6 +38,7 @@ private:
     void apply();
 
     QJsonObject m_cfg;
-    QTabWidget *m_tabs = nullptr;
+    QStackedWidget *m_stack = nullptr;
+    QListWidget *m_navList = nullptr;
     QList<QPair<QString, QWidget *>> m_controls; // field key -> control
 };

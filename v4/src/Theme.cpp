@@ -410,6 +410,21 @@ QPushButton[full="true"] { width: 100%%; }
 #modelList::item { padding: 6px 8px; border-radius: 6px; }
 #modelList::item:selected { background-color: %7; color: %3; }
 
+/* Settings page (v2 SettingsChatDesktopSidebar + section cards) */
+#settingsNav { background-color: %21; border-right: 1px solid %5; }
+#settingsHeading { font-size: 18px; font-weight: 600; padding: 4px 8px; }
+#settingsNavList { background: transparent; font-size: 14px; }
+#settingsNavList::item { padding: 8px 10px; border-radius: 8px; margin: 1px 0; }
+#settingsNavList::item:selected { background-color: %7; color: %3; }
+#settingsVersion { color: %10; font-size: 11px; padding: 4px 8px; }
+#settingsSectionTitle { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; padding: 4px 0; }
+#settingsCard {
+  background-color: %11; border: 1px solid %5; border-radius: 10px;
+}
+#settingsFieldLabel { color: %3; font-size: 14px; font-weight: 500; }
+#settingsFooter { border-top: 1px solid %5; background-color: %21; padding: 8px 24px; }
+#settingsFooter QPushButton { padding: 4px 14px; min-height: 28px; font-size: 13px; }
+
 /* Dialogs (UI-SPEC §3.7) */
 QDialog#appDialog { background-color: %21; border: 1px solid %5; border-radius: 10px; }
 QDialog QLabel#dialogTitle { font-size: 18px; font-weight: 600; }

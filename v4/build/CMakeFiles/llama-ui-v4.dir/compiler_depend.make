@@ -7555,6 +7555,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o: /home/stry4ok/Devel
   /usr/include/qt6/QtCore/qhashfunctions.h \
   /usr/include/qt6/QtCore/qiodevice.h \
   /usr/include/qt6/QtCore/qiodevicebase.h \
+  /usr/include/qt6/QtCore/qitemselectionmodel.h \
   /usr/include/qt6/QtCore/qiterable.h \
   /usr/include/qt6/QtCore/qiterator.h \
   /usr/include/qt6/QtCore/qjsonarray.h \
@@ -7671,6 +7672,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o: /home/stry4ok/Devel
   /usr/include/qt6/QtGui/qpaintdevice.h \
   /usr/include/qt6/QtGui/qpalette.h \
   /usr/include/qt6/QtGui/qpen.h \
+  /usr/include/qt6/QtGui/qpicture.h \
   /usr/include/qt6/QtGui/qpixelformat.h \
   /usr/include/qt6/QtGui/qpixmap.h \
   /usr/include/qt6/QtGui/qpointingdevice.h \
@@ -7701,16 +7703,19 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o: /home/stry4ok/Devel
   /usr/include/qt6/QtWidgets/QFileDialog \
   /usr/include/qt6/QtWidgets/QFormLayout \
   /usr/include/qt6/QtWidgets/QHBoxLayout \
+  /usr/include/qt6/QtWidgets/QLabel \
   /usr/include/qt6/QtWidgets/QLayout \
   /usr/include/qt6/QtWidgets/QLineEdit \
+  /usr/include/qt6/QtWidgets/QListWidget \
   /usr/include/qt6/QtWidgets/QMessageBox \
   /usr/include/qt6/QtWidgets/QPlainTextEdit \
   /usr/include/qt6/QtWidgets/QPushButton \
   /usr/include/qt6/QtWidgets/QScrollArea \
-  /usr/include/qt6/QtWidgets/QTabWidget \
+  /usr/include/qt6/QtWidgets/QStackedWidget \
   /usr/include/qt6/QtWidgets/QVBoxLayout \
   /usr/include/qt6/QtWidgets/qabstractbutton.h \
   /usr/include/qt6/QtWidgets/qabstractitemdelegate.h \
+  /usr/include/qt6/QtWidgets/qabstractitemview.h \
   /usr/include/qt6/QtWidgets/qabstractscrollarea.h \
   /usr/include/qt6/QtWidgets/qabstractslider.h \
   /usr/include/qt6/QtWidgets/qabstractspinbox.h \
@@ -7724,9 +7729,12 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o: /home/stry4ok/Devel
   /usr/include/qt6/QtWidgets/qformlayout.h \
   /usr/include/qt6/QtWidgets/qframe.h \
   /usr/include/qt6/QtWidgets/qgridlayout.h \
+  /usr/include/qt6/QtWidgets/qlabel.h \
   /usr/include/qt6/QtWidgets/qlayout.h \
   /usr/include/qt6/QtWidgets/qlayoutitem.h \
   /usr/include/qt6/QtWidgets/qlineedit.h \
+  /usr/include/qt6/QtWidgets/qlistview.h \
+  /usr/include/qt6/QtWidgets/qlistwidget.h \
   /usr/include/qt6/QtWidgets/qmessagebox.h \
   /usr/include/qt6/QtWidgets/qplaintextedit.h \
   /usr/include/qt6/QtWidgets/qpushbutton.h \
@@ -7734,6 +7742,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o: /home/stry4ok/Devel
   /usr/include/qt6/QtWidgets/qscrollarea.h \
   /usr/include/qt6/QtWidgets/qsizepolicy.h \
   /usr/include/qt6/QtWidgets/qslider.h \
+  /usr/include/qt6/QtWidgets/qstackedwidget.h \
   /usr/include/qt6/QtWidgets/qstyle.h \
   /usr/include/qt6/QtWidgets/qstyleoption.h \
   /usr/include/qt6/QtWidgets/qtabbar.h \
@@ -9034,8 +9043,6 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
 
 /usr/include/qt6/QtWidgets/qcheckbox.h:
 
-/usr/include/qt6/QtWidgets/QTabWidget:
-
 /usr/include/qt6/QtWidgets/QPlainTextEdit:
 
 /usr/include/qt6/QtWidgets/QLayout:
@@ -9952,6 +9959,8 @@ llama-ui-v4_autogen/UVLADIE3JM/moc_MainWindow.cpp:
 
 /usr/include/bits/pthreadtypes-arch.h:
 
+/usr/include/qt6/QtWidgets/QStackedWidget:
+
 /usr/include/c++/15.2.1/bits/fs_ops.h:
 
 /usr/include/qt6/QtCore/qjsonparseerror.h:
@@ -10597,6 +10606,8 @@ llama-ui-v4_autogen/UVLADIE3JM/moc_Api.cpp:
 /usr/include/features-time64.h:
 
 /usr/include/qt6/QtNetwork/QSslConfiguration:
+
+/usr/include/qt6/QtWidgets/qstackedwidget.h:
 
 /usr/include/qt6/QtNetwork/qabstractsocket.h:
 

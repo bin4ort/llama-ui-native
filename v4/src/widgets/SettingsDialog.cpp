@@ -11,6 +11,7 @@
 #include <QFormLayout>
 #include <QHBoxLayout>
 #include <QIntValidator>
+#include <QLabel>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QLineEdit>
@@ -18,7 +19,8 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QScrollArea>
-#include <QTabWidget>
+#include <QStackedWidget>
+#include <QListWidget>
 #include <QVBoxLayout>
 
 namespace {
@@ -110,25 +112,84 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, QWidget *parent)
     setObjectName(QStringLiteral("appDialog"));
     setWindowTitle(QStringLiteral("Settings"));
     setModal(true);
-    resize(560, 640);
+    resize(1400, 900);
 
-    auto *layout = new QVBoxLayout(this);
-    layout->setContentsMargins(20, 20, 20, 20);
-    layout->setSpacing(12);
+    auto *outer = new QVBoxLayout(this);
+    outer->setContentsMargins(0, 0, 0, 0);
+    outer->setSpacing(0);
+    auto *layout = new QHBoxLayout;
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
 
-    m_tabs = new QTabWidget(this);
-    m_tabs->addTab(buildSection(QStringLiteral("General"), GENERAL, true, true), QStringLiteral("General"));
-    m_tabs->addTab(buildSection(QStringLiteral("Display"), DISPLAY), QStringLiteral("Display"));
-    m_tabs->addTab(buildSection(QStringLiteral("Sampling"), SAMPLING), QStringLiteral("Sampling"));
-    m_tabs->addTab(buildSection(QStringLiteral("Penalties"), PENALTIES), QStringLiteral("Penalties"));
-    m_tabs->addTab(buildSection(QStringLiteral("Agentic"), AGENTIC), QStringLiteral("Agentic"));
-    m_tabs->addTab(buildSection(QStringLiteral("Developer"), DEVELOPER), QStringLiteral("Developer"));
-    m_tabs->addTab(buildSection(QStringLiteral("Tools"), TOOLS), QStringLiteral("Tools"));
-    m_tabs->addTab(buildImportExport(), I18n::t(QStringLiteral("Import/Export")));
-    layout->addWidget(m_tabs, 1);
+    // v2 SettingsChatDesktopSidebar: w-64 nav with icon + label, active
+    // accent state, version footer
+    auto *nav = new QWidget(this);
+    nav->setObjectName(QStringLiteral("settingsNav"));
+    nav->setFixedWidth(256);
+    auto *nl = new QVBoxLayout(nav);
+    nl->setContentsMargins(12, 16, 12, 12);
+    nl->setSpacing(4);
 
-    // footer: reset-to-default + cancel/save (UI-SPEC §9.4)
-    auto *buttons = new QHBoxLayout;
+    auto *heading = new QLabel(QStringLiteral("⚙  ") + I18n::t(QStringLiteral("Settings")), nav);
+    heading->setObjectName(QStringLiteral("settingsHeading"));
+    nl->addWidget(heading);
+    nl->addSpacing(8);
+
+    m_navList = new QListWidget(nav);
+    m_navList->setObjectName(QStringLiteral("settingsNavList"));
+    m_navList->setFrameShape(QFrame::NoFrame);
+    const QStringList sections = {
+        QStringLiteral("General"), QStringLiteral("Display"), QStringLiteral("Sampling"),
+        QStringLiteral("Penalties"), QStringLiteral("Agentic"), QStringLiteral("Developer"),
+        QStringLiteral("Tools"), QStringLiteral("Import/Export")};
+    const QStringList icons = {
+        QStringLiteral("⚙"), QStringLiteral("👁"), QStringLiteral("🎚"), QStringLiteral("⚠"),
+        QStringLiteral("🤖"), QStringLiteral("⌨"), QStringLiteral("🔧"), QStringLiteral("⇅")};
+    for (int i = 0; i < sections.size(); ++i)
+        m_navList->addItem(icons.at(i) + QStringLiteral("  ") + sections.at(i));
+    nl->addWidget(m_navList, 1);
+
+    // version footer (v2: "Llama UI Native vX (build Y)")
+    auto *ver = new QLabel(QStringLiteral("Llama UI Native v0.6.0"), nav);
+    ver->setObjectName(QStringLiteral("settingsVersion"));
+    nl->addWidget(ver);
+    layout->addWidget(nav);
+
+    // content stack (v2: the section renders on the right)
+    m_stack = new QStackedWidget(this);
+    m_stack->setObjectName(QStringLiteral("settingsStack"));
+    m_stack->addWidget(buildSection(QStringLiteral("General"), GENERAL, true, true));
+    m_stack->addWidget(buildSection(QStringLiteral("Display"), DISPLAY));
+    m_stack->addWidget(buildSection(QStringLiteral("Sampling"), SAMPLING));
+    m_stack->addWidget(buildSection(QStringLiteral("Penalties"), PENALTIES));
+    m_stack->addWidget(buildSection(QStringLiteral("Agentic"), AGENTIC));
+    m_stack->addWidget(buildSection(QStringLiteral("Developer"), DEVELOPER));
+    m_stack->addWidget(buildSection(QStringLiteral("Tools"), TOOLS));
+    m_stack->addWidget(buildImportExport());
+
+    auto *rightCol = new QVBoxLayout;
+    rightCol->setContentsMargins(0, 0, 0, 0);
+    rightCol->setSpacing(0);
+    rightCol->addWidget(m_stack, 1);
+    layout->addLayout(rightCol, 1);
+
+    // footer: reset-to-default + cancel/save (v2 SettingsFooter, inside
+    // the content pane, sticky bottom)
+    auto *buttons = new QWidget(this);
+    buttons->setObjectName(QStringLiteral("settingsFooter"));
+    buttons->setAttribute(Qt::WA_StyledBackground);
+    buttons->setAutoFillBackground(true);
+    buttons->setMinimumHeight(55);
+    // v2 footer: buttons grouped and centered in the content pane
+    auto *bl = new QHBoxLayout(buttons);
+    bl->setContentsMargins(24, 10, 24, 10);
+    auto *group = new QWidget(buttons);
+    group->setObjectName(QStringLiteral("settingsFooterGroup"));
+    group->setMinimumWidth(740);
+    group->setMaximumWidth(760);
+    auto *gl = new QHBoxLayout(group);
+    gl->setContentsMargins(0, 0, 0, 0);
+    gl->setSpacing(8);
     auto *reset = new QPushButton(I18n::t(QStringLiteral("Reset to default")));
     reset->setProperty("outline", true);
     connect(reset, &QPushButton::clicked, this, [this]() {
@@ -142,79 +203,64 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, QWidget *parent)
         emit configChanged(m_cfg);
         accept();
     });
-    buttons->addWidget(reset);
-    buttons->addStretch(1);
-    auto *cancel = new QPushButton(I18n::t(QStringLiteral("Cancel")));
-    cancel->setProperty("outline", true);
-    connect(cancel, &QPushButton::clicked, this, &QDialog::reject);
-    buttons->addWidget(cancel);
+    gl->addWidget(reset);
+    gl->addStretch(1);
     auto *save = new QPushButton(I18n::t(QStringLiteral("Save settings")));
     connect(save, &QPushButton::clicked, this, &SettingsDialog::apply);
-    buttons->addWidget(save);
-    layout->addLayout(buttons);
+    gl->addWidget(save);
+    bl->addWidget(group, 0, Qt::AlignHCenter);
+
+    rightCol->addWidget(buttons);
+    outer->addLayout(layout, 1);
+
+    connect(m_navList, &QListWidget::currentRowChanged, this,
+            [this](int row) { m_stack->setCurrentIndex(qMax(0, row)); });
+    m_navList->setCurrentRow(0);
 }
 
 QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingField> &fields,
                                       bool useComboLang, bool useComboTheme) {
-    Q_UNUSED(title);
+    // v2 section page: h1 heading + centered 672px column of cards, each
+    // card holding labeled field rows
     auto *scroll = new QScrollArea;
     scroll->setWidgetResizable(true);
     scroll->setFrameShape(QFrame::NoFrame);
     auto *host = new QWidget;
-    auto *form = new QFormLayout(host);
-    form->setContentsMargins(12, 12, 12, 12);
-    form->setSpacing(10);
+    auto *col = new QVBoxLayout(host);
+    col->setContentsMargins(0, 0, 0, 0);
+    col->setSpacing(12);
+    col->addStretch(0);
 
-    if (useComboLang) {
-        // v2 human-readable language labels
-        const QMap<QString, QString> langNames{
-            {QStringLiteral("en"), QStringLiteral("English")},
-            {QStringLiteral("de"), QStringLiteral("Deutsch")},
-            {QStringLiteral("ru"), QStringLiteral("Русский")},
-            {QStringLiteral("es"), QStringLiteral("Español")},
-            {QStringLiteral("fr"), QStringLiteral("Français")},
-            {QStringLiteral("zh"), QStringLiteral("中文")},
-            {QStringLiteral("ja"), QStringLiteral("日本語")},
-            {QStringLiteral("ko"), QStringLiteral("한국어")},
-            {QStringLiteral("pt"), QStringLiteral("Português")},
-            {QStringLiteral("it"), QStringLiteral("Italiano")},
-            {QStringLiteral("tr"), QStringLiteral("Türkçe")},
-            {QStringLiteral("pl"), QStringLiteral("Polski")},
-        };
-        auto *lang = new QComboBox;
-        for (const auto &code : I18n::languages())
-            lang->addItem(langNames.value(code, code), code);
-        lang->setCurrentIndex(qMax(0, lang->findData(m_cfg.value(QStringLiteral("language")).toString())));
-        form->addRow(QStringLiteral("Language"), lang);
-        m_controls.append({QStringLiteral("language"), lang});
-    }
-    if (useComboTheme) {
-        // v2 theme names (settings-registry order)
-        const QList<QPair<QString, QString>> themes{
-            {QStringLiteral("System"), QStringLiteral("system")},
-            {QStringLiteral("Light"), QStringLiteral("light")},
-            {QStringLiteral("Snow"), QStringLiteral("snow")},
-            {QStringLiteral("Dark"), QStringLiteral("dark")},
-            {QStringLiteral("AMOLED"), QStringLiteral("amoled")},
-            {QStringLiteral("Nord"), QStringLiteral("nord")},
-            {QStringLiteral("Dracula"), QStringLiteral("dracula")},
-            {QStringLiteral("Cobalt"), QStringLiteral("cobalt")},
-            {QStringLiteral("Solarized Dark"), QStringLiteral("solarized")},
-            {QStringLiteral("Gruvbox Dark"), QStringLiteral("gruvbox")},
-            {QStringLiteral("Gruvbox Light"), QStringLiteral("gruvbox-light")},
-            {QStringLiteral("Ionized Purple"), QStringLiteral("ionized-purple")},
-            {QStringLiteral("Ionized Red"), QStringLiteral("ionized-red")},
-            {QStringLiteral("Ionized Cyan"), QStringLiteral("ionized-cyan")},
-        };
-        auto *theme = new QComboBox;
-        for (const auto &[label, id] : themes)
-            theme->addItem(label, id);
-        theme->setCurrentIndex(qMax(0, theme->findData(m_cfg.value(QStringLiteral("theme")).toString())));
-        form->addRow(QStringLiteral("Theme"), theme);
-        m_controls.append({QStringLiteral("theme"), theme});
-    }
+    auto *center = new QWidget(host);
+    center->setObjectName(QStringLiteral("settingsCenter"));
+    center->setMaximumWidth(672);
+    auto *cl = new QVBoxLayout(center);
+    cl->setContentsMargins(0, 0, 0, 0);
+    cl->setSpacing(8);
 
-    for (const auto &f : fields) {
+    auto *heading = new QLabel(title, center);
+    heading->setObjectName(QStringLiteral("settingsSectionTitle"));
+    cl->addWidget(heading);
+    cl->addSpacing(4);
+
+    auto addCard = [&](const QStringList &labels, const QList<QWidget *> &controls) {
+        auto *card = new QWidget(center);
+        card->setObjectName(QStringLiteral("settingsCard"));
+        auto *cardL = new QVBoxLayout(card);
+        cardL->setContentsMargins(16, 12, 16, 12);
+        cardL->setSpacing(8);
+        for (int i = 0; i < controls.size(); ++i) {
+            auto *row = new QHBoxLayout;
+            auto *lbl = new QLabel(labels.at(i), card);
+            lbl->setObjectName(QStringLiteral("settingsFieldLabel"));
+            row->addWidget(lbl, 1);
+            row->addWidget(controls.at(i), 2);
+            cardL->addLayout(row);
+        }
+        cl->addWidget(card);
+    };
+
+    auto makeControl = [&](const SettingField &f) -> QWidget * {
         QWidget *control = nullptr;
         if (f.type == QStringLiteral("checkbox")) {
             auto *cb = new QCheckBox;
@@ -241,9 +287,90 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             if (f.positiveInt) le->setValidator(new QIntValidator(0, 1 << 30, le));
             control = le;
         }
-        form->addRow(f.label, control);
         m_controls.append({f.key, control});
+        return control;
+    };
+
+    // Language + Theme card (v2 General groups them first)
+    if (useComboLang || useComboTheme) {
+        QStringList labels;
+        QList<QWidget *> controls;
+        if (useComboLang) {
+            // v2 human-readable language labels
+            const QMap<QString, QString> langNames{
+                {QStringLiteral("en"), QStringLiteral("English")},
+                {QStringLiteral("de"), QStringLiteral("Deutsch")},
+                {QStringLiteral("ru"), QStringLiteral("Русский")},
+                {QStringLiteral("es"), QStringLiteral("Español")},
+                {QStringLiteral("fr"), QStringLiteral("Français")},
+                {QStringLiteral("zh"), QStringLiteral("中文")},
+                {QStringLiteral("ja"), QStringLiteral("日本語")},
+                {QStringLiteral("ko"), QStringLiteral("한국어")},
+                {QStringLiteral("pt"), QStringLiteral("Português")},
+                {QStringLiteral("it"), QStringLiteral("Italiano")},
+                {QStringLiteral("tr"), QStringLiteral("Türkçe")},
+                {QStringLiteral("pl"), QStringLiteral("Polski")},
+            };
+            auto *lang = new QComboBox;
+            for (const auto &code : I18n::languages())
+                lang->addItem(langNames.value(code, code), code);
+            lang->setCurrentIndex(qMax(0, lang->findData(m_cfg.value(QStringLiteral("language")).toString())));
+            labels << QStringLiteral("Language");
+            controls << lang;
+            m_controls.append({QStringLiteral("language"), lang});
+        }
+        if (useComboTheme) {
+            // v2 theme names (settings-registry order)
+            const QList<QPair<QString, QString>> themes{
+                {QStringLiteral("System"), QStringLiteral("system")},
+                {QStringLiteral("Light"), QStringLiteral("light")},
+                {QStringLiteral("Snow"), QStringLiteral("snow")},
+                {QStringLiteral("Dark"), QStringLiteral("dark")},
+                {QStringLiteral("AMOLED"), QStringLiteral("amoled")},
+                {QStringLiteral("Nord"), QStringLiteral("nord")},
+                {QStringLiteral("Dracula"), QStringLiteral("dracula")},
+                {QStringLiteral("Cobalt"), QStringLiteral("cobalt")},
+                {QStringLiteral("Solarized Dark"), QStringLiteral("solarized")},
+                {QStringLiteral("Gruvbox Dark"), QStringLiteral("gruvbox")},
+                {QStringLiteral("Gruvbox Light"), QStringLiteral("gruvbox-light")},
+                {QStringLiteral("Ionized Purple"), QStringLiteral("ionized-purple")},
+                {QStringLiteral("Ionized Red"), QStringLiteral("ionized-red")},
+                {QStringLiteral("Ionized Cyan"), QStringLiteral("ionized-cyan")},
+            };
+            auto *theme = new QComboBox;
+            for (const auto &[label, id] : themes)
+                theme->addItem(label, id);
+            theme->setCurrentIndex(qMax(0, theme->findData(m_cfg.value(QStringLiteral("theme")).toString())));
+            labels << QStringLiteral("Theme");
+            controls << theme;
+            m_controls.append({QStringLiteral("theme"), theme});
+        }
+        addCard(labels, controls);
     }
+
+    // checkbox fields: grouped ~3 per card (v2 bundles toggles)
+    QList<const SettingField *> checks;
+    for (const auto &f : fields)
+        if (f.type == QStringLiteral("checkbox")) checks.append(&f);
+    for (int i = 0; i < checks.size(); i += 3) {
+        QStringList labels;
+        QList<QWidget *> controls;
+        for (int j = i; j < qMin(i + 3, checks.size()); ++j) {
+            labels << checks.at(j)->label;
+            controls << makeControl(*checks.at(j));
+        }
+        addCard(labels, controls);
+    }
+
+    // input/textarea fields: one per card (v2)
+    for (const auto &f : fields) {
+        if (f.type == QStringLiteral("checkbox")) continue;
+        addCard({f.label}, {makeControl(f)});
+    }
+
+    cl->addStretch(1);
+    col->addWidget(center, 0, Qt::AlignHCenter);
+    col->addStretch(1);
     scroll->setWidget(host);
     return scroll;
 }

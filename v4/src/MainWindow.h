@@ -29,6 +29,7 @@ public:
     void overrideThemeForTest(const QString &id);
     void openSettingsForTest();
     void openMcpForTest() { openMcp(); }
+    void openSearchForTest() { openSearch(); }
     void attachForTest(const QStringList &paths) { attachFiles(paths); }
     void abortForTest();
 
