@@ -201,8 +201,8 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, QWidget *parent)
     bl->setContentsMargins(24, 10, 24, 10);
     auto *group = new QWidget(buttons);
     group->setObjectName(QStringLiteral("settingsFooterGroup"));
-    group->setMinimumWidth(740);
-    group->setMaximumWidth(760);
+    group->setMinimumWidth(780);
+    group->setMaximumWidth(780);
     auto *gl = new QHBoxLayout(group);
     gl->setContentsMargins(0, 0, 0, 0);
     gl->setSpacing(8);
