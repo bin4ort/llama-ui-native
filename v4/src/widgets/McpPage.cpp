@@ -1,4 +1,5 @@
 #include "McpPage.h"
+#include <cstdio>
 #include "../i18n.h"
 #include <QHBoxLayout>
 #include <QJsonArray>
@@ -42,21 +43,34 @@ McpPage::McpPage(const QJsonObject &config, QWidget *parent)
     setObjectName(QStringLiteral("appDialog"));
     setWindowTitle(I18n::t(QStringLiteral("MCP Servers")));
     setModal(true);
-    resize(560, 420);
+    resize(1400, 900);
 
     auto *outer = new QVBoxLayout(this);
-    outer->setContentsMargins(20, 20, 20, 20);
-    outer->setSpacing(12);
+    outer->setContentsMargins(0, 0, 0, 0);
+    outer->setSpacing(0);
 
-    auto *title = new QLabel(I18n::t(QStringLiteral("MCP Servers")), this);
-    title->setObjectName(QStringLiteral("dialogTitle"));
-    outer->addWidget(title);
+    // v2 full-page layout: header top-left, centered content
+    auto *header = new QWidget(this);
+    header->setObjectName(QStringLiteral("mcpHeader"));
+    auto *hl = new QHBoxLayout(header);
+    hl->setContentsMargins(24, 16, 24, 12);
+    auto *title = new QLabel(QStringLiteral("◫ ") + I18n::t(QStringLiteral("MCP Servers")), this);
+    title->setObjectName(QStringLiteral("mcpTitle"));
+    hl->addWidget(title);
+    hl->addStretch(1);
+    auto *closeBtn = new QPushButton(QStringLiteral("✕"), this);
+    closeBtn->setProperty("ghost", true);
+    connect(closeBtn, &QPushButton::clicked, this, &QDialog::close);
+    hl->addWidget(closeBtn);
+    outer->addWidget(header);
+
     auto *desc = new QLabel(
         I18n::t(QStringLiteral(
             "Connect Model Context Protocol servers to give the assistant access to external tools and resources.")),
         this);
     desc->setObjectName(QStringLiteral("dialogDesc"));
     desc->setWordWrap(true);
+    desc->setContentsMargins(24, 0, 24, 8);
     outer->addWidget(desc);
 
     auto *scroll = new QScrollArea(this);
@@ -64,19 +78,11 @@ McpPage::McpPage(const QJsonObject &config, QWidget *parent)
     scroll->setFrameShape(QFrame::NoFrame);
     auto *host = new QWidget;
     m_list = new QVBoxLayout(host);
-    m_list->setContentsMargins(0, 0, 0, 0);
+    m_list->setContentsMargins(24, 8, 24, 24);
     m_list->setSpacing(10);
     scroll->setWidget(host);
     outer->addWidget(scroll, 1);
     rebuild();
-
-    auto *bottom = new QHBoxLayout;
-    bottom->addStretch(1);
-    auto *closeBtn = new QPushButton(I18n::t(QStringLiteral("Close")), this);
-    closeBtn->setProperty("outline", true);
-    connect(closeBtn, &QPushButton::clicked, this, &QDialog::close);
-    bottom->addWidget(closeBtn);
-    outer->addLayout(bottom);
 }
 
 void McpPage::rebuild() {
@@ -87,27 +93,26 @@ void McpPage::rebuild() {
     }
     const auto servers = serversOf(m_cfg);
     if (servers.isEmpty()) {
-        // v2 empty state: centered card with primary add button
-        auto *empty = new QWidget(this);
-        empty->setObjectName(QStringLiteral("mcpEmpty"));
-        auto *vl = new QVBoxLayout(empty);
-        vl->setContentsMargins(16, 24, 16, 24);
-        vl->setSpacing(8);
-        auto *t1 = new QLabel(I18n::t(QStringLiteral("Add your first MCP server")), empty);
+        // v2 empty state: centered text + primary button (no card)
+        m_list->addStretch(1);
+        auto *t1 = new QLabel(I18n::t(QStringLiteral("Add your first MCP server")), this);
         t1->setObjectName(QStringLiteral("mcpEmptyTitle"));
         t1->setAlignment(Qt::AlignCenter);
-        vl->addWidget(t1);
-        auto *t2 = new QLabel(I18n::t(QStringLiteral("Connect a remote MCP server by URL.")), empty);
+        m_list->addWidget(t1);
+        auto *t2 = new QLabel(I18n::t(QStringLiteral("Connect a remote MCP server by URL.")), this);
         t2->setObjectName(QStringLiteral("mcpEmptyDesc"));
         t2->setAlignment(Qt::AlignCenter);
-        vl->addWidget(t2);
-        auto *btn = new QPushButton(I18n::t(QStringLiteral("Add New Server")), empty);
+        m_list->addWidget(t2);
+        m_list->addSpacing(16);
+        auto *btn = new QPushButton(I18n::t(QStringLiteral("Add New Server")), this);
         btn->setProperty("primary", true);
+        btn->setMinimumWidth(140);
         connect(btn, &QPushButton::clicked, this, &McpPage::addServer);
-        vl->addWidget(btn, 0, Qt::AlignCenter);
-        m_list->addWidget(empty);
+        m_list->addWidget(btn, 0, Qt::AlignHCenter);
+        m_list->addStretch(1);
         return;
     }
+    fprintf(stderr, "[MCP] rebuild: %d servers\n", servers.size());
     for (int i = 0; i < servers.size(); ++i) {
         const auto s = servers.at(i).toObject();
         const QString name = s.value(QStringLiteral("name")).toString();
@@ -116,6 +121,8 @@ void McpPage::rebuild() {
 
         auto *card = new QWidget(this);
         card->setObjectName(QStringLiteral("mcpCard"));
+        card->setAttribute(Qt::WA_StyledBackground);
+        card->setMinimumHeight(64);
         auto *vl = new QVBoxLayout(card);
         vl->setContentsMargins(12, 10, 12, 10);
         vl->setSpacing(4);

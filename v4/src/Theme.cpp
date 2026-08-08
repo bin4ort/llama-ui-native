@@ -331,9 +331,10 @@ QPushButton[primary="true"]:hover { background-color: %15; }
 #mcpState { font-size: 11px; padding: 1px 8px; border-radius: 8px; color: %10; }
 #mcpState[on="true"] { color: #2ecc71; }
 #mcpState[on="false"] { color: %23; }
-#mcpEmpty { border: 1px dashed %5; border-radius: 12px; }
-#mcpEmptyTitle { font-size: 15px; font-weight: 600; color: %3; }
-#mcpEmptyDesc { font-size: 13px; color: %10; }
+#mcpEmptyTitle { font-size: 20px; font-weight: 600; color: %3; }
+#mcpEmptyDesc { font-size: 14px; color: %10; }
+#mcpHeader { border-bottom: 1px solid %5; }
+#mcpTitle { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
 
 QPushButton[persona="true"] {
   background-color: transparent; border: 1px solid %5; border-radius: 14px;
