@@ -174,10 +174,17 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props, QWidge
     nl->setContentsMargins(12, 36, 12, 12);
     nl->setSpacing(4);
 
+    auto *headingRow = new QHBoxLayout;
+    headingRow->setContentsMargins(0, 0, 0, 0);
+    headingRow->setSpacing(8);
+    auto *headingIcon = new QLabel(nav);
+    headingIcon->setPixmap(Icons::get(QStringLiteral("settings"), Icons::color()).pixmap(22, 22));
+    headingRow->addWidget(headingIcon);
     auto *heading = new QLabel(I18n::t(QStringLiteral("Settings")), nav);
     heading->setObjectName(QStringLiteral("settingsHeading"));
-    heading->setPixmap(Icons::get(QStringLiteral("settings"), Icons::color()).pixmap(18, 18));
-    nl->addWidget(heading);
+    headingRow->addWidget(heading);
+    headingRow->addStretch(1);
+    nl->addLayout(headingRow);
     nl->addSpacing(8);
 
     m_navList = new QListWidget(nav);
