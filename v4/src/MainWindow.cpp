@@ -254,9 +254,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     chatCol->insertWidget(chatCol->indexOf(m_composer), bannerHost, 0, Qt::AlignHCenter); // v2: banner above the form
     // v2 floats the form at ~50dvh on the empty chat (md:bottom-[calc(50dvh-7rem)])
     // and pins it to the bottom once messages exist
+    // v2: the form floats with bottom-4 (16px) — keep a 10px pad so the
+    // pinned form also sits 18px above the window bottom
     m_formSpacer = new QWidget(central);
     m_formSpacer->setVisible(false);
     chatCol->addWidget(m_formSpacer);
+    auto *bottomPad = new QWidget(central);
+    bottomPad->setFixedHeight(10);
+    chatCol->addWidget(bottomPad);
     chatCol->setStretch(chatCol->indexOf(m_messages), 1);
 
     layout->addLayout(chatCol, 1);
@@ -517,7 +522,7 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     if (m_formSpacer && m_empty) {
         const int h = height();
         const int desiredBottom = h / 2 + 112;
-        const int spacer = h - desiredBottom - 8;
+        const int spacer = h - desiredBottom - 18;
         m_formSpacer->setFixedHeight(qMax(20, spacer));
     }
 }
@@ -532,7 +537,7 @@ void MainWindow::setEmpty(bool empty) {
             // v2: form bottom sits at 50dvh - 7rem from the window bottom
             const int h = height();
             const int desiredBottom = h / 2 + 112; // bottom edge y of the form
-            const int spacer = h - desiredBottom - 8; // 8px bottom margin
+            const int spacer = h - desiredBottom - 18; // 8px margin + 10px pad
             m_formSpacer->setFixedHeight(qMax(20, spacer));
         }
     }
