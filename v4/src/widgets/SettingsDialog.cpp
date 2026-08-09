@@ -238,7 +238,7 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props, QWidge
     buttons->setObjectName(QStringLiteral("settingsFooter"));
     buttons->setAttribute(Qt::WA_StyledBackground);
     buttons->setAutoFillBackground(true);
-    buttons->setMinimumHeight(55);
+    buttons->setMinimumHeight(60);
     // v2 footer: buttons grouped and centered in the content pane
     auto *bl = new QHBoxLayout(buttons);
     bl->setContentsMargins(24, 10, 24, 10);
@@ -270,6 +270,10 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props, QWidge
     bl->addWidget(group, 0, Qt::AlignHCenter);
 
     rightCol->addWidget(buttons);
+    // v2 footer sits ~20px above the window bottom
+    auto *footPad = new QWidget(this);
+    footPad->setFixedHeight(10);
+    rightCol->addWidget(footPad);
     outer->addLayout(layout, 1);
 
     connect(m_navList, &QListWidget::currentRowChanged, this,
