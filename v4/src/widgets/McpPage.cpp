@@ -48,38 +48,66 @@ McpPage::McpPage(const QJsonObject &config, QWidget *parent)
     setModal(true);
     resize(1400, 900);
 
-    auto *outer = new QVBoxLayout(this);
+    auto *outer = new QHBoxLayout(this);
     outer->setContentsMargins(0, 0, 0, 0);
     outer->setSpacing(0);
 
-    // v2 full-page layout: header top-left, centered content
-    auto *header = new QWidget(this);
+    // v2: collapsed sidebar strip at x0-56, content pane after it
+    auto *navPad = new QWidget(this);
+    navPad->setFixedWidth(56); // v2: w-12 strip + ml-2
+    navPad->setAutoFillBackground(false);
+    auto *stripL = new QVBoxLayout(navPad);
+    stripL->setContentsMargins(6, 16, 6, 0);
+    stripL->setSpacing(4);
+    auto *stripLogo = new QPushButton(navPad);
+    stripLogo->setProperty("strip", true);
+    stripLogo->setProperty("logoBtn", true);
+    stripLogo->setFixedSize(36, 36);
+    stripLogo->setIconSize(QSize(20, 20));
+    stripLogo->setIcon(Icons::logo(Icons::color()));
+    stripLogo->setToolTip(I18n::t(QStringLiteral("Back to Chat")));
+    connect(stripLogo, &QPushButton::clicked, this, &QDialog::close);
+    stripL->addWidget(stripLogo, 0, Qt::AlignHCenter);
+    stripL->addStretch(1);
+    outer->addWidget(navPad);
+
+    auto *content = new QWidget(this);
+    auto *col = new QVBoxLayout(content);
+    col->setContentsMargins(0, 0, 0, 0);
+    col->setSpacing(0);
+
+    // v2 full-page layout: sticky header (mt-4, h64) + centered content
+    auto *header = new QWidget(content);
     header->setObjectName(QStringLiteral("mcpHeader"));
+    header->setFixedHeight(64);
     auto *hl = new QHBoxLayout(header);
-    hl->setContentsMargins(24, 16, 24, 12);
-    auto *title = new QLabel(I18n::t(QStringLiteral("MCP Servers")), this);
+    hl->setContentsMargins(2, 16, 32, 12); // v2: title at x58
+    auto *titleIcon = new QLabel(content);
+    titleIcon->setPixmap(Icons::mcpLogo(Icons::color()).pixmap(20, 20));
+    hl->addWidget(titleIcon);
+    auto *title = new QLabel(I18n::t(QStringLiteral("MCP Servers")), content);
     title->setObjectName(QStringLiteral("mcpTitle"));
-    title->setPixmap(Icons::mcpLogo(Icons::color()).pixmap(26, 26));
     hl->addWidget(title);
     hl->addStretch(1);
-    auto *closeBtn = new QPushButton(this);
+    auto *closeBtn = new QPushButton(content);
     closeBtn->setProperty("ghost", true);
     closeBtn->setIcon(Icons::get(QStringLiteral("x"), Icons::color()));
     closeBtn->setIconSize(QSize(18, 18));
     connect(closeBtn, &QPushButton::clicked, this, &QDialog::close);
     hl->addWidget(closeBtn);
-    outer->addWidget(header);
+    col->addWidget(header);
 
-    auto *scroll = new QScrollArea(this);
+    auto *scroll = new QScrollArea(content);
     scroll->setWidgetResizable(true);
     scroll->setFrameShape(QFrame::NoFrame);
     auto *host = new QWidget;
     m_list = new QVBoxLayout(host);
-    m_list->setContentsMargins(24, 8, 24, 24);
+    m_list->setContentsMargins(32, 8, 32, 24);
     m_list->setSpacing(10);
     m_list->setProperty("emptyMode", false);
     scroll->setWidget(host);
-    outer->addWidget(scroll, 1);
+    col->addWidget(scroll, 1);
+    outer->addWidget(content, 1);
     rebuild();
 }
 
@@ -91,14 +119,14 @@ void McpPage::rebuild() {
     }
     const auto servers = serversOf(m_cfg);
     if (servers.isEmpty()) {
-        // v2 empty state: Plus icon circle + title + desc + primary button
+        // v2 empty state: 16px plus icon + 14px title/desc + primary button
         m_list->setSpacing(6);
         m_list->addStretch(1);
         auto *icon = new QLabel(this);
         icon->setObjectName(QStringLiteral("mcpEmptyIcon"));
-        icon->setPixmap(Icons::get(QStringLiteral("plus"), Icons::color()).pixmap(22, 22));
+        icon->setPixmap(Icons::get(QStringLiteral("plus"), Icons::color()).pixmap(16, 16));
         icon->setAlignment(Qt::AlignCenter);
-        icon->setFixedSize(48, 48);
+        icon->setFixedSize(24, 24);
         m_list->addWidget(icon, 0, Qt::AlignHCenter);
         m_list->addSpacing(4);
         auto *t1 = new QLabel(I18n::t(QStringLiteral("Add your first MCP server")), this);
@@ -110,7 +138,7 @@ void McpPage::rebuild() {
         t2->setAlignment(Qt::AlignCenter);
         m_list->addWidget(t2);
         m_list->addSpacing(8);
-        auto *btn = new QPushButton(I18n::t(QStringLiteral("Add New Server")), this);
+        auto *btn = new QPushButton(QStringLiteral("+ Add new server"), this);
         btn->setProperty("primary", true);
         btn->setMinimumWidth(160);
         connect(btn, &QPushButton::clicked, this, &McpPage::addServer);

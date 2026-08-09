@@ -371,13 +371,13 @@ QPushButton[primary="true"]:hover { background-color: %15; }
 #mcpCap[cap="purple"] { color: #9b59b6; background-color: rgba(155,89,182,0.12); }
 #mcpToolsBtn { color: %10; font-size: 12px; text-align: left; }
 #mcpToolsList { color: %10; font-size: 12px; padding-left: 8px; }
-#mcpEmptyTitle { font-size: 20px; font-weight: 600; color: %3; }
+#mcpEmptyTitle { font-size: 14px; font-weight: 600; color: %3; }
 #mcpEmptyDesc { font-size: 14px; color: %10; }
 #mcpEmptyIcon {
-  background-color: %7; border-radius: 24px; color: %3; font-size: 20px;
+  background-color: %7; border-radius: 12px; color: %3; font-size: 14px;
 }
 #mcpHeader { border-bottom: 1px solid %5; }
-#mcpTitle { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+#mcpTitle { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
 
 QPushButton[persona="true"] {
   background-color: transparent; border: 1px solid %5; border-radius: 14px;

@@ -106,9 +106,12 @@ QIcon logo(const QColor &color) {
 }
 
 QIcon mcpLogo(const QColor &color) {
-    Q_UNUSED(color);
+    // the v2 mcp logo stroke uses currentColor — QSvgRenderer leaves it
+    // black, so substitute the requested color
+    QString svg = QString::fromUtf8(decode(kMcpB64));
+    svg.replace(QStringLiteral("currentColor"), color.name());
     QIcon icon;
-    icon.addPixmap(renderSvg(QString::fromUtf8(decode(kMcpB64)), 24));
+    icon.addPixmap(renderSvg(svg, 24));
     return icon;
 }
 
