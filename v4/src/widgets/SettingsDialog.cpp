@@ -256,7 +256,8 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
 
     auto *center = new QWidget(host);
     center->setObjectName(QStringLiteral("settingsCenter"));
-    center->setMaximumWidth(768); // v2: max-w-3xl
+    center->setMaximumWidth(840); // v2: measured card span x400-1240
+    center->setMinimumWidth(840);
     auto *cl = new QVBoxLayout(center);
     cl->setContentsMargins(0, 112, 0, 0); // v2: md:pt-28
     cl->setSpacing(32);                    // v2: space-y-8 between cards
@@ -278,8 +279,12 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             auto *row = new QHBoxLayout;
             auto *lbl = new QLabel(labels.at(i), card);
             lbl->setObjectName(QStringLiteral("settingsFieldLabel"));
-            row->addWidget(lbl, 1);
-            row->addWidget(controls.at(i), 2);
+            row->addWidget(lbl, 0, Qt::AlignLeft);
+            row->addSpacing(16);
+            // v2: the control fills the card's remaining width
+            controls.at(i)->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+            controls.at(i)->setMinimumWidth(300);
+            row->addWidget(controls.at(i), 1);
             cardL->addLayout(row);
             if (i < helps.size() && !helps.at(i).isEmpty()) {
                 auto *help = new QLabel(helps.at(i), card);
