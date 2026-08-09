@@ -33,6 +33,7 @@ public:
 
 signals:
     void configChanged(const QJsonObject &cfg);
+    void clearAllConversationsRequested();
 
 private:
     QWidget *buildSection(const QString &title, const QList<SettingField> &fields,

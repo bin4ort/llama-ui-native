@@ -727,5 +727,9 @@
   "Loaded models": "Loaded models",
   "Available models": "Available models",
   "First line of the conversation": "First line of the conversation",
-  "just now": "just now"
+  "just now": "just now",
+  "Download your conversations as a JSON file with all messages.": "Download your conversations as a JSON file with all messages.",
+  "Import conversations from a previously exported file. This will merge with your existing conversations.": "Import conversations from a previously exported file. This will merge with your existing conversations.",
+  "Permanently delete all conversations and their messages. This action cannot be undone.": "Permanently delete all conversations and their messages. This action cannot be undone.",
+  "Upload": "Upload"
 }

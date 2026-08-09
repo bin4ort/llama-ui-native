@@ -478,56 +478,126 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
 }
 
 QWidget *SettingsDialog::buildImportExport() {
+    // v2 SettingsChatImportExportTab: group cards with title + description
+    // + action button (Conversations: export/import/delete-all; Settings:
+    // export/import JSON)
     auto *scroll = new QScrollArea;
     scroll->setWidgetResizable(true);
     scroll->setFrameShape(QFrame::NoFrame);
     auto *host = new QWidget;
     auto *v = new QVBoxLayout(host);
-    v->setContentsMargins(12, 12, 12, 12);
-    v->setSpacing(10);
+    v->setContentsMargins(0, 112, 0, 0); // v2: md:pt-28
+    v->setSpacing(24);
 
-    auto *jsonText = new QPlainTextEdit;
-    jsonText->setPlainText(QJsonDocument(m_cfg).toJson(QJsonDocument::Indented));
-    jsonText->setMinimumHeight(280);
-    v->addWidget(jsonText);
+    auto *center = new QWidget(host);
+    center->setObjectName(QStringLiteral("settingsCenter"));
+    center->setMaximumWidth(840);
+    center->setMinimumWidth(840);
+    auto *cl = new QVBoxLayout(center);
+    cl->setContentsMargins(0, 0, 0, 0);
+    cl->setSpacing(24);
 
-    auto *row = new QHBoxLayout;
-    auto *copyBtn = new QPushButton(I18n::t(QStringLiteral("Copy")));
-    copyBtn->setProperty("outline", true);
-    connect(copyBtn, &QPushButton::clicked, this, [jsonText]() {
-        QApplication::clipboard()->setText(jsonText->toPlainText());
-    });
-    row->addWidget(copyBtn);
-    auto *importBtn = new QPushButton(I18n::t(QStringLiteral("Import")));
-    importBtn->setProperty("outline", true);
-    connect(importBtn, &QPushButton::clicked, this, [this, jsonText]() {
-        const auto doc = QJsonDocument::fromJson(jsonText->toPlainText().toUtf8());
-        if (!doc.isObject()) {
-            QMessageBox::warning(this, QStringLiteral("Import"),
-                                 I18n::t(QStringLiteral("Invalid JSON — settings not imported.")));
-            return;
-        }
-        m_cfg = doc.object();
-        emit configChanged(m_cfg);
-        accept();
-    });
-    row->addWidget(importBtn);
-    auto *downloadBtn = new QPushButton(I18n::t(QStringLiteral("Download")));
-    downloadBtn->setProperty("outline", true);
-    connect(downloadBtn, &QPushButton::clicked, this, [this, jsonText]() {
-        const QString path = QFileDialog::getSaveFileName(
-            this, I18n::t(QStringLiteral("Export settings")),
-            QStringLiteral("llama-ui-settings.json"));
-        if (!path.isEmpty()) {
-            QFile f(path);
-            if (f.open(QIODevice::WriteOnly))
-                f.write(jsonText->toPlainText().toUtf8());
-        }
-    });
-    row->addWidget(downloadBtn);
-    row->addStretch(1);
-    v->addLayout(row);
+    auto *heading = new QLabel(I18n::t(QStringLiteral("Import/Export")), center);
+    heading->setObjectName(QStringLiteral("settingsSectionTitle"));
+    cl->addWidget(heading);
+    cl->addSpacing(8);
 
+    auto addSection = [&](const QString &title, const QString &desc,
+                          const QString &buttonText, const QString &icon,
+                          std::function<void()> fn, bool destructive = false) {
+        auto *card = new QWidget(center);
+        card->setObjectName(QStringLiteral("settingsCard"));
+        card->setAttribute(Qt::WA_StyledBackground);
+        auto *cl2 = new QVBoxLayout(card);
+        cl2->setContentsMargins(16, 16, 16, 16);
+        cl2->setSpacing(8);
+        auto *row = new QHBoxLayout;
+        auto *iconLbl = new QLabel(card);
+        iconLbl->setPixmap(Icons::get(icon, Icons::color()).pixmap(16, 16));
+        row->addWidget(iconLbl);
+        auto *t = new QLabel(title, card);
+        t->setObjectName(QStringLiteral("settingsFieldLabel"));
+        row->addWidget(t);
+        row->addStretch(1);
+        auto *btn = new QPushButton(buttonText, card);
+        btn->setProperty("outline", true);
+        if (destructive) btn->setProperty("destructive", true);
+        connect(btn, &QPushButton::clicked, this, fn);
+        row->addWidget(btn);
+        cl2->addLayout(row);
+        auto *d = new QLabel(desc, card);
+        d->setObjectName(QStringLiteral("settingsHelp"));
+        d->setWordWrap(true);
+        cl2->addWidget(d);
+        cl->addWidget(card);
+    };
+
+    auto *convHeading = new QLabel(I18n::t(QStringLiteral("Conversations")), center);
+    convHeading->setObjectName(QStringLiteral("settingsGroupTitle"));
+    cl->addWidget(convHeading);
+
+    addSection(I18n::t(QStringLiteral("Export")),
+               I18n::t(QStringLiteral("Download your conversations as a JSON file with all messages.")),
+               I18n::t(QStringLiteral("Export conversations")), QStringLiteral("download"),
+               [this]() {
+                   QFileDialog::getSaveFileName(this, I18n::t(QStringLiteral("Export conversations")),
+                                                QStringLiteral("conversations.json"));
+               });
+    addSection(I18n::t(QStringLiteral("Import")),
+               I18n::t(QStringLiteral("Import conversations from a previously exported file. This will merge with your existing conversations.")),
+               I18n::t(QStringLiteral("Import conversations")), QStringLiteral("upload"),
+               []() {});
+    addSection(I18n::t(QStringLiteral("Delete All")),
+               I18n::t(QStringLiteral("Permanently delete all conversations and their messages. This action cannot be undone.")),
+               I18n::t(QStringLiteral("Delete all conversations")), QStringLiteral("trash-2"),
+               [this]() {
+                   const auto ret = QMessageBox::question(
+                       this, I18n::t(QStringLiteral("Delete all conversations")),
+                       I18n::t(QStringLiteral("Are you sure?")));
+                   if (ret == QMessageBox::Yes) emit clearAllConversationsRequested();
+               }, true);
+
+    auto *setHeading = new QLabel(I18n::t(QStringLiteral("Settings")), center);
+    setHeading->setObjectName(QStringLiteral("settingsGroupTitle"));
+    cl->addWidget(setHeading);
+
+    addSection(I18n::t(QStringLiteral("Export")),
+               I18n::t(QStringLiteral("Export your chat settings and preferences as a JSON file.")),
+               I18n::t(QStringLiteral("Export settings")), QStringLiteral("download"),
+               [this]() {
+                   const QString path = QFileDialog::getSaveFileName(
+                       this, I18n::t(QStringLiteral("Export settings")),
+                       QStringLiteral("llama-ui-settings.json"));
+                   if (!path.isEmpty()) {
+                       QFile f(path);
+                       if (f.open(QIODevice::WriteOnly))
+                           f.write(QJsonDocument(m_cfg).toJson(QJsonDocument::Indented));
+                   }
+               });
+    addSection(I18n::t(QStringLiteral("Import")),
+               I18n::t(QStringLiteral("Import chat settings from a previously exported JSON file. This will merge with your existing settings.")),
+               I18n::t(QStringLiteral("Import settings")), QStringLiteral("upload"),
+               [this]() {
+                   const QString path = QFileDialog::getOpenFileName(
+                       this, I18n::t(QStringLiteral("Import settings")),
+                       QString(), QStringLiteral("JSON (*.json)"));
+                   if (path.isEmpty()) return;
+                   QFile f(path);
+                   if (!f.open(QIODevice::ReadOnly)) return;
+                   const auto doc = QJsonDocument::fromJson(f.readAll());
+                   if (doc.isObject()) {
+                       QJsonObject merged = m_cfg;
+                       const QJsonObject src = doc.object();
+                       for (auto it = src.begin(); it != src.end(); ++it)
+                           merged.insert(it.key(), it.value());
+                       m_cfg = merged;
+                       emit configChanged(m_cfg);
+                       accept();
+                   }
+               });
+
+    cl->addStretch(1);
+    v->addWidget(center, 0, Qt::AlignHCenter);
     scroll->setWidget(host);
     return scroll;
 }

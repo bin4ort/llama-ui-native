@@ -42,7 +42,8 @@ template <> constexpr inline auto SettingsDialog::qt_create_metaobjectdata<qt_me
         "configChanged",
         "",
         "QJsonObject",
-        "cfg"
+        "cfg",
+        "clearAllConversationsRequested"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -50,6 +51,8 @@ template <> constexpr inline auto SettingsDialog::qt_create_metaobjectdata<qt_me
         QtMocHelpers::SignalData<void(const QJsonObject &)>(1, 2, QMC::AccessPublic, QMetaType::Void, {{
             { 0x80000000 | 3, 4 },
         }}),
+        // Signal 'clearAllConversationsRequested'
+        QtMocHelpers::SignalData<void()>(5, 2, QMC::AccessPublic, QMetaType::Void),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -74,11 +77,14 @@ void SettingsDialog::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: _t->configChanged((*reinterpret_cast<std::add_pointer_t<QJsonObject>>(_a[1]))); break;
+        case 1: _t->clearAllConversationsRequested(); break;
         default: ;
         }
     }
     if (_c == QMetaObject::IndexOfMethod) {
         if (QtMocHelpers::indexOfMethod<void (SettingsDialog::*)(const QJsonObject & )>(_a, &SettingsDialog::configChanged, 0))
+            return;
+        if (QtMocHelpers::indexOfMethod<void (SettingsDialog::*)()>(_a, &SettingsDialog::clearAllConversationsRequested, 1))
             return;
     }
 }
@@ -102,14 +108,14 @@ int SettingsDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 1)
+        if (_id < 2)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 1;
+        _id -= 2;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 1)
+        if (_id < 2)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 1;
+        _id -= 2;
     }
     return _id;
 }
@@ -118,5 +124,11 @@ int SettingsDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 void SettingsDialog::configChanged(const QJsonObject & _t1)
 {
     QMetaObject::activate<void>(this, &staticMetaObject, 0, nullptr, _t1);
+}
+
+// SIGNAL 1
+void SettingsDialog::clearAllConversationsRequested()
+{
+    QMetaObject::activate(this, &staticMetaObject, 1, nullptr);
 }
 QT_WARNING_POP
