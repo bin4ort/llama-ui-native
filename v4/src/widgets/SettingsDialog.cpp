@@ -294,6 +294,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     // v2 section header: icon + title + bottom border (pb-6)
     auto *headerRow = new QWidget(center);
     headerRow->setObjectName(QStringLiteral("settingsSectionHeader"));
+    headerRow->setAttribute(Qt::WA_StyledBackground);
     auto *hrl = new QHBoxLayout(headerRow);
     hrl->setContentsMargins(0, 0, 0, 0);
     hrl->setSpacing(8);
@@ -306,7 +307,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     hrl->addWidget(heading);
     hrl->addStretch(1);
     cl->addWidget(headerRow);
-    cl->addSpacing(16); // v2: mb-6 after the group title
+    cl->addSpacing(46); // v2: mb-6 after the group title + card offset
 
     auto addCard = [&](const QStringList &labels, const QList<QWidget *> &controls,
                        const QStringList &helps = {}) {

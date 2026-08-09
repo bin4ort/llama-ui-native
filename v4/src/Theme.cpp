@@ -462,7 +462,7 @@ QPushButton[full="true"] { width: 100%%; }
 #settingsNavList::item:selected { background-color: %7; color: %3; }
 #settingsVersion { color: %10; font-size: 11px; padding: 4px 8px; }
 #settingsSectionTitle { font-size: 18px; font-weight: 600; }
-#settingsSectionHeader { border-bottom: 1px solid %5; padding-bottom: 16px; }
+#settingsSectionHeader { border-bottom: 1px solid %5; padding-bottom: 24px; }
 #settingsCard {
   background-color: %11; border: 1px solid %5; border-radius: 10px;
 }
