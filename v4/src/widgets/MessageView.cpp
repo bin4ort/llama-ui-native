@@ -47,7 +47,7 @@ QString mdToHtml(const QString &md, const QColor &linkColor, const QColor &thBg,
                m.captured(2).replace("\n", "<br>") + QStringLiteral("</pre>") +
                QStringLiteral("<a href='copy-code://%1' style='color:%2;font-size:11px'>")
                    .arg(codeIdx++).arg(linkColor.name()) +
-               QStringLiteral("⧉ %1 · %2</a><br>")
+               QStringLiteral("%1 · %2</a><br>")
                    .arg(I18n::t(QStringLiteral("Copy")), lang);
         pos = m.capturedEnd();
     }

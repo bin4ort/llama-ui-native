@@ -189,8 +189,10 @@ void Composer::rebuildChips() {
                 hl->addWidget(thumb);
             }
         } else {
-            auto *icon = new QLabel(QStringLiteral("📄"), chip);
+            auto *icon = new QLabel(chip);
             icon->setObjectName(QStringLiteral("attIcon"));
+            icon->setPixmap(Icons::get(QStringLiteral("file-text"), Icons::color())
+                                .pixmap(20, 20));
             icon->setFixedSize(32, 32);
             icon->setCursor(Qt::PointingHandCursor);
             icon->installEventFilter(this);
@@ -209,8 +211,10 @@ void Composer::rebuildChips() {
             txt->addWidget(sizeLbl);
         }
         hl->addLayout(txt);
-        auto *rm = new QPushButton(QStringLiteral("✕"), chip);
+        auto *rm = new QPushButton(chip);
         rm->setProperty("ghost", true);
+        rm->setIcon(Icons::get(QStringLiteral("x"), Icons::color()));
+        rm->setIconSize(QSize(12, 12));
         rm->setFixedSize(18, 18);
         connect(rm, &QPushButton::clicked, this, [this, i]() {
             m_attachments.removeAt(i);

@@ -246,7 +246,7 @@ void Sidebar::rebuildList() {
                            });
             menu.addAction(I18n::t(QStringLiteral("Edit")),
                            this, [this, id = c.id]() { emit conversationRenameRequested(id); });
-            menu.addAction(QStringLiteral("⭳ ") + I18n::t(QStringLiteral("Export")),
+            auto *expAct = menu.addAction(I18n::t(QStringLiteral("Export")),
                            this, [this, c]() {
                                const QString path = QFileDialog::getSaveFileName(
                                    this, I18n::t(QStringLiteral("Export conversation")),
@@ -264,6 +264,7 @@ void Sidebar::rebuildList() {
                                        {QStringLiteral("messages"), msgs}})
                                                .toJson(QJsonDocument::Indented));
                            });
+            expAct->setIcon(Icons::get(QStringLiteral("download"), Icons::color()));
             menu.addSeparator();
             menu.addAction(I18n::t(QStringLiteral("Delete")),
                            this, [this, id = c.id]() { emit conversationDeleteRequested(id); });

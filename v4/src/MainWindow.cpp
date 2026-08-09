@@ -233,8 +233,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_errorBannerDetail->setWordWrap(true);
     bannerText->addWidget(m_errorBannerDetail);
     bl->addLayout(bannerText, 1);
-    auto *retryBtn = new QPushButton(QStringLiteral("↻ ") + I18n::t(QStringLiteral("Retry")), bannerHost);
+    auto *retryBtn = new QPushButton(I18n::t(QStringLiteral("Retry")), bannerHost);
     retryBtn->setProperty("outline", true);
+    retryBtn->setIcon(Icons::get(QStringLiteral("refresh-cw"), Icons::color()));
+    retryBtn->setIconSize(QSize(14, 14));
     connect(retryBtn, &QPushButton::clicked, this, [this]() {
         hideErrorBanner();
         m_api->fetchModels();
@@ -286,8 +288,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(m_composer, &Composer::attachRequested, this, [this]() {
         // v2 ChatFormActionAddDropdown: Add files / System message
         QMenu menu(this);
-        const auto filesSub = menu.addMenu(QStringLiteral("📎 ") +
-                                           I18n::t(QStringLiteral("Add files")));
+        auto *filesSub = menu.addMenu(I18n::t(QStringLiteral("Add files")));
+        filesSub->setIcon(Icons::get(QStringLiteral("paperclip"), Icons::color()));
         filesSub->addAction(I18n::t(QStringLiteral("Images")),
                             this, [this]() {
                                 const QStringList files = QFileDialog::getOpenFileNames(
@@ -321,8 +323,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         // MCP servers submenu (v2: per-server switches + configure footer)
         const auto servers = McpServers::list(m_config);
         if (!servers.isEmpty()) {
-            auto *mcpSub = menu.addMenu(QStringLiteral("◫ ") +
-                                        I18n::t(QStringLiteral("MCP Servers")));
+            auto *mcpSub = menu.addMenu(I18n::t(QStringLiteral("MCP Servers")));
+            mcpSub->setIcon(Icons::mcpLogo(Icons::color()));
             for (const auto &s : servers) {
                 auto *act = mcpSub->addAction(s.name, this, [this, s]() {
                     // attach an MCP prompt marker so the model can use it
@@ -336,7 +338,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             mcpSub->addAction(I18n::t(QStringLiteral("Configure servers…")),
                               this, [this]() { openMcp(); });
         }
-        menu.addAction(QStringLiteral("💬 ") + I18n::t(QStringLiteral("System Message")),
+        auto *sysAct = menu.addAction(I18n::t(QStringLiteral("System Message")),
                        this, [this]() {
                            bool ok = false;
                            const QString text = QInputDialog::getMultiLineText(
@@ -354,6 +356,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
                                m_messages->addMessage(cm);
                            }
                        });
+        sysAct->setIcon(Icons::get(QStringLiteral("message-square"), Icons::color()));
         menu.exec(QCursor::pos());
     });
     connect(m_composer, &Composer::attachmentPreviewRequested, this, [this](int idx) {
@@ -1048,7 +1051,8 @@ void MainWindow::openSearch() {
         for (const auto &c : m_store->conversations()) {
             if (c.name.contains(needle, Qt::CaseInsensitive)) {
                 ++convHits;
-                auto *item = new QListWidgetItem(QStringLiteral("💬 ") + c.name);
+                auto *item = new QListWidgetItem(c.name);
+                item->setIcon(Icons::get(QStringLiteral("message-square"), Icons::color()));
                 item->setData(Qt::UserRole, c.id);
                 results->addItem(item);
             }
@@ -1191,8 +1195,9 @@ void MainWindow::openPersonaMenu() {
         });
         lay->addWidget(list, 1);
         auto *foot = new QHBoxLayout;
-        auto *wizardBtn = new QPushButton(QStringLiteral("✦ ") + I18n::t(QStringLiteral("Create with wizard…")), dlg);
+        auto *wizardBtn = new QPushButton(I18n::t(QStringLiteral("Create with wizard…")), dlg);
         wizardBtn->setProperty("ghost", true);
+        wizardBtn->setIcon(Icons::get(QStringLiteral("wand-sparkles"), Icons::color()));
         connect(wizardBtn, &QPushButton::clicked, dlg, [this, dlg]() {
             WizardDialog wiz(m_api, m_model, dlg);
             connect(&wiz, &WizardDialog::presetCreated, this,
