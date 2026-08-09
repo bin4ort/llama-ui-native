@@ -161,13 +161,17 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props, QWidge
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
-    // v2 SettingsChatDesktopSidebar: w-64 nav with icon + label, active
-    // accent state, version footer
+    // v2 SettingsChatDesktopSidebar: w-64 nav at x~85 (after the app
+    // strip), icon + label, active accent state, version footer
     auto *nav = new QWidget(this);
     nav->setObjectName(QStringLiteral("settingsNav"));
     nav->setFixedWidth(256);
+    nav->setContentsMargins(0, 0, 0, 0);
+    auto *navPad = new QWidget(this);
+    navPad->setFixedWidth(85); // app strip room (v2: ml-2 + w-12 + gap)
+    navPad->setAutoFillBackground(false);
     auto *nl = new QVBoxLayout(nav);
-    nl->setContentsMargins(12, 16, 12, 12);
+    nl->setContentsMargins(12, 36, 12, 12);
     nl->setSpacing(4);
 
     auto *heading = new QLabel(I18n::t(QStringLiteral("Settings")), nav);
@@ -190,14 +194,17 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props, QWidge
     for (int i = 0; i < sections.size(); ++i) {
         auto *item = new QListWidgetItem(sections.at(i));
         item->setIcon(Icons::get(icons.at(i), Icons::color()));
+        item->setSizeHint(QSize(0, 40)); // v2: py-2 item ~40px pitch
         m_navList->addItem(item);
     }
+    nl->addSpacing(16);
     nl->addWidget(m_navList, 1);
 
     // version footer (v2: "Llama UI Native vX (build Y)")
     auto *ver = new QLabel(QStringLiteral("Llama UI Native v0.6.0"), nav);
     ver->setObjectName(QStringLiteral("settingsVersion"));
     nl->addWidget(ver);
+    layout->addWidget(navPad);
     layout->addWidget(nav);
 
     // content stack (v2: the section renders on the right)
