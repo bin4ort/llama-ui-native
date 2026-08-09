@@ -141,6 +141,8 @@ const QList<SettingField> DEVELOPER = {
     {"showRawOutputSwitch", "Enable raw output toggle", "checkbox"},
     {"jsSandboxEnabled", "JavaScript sandbox tool", "checkbox"},
     {"symbolicMathEnabled", "Symbolic math (nerdamer)", "checkbox"},
+    {"customJson", "Custom JSON", "textarea"},
+    {"customCss", "Custom CSS", "textarea"},
     {"logLevel", "Log level", "loglevel"},
 };
 } // namespace
