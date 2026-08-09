@@ -288,33 +288,33 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         cardL->setContentsMargins(16, 16, 16, 16);
         cardL->setSpacing(6);
         for (int i = 0; i < controls.size(); ++i) {
-            auto *row = new QHBoxLayout;
+            // v2 SettingsChatFields: the label row sits ABOVE the control
             auto *lbl = new QLabel(labels.at(i), card);
             lbl->setObjectName(QStringLiteral("settingsFieldLabel"));
-            row->addWidget(lbl, 0, Qt::AlignLeft);
-            row->addSpacing(16);
-            // v2: the control fills the card's remaining width, with a
-            // reset-to-default button on the right (v2 SettingsChatFields)
+            cardL->addWidget(lbl);
+            // control row: full width + reset-to-default button
+            auto *crow = new QHBoxLayout;
+            crow->setContentsMargins(0, 0, 0, 0);
+            crow->setSpacing(8);
             controls.at(i)->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-            controls.at(i)->setMinimumWidth(300);
-            row->addWidget(controls.at(i), 1);
+            controls.at(i)->setMinimumWidth(200);
+            crow->addWidget(controls.at(i), 1);
             auto *resetBtn = new QPushButton(card);
             resetBtn->setProperty("ghost", true);
             resetBtn->setIcon(Icons::get(QStringLiteral("rotate-ccw"), Icons::color()));
             resetBtn->setIconSize(QSize(14, 14));
             resetBtn->setToolTip(I18n::t(QStringLiteral("Reset to default")));
-            const QString resetKey = labels.at(i);
-            Q_UNUSED(resetKey);
             connect(resetBtn, &QPushButton::clicked, this, [this, controls, i]() {
                 if (auto *le = qobject_cast<QLineEdit *>(controls.at(i))) {
-                    le->setText(QString());
-                    le->setPlaceholderText(QStringLiteral("Default"));
+                    le->clear();
                 } else if (auto *te = qobject_cast<QPlainTextEdit *>(controls.at(i))) {
-                    te->setPlainText(QString());
+                    te->clear();
+                } else if (auto *cb = qobject_cast<QComboBox *>(controls.at(i))) {
+                    cb->setCurrentIndex(0);
                 }
             });
-            row->addWidget(resetBtn);
-            cardL->addLayout(row);
+            crow->addWidget(resetBtn);
+            cardL->addLayout(crow);
             if (i < helps.size() && !helps.at(i).isEmpty()) {
                 auto *help = new QLabel(helps.at(i), card);
                 help->setObjectName(QStringLiteral("settingsHelp"));
@@ -357,25 +357,25 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             combo->setCurrentIndex(qBound(0, lvl, 4));
             control = combo;
         } else {
-            // v2: the field shows the server's /props default when the
-            // config doesn't override it (numbers cleaned: 0.8 not
-            // 0.800000011920929)
+            // v2: the input stays empty and shows the server default as
+            // the placeholder ('Default: 0.8'), with a reset button
             QString value = m_cfg.value(f.key).toString();
+            QString defaultText = QStringLiteral("Default");
             const QJsonValue serverVal = m_props.value(f.key);
-            if (value.isEmpty() && !serverVal.isUndefined()) {
+            if (!serverVal.isUndefined() && !serverVal.isNull()) {
+                QString dv;
                 if (serverVal.isDouble()) {
-                    // v2 normalizes to 6 decimals and trims trailing zeros
-                    // (0.80000001 -> 0.8)
-                    value = QString::number(serverVal.toDouble(), 'f', 6);
-                    while (value.contains(QLatin1Char('.')) && value.endsWith(QLatin1Char('0')))
-                        value.chop(1);
-                    if (value.endsWith(QLatin1Char('.'))) value.chop(1);
+                    dv = QString::number(serverVal.toDouble(), 'f', 6);
+                    while (dv.contains(QLatin1Char('.')) && dv.endsWith(QLatin1Char('0')))
+                        dv.chop(1);
+                    if (dv.endsWith(QLatin1Char('.'))) dv.chop(1);
                 } else {
-                    value = serverVal.toVariant().toString();
+                    dv = serverVal.toVariant().toString();
                 }
+                if (!dv.isEmpty()) defaultText = QStringLiteral("Default: ") + dv;
             }
             auto *le = new QLineEdit(value);
-            le->setPlaceholderText(QStringLiteral("Default"));
+            le->setPlaceholderText(defaultText);
             if (f.positiveInt) le->setValidator(new QIntValidator(0, 1 << 30, le));
             control = le;
         }
