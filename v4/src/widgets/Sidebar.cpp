@@ -71,7 +71,7 @@ Sidebar::Sidebar(ConversationStore *store, QWidget *parent)
     scroll->setFrameShape(QFrame::NoFrame);
     auto *listHost = new QWidget;
     m_listLayout = new QVBoxLayout(listHost);
-    m_listLayout->setContentsMargins(0, 4, 0, 0);
+    m_listLayout->setContentsMargins(0, 30, 0, 0);
     m_listLayout->setSpacing(2);
     scroll->setWidget(listHost);
     m_outer->addWidget(scroll, 1);
@@ -154,9 +154,8 @@ void Sidebar::rebuildActions() {
         btn->setProperty("iconName", a.icon);
         btn->setIconSize(QSize(18, 18));
         if (m_expanded) {
+            // v2: the kbd hint is hidden until hover
             btn->setText(a.label);
-            if (!a.kbd.isEmpty())
-                btn->setText(btn->text() + QStringLiteral("    ") + a.kbd);
         }
         btn->setToolTip(a.label + (a.kbd.isEmpty() ? QString() : QStringLiteral("  (%1)").arg(a.kbd)));
         connect(btn, &QPushButton::clicked, this, [this, a]() {

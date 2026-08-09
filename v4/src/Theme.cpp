@@ -239,7 +239,7 @@ QMainWindow, QDialog { background-color: %2; color: %3; }
 #sidebar QPushButton[logoBtn="true"]:hover { background-color: rgba(229,229,229,0.10); }
 #sidebar QPushButton[sideAction="true"] {
   background: transparent; border: none; border-radius: 8px;
-  color: %6; text-align: left; padding: 7px 10px; font-size: 14px;
+  color: %6; text-align: left; padding: 7px 16px; font-size: 14px;
 }
 #sidebar QPushButton[sideAction="true"]:hover { background-color: %7; color: %3; }
 #sidebar QLabel { color: %6; }
