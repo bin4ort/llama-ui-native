@@ -376,22 +376,17 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         card->setAttribute(Qt::WA_StyledBackground);
         auto *cardL = new QVBoxLayout(card);
         cardL->setContentsMargins(16, 16, 16, 16);
-        cardL->setSpacing(6);
+        cardL->setSpacing(14); // v2: field rows spaced ~24px apart
         for (int i = 0; i < controls.size(); ++i) {
             auto *lbl = new QLabel(labels.at(i), card);
             lbl->setObjectName(QStringLiteral("settingsFieldLabel"));
             const bool isSelect = qobject_cast<QComboBox *>(controls.at(i)) != nullptr;
-            // v2 SettingsChatFields: SELECT fields keep label+control on
-            // one row; INPUT fields stack the label above the control
+            // v2 SettingsChatFields: every field stacks label above the
+            // control; SELECT controls stretch to the full card width
+            cardL->addWidget(lbl);
             if (isSelect) {
-                auto *srow = new QHBoxLayout;
-                srow->setContentsMargins(0, 0, 0, 0);
-                srow->setSpacing(8);
-                srow->addWidget(lbl);
-                srow->addStretch(1);
-                controls.at(i)->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-                srow->addWidget(controls.at(i));
-                cardL->addLayout(srow);
+                controls.at(i)->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+                cardL->addWidget(controls.at(i));
                 if (i < helps.size() && !helps.at(i).isEmpty()) {
                     auto *help = new QLabel(helps.at(i), card);
                     help->setObjectName(QStringLiteral("settingsHelp"));
