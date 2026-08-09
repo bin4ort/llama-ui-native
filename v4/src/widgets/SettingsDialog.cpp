@@ -317,9 +317,28 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         cardL->setContentsMargins(16, 16, 16, 16);
         cardL->setSpacing(6);
         for (int i = 0; i < controls.size(); ++i) {
-            // v2 SettingsChatFields: the label row sits ABOVE the control
             auto *lbl = new QLabel(labels.at(i), card);
             lbl->setObjectName(QStringLiteral("settingsFieldLabel"));
+            const bool isSelect = qobject_cast<QComboBox *>(controls.at(i)) != nullptr;
+            // v2 SettingsChatFields: SELECT fields keep label+control on
+            // one row; INPUT fields stack the label above the control
+            if (isSelect) {
+                auto *srow = new QHBoxLayout;
+                srow->setContentsMargins(0, 0, 0, 0);
+                srow->setSpacing(8);
+                srow->addWidget(lbl);
+                srow->addStretch(1);
+                controls.at(i)->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+                srow->addWidget(controls.at(i));
+                cardL->addLayout(srow);
+                if (i < helps.size() && !helps.at(i).isEmpty()) {
+                    auto *help = new QLabel(helps.at(i), card);
+                    help->setObjectName(QStringLiteral("settingsHelp"));
+                    help->setWordWrap(true);
+                    cardL->addWidget(help);
+                }
+                continue;
+            }
             cardL->addWidget(lbl);
             // control row: full width + reset-to-default button
             auto *crow = new QHBoxLayout;
