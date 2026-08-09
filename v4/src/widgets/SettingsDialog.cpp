@@ -256,15 +256,15 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
 
     auto *center = new QWidget(host);
     center->setObjectName(QStringLiteral("settingsCenter"));
-    center->setMaximumWidth(672);
+    center->setMaximumWidth(768); // v2: max-w-3xl
     auto *cl = new QVBoxLayout(center);
-    cl->setContentsMargins(0, 0, 0, 0);
-    cl->setSpacing(8);
+    cl->setContentsMargins(0, 112, 0, 0); // v2: md:pt-28
+    cl->setSpacing(32);                    // v2: space-y-8 between cards
 
     auto *heading = new QLabel(title, center);
     heading->setObjectName(QStringLiteral("settingsSectionTitle"));
     cl->addWidget(heading);
-    cl->addSpacing(4);
+    cl->addSpacing(24); // v2: mb-6 after the group title
 
     auto addCard = [&](const QStringList &labels, const QList<QWidget *> &controls,
                        const QStringList &helps = {}) {
