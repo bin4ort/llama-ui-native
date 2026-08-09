@@ -296,7 +296,7 @@ QMainWindow, QDialog { background-color: %2; color: %3; }
 /* Inputs (UI-SPEC §3.2) */
 QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox {
   background-color: %19; border: 1px solid %20; border-radius: 8px;
-  color: %3; padding: 6px 10px; min-height: 16px; font-size: 14px;
+  color: %3; padding: 6px 10px; min-height: 24px; font-size: 14px;
   selection-background-color: %13; selection-color: %14;
 }
 QLineEdit:focus, QComboBox:focus { border-color: %12; }

@@ -364,8 +364,8 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         card->setObjectName(QStringLiteral("settingsCard"));
         card->setAttribute(Qt::WA_StyledBackground);
         auto *cardL = new QVBoxLayout(card);
-        cardL->setContentsMargins(16, 16, 16, 16);
-        cardL->setSpacing(14); // v2: field rows spaced ~24px apart
+        cardL->setContentsMargins(8, 8, 8, 8); // v2: card p-2-ish
+        cardL->setSpacing(8); // v2: card space-y-2
         for (int i = 0; i < controls.size(); ++i) {
             auto *lbl = new QLabel(labels.at(i), card);
             lbl->setObjectName(QStringLiteral("settingsFieldLabel"));
