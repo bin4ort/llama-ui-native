@@ -270,6 +270,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
                        const QStringList &helps = {}) {
         auto *card = new QWidget(center);
         card->setObjectName(QStringLiteral("settingsCard"));
+        card->setAttribute(Qt::WA_StyledBackground);
         auto *cardL = new QVBoxLayout(card);
         cardL->setContentsMargins(16, 12, 16, 12);
         cardL->setSpacing(4);
@@ -358,6 +359,10 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             labels << QStringLiteral("Language");
             controls << lang;
             m_controls.append({QStringLiteral("language"), lang});
+            // v2 renders Language and Theme as separate cards
+            addCard(labels, controls, {QStringLiteral("Choose the interface language.")});
+            labels.clear();
+            controls.clear();
         }
         if (useComboTheme) {
             // v2 theme names (settings-registry order)
@@ -385,7 +390,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             controls << theme;
             m_controls.append({QStringLiteral("theme"), theme});
         }
-        addCard(labels, controls);
+        if (!controls.isEmpty()) addCard(labels, controls);
     }
 
     // fields render in registry order (v2 interleaves checkboxes and
