@@ -96,10 +96,12 @@ QPixmap pixmap(const QString &name, const QColor &color, int size) {
 }
 
 QIcon logo(const QColor &color) {
-    // the logo mark is drawn in its own colors; ignore the requested color
-    Q_UNUSED(color);
+    // the v2 logo.svg uses fill=currentColor — QSvgRenderer leaves it
+    // black, so substitute the requested color
+    QString svg = QString::fromUtf8(decode(kLogoB64));
+    svg.replace(QStringLiteral("currentColor"), color.name());
     QIcon icon;
-    icon.addPixmap(renderSvg(QString::fromUtf8(decode(kLogoB64)), 24));
+    icon.addPixmap(renderSvg(svg, 24));
     return icon;
 }
 

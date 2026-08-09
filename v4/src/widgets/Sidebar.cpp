@@ -16,6 +16,7 @@
 #include <QSize>
 #include <QScrollArea>
 #include <QStyle>
+#include <QTimer>
 #include <QVBoxLayout>
 #include <algorithm>
 
@@ -30,7 +31,7 @@ Sidebar::Sidebar(ConversationStore *store, QWidget *parent)
     setFixedWidth(48); // v2: collapsed strip w-12
 
     m_outer = new QVBoxLayout(this);
-    m_outer->setContentsMargins(4, 6, 4, 6);
+    m_outer->setContentsMargins(4, 8, 4, 6);
     m_outer->setSpacing(2);
 
     // logo row: expand/collapse toggle + close button when expanded
@@ -39,13 +40,16 @@ Sidebar::Sidebar(ConversationStore *store, QWidget *parent)
     topRow->setSpacing(0);
     m_logo = new QPushButton(this);
     m_logo->setProperty("strip", true);
+    m_logo->setProperty("logoBtn", true);
     m_logo->setFixedSize(36, 36);
     m_logo->setIconSize(QSize(20, 20));
     m_logo->setToolTip(I18n::t(QStringLiteral("Expand navigation")));
     connect(m_logo, &QPushButton::clicked, this, [this]() { setExpanded(!m_expanded); });
     topRow->addWidget(m_logo);
+    topRow->addStretch(1);
     m_closeBtn = new QPushButton(this);
     m_closeBtn->setProperty("strip", true);
+    m_closeBtn->setProperty("logoBtn", true);
     m_closeBtn->setFixedSize(36, 36);
     m_closeBtn->setIconSize(QSize(20, 20));
     m_closeBtn->setToolTip(I18n::t(QStringLiteral("Collapse navigation")));
@@ -57,7 +61,7 @@ Sidebar::Sidebar(ConversationStore *store, QWidget *parent)
     // action rows (v2 SIDEBAR_ACTIONS_ITEMS: New chat / Search / MCP / Settings)
     m_actionsLayout = new QVBoxLayout;
     m_actionsLayout->setContentsMargins(0, 4, 0, 0);
-    m_actionsLayout->setSpacing(2);
+    m_actionsLayout->setSpacing(6);
     m_outer->addLayout(m_actionsLayout);
     rebuildActions();
 

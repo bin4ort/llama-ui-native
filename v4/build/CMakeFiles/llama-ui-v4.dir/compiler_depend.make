@@ -8608,6 +8608,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: /home/stry4ok/Development/
   /usr/include/qt6/QtCore/QSize \
   /usr/include/qt6/QtCore/QString \
   /usr/include/qt6/QtCore/QStringList \
+  /usr/include/qt6/QtCore/QTimer \
   /usr/include/qt6/QtCore/q17memory.h \
   /usr/include/qt6/QtCore/q20bit.h \
   /usr/include/qt6/QtCore/q20functional.h \
@@ -8742,6 +8743,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: /home/stry4ok/Development/
   /usr/include/qt6/QtCore/qtenvironmentvariables.h \
   /usr/include/qt6/QtCore/qtextstream.h \
   /usr/include/qt6/QtCore/qtformat_impl.h \
+  /usr/include/qt6/QtCore/qtimer.h \
   /usr/include/qt6/QtCore/qtimezone.h \
   /usr/include/qt6/QtCore/qtmetamacros.h \
   /usr/include/qt6/QtCore/qtnoop.h \
