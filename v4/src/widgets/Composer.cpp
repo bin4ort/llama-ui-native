@@ -47,7 +47,8 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
     m_attach = new QPushButton(this);
     m_attach->setProperty("round", true);
     m_attach->setIconSize(QSize(18, 18));
-    m_attach->setToolTip(I18n::t(QStringLiteral("Attach file")));
+    // v2 ChatFormActionAdd: Plus icon, tooltip lists what can be added
+    m_attach->setToolTip(I18n::t(QStringLiteral("Add files, prompts, tools or MCP Servers")));
     connect(m_attach, &QPushButton::clicked, this, &Composer::attachRequested);
     bar->addWidget(m_attach);
 
@@ -240,7 +241,7 @@ void Composer::setBusy(bool busy) {
 
 void Composer::applyIcons() {
     const QColor c = Icons::color();
-    if (m_attach) m_attach->setIcon(Icons::get(QStringLiteral("paperclip"), c));
+    if (m_attach) m_attach->setIcon(Icons::get(QStringLiteral("plus"), c));
     m_persona->setIcon(Icons::get(QStringLiteral("sparkles"), c));
     m_send->setIcon(Icons::get(m_busy ? QStringLiteral("square")
                                       : QStringLiteral("arrow-up"), c));
