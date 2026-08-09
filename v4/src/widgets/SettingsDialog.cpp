@@ -280,24 +280,18 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     rightCol->addWidget(m_stack, 1);
     layout->addLayout(rightCol, 1);
 
-    // footer: reset-to-default + cancel/save (v2 SettingsFooter, inside
-    // the content pane, sticky bottom)
+    // footer: reset-to-default + save (v2 SettingsFooter: sticky bottom,
+    // max-w-3xl box at x496-1264, p-6, justify-between)
     auto *buttons = new QWidget(this);
     buttons->setObjectName(QStringLiteral("settingsFooter"));
     buttons->setAttribute(Qt::WA_StyledBackground);
     buttons->setAutoFillBackground(true);
-    buttons->setMinimumHeight(60);
-    // v2 footer: buttons grouped and centered in the content pane
+    buttons->setFixedWidth(768); // v2: max-w-3xl
+    buttons->setMinimumHeight(84); // v2: p-6 (48) + buttons (36)
+    buttons->setMaximumHeight(84);
     auto *bl = new QHBoxLayout(buttons);
-    // v2: the footer aligns with the content column (right ~1240)
-    bl->setContentsMargins(69, 10, 160, 10);
-    auto *group = new QWidget(buttons);
-    group->setObjectName(QStringLiteral("settingsFooterGroup"));
-    group->setMinimumWidth(790);
-    group->setMaximumWidth(790);
-    auto *gl = new QHBoxLayout(group);
-    gl->setContentsMargins(0, 0, 0, 0);
-    gl->setSpacing(8);
+    bl->setContentsMargins(24, 24, 24, 24); // v2: p-6
+    bl->setSpacing(8);
     auto *reset = new QPushButton(I18n::t(QStringLiteral("Reset to default")));
     reset->setProperty("outline", true);
     connect(reset, &QPushButton::clicked, this, [this]() {
@@ -311,18 +305,13 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
         emit configChanged(m_cfg);
         accept();
     });
-    gl->addWidget(reset);
-    gl->addStretch(1);
+    bl->addWidget(reset);
+    bl->addStretch(1);
     auto *save = new QPushButton(I18n::t(QStringLiteral("Save settings")));
     connect(save, &QPushButton::clicked, this, &SettingsDialog::apply);
-    gl->addWidget(save);
-    bl->addWidget(group, 0, Qt::AlignHCenter);
+    bl->addWidget(save);
 
-    rightCol->addWidget(buttons);
-    // v2 footer sits ~20px above the window bottom
-    auto *footPad = new QWidget(this);
-    footPad->setFixedHeight(10);
-    rightCol->addWidget(footPad);
+    rightCol->addWidget(buttons, 0, Qt::AlignHCenter);
     outer->addLayout(layout, 1);
 
     connect(m_navList, &QListWidget::currentRowChanged, this,
