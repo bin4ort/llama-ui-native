@@ -377,6 +377,7 @@ QPushButton[primary="true"]:hover { background-color: %15; }
   background-color: %7; border-radius: 12px; color: %3; font-size: 14px;
 }
 #mcpHeader { border-bottom: 1px solid %5; }
+#sidebar QPushButton[mcpActive="true"] { background-color: %7; color: %3; }
 #mcpTitle { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
 
 QPushButton[persona="true"] {

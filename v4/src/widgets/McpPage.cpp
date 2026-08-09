@@ -57,17 +57,42 @@ McpPage::McpPage(const QJsonObject &config, QWidget *parent)
     navPad->setFixedWidth(56); // v2: w-12 strip + ml-2
     navPad->setAutoFillBackground(false);
     auto *stripL = new QVBoxLayout(navPad);
-    stripL->setContentsMargins(6, 16, 6, 0);
-    stripL->setSpacing(4);
+    stripL->setContentsMargins(10, 28, 10, 0);
+    stripL->setSpacing(0);
+    auto stripBtn = [this, navPad](const QString &icon, const QString &tip, bool sel = false) {
+        auto *b = new QPushButton(navPad);
+        b->setProperty("strip", true);
+        b->setProperty("mcpActive", sel);
+        b->setFixedSize(28, 28);
+        b->setIconSize(QSize(14, 14));
+        b->setIcon(Icons::get(icon, Icons::color()));
+        b->setToolTip(tip);
+        b->setCursor(Qt::PointingHandCursor);
+        return b;
+    };
     auto *stripLogo = new QPushButton(navPad);
     stripLogo->setProperty("strip", true);
     stripLogo->setProperty("logoBtn", true);
-    stripLogo->setFixedSize(36, 36);
-    stripLogo->setIconSize(QSize(20, 20));
+    stripLogo->setFixedSize(28, 28);
+    stripLogo->setIconSize(QSize(12, 12));
     stripLogo->setIcon(Icons::logo(Icons::color()));
     stripLogo->setToolTip(I18n::t(QStringLiteral("Back to Chat")));
     connect(stripLogo, &QPushButton::clicked, this, &QDialog::close);
     stripL->addWidget(stripLogo, 0, Qt::AlignHCenter);
+    stripL->addSpacing(16);
+    auto *b1 = stripBtn(QStringLiteral("message-square"), I18n::t(QStringLiteral("New Chat")));
+    connect(b1, &QPushButton::clicked, this, &QDialog::close);
+    stripL->addWidget(b1, 0, Qt::AlignHCenter);
+    stripL->addSpacing(16);
+    auto *b2 = stripBtn(QStringLiteral("search"), I18n::t(QStringLiteral("Search")));
+    connect(b2, &QPushButton::clicked, this, &QDialog::close);
+    stripL->addWidget(b2, 0, Qt::AlignHCenter);
+    stripL->addSpacing(16);
+    auto *b3 = stripBtn(QStringLiteral("boxes"), I18n::t(QStringLiteral("MCP servers")), true);
+    stripL->addWidget(b3, 0, Qt::AlignHCenter);
+    stripL->addSpacing(16);
+    auto *b4 = stripBtn(QStringLiteral("settings"), I18n::t(QStringLiteral("Settings")));
+    stripL->addWidget(b4, 0, Qt::AlignHCenter);
     stripL->addStretch(1);
     outer->addWidget(navPad);
 
