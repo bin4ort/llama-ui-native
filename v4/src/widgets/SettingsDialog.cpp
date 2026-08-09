@@ -345,10 +345,10 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
 
     auto *center = new QWidget(host);
     center->setObjectName(QStringLiteral("settingsCenter"));
-    center->setMaximumWidth(840); // v2: measured card span x400-1240
-    center->setMinimumWidth(840);
+    center->setMaximumWidth(720); // v2: max-w-3xl content at x520-1240
+    center->setMinimumWidth(720);
     auto *cl = new QVBoxLayout(center);
-    cl->setContentsMargins(0, 112, 0, 0); // v2: md:pt-28
+    cl->setContentsMargins(8, 112, 0, 0); // v2: md:pt-28 + pane offset
     cl->setSpacing(24);                    // v2: space-y-6 between cards
 
     // v2 section header: icon + title + bottom border (pb-6)
@@ -600,10 +600,10 @@ QWidget *SettingsDialog::buildImportExport() {
 
     auto *center = new QWidget(host);
     center->setObjectName(QStringLiteral("settingsCenter"));
-    center->setMaximumWidth(840);
-    center->setMinimumWidth(840);
+    center->setMaximumWidth(720);
+    center->setMinimumWidth(720);
     auto *cl = new QVBoxLayout(center);
-    cl->setContentsMargins(0, 0, 0, 0);
+    cl->setContentsMargins(8, 0, 0, 0);
     cl->setSpacing(24);
 
     auto *heading = new QLabel(I18n::t(QStringLiteral("Import/Export")), center);
