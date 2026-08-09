@@ -27,7 +27,7 @@ public:
 
     void expandSidebarForTest();
     void overrideThemeForTest(const QString &id);
-    void openSettingsForTest();
+    void openSettingsForTest(int section = -1);
     void openMcpForTest() { openMcp(); }
     void openSearchForTest() { openSearch(); }
     void attachForTest(const QStringList &paths) { attachFiles(paths); }
@@ -49,6 +49,7 @@ signals:
 private slots:
     void onSend(const QString &text);
     void openSettings();
+    void openSettings(int section);
     void openPersonaMenu();
     void openSearch();
     void openMcp();
@@ -92,6 +93,7 @@ private:
     bool m_streaming = false;
     int m_toolTurn = 0;
     QJsonArray m_pendingTools;
+    QJsonObject m_propsDefaults;
     qint64 m_promptChars = 0;
     qint64 m_completionChars = 0;
     int m_nCtx = 4096;

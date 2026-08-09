@@ -25,9 +25,11 @@ struct SettingField {
 class SettingsDialog : public QDialog {
     Q_OBJECT
 public:
-    explicit SettingsDialog(QJsonObject cfg, QWidget *parent = nullptr);
+    explicit SettingsDialog(QJsonObject cfg, const QJsonObject &props,
+                            QWidget *parent = nullptr);
 
     QJsonObject config() const { return m_cfg; }
+    void setSection(int index);
 
 signals:
     void configChanged(const QJsonObject &cfg);
@@ -39,6 +41,7 @@ private:
     void apply();
 
     QJsonObject m_cfg;
+    QJsonObject m_props;
     QStackedWidget *m_stack = nullptr;
     QListWidget *m_navList = nullptr;
     QList<QPair<QString, QWidget *>> m_controls; // field key -> control

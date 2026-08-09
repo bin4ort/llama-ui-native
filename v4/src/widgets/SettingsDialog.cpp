@@ -125,8 +125,8 @@ const QList<SettingField> DEVELOPER = {
 };
 } // namespace
 
-SettingsDialog::SettingsDialog(QJsonObject cfg, QWidget *parent)
-    : QDialog(parent), m_cfg(std::move(cfg)) {
+SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props, QWidget *parent)
+    : QDialog(parent), m_cfg(std::move(cfg)), m_props(props) {
     setObjectName(QStringLiteral("appDialog"));
     setWindowTitle(QStringLiteral("Settings"));
     setModal(true);
@@ -260,12 +260,24 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     center->setMinimumWidth(840);
     auto *cl = new QVBoxLayout(center);
     cl->setContentsMargins(0, 112, 0, 0); // v2: md:pt-28
-    cl->setSpacing(32);                    // v2: space-y-8 between cards
+    cl->setSpacing(24);                    // v2: space-y-6 between cards
 
-    auto *heading = new QLabel(title, center);
+    // v2 section header: icon + title + bottom border (pb-6)
+    auto *headerRow = new QWidget(center);
+    headerRow->setObjectName(QStringLiteral("settingsSectionHeader"));
+    auto *hrl = new QHBoxLayout(headerRow);
+    hrl->setContentsMargins(0, 0, 0, 0);
+    hrl->setSpacing(8);
+    auto *secIcon = new QLabel(headerRow);
+    secIcon->setPixmap(Icons::get(QStringLiteral("sliders-horizontal"), Icons::color())
+                           .pixmap(18, 18));
+    hrl->addWidget(secIcon);
+    auto *heading = new QLabel(title, headerRow);
     heading->setObjectName(QStringLiteral("settingsSectionTitle"));
-    cl->addWidget(heading);
-    cl->addSpacing(24); // v2: mb-6 after the group title
+    hrl->addWidget(heading);
+    hrl->addStretch(1);
+    cl->addWidget(headerRow);
+    cl->addSpacing(16); // v2: mb-6 after the group title
 
     auto addCard = [&](const QStringList &labels, const QList<QWidget *> &controls,
                        const QStringList &helps = {}) {
@@ -273,18 +285,35 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         card->setObjectName(QStringLiteral("settingsCard"));
         card->setAttribute(Qt::WA_StyledBackground);
         auto *cardL = new QVBoxLayout(card);
-        cardL->setContentsMargins(16, 12, 16, 12);
-        cardL->setSpacing(4);
+        cardL->setContentsMargins(16, 16, 16, 16);
+        cardL->setSpacing(6);
         for (int i = 0; i < controls.size(); ++i) {
             auto *row = new QHBoxLayout;
             auto *lbl = new QLabel(labels.at(i), card);
             lbl->setObjectName(QStringLiteral("settingsFieldLabel"));
             row->addWidget(lbl, 0, Qt::AlignLeft);
             row->addSpacing(16);
-            // v2: the control fills the card's remaining width
+            // v2: the control fills the card's remaining width, with a
+            // reset-to-default button on the right (v2 SettingsChatFields)
             controls.at(i)->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
             controls.at(i)->setMinimumWidth(300);
             row->addWidget(controls.at(i), 1);
+            auto *resetBtn = new QPushButton(card);
+            resetBtn->setProperty("ghost", true);
+            resetBtn->setIcon(Icons::get(QStringLiteral("rotate-ccw"), Icons::color()));
+            resetBtn->setIconSize(QSize(14, 14));
+            resetBtn->setToolTip(I18n::t(QStringLiteral("Reset to default")));
+            const QString resetKey = labels.at(i);
+            Q_UNUSED(resetKey);
+            connect(resetBtn, &QPushButton::clicked, this, [this, controls, i]() {
+                if (auto *le = qobject_cast<QLineEdit *>(controls.at(i))) {
+                    le->setText(QString());
+                    le->setPlaceholderText(QStringLiteral("Default"));
+                } else if (auto *te = qobject_cast<QPlainTextEdit *>(controls.at(i))) {
+                    te->setPlainText(QString());
+                }
+            });
+            row->addWidget(resetBtn);
             cardL->addLayout(row);
             if (i < helps.size() && !helps.at(i).isEmpty()) {
                 auto *help = new QLabel(helps.at(i), card);
@@ -328,7 +357,24 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             combo->setCurrentIndex(qBound(0, lvl, 4));
             control = combo;
         } else {
-            auto *le = new QLineEdit(m_cfg.value(f.key).toString());
+            // v2: the field shows the server's /props default when the
+            // config doesn't override it (numbers cleaned: 0.8 not
+            // 0.800000011920929)
+            QString value = m_cfg.value(f.key).toString();
+            const QJsonValue serverVal = m_props.value(f.key);
+            if (value.isEmpty() && !serverVal.isUndefined()) {
+                if (serverVal.isDouble()) {
+                    // v2 normalizes to 6 decimals and trims trailing zeros
+                    // (0.80000001 -> 0.8)
+                    value = QString::number(serverVal.toDouble(), 'f', 6);
+                    while (value.contains(QLatin1Char('.')) && value.endsWith(QLatin1Char('0')))
+                        value.chop(1);
+                    if (value.endsWith(QLatin1Char('.'))) value.chop(1);
+                } else {
+                    value = serverVal.toVariant().toString();
+                }
+            }
+            auto *le = new QLineEdit(value);
             le->setPlaceholderText(QStringLiteral("Default"));
             if (f.positiveInt) le->setValidator(new QIntValidator(0, 1 << 30, le));
             control = le;
@@ -484,6 +530,12 @@ QWidget *SettingsDialog::buildImportExport() {
 
     scroll->setWidget(host);
     return scroll;
+}
+
+void SettingsDialog::setSection(int index) {
+
+    if (m_navList && index >= 0 && index < m_navList->count())
+        m_navList->setCurrentRow(index);
 }
 
 void SettingsDialog::apply() {

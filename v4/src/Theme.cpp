@@ -441,10 +441,11 @@ QPushButton[full="true"] { width: 100%%; }
 #settingsNav { background-color: %21; border-right: 1px solid %5; }
 #settingsHeading { font-size: 18px; font-weight: 600; padding: 4px 8px; }
 #settingsNavList { background: transparent; font-size: 14px; }
-#settingsNavList::item { padding: 8px 12px; border-radius: 8px; margin: 4px 0; font-size: 14px; min-height: 26px; }
+#settingsNavList::item { padding: 8px 12px; border-radius: 8px; margin: 7px 0; font-size: 14px; min-height: 32px; }
 #settingsNavList::item:selected { background-color: %7; color: %3; }
 #settingsVersion { color: %10; font-size: 11px; padding: 4px 8px; }
-#settingsSectionTitle { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; padding: 4px 0; }
+#settingsSectionTitle { font-size: 18px; font-weight: 600; }
+#settingsSectionHeader { border-bottom: 1px solid %5; padding-bottom: 16px; }
 #settingsCard {
   background-color: %11; border: 1px solid %5; border-radius: 10px;
 }

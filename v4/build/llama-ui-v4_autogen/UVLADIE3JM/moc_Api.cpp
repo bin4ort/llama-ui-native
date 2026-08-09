@@ -57,7 +57,9 @@ template <> constexpr inline auto Api::qt_create_metaobjectdata<qt_meta_tag_ZN3A
         "healthChanged",
         "online",
         "propsLoaded",
-        "nCtx"
+        "nCtx",
+        "QJsonObject",
+        "defaults"
     };
 
     QtMocHelpers::UintData qt_methods {
@@ -92,8 +94,8 @@ template <> constexpr inline auto Api::qt_create_metaobjectdata<qt_meta_tag_ZN3A
             { QMetaType::Bool, 17 },
         }}),
         // Signal 'propsLoaded'
-        QtMocHelpers::SignalData<void(int)>(18, 2, QMC::AccessPublic, QMetaType::Void, {{
-            { QMetaType::Int, 19 },
+        QtMocHelpers::SignalData<void(int, const QJsonObject &)>(18, 2, QMC::AccessPublic, QMetaType::Void, {{
+            { QMetaType::Int, 19 }, { 0x80000000 | 20, 21 },
         }}),
     };
     QtMocHelpers::UintData qt_properties {
@@ -126,7 +128,7 @@ void Api::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **
         case 5: _t->contentDone(); break;
         case 6: _t->completionReady((*reinterpret_cast<std::add_pointer_t<QString>>(_a[1]))); break;
         case 7: _t->healthChanged((*reinterpret_cast<std::add_pointer_t<bool>>(_a[1]))); break;
-        case 8: _t->propsLoaded((*reinterpret_cast<std::add_pointer_t<int>>(_a[1]))); break;
+        case 8: _t->propsLoaded((*reinterpret_cast<std::add_pointer_t<int>>(_a[1])),(*reinterpret_cast<std::add_pointer_t<QJsonObject>>(_a[2]))); break;
         default: ;
         }
     }
@@ -147,7 +149,7 @@ void Api::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **
             return;
         if (QtMocHelpers::indexOfMethod<void (Api::*)(bool )>(_a, &Api::healthChanged, 7))
             return;
-        if (QtMocHelpers::indexOfMethod<void (Api::*)(int )>(_a, &Api::propsLoaded, 8))
+        if (QtMocHelpers::indexOfMethod<void (Api::*)(int , const QJsonObject & )>(_a, &Api::propsLoaded, 8))
             return;
     }
 }
@@ -232,8 +234,8 @@ void Api::healthChanged(bool _t1)
 }
 
 // SIGNAL 8
-void Api::propsLoaded(int _t1)
+void Api::propsLoaded(int _t1, const QJsonObject & _t2)
 {
-    QMetaObject::activate<void>(this, &staticMetaObject, 8, nullptr, _t1);
+    QMetaObject::activate<void>(this, &staticMetaObject, 8, nullptr, _t1, _t2);
 }
 QT_WARNING_POP

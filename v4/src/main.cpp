@@ -25,8 +25,18 @@ int main(int argc, char *argv[]) {
     if (thIdx != -1 && thIdx + 1 < a.size())
         window.overrideThemeForTest(a.at(thIdx + 1));
     window.show();
-    if (a.contains(QStringLiteral("--open-settings")))
-        QTimer::singleShot(700, &window, &MainWindow::openSettingsForTest);
+    if (a.contains(QStringLiteral("--open-settings"))) {
+        int secIdx = -1;
+        const int sIdx = a.indexOf(QStringLiteral("--settings-section"));
+        if (sIdx != -1 && sIdx + 1 < a.size()) {
+            const QStringList secs = {"general", "display", "sampling", "penalties",
+                                      "agentic", "developer", "tools", "import-export"};
+            secIdx = secs.indexOf(a.at(sIdx + 1));
+        }
+        QTimer::singleShot(700, &window, [&window, secIdx]() {
+            window.openSettingsForTest(secIdx);
+        });
+    }
     if (a.contains(QStringLiteral("--open-mcp")))
         QTimer::singleShot(700, &window, [&window]() { window.openMcpForTest(); });
     if (a.contains(QStringLiteral("--open-search")))

@@ -270,7 +270,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     // sidebar wiring
     connect(m_sidebar, &Sidebar::newChatClicked, this, &MainWindow::newChat);
-    connect(m_sidebar, &Sidebar::settingsClicked, this, &MainWindow::openSettings);
+    connect(m_sidebar, &Sidebar::settingsClicked, this, [this]() { openSettings(-1); });
     connect(m_sidebar, &Sidebar::conversationSelected, this, &MainWindow::selectConversation);
     connect(m_sidebar, &Sidebar::conversationRenameRequested, this, &MainWindow::onRenameConversation);
     connect(m_sidebar, &Sidebar::conversationDeleteRequested, this, &MainWindow::onDeleteConversation);
@@ -479,11 +479,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     // context gauge (UI-SPEC §5.7) — n_ctx from /props, char-based tokens
     m_nCtx = 4096;
-    connect(m_api, &Api::propsLoaded, this, [this](int nCtx) {
+    connect(m_api, &Api::propsLoaded, this, [this](int nCtx, const QJsonObject &defs) {
         m_nCtx = nCtx;
+        m_propsDefaults = defs;
         updateGauge();
     });
-    m_api->fetchProps();
 
     // server status (UI-SPEC §2.5) — health poll
     connect(m_api, &Api::healthChanged, this, [this](bool ok) {
@@ -491,8 +491,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     });
     auto *healthTimer = new QTimer(this);
     connect(healthTimer, &QTimer::timeout, m_api, &Api::checkHealth);
+    connect(healthTimer, &QTimer::timeout, this, [this]() {
+        // keep the /props defaults fresh (the startup fetch may 503)
+        if (m_propsDefaults.isEmpty()) m_api->fetchProps();
+    });
     healthTimer->start(10000);
     m_api->checkHealth();
+    m_api->fetchProps();
 
     // keyboard shortcuts (UI-SPEC §2.1): Ctrl+K search, Ctrl+B sidebar,
     // Ctrl+Shift+O new chat
@@ -996,8 +1001,9 @@ void MainWindow::overrideThemeForTest(const QString &id) {
     applyTheme(id);
 }
 
-void MainWindow::openSettingsForTest() {
-    openSettings();
+void MainWindow::openSettingsForTest(int section) {
+    if (section >= 0) openSettings(section);
+    else openSettings();
 }
 
 void MainWindow::runSelfTest(const QString &message, const QString &shotPath) {
@@ -1108,7 +1114,12 @@ void MainWindow::openMcp() {
 }
 
 void MainWindow::openSettings() {
-    SettingsDialog dlg(m_config, this);
+    openSettings(-1);
+}
+
+void MainWindow::openSettings(int section) {
+    SettingsDialog dlg(m_config, m_propsDefaults, this);
+    if (section >= 0) dlg.setSection(section);
     connect(&dlg, &SettingsDialog::configChanged, this, [this](const QJsonObject &cfg) {
         m_config = cfg;
         Config::save(cfg);

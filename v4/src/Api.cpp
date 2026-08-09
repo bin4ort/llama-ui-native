@@ -166,6 +166,11 @@ void Api::fetchProps() {
         const auto doc = QJsonDocument::fromJson(reply->readAll());
         const auto defs = doc.object().value(QStringLiteral("default_generation_settings")).toObject();
         const int nCtx = defs.value(QStringLiteral("n_ctx")).toInt(4096);
-        emit propsLoaded(qMax(512, nCtx));
+        // the generation params live under 'params' (llama.cpp schema)
+        QJsonObject merged = defs;
+        const auto params = defs.value(QStringLiteral("params")).toObject();
+        for (auto it = params.begin(); it != params.end(); ++it)
+            merged.insert(it.key(), it.value());
+        emit propsLoaded(qMax(512, nCtx), merged);
     });
 }
