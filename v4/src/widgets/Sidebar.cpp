@@ -1,5 +1,6 @@
 #include "Sidebar.h"
 #include "../ConversationStore.h"
+#include "../Icons.h"
 #include "../i18n.h"
 #include <QEvent>
 #include <QFile>
@@ -12,6 +13,7 @@
 #include <QLineEdit>
 #include <QMenu>
 #include <QPushButton>
+#include <QSize>
 #include <QScrollArea>
 #include <QStyle>
 #include <QVBoxLayout>
@@ -35,15 +37,17 @@ Sidebar::Sidebar(ConversationStore *store, QWidget *parent)
     auto *topRow = new QHBoxLayout;
     topRow->setContentsMargins(0, 0, 0, 0);
     topRow->setSpacing(0);
-    m_logo = new QPushButton(QStringLiteral("◆"), this);
+    m_logo = new QPushButton(this);
     m_logo->setProperty("strip", true);
     m_logo->setFixedSize(36, 36);
+    m_logo->setIconSize(QSize(20, 20));
     m_logo->setToolTip(I18n::t(QStringLiteral("Expand navigation")));
     connect(m_logo, &QPushButton::clicked, this, [this]() { setExpanded(!m_expanded); });
     topRow->addWidget(m_logo);
-    m_closeBtn = new QPushButton(QStringLiteral("◁"), this);
+    m_closeBtn = new QPushButton(this);
     m_closeBtn->setProperty("strip", true);
     m_closeBtn->setFixedSize(36, 36);
+    m_closeBtn->setIconSize(QSize(20, 20));
     m_closeBtn->setToolTip(I18n::t(QStringLiteral("Collapse navigation")));
     m_closeBtn->setVisible(false);
     connect(m_closeBtn, &QPushButton::clicked, this, [this]() { setExpanded(false); });
@@ -76,6 +80,7 @@ Sidebar::Sidebar(ConversationStore *store, QWidget *parent)
     m_outer->addWidget(m_statusLabel);
 
     applyPanelStyle();
+    applyIcons();
 }
 
 /** v2: collapsed strip is a transparent floating panel; expanded gets the
@@ -130,24 +135,24 @@ void Sidebar::rebuildActions() {
         QString icon, label, kbd, slot;
     };
     const QList<Action> actions{
-        {QStringLiteral("✚"), I18n::t(QStringLiteral("New chat")),
+        {QStringLiteral("square-pen"), I18n::t(QStringLiteral("New chat")),
          I18n::t(QStringLiteral("Ctrl+Shift+O")), QStringLiteral("new")},
-        {QStringLiteral("⌕"), I18n::t(QStringLiteral("Search")),
+        {QStringLiteral("search"), I18n::t(QStringLiteral("Search")),
          I18n::t(QStringLiteral("Ctrl+K")), QStringLiteral("search")},
-        {QStringLiteral("◫"), I18n::t(QStringLiteral("MCP Servers")),
+        {QStringLiteral("mcp"), I18n::t(QStringLiteral("MCP Servers")),
          QString(), QStringLiteral("mcp")},
-        {QStringLiteral("⚙"), I18n::t(QStringLiteral("Settings")),
+        {QStringLiteral("settings"), I18n::t(QStringLiteral("Settings")),
          QString(), QStringLiteral("settings")},
     };
     for (const auto &a : actions) {
         auto *btn = new QPushButton(this);
         btn->setProperty("sideAction", true);
+        btn->setProperty("iconName", a.icon);
+        btn->setIconSize(QSize(18, 18));
         if (m_expanded) {
-            btn->setText(a.icon + QStringLiteral("  ") + a.label);
+            btn->setText(a.label);
             if (!a.kbd.isEmpty())
                 btn->setText(btn->text() + QStringLiteral("    ") + a.kbd);
-        } else {
-            btn->setText(a.icon);
         }
         btn->setToolTip(a.label + (a.kbd.isEmpty() ? QString() : QStringLiteral("  (%1)").arg(a.kbd)));
         connect(btn, &QPushButton::clicked, this, [this, a]() {
@@ -272,6 +277,23 @@ void Sidebar::rebuildList() {
 void Sidebar::setActiveConversation(const QString &id) {
     m_activeId = id;
     refreshConversations();
+}
+
+void Sidebar::applyIcons() {
+    const QColor c = Icons::color();
+    m_logo->setIcon(Icons::logo(c));
+    m_closeBtn->setIcon(Icons::get(QStringLiteral("panel-left-close"), c));
+    // refresh the action-row icons (rebuilt with the stored icon names)
+    for (int i = 0; i < m_actionsLayout->count(); ++i) {
+        auto *w = m_actionsLayout->itemAt(i)->widget();
+        auto *btn = qobject_cast<QPushButton *>(w);
+        if (!btn) continue;
+        const QString icon = btn->property("iconName").toString();
+        if (icon == QStringLiteral("mcp"))
+            btn->setIcon(Icons::mcpLogo(c));
+        else
+            btn->setIcon(Icons::get(icon, c));
+    }
 }
 
 void Sidebar::setServerStatus(bool online, const QString &address) {

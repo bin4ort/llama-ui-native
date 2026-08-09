@@ -251,6 +251,30 @@ src/ConversationStore.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.s
 .PHONY : src/ConversationStore.cpp.s
 
+src/Icons.o: src/Icons.cpp.o
+.PHONY : src/Icons.o
+
+# target to build an object file
+src/Icons.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o
+.PHONY : src/Icons.cpp.o
+
+src/Icons.i: src/Icons.cpp.i
+.PHONY : src/Icons.i
+
+# target to preprocess a source file
+src/Icons.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.i
+.PHONY : src/Icons.cpp.i
+
+src/Icons.s: src/Icons.cpp.s
+.PHONY : src/Icons.s
+
+# target to generate assembly for a file
+src/Icons.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/llama-ui-v4.dir/build.make CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.s
+.PHONY : src/Icons.cpp.s
+
 src/MainWindow.o: src/MainWindow.cpp.o
 .PHONY : src/MainWindow.o
 
@@ -586,6 +610,9 @@ help:
 	@echo "... src/ConversationStore.o"
 	@echo "... src/ConversationStore.i"
 	@echo "... src/ConversationStore.s"
+	@echo "... src/Icons.o"
+	@echo "... src/Icons.i"
+	@echo "... src/Icons.s"
 	@echo "... src/MainWindow.o"
 	@echo "... src/MainWindow.i"
 	@echo "... src/MainWindow.s"

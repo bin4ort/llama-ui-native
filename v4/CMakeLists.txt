@@ -8,7 +8,7 @@ set(CMAKE_AUTOMOC ON)
 # Qt6 Widgets + Network only. No WebEngine, no Quick — nothing that needs
 # Qt environment variables (QT_QPA_PLATFORM, QTWEBENGINE_*, …). The app runs
 # with a plain environment; theme and DPI handling are done in code.
-find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network Svg)
 
 add_executable(llama-ui-v4
   src/main.cpp
@@ -20,6 +20,8 @@ add_executable(llama-ui-v4
   src/Api.h
   src/i18n.cpp
   src/i18n.h
+  src/Icons.cpp
+  src/Icons.h
   src/Config.cpp
   src/Config.h
   src/ConversationStore.cpp
@@ -44,7 +46,7 @@ add_executable(llama-ui-v4
   src/widgets/McpPage.h
 )
 
-target_link_libraries(llama-ui-v4 PRIVATE Qt6::Widgets Qt6::Network)
+target_link_libraries(llama-ui-v4 PRIVATE Qt6::Widgets Qt6::Network Qt6::Svg)
 
 # i18n dicts + spec are read at runtime from the repo (frontend/v2/lang).
 target_compile_definitions(llama-ui-v4 PRIVATE

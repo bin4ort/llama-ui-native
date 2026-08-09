@@ -11,6 +11,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o.d"
   "CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o"
   "CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o.d"
+  "CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o"
+  "CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o.d"
   "CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o"
   "CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o.d"
   "CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o"

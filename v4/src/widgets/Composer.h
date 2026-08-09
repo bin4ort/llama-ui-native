@@ -43,6 +43,9 @@ public:
     /** Context usage for the gauge (UI-SPEC §5.7). */
     void setContextUsage(qint64 promptChars, qint64 completionChars, int maxCtx);
 
+    /** (Re)set the icon buttons from the current theme color. */
+    void applyIcons();
+
 signals:
     void sendRequested(const QString &text);
     void stopRequested();
@@ -63,6 +66,7 @@ private:
     QTextEdit *m_input;
     QPushButton *m_send;
     QPushButton *m_persona;
+    QPushButton *m_attach = nullptr;
     ModelsSelector *m_modelSelect = nullptr;
     ContextGauge *m_gauge = nullptr;
     QVBoxLayout *m_outer;

@@ -6344,3 +6344,126 @@ events:
         - "/usr/lib/cmake/Qt6/3rdparty/extra-cmake-modules/find-modules"
         - "/usr/lib/cmake/Qt6/3rdparty/kwin"
 ...
+
+---
+events:
+  -
+    kind: "find_package-v1"
+    backtrace:
+      - "/usr/lib/cmake/Qt6/Qt6Config.cmake:256 (find_package)"
+      - "CMakeLists.txt:11 (find_package)"
+    name: "Qt6Svg"
+    configs:
+      -
+        filename: "Qt6Svg.cps"
+        kind: "cps"
+      -
+        filename: "qt6svg.cps"
+        kind: "cps"
+      -
+        filename: "Qt6SvgConfig.cmake"
+        kind: "cmake"
+      -
+        filename: "qt6svg-config.cmake"
+        kind: "cmake"
+    version_request:
+      exact: false
+    settings:
+      required: "optional"
+      quiet: false
+      global: false
+      policy_scope: true
+      bypass_provider: false
+      names:
+        - "Qt6Svg"
+      search_paths:
+        - "/usr/lib/cmake"
+      path_suffixes:
+        - ""
+      paths:
+        CMAKE_FIND_USE_CMAKE_PATH: false
+        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+        CMAKE_FIND_USE_INSTALL_PREFIX: true
+        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
+        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
+        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
+        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
+    candidates:
+      -
+        path: "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles/pkgRedirects/Qt6SvgConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles/pkgRedirects/qt6svg-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles/pkgRedirects/lib/cps/Qt6Svg.cps"
+        mode: "cps"
+        reason: "no_exist"
+      -
+        path: "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles/pkgRedirects/lib/cps/qt6svg.cps"
+        mode: "cps"
+        reason: "no_exist"
+      -
+        path: "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles/pkgRedirects/share/cps/Qt6Svg.cps"
+        mode: "cps"
+        reason: "no_exist"
+      -
+        path: "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles/pkgRedirects/share/cps/qt6svg.cps"
+        mode: "cps"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/cmake/Qt6SvgConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/cmake/qt6svg-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/cmake/Qt6SvgWidgets/Qt6SvgConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/cmake/Qt6SvgWidgets/qt6svg-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/cmake/Qt6SvgPrivate/Qt6SvgConfig.cmake"
+        mode: "config"
+        reason: "no_exist"
+      -
+        path: "/usr/lib/cmake/Qt6SvgPrivate/qt6svg-config.cmake"
+        mode: "config"
+        reason: "no_exist"
+    found:
+      path: "/usr/lib/cmake/Qt6Svg/Qt6SvgConfig.cmake"
+      mode: "config"
+      version: "6.11.0"
+    search_context:
+      ENV{PATH}:
+        - "/home/stry4ok/.local/bin"
+        - "/home/stry4ok/.local/bin"
+        - "/home/stry4ok/.local/bin"
+        - "/usr/local/sbin"
+        - "/usr/local/bin"
+        - "/usr/bin"
+        - "/var/lib/flatpak/exports/bin"
+        - "/usr/bin/site_perl"
+        - "/usr/bin/vendor_perl"
+        - "/usr/bin/core_perl"
+        - "/opt/rocm/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/usr"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+...

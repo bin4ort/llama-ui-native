@@ -368,6 +368,8 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Theme.h \
  /usr/include/qt6/QtGui/QColor \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/i18n.h \
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Icons.h \
+ /usr/include/qt6/QtGui/QIcon \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Composer.h \
  /usr/include/qt6/QtWidgets/QWidget \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/MessageView.h \

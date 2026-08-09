@@ -8,6 +8,7 @@ llama-ui-v4: \
   CMakeFiles/llama-ui-v4.dir/src/Theme.cpp.o \
   CMakeFiles/llama-ui-v4.dir/src/Api.cpp.o \
   CMakeFiles/llama-ui-v4.dir/src/i18n.cpp.o \
+  CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o \
   CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o \
   CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o \
   CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o \
@@ -21,6 +22,7 @@ llama-ui-v4: \
   CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o \
   /usr/lib/libQt6Widgets.so.6.11.0 \
   /usr/lib/libQt6Network.so.6.11.0 \
+  /usr/lib/libQt6Svg.so.6.11.0 \
   /usr/lib/libQt6Gui.so.6.11.0 \
   /usr/lib/libGLX.so \
   /usr/lib/libOpenGL.so \
@@ -132,6 +134,8 @@ CMakeFiles/llama-ui-v4.dir/src/Api.cpp.o:
 
 CMakeFiles/llama-ui-v4.dir/src/i18n.cpp.o:
 
+CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o:
+
 CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o:
 
 CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o:
@@ -157,6 +161,8 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o:
 /usr/lib/libQt6Widgets.so.6.11.0:
 
 /usr/lib/libQt6Network.so.6.11.0:
+
+/usr/lib/libQt6Svg.so.6.11.0:
 
 /usr/lib/libQt6Gui.so.6.11.0:
 

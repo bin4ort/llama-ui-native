@@ -25,6 +25,7 @@ public:
     void setServerStatus(bool online, const QString &address);
     void toggleExpanded() { setExpanded(!m_expanded); }
     void activateSearchMode();
+    void applyIcons();
 
 signals:
     void newChatClicked();

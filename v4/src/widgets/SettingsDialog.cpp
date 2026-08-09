@@ -1,4 +1,5 @@
 #include "SettingsDialog.h"
+#include "../Icons.h"
 #include "../i18n.h"
 #include "../Theme.h"
 #include "../Config.h"
@@ -21,6 +22,7 @@
 #include <QScrollArea>
 #include <QStackedWidget>
 #include <QListWidget>
+#include <QSize>
 #include <QVBoxLayout>
 
 namespace {
@@ -146,8 +148,9 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, QWidget *parent)
     nl->setContentsMargins(12, 16, 12, 12);
     nl->setSpacing(4);
 
-    auto *heading = new QLabel(QStringLiteral("⚙  ") + I18n::t(QStringLiteral("Settings")), nav);
+    auto *heading = new QLabel(I18n::t(QStringLiteral("Settings")), nav);
     heading->setObjectName(QStringLiteral("settingsHeading"));
+    heading->setPixmap(Icons::get(QStringLiteral("settings"), Icons::color()).pixmap(18, 18));
     nl->addWidget(heading);
     nl->addSpacing(8);
 
@@ -159,10 +162,14 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, QWidget *parent)
         QStringLiteral("Penalties"), QStringLiteral("Agentic"), QStringLiteral("Developer"),
         QStringLiteral("Tools"), QStringLiteral("Import/Export")};
     const QStringList icons = {
-        QStringLiteral("⚙"), QStringLiteral("👁"), QStringLiteral("🎚"), QStringLiteral("⚠"),
-        QStringLiteral("🤖"), QStringLiteral("⌨"), QStringLiteral("🔧"), QStringLiteral("⇅")};
-    for (int i = 0; i < sections.size(); ++i)
-        m_navList->addItem(icons.at(i) + QStringLiteral("  ") + sections.at(i));
+        QStringLiteral("sliders-horizontal"), QStringLiteral("eye"), QStringLiteral("gauge"),
+        QStringLiteral("triangle-alert"), QStringLiteral("bot"), QStringLiteral("code-2"),
+        QStringLiteral("wrench"), QStringLiteral("arrow-left-right")};
+    for (int i = 0; i < sections.size(); ++i) {
+        auto *item = new QListWidgetItem(sections.at(i));
+        item->setIcon(Icons::get(icons.at(i), Icons::color()));
+        m_navList->addItem(item);
+    }
     nl->addWidget(m_navList, 1);
 
     // version footer (v2: "Llama UI Native vX (build Y)")

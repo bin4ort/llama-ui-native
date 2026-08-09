@@ -362,8 +362,9 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o: \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/../Config.h \
  /usr/include/qt6/QtCore/QJsonObject \
  /usr/include/qt6/QtCore/qjsonobject.h \
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/../Icons.h \
+ /usr/include/qt6/QtGui/QColor /usr/include/qt6/QtGui/QIcon \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/../Theme.h \
- /usr/include/qt6/QtGui/QColor \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/../i18n.h \
  /usr/include/qt6/QtCore/QStringList \
  /usr/include/qt6/QtGui/QAbstractTextDocumentLayout \
@@ -397,8 +398,8 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o: \
  /usr/include/qt6/QtGui/QDesktopServices \
  /usr/include/qt6/QtGui/qdesktopservices.h \
  /usr/include/qt6/QtGui/QGuiApplication /usr/include/qt6/QtGui/QClipboard \
- /usr/include/qt6/QtGui/qclipboard.h /usr/include/qt6/QtGui/QFont \
- /usr/include/qt6/QtGui/QFontMetrics \
+ /usr/include/qt6/QtGui/qclipboard.h /usr/include/qt6/QtCore/QSize \
+ /usr/include/qt6/QtGui/QFont /usr/include/qt6/QtGui/QFontMetrics \
  /usr/include/qt6/QtWidgets/QHBoxLayout \
  /usr/include/qt6/QtWidgets/qboxlayout.h \
  /usr/include/qt6/QtWidgets/qlayout.h \

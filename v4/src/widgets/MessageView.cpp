@@ -1,11 +1,13 @@
 #include "MessageView.h"
 #include "../Config.h"
+#include "../Icons.h"
 #include "../Theme.h"
 #include "../i18n.h"
 #include <QAbstractTextDocumentLayout>
 #include <QDesktopServices>
 #include <QGuiApplication>
 #include <QClipboard>
+#include <QSize>
 #include <cstdio>
 #include <QFont>
 #include <QFontMetrics>
@@ -369,29 +371,31 @@ void MessageView::addMessage(const ChatMessage &msg) {
     al->setSpacing(2);
     auto makeAction = [&](const QString &icon, const QString &tip,
                           std::function<void()> fn) {
-        auto *b = new QPushButton(icon, actions);
+        auto *b = new QPushButton(actions);
         b->setProperty("ghost", true);
+        b->setIcon(Icons::get(icon, Icons::color()));
+        b->setIconSize(QSize(15, 15));
         b->setToolTip(tip);
         connect(b, &QPushButton::clicked, this, std::move(fn));
         al->addWidget(b);
     };
-    makeAction(QStringLiteral("⧉"), I18n::t(QStringLiteral("Copy")),
+    makeAction(QStringLiteral("copy"), I18n::t(QStringLiteral("Copy")),
                [this, id = msg.id, content = msg.content]() {
                    emit copyRequested(id, content);
                });
     if (!msg.streaming) {
         if (msg.role != ChatMessage::System)
-            makeAction(QStringLiteral("✎"), I18n::t(QStringLiteral("Edit")),
+            makeAction(QStringLiteral("pencil"), I18n::t(QStringLiteral("Edit")),
                        [this, id = msg.id]() { emit editRequested(id); });
         if (msg.role == ChatMessage::Assistant) {
-            makeAction(QStringLiteral("↻"), I18n::t(QStringLiteral("Regenerate")),
+            makeAction(QStringLiteral("refresh-cw"), I18n::t(QStringLiteral("Regenerate")),
                        [this, id = msg.id]() { emit regenerateRequested(id); });
             if (Config::value(QStringLiteral("enableContinueGeneration")).toBool())
-                makeAction(QStringLiteral("→"), I18n::t(QStringLiteral("Continue")),
+                makeAction(QStringLiteral("arrow-right"), I18n::t(QStringLiteral("Continue")),
                            [this, id = msg.id]() { emit continueRequested(id); });
         }
         if (msg.role != ChatMessage::System)
-            makeAction(QStringLiteral("✕"), I18n::t(QStringLiteral("Delete")),
+            makeAction(QStringLiteral("trash-2"), I18n::t(QStringLiteral("Delete")),
                        [this, id = msg.id]() { emit deleteRequested(id); });
     }
     al->addStretch(1);
@@ -432,15 +436,15 @@ void MessageView::updateReasoning(const QString &delta) {
         auto *vl = new QVBoxLayout(host);
         vl->setContentsMargins(0, 0, 0, 0);
         vl->setSpacing(2);
-        m_reasoningToggle = new QPushButton(QStringLiteral("🧠 ") + I18n::t(QStringLiteral("Reasoning")),
-                                            host);
+        m_reasoningToggle = new QPushButton(I18n::t(QStringLiteral("Reasoning")), host);
         m_reasoningToggle->setProperty("reasoningToggle", true);
+        m_reasoningToggle->setIcon(Icons::get(QStringLiteral("lightbulb"), Icons::color()));
+        m_reasoningToggle->setIconSize(QSize(14, 14));
         connect(m_reasoningToggle, &QPushButton::clicked, this, [this]() {
             m_streamReasoningVisible = !m_streamReasoningVisible;
             if (m_streamingReasoning)
                 m_streamingReasoning->setVisible(m_streamReasoningVisible);
-            m_reasoningToggle->setText(QString(m_streamReasoningVisible ? "🧠 " : "🧠 ") +
-                                       I18n::t(QStringLiteral("Reasoning")));
+            m_reasoningToggle->setText(I18n::t(QStringLiteral("Reasoning")));
         });
         vl->addWidget(m_reasoningToggle);
         m_streamingReasoning = new QLabel(m_streamReasoning.toHtmlEscaped());

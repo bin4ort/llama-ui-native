@@ -1,5 +1,6 @@
 #include "Composer.h"
 #include "../Config.h"
+#include "../Icons.h"
 #include "../i18n.h"
 #include "ContextGauge.h"
 #include "ModelsSelector.h"
@@ -43,14 +44,16 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
     bar->setContentsMargins(0, 0, 0, 0);
     bar->setSpacing(6);
 
-    auto *attach = new QPushButton(QStringLiteral("📎"), this);
-    attach->setProperty("round", true);
-    attach->setToolTip(I18n::t(QStringLiteral("Attach file")));
-    connect(attach, &QPushButton::clicked, this, &Composer::attachRequested);
-    bar->addWidget(attach);
+    m_attach = new QPushButton(this);
+    m_attach->setProperty("round", true);
+    m_attach->setIconSize(QSize(18, 18));
+    m_attach->setToolTip(I18n::t(QStringLiteral("Attach file")));
+    connect(m_attach, &QPushButton::clicked, this, &Composer::attachRequested);
+    bar->addWidget(m_attach);
 
-    m_persona = new QPushButton(QStringLiteral("✦ Default ▾"), this);
+    m_persona = new QPushButton(QStringLiteral("Default ▾"), this);
     m_persona->setProperty("persona", true);
+    m_persona->setIconSize(QSize(16, 16));
     m_persona->setToolTip(I18n::t(QStringLiteral("Choose a personality preset")));
     connect(m_persona, &QPushButton::clicked, this, &Composer::personaRequested);
     bar->addWidget(m_persona);
@@ -61,8 +64,9 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
     m_input->setTabChangesFocus(false);
     bar->addWidget(m_input, 1);
 
-    m_send = new QPushButton(QStringLiteral("↑"), this);
+    m_send = new QPushButton(this);
     m_send->setProperty("send", true);
+    m_send->setIconSize(QSize(22, 22));
 
     // right cluster (v2 ChatFormActions order): gauge -> model -> send
     m_gauge = new ContextGauge(this);
@@ -95,6 +99,7 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
         updateHeight();
     });
     updateHeight();
+    applyIcons();
 }
 
 QString Composer::text() const { return m_input->toPlainText(); }
@@ -141,7 +146,7 @@ QString Composer::model() const {
 }
 
 void Composer::setPersonaName(const QString &name) {
-    m_persona->setText(QStringLiteral("✦ ") + name + QStringLiteral(" ▾"));
+    m_persona->setText(name + QStringLiteral(" ▾"));
     m_persona->setProperty("active", !name.isEmpty() && name != I18n::t(QStringLiteral("Default")));
     m_persona->style()->unpolish(m_persona);
     m_persona->style()->polish(m_persona);
@@ -221,16 +226,24 @@ void Composer::setBusy(bool busy) {
     m_busy = busy;
     if (busy) {
         // stop button replaces send while streaming (UI-SPEC §5.6)
-        m_send->setText(QStringLiteral("■"));
+        m_send->setIcon(Icons::get(QStringLiteral("square"), Icons::color()));
         m_send->setToolTip(I18n::t(QStringLiteral("Stop")));
         m_send->setEnabled(true);
         m_input->setReadOnly(true);
     } else {
-        m_send->setText(QStringLiteral("↑"));
+        m_send->setIcon(Icons::get(QStringLiteral("arrow-up"), Icons::color()));
         m_send->setToolTip(I18n::t(QStringLiteral("Send")));
         m_send->setEnabled(!text().trimmed().isEmpty() || !m_attachments.isEmpty());
         m_input->setReadOnly(false);
     }
+}
+
+void Composer::applyIcons() {
+    const QColor c = Icons::color();
+    if (m_attach) m_attach->setIcon(Icons::get(QStringLiteral("paperclip"), c));
+    m_persona->setIcon(Icons::get(QStringLiteral("sparkles"), c));
+    m_send->setIcon(Icons::get(m_busy ? QStringLiteral("square")
+                                      : QStringLiteral("arrow-up"), c));
 }
 
 /** Autosize the textarea (spec §5.1: field-sizing-content, min 64px). */

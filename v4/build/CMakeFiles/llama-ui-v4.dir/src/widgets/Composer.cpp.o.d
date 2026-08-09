@@ -358,6 +358,8 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o: \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/../Config.h \
  /usr/include/qt6/QtCore/QJsonObject \
  /usr/include/qt6/QtCore/qjsonobject.h /usr/include/qt6/QtCore/QString \
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/../Icons.h \
+ /usr/include/qt6/QtGui/QColor /usr/include/qt6/QtGui/QIcon \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/../i18n.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ContextGauge.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ModelsSelector.h \

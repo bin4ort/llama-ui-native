@@ -562,7 +562,17 @@
 		"/usr/lib/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginTargets.cmake",
 		"/usr/lib/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginTargets-relwithdebinfo.cmake",
 		"/usr/lib/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginAdditionalTargetInfo.cmake",
-		"/usr/lib/cmake/Qt6Network/Qt6NetworkVersionlessAliasTargets.cmake"
+		"/usr/lib/cmake/Qt6Network/Qt6NetworkVersionlessAliasTargets.cmake",
+		"/usr/lib/cmake/Qt6Svg/Qt6SvgConfigVersion.cmake",
+		"/usr/lib/cmake/Qt6Svg/Qt6SvgConfigVersionImpl.cmake",
+		"/usr/lib/cmake/Qt6Svg/Qt6SvgConfig.cmake",
+		"/usr/share/cmake/Modules/CMakeFindDependencyMacro.cmake",
+		"/usr/lib/cmake/Qt6Svg/Qt6SvgDependencies.cmake",
+		"/usr/lib/cmake/Qt6Svg/Qt6SvgTargetsPrecheck.cmake",
+		"/usr/lib/cmake/Qt6Svg/Qt6SvgTargets.cmake",
+		"/usr/lib/cmake/Qt6Svg/Qt6SvgTargets-relwithdebinfo.cmake",
+		"/usr/lib/cmake/Qt6Svg/Qt6SvgAdditionalTargetInfo.cmake",
+		"/usr/lib/cmake/Qt6Svg/Qt6SvgVersionlessAliasTargets.cmake"
 	],
 	"CMAKE_SOURCE_DIR" : "/home/stry4ok/Development/Projects/LlamaUI-Native/v4",
 	"CROSS_CONFIG" : false,
@@ -586,6 +596,12 @@
 			"/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/ConversationStore.h",
 			"Mu",
 			"UVLADIE3JM/moc_ConversationStore.cpp",
+			null
+		],
+		[
+			"/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Icons.h",
+			"Mu",
+			"UVLADIE3JM/moc_Icons.cpp",
 			null
 		],
 		[
@@ -672,6 +688,7 @@
 		"QT_GUI_LIB",
 		"QT_NETWORK_LIB",
 		"QT_NO_DEBUG",
+		"QT_SVG_LIB",
 		"QT_WIDGETS_LIB",
 		"UI_SPEC_DIR=\"/home/stry4ok/Development/Projects/LlamaUI-Native/v4/..\""
 	],
@@ -690,6 +707,7 @@
 		"/usr/lib/qt6/mkspecs/linux-g++",
 		"/usr/include/qt6/QtGui",
 		"/usr/include/qt6/QtNetwork",
+		"/usr/include/qt6/QtSvg",
 		"/usr/include",
 		"/usr/include/c++/15.2.1",
 		"/usr/include/c++/15.2.1/x86_64-pc-linux-gnu",
@@ -743,6 +761,11 @@
 		],
 		[
 			"/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/ConversationStore.cpp",
+			"Mu",
+			null
+		],
+		[
+			"/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Icons.cpp",
 			"Mu",
 			null
 		],

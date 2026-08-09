@@ -1,5 +1,6 @@
 #include "McpPage.h"
 #include <cstdio>
+#include "../Icons.h"
 #include "../i18n.h"
 #include <QHBoxLayout>
 #include <QJsonArray>
@@ -13,6 +14,7 @@
 #include <QPushButton>
 #include <QStyle>
 #include <QScrollArea>
+#include <QSize>
 #include <QVBoxLayout>
 
 QJsonArray serversOf(const QJsonObject &cfg) {
@@ -54,12 +56,15 @@ McpPage::McpPage(const QJsonObject &config, QWidget *parent)
     header->setObjectName(QStringLiteral("mcpHeader"));
     auto *hl = new QHBoxLayout(header);
     hl->setContentsMargins(24, 16, 24, 12);
-    auto *title = new QLabel(QStringLiteral("◫ ") + I18n::t(QStringLiteral("MCP Servers")), this);
+    auto *title = new QLabel(I18n::t(QStringLiteral("MCP Servers")), this);
     title->setObjectName(QStringLiteral("mcpTitle"));
+    title->setPixmap(Icons::mcpLogo(Icons::color()).pixmap(26, 26));
     hl->addWidget(title);
     hl->addStretch(1);
-    auto *closeBtn = new QPushButton(QStringLiteral("✕"), this);
+    auto *closeBtn = new QPushButton(this);
     closeBtn->setProperty("ghost", true);
+    closeBtn->setIcon(Icons::get(QStringLiteral("x"), Icons::color()));
+    closeBtn->setIconSize(QSize(18, 18));
     connect(closeBtn, &QPushButton::clicked, this, &QDialog::close);
     hl->addWidget(closeBtn);
     outer->addWidget(header);
@@ -88,8 +93,9 @@ void McpPage::rebuild() {
         // v2 empty state: Plus icon circle + title + desc + primary button
         m_list->setSpacing(6);
         m_list->addStretch(1);
-        auto *icon = new QLabel(QStringLiteral("＋"), this);
+        auto *icon = new QLabel(this);
         icon->setObjectName(QStringLiteral("mcpEmptyIcon"));
+        icon->setPixmap(Icons::get(QStringLiteral("plus"), Icons::color()).pixmap(22, 22));
         icon->setAlignment(Qt::AlignCenter);
         icon->setFixedSize(48, 48);
         m_list->addWidget(icon, 0, Qt::AlignHCenter);

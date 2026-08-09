@@ -5,6 +5,7 @@
 #include "ConversationStore.h"
 #include "Theme.h"
 #include "i18n.h"
+#include "Icons.h"
 #include "widgets/Composer.h"
 #include "widgets/MessageView.h"
 #include "widgets/SettingsDialog.h"
@@ -537,6 +538,9 @@ void MainWindow::setEmpty(bool empty) {
 void MainWindow::applyTheme(const QString &paletteId) {
     qApp->setStyleSheet(Theme::stylesheet(paletteId));
     const auto t = Theme::tokens(paletteId);
+    Icons::setColor(t.mutedForeground);
+    m_sidebar->applyIcons();
+    m_composer->applyIcons();
     QPalette pal;
     pal.setColor(QPalette::Window, t.background);
     pal.setColor(QPalette::WindowText, t.foreground);

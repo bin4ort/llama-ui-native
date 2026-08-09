@@ -9,6 +9,8 @@ llama-ui-v4_autogen/timestamp: \
 	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Config.h \
 	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/ConversationStore.cpp \
 	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/ConversationStore.h \
+	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Icons.cpp \
+	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Icons.h \
 	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/MainWindow.cpp \
 	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/MainWindow.h \
 	/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Presets.cpp \
@@ -892,6 +894,15 @@ llama-ui-v4_autogen/timestamp: \
 	/usr/lib/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginTargets-relwithdebinfo.cmake \
 	/usr/lib/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginTargets.cmake \
 	/usr/lib/cmake/Qt6Network/Qt6QTlsBackendOpenSSLPluginTargetsPrecheck.cmake \
+	/usr/lib/cmake/Qt6Svg/Qt6SvgAdditionalTargetInfo.cmake \
+	/usr/lib/cmake/Qt6Svg/Qt6SvgConfig.cmake \
+	/usr/lib/cmake/Qt6Svg/Qt6SvgConfigVersion.cmake \
+	/usr/lib/cmake/Qt6Svg/Qt6SvgConfigVersionImpl.cmake \
+	/usr/lib/cmake/Qt6Svg/Qt6SvgDependencies.cmake \
+	/usr/lib/cmake/Qt6Svg/Qt6SvgTargets-relwithdebinfo.cmake \
+	/usr/lib/cmake/Qt6Svg/Qt6SvgTargets.cmake \
+	/usr/lib/cmake/Qt6Svg/Qt6SvgTargetsPrecheck.cmake \
+	/usr/lib/cmake/Qt6Svg/Qt6SvgVersionlessAliasTargets.cmake \
 	/usr/lib/cmake/Qt6Widgets/Qt6WidgetsAdditionalTargetInfo.cmake \
 	/usr/lib/cmake/Qt6Widgets/Qt6WidgetsConfig.cmake \
 	/usr/lib/cmake/Qt6Widgets/Qt6WidgetsConfigVersion.cmake \

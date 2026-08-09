@@ -156,10 +156,24 @@ CMakeFiles/llama-ui-v4.dir/src/i18n.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/llama-ui-v4.dir/src/i18n.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/i18n.cpp -o CMakeFiles/llama-ui-v4.dir/src/i18n.cpp.s
 
+CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o: CMakeFiles/llama-ui-v4.dir/flags.make
+CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o: /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Icons.cpp
+CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o: CMakeFiles/llama-ui-v4.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o -MF CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o.d -o CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o -c /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Icons.cpp
+
+CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Icons.cpp > CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.i
+
+CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Icons.cpp -o CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.s
+
 CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o: CMakeFiles/llama-ui-v4.dir/flags.make
 CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o: /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Config.cpp
 CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o: CMakeFiles/llama-ui-v4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o -MF CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o.d -o CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o -c /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Config.cpp
 
 CMakeFiles/llama-ui-v4.dir/src/Config.cpp.i: cmake_force
@@ -173,7 +187,7 @@ CMakeFiles/llama-ui-v4.dir/src/Config.cpp.s: cmake_force
 CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o: CMakeFiles/llama-ui-v4.dir/flags.make
 CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o: /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/ConversationStore.cpp
 CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o: CMakeFiles/llama-ui-v4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o -MF CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o.d -o CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o -c /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/ConversationStore.cpp
 
 CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.i: cmake_force
@@ -187,7 +201,7 @@ CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.s: cmake_force
 CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o: CMakeFiles/llama-ui-v4.dir/flags.make
 CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o: /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Presets.cpp
 CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o: CMakeFiles/llama-ui-v4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o -MF CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o.d -o CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o -c /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Presets.cpp
 
 CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.i: cmake_force
@@ -201,7 +215,7 @@ CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.s: cmake_force
 CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: CMakeFiles/llama-ui-v4.dir/flags.make
 CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Sidebar.cpp
 CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: CMakeFiles/llama-ui-v4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o -MF CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o.d -o CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o -c /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Sidebar.cpp
 
 CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.i: cmake_force
@@ -215,7 +229,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.s: cmake_force
 CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o: CMakeFiles/llama-ui-v4.dir/flags.make
 CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o: /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Composer.cpp
 CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o: CMakeFiles/llama-ui-v4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o -MF CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o.d -o CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o -c /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Composer.cpp
 
 CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.i: cmake_force
@@ -229,7 +243,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.s: cmake_force
 CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o: CMakeFiles/llama-ui-v4.dir/flags.make
 CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o: /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/MessageView.cpp
 CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o: CMakeFiles/llama-ui-v4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o -MF CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o.d -o CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.o -c /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/MessageView.cpp
 
 CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.i: cmake_force
@@ -243,7 +257,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/MessageView.cpp.s: cmake_force
 CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o: CMakeFiles/llama-ui-v4.dir/flags.make
 CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o: /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/SettingsDialog.cpp
 CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o: CMakeFiles/llama-ui-v4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o -MF CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o.d -o CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o -c /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/SettingsDialog.cpp
 
 CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.i: cmake_force
@@ -257,7 +271,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.s: cmake_force
 CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.o: CMakeFiles/llama-ui-v4.dir/flags.make
 CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.o: /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/WizardDialog.cpp
 CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.o: CMakeFiles/llama-ui-v4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.o -MF CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.o.d -o CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.o -c /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/WizardDialog.cpp
 
 CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.i: cmake_force
@@ -271,7 +285,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/WizardDialog.cpp.s: cmake_force
 CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o: CMakeFiles/llama-ui-v4.dir/flags.make
 CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o: /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ContextGauge.cpp
 CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o: CMakeFiles/llama-ui-v4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o -MF CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o.d -o CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o -c /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ContextGauge.cpp
 
 CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.i: cmake_force
@@ -285,7 +299,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.s: cmake_force
 CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.o: CMakeFiles/llama-ui-v4.dir/flags.make
 CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.o: /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ModelsSelector.cpp
 CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.o: CMakeFiles/llama-ui-v4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.o -MF CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.o.d -o CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.o -c /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ModelsSelector.cpp
 
 CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.i: cmake_force
@@ -299,7 +313,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/ModelsSelector.cpp.s: cmake_force
 CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o: CMakeFiles/llama-ui-v4.dir/flags.make
 CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o: /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/McpPage.cpp
 CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o: CMakeFiles/llama-ui-v4.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o -MF CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o.d -o CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o -c /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/McpPage.cpp
 
 CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.i: cmake_force
@@ -318,6 +332,7 @@ llama__ui__v4_OBJECTS = \
 "CMakeFiles/llama-ui-v4.dir/src/Theme.cpp.o" \
 "CMakeFiles/llama-ui-v4.dir/src/Api.cpp.o" \
 "CMakeFiles/llama-ui-v4.dir/src/i18n.cpp.o" \
+"CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o" \
 "CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o" \
 "CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o" \
 "CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o" \
@@ -339,6 +354,7 @@ llama-ui-v4: CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o
 llama-ui-v4: CMakeFiles/llama-ui-v4.dir/src/Theme.cpp.o
 llama-ui-v4: CMakeFiles/llama-ui-v4.dir/src/Api.cpp.o
 llama-ui-v4: CMakeFiles/llama-ui-v4.dir/src/i18n.cpp.o
+llama-ui-v4: CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o
 llama-ui-v4: CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o
 llama-ui-v4: CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o
 llama-ui-v4: CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o
@@ -354,12 +370,13 @@ llama-ui-v4: CMakeFiles/llama-ui-v4.dir/build.make
 llama-ui-v4: CMakeFiles/llama-ui-v4.dir/compiler_depend.ts
 llama-ui-v4: /usr/lib/libQt6Widgets.so.6.11.0
 llama-ui-v4: /usr/lib/libQt6Network.so.6.11.0
+llama-ui-v4: /usr/lib/libQt6Svg.so.6.11.0
 llama-ui-v4: /usr/lib/libQt6Gui.so.6.11.0
 llama-ui-v4: /usr/lib/libGLX.so
 llama-ui-v4: /usr/lib/libOpenGL.so
 llama-ui-v4: /usr/lib/libQt6Core.so.6.11.0
 llama-ui-v4: CMakeFiles/llama-ui-v4.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Linking CXX executable llama-ui-v4"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Linking CXX executable llama-ui-v4"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/llama-ui-v4.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

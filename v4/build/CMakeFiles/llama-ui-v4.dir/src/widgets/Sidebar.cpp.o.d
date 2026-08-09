@@ -359,6 +359,8 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: \
  /usr/include/qt6/QtCore/qjsonobject.h /usr/include/qt6/QtCore/QList \
  /usr/include/qt6/QtCore/QString /usr/include/qt6/QtCore/QStringList \
  /usr/include/qt6/QtCore/QObject \
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/../Icons.h \
+ /usr/include/qt6/QtGui/QColor /usr/include/qt6/QtGui/QIcon \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/../i18n.h \
  /usr/include/qt6/QtCore/QEvent /usr/include/qt6/QtCore/qcoreevent.h \
  /usr/include/qt6/QtCore/qbasictimer.h \
@@ -414,7 +416,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Sidebar.cpp.o: \
  /usr/include/qt6/QtWidgets/QPushButton \
  /usr/include/qt6/QtWidgets/qpushbutton.h \
  /usr/include/qt6/QtWidgets/qabstractbutton.h \
- /usr/include/qt6/QtWidgets/QScrollArea \
+ /usr/include/qt6/QtCore/QSize /usr/include/qt6/QtWidgets/QScrollArea \
  /usr/include/qt6/QtWidgets/qscrollarea.h \
  /usr/include/qt6/QtWidgets/qabstractscrollarea.h \
  /usr/include/qt6/QtWidgets/QStyle /usr/include/qt6/QtWidgets/qstyle.h \

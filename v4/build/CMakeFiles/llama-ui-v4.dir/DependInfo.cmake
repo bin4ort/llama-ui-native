@@ -12,6 +12,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Api.cpp" "CMakeFiles/llama-ui-v4.dir/src/Api.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/Api.cpp.o.d"
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Config.cpp" "CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/Config.cpp.o.d"
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/ConversationStore.cpp" "CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o.d"
+  "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Icons.cpp" "CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o.d"
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/MainWindow.cpp" "CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o.d"
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Presets.cpp" "CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/Presets.cpp.o.d"
   "/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Theme.cpp" "CMakeFiles/llama-ui-v4.dir/src/Theme.cpp.o" "gcc" "CMakeFiles/llama-ui-v4.dir/src/Theme.cpp.o.d"

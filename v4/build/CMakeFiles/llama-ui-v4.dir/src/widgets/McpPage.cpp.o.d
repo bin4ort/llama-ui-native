@@ -356,8 +356,11 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o: \
  /usr/include/qt6/QtCore/qurl.h /usr/include/qt6/QtCore/quuid.h \
  /usr/include/qt6/QtCore/qjsondocument.h \
  /usr/include/qt6/QtCore/qjsonparseerror.h /usr/include/qt6/QtCore/QList \
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/../Icons.h \
+ /usr/include/qt6/QtGui/QColor /usr/include/qt6/QtGui/QIcon \
+ /usr/include/qt6/QtCore/QString \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/../i18n.h \
- /usr/include/qt6/QtCore/QString /usr/include/qt6/QtCore/QStringList \
+ /usr/include/qt6/QtCore/QStringList \
  /usr/include/qt6/QtWidgets/QHBoxLayout \
  /usr/include/qt6/QtWidgets/qboxlayout.h \
  /usr/include/qt6/QtWidgets/qlayout.h \
@@ -414,4 +417,4 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o: \
  /usr/include/qt6/QtWidgets/QScrollArea \
  /usr/include/qt6/QtWidgets/qscrollarea.h \
  /usr/include/qt6/QtWidgets/qabstractscrollarea.h \
- /usr/include/qt6/QtWidgets/QVBoxLayout
+ /usr/include/qt6/QtCore/QSize /usr/include/qt6/QtWidgets/QVBoxLayout
