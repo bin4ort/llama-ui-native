@@ -348,7 +348,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     center->setMaximumWidth(720); // v2: max-w-3xl content at x520-1240
     center->setMinimumWidth(720);
     auto *cl = new QVBoxLayout(center);
-    cl->setContentsMargins(8, 112, 0, 0); // v2: md:pt-28 + pane offset
+    cl->setContentsMargins(8, 112, 0, 0); // v2: md:pt-28 (title at y118)
     cl->setSpacing(24);                    // v2: space-y-6 between cards
 
     // v2 section header: icon + title + bottom border (pb-6)
@@ -367,7 +367,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     hrl->addWidget(heading);
     hrl->addStretch(1);
     cl->addWidget(headerRow);
-    cl->addSpacing(46); // v2: mb-6 after the group title + card offset
+    cl->addSpacing(8); // v2: header pb-6 + mb-6 -> first card at y200
 
     auto addCard = [&](const QStringList &labels, const QList<QWidget *> &controls,
                        const QStringList &helps = {}) {
