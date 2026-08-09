@@ -219,8 +219,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     auto *bl = new QHBoxLayout(bannerHost);
     bl->setContentsMargins(0, 0, 0, 0);
     bl->setSpacing(8);
-    auto *warnIcon = new QLabel(QStringLiteral("⚠ "), bannerHost);
+    auto *warnIcon = new QLabel(bannerHost);
     warnIcon->setObjectName(QStringLiteral("bannerIcon"));
+    warnIcon->setPixmap(Icons::get(QStringLiteral("triangle-alert"), Icons::color()).pixmap(18, 18));
     bl->addWidget(warnIcon);
     auto *bannerText = new QVBoxLayout;
     bannerText->setContentsMargins(0, 0, 0, 0);
@@ -760,7 +761,7 @@ void MainWindow::runAgenticTurn(const QJsonArray &toolCalls) {
         cm.id = res.id;
         cm.type = QStringLiteral("tool-result");
         cm.role = ChatMessage::Assistant;
-        cm.content = QStringLiteral("🔧 %1 → %2").arg(name, result.left(200));
+        cm.content = QStringLiteral("%1: %2").arg(name, result.left(200));
         m_messages->addMessage(cm);
     }
 
