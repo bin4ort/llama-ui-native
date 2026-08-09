@@ -359,14 +359,14 @@ CMakeFiles/llama-ui-v4.dir/src/MainWindow.cpp.o: \
  /usr/include/qt6/QtWidgets/qsizepolicy.h \
  /usr/include/qt6/QtGui/qcursor.h /usr/include/qt6/QtGui/qbitmap.h \
  /usr/include/qt6/QtWidgets/qtabwidget.h \
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Theme.h \
+ /usr/include/qt6/QtGui/QColor /usr/include/qt6/QtCore/QString \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Api.h \
- /usr/include/qt6/QtCore/QObject /usr/include/qt6/QtCore/QString \
+ /usr/include/qt6/QtCore/QObject \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Config.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Presets.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/ConversationStore.h \
  /usr/include/qt6/QtCore/QList /usr/include/qt6/QtCore/QStringList \
- /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Theme.h \
- /usr/include/qt6/QtGui/QColor \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/i18n.h \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Icons.h \
  /usr/include/qt6/QtGui/QIcon \

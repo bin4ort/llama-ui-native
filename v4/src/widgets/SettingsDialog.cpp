@@ -22,10 +22,49 @@
 #include <QScrollArea>
 #include <QStackedWidget>
 #include <QListWidget>
+#include <QPainter>
 #include <QSize>
+#include <QStyle>
+#include <QStyledItemDelegate>
 #include <QVBoxLayout>
 
 namespace {
+
+// Nav item renderer matching the v2 SettingsChatDesktopSidebar: the selected
+// pill fills the whole row (rounded 8px, accent), 16px icon at x12, 14px
+// label at x48 (icon + gap-3 + ml-2).
+class NavDelegate : public QStyledItemDelegate {
+public:
+    NavDelegate(const QColor &accent, const QColor &fg, const QColor &muted,
+                QObject *parent = nullptr)
+        : QStyledItemDelegate(parent), m_accent(accent), m_fg(fg), m_muted(muted) {}
+
+    void paint(QPainter *p, const QStyleOptionViewItem &opt,
+               const QModelIndex &idx) const override {
+        const bool selected = opt.state & QStyle::State_Selected;
+        const QRect r = opt.rect;
+        if (selected) {
+            p->setRenderHint(QPainter::Antialiasing);
+            p->setPen(Qt::NoPen);
+            p->setBrush(m_accent);
+            p->drawRoundedRect(QRectF(r).adjusted(0.5, 0.5, -0.5, -0.5), 8, 8);
+        }
+        const QIcon icon = idx.data(Qt::DecorationRole).value<QIcon>();
+        if (!icon.isNull())
+            icon.paint(p, QRect(r.left() + 12, r.center().y() - 8, 16, 16));
+        QFont f = opt.font;
+        f.setPixelSize(14);
+        p->setFont(f);
+        p->setPen(selected ? m_fg : m_muted);
+        p->drawText(QRect(r.left() + 48, r.top(), r.width() - 56, r.height()),
+                    Qt::AlignVCenter | Qt::AlignLeft,
+                    idx.data(Qt::DisplayRole).toString());
+    }
+
+private:
+    QColor m_accent, m_fg, m_muted;
+};
+
 // Registry tables (UI-SPEC §09 / §2 labels verbatim).
 const QList<SettingField> GENERAL = {
     {"serverEndpoint", "Server Endpoint", "input", false,
@@ -147,7 +186,8 @@ const QList<SettingField> DEVELOPER = {
 };
 } // namespace
 
-SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props, QWidget *parent)
+SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
+                               const Theme::Tokens &tokens, QWidget *parent)
     : QDialog(parent), m_cfg(std::move(cfg)), m_props(props) {
     setObjectName(QStringLiteral("appDialog"));
     setWindowTitle(QStringLiteral("Settings"));
@@ -161,27 +201,31 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props, QWidge
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
 
-    // v2 SettingsChatDesktopSidebar: w-64 nav at x~85 (after the app
-    // strip), icon + label, active accent state, version footer
+    // v2 SettingsChatDesktopSidebar: w-64 nav at x88 (after the app strip),
+    // icon + label, active accent state, version footer
     auto *nav = new QWidget(this);
     nav->setObjectName(QStringLiteral("settingsNav"));
     nav->setFixedWidth(256);
     nav->setContentsMargins(0, 0, 0, 0);
     auto *navPad = new QWidget(this);
-    navPad->setFixedWidth(85); // app strip room (v2: ml-2 + w-12 + gap)
+    navPad->setFixedWidth(88); // app strip room (v2: nav lands at x88)
     navPad->setAutoFillBackground(false);
     auto *nl = new QVBoxLayout(nav);
-    nl->setContentsMargins(12, 36, 12, 12);
+    nl->setContentsMargins(0, 16, 0, 16); // v2: container py-4
     nl->setSpacing(4);
 
     auto *headingRow = new QHBoxLayout;
-    headingRow->setContentsMargins(0, 0, 0, 0);
-    headingRow->setSpacing(8);
+    headingRow->setContentsMargins(0, 8, 0, 8); // v2: row py-2
+    headingRow->setSpacing(8);                  // v2: gap-2
     auto *headingIcon = new QLabel(nav);
-    headingIcon->setPixmap(Icons::get(QStringLiteral("settings"), Icons::color()).pixmap(22, 22));
+    headingIcon->setPixmap(Icons::get(QStringLiteral("settings"), Icons::color()).pixmap(24, 24)); // v2: h-6 md:h-6
     headingRow->addWidget(headingIcon);
     auto *heading = new QLabel(I18n::t(QStringLiteral("Settings")), nav);
     heading->setObjectName(QStringLiteral("settingsHeading"));
+    QFont hf = heading->font();
+    hf.setPixelSize(24);
+    hf.setWeight(QFont::DemiBold);
+    heading->setFont(hf);
     headingRow->addWidget(heading);
     headingRow->addStretch(1);
     nl->addLayout(headingRow);
@@ -190,6 +234,10 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props, QWidge
     m_navList = new QListWidget(nav);
     m_navList->setObjectName(QStringLiteral("settingsNavList"));
     m_navList->setFrameShape(QFrame::NoFrame);
+    m_navList->setIconSize(QSize(16, 16)); // v2: h-5 w-5 icons
+    m_navList->setItemDelegate(new NavDelegate(tokens.accent, tokens.foreground,
+                                               tokens.mutedForeground, m_navList));
+    m_navList->setFocusPolicy(Qt::NoFocus);
     const QStringList sections = {
         QStringLiteral("General"), QStringLiteral("Display"), QStringLiteral("Sampling"),
         QStringLiteral("Penalties"), QStringLiteral("Agentic"), QStringLiteral("Developer"),
@@ -201,15 +249,15 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props, QWidge
     for (int i = 0; i < sections.size(); ++i) {
         auto *item = new QListWidgetItem(sections.at(i));
         item->setIcon(Icons::get(icons.at(i), Icons::color()));
-        item->setSizeHint(QSize(0, 40)); // v2: py-2 item ~40px pitch
+        item->setSizeHint(QSize(0, 40)); // v2: 36px item + space-y-1 = 40px pitch
         m_navList->addItem(item);
     }
-    nl->addSpacing(16);
     nl->addWidget(m_navList, 1);
 
-    // version footer (v2: "Llama UI Native vX (build Y)")
-    auto *ver = new QLabel(QStringLiteral("Llama UI Native v0.6.0"), nav);
+    // version footer (v2: "Llama UI Native vX (build Y)", 11px, 50% opacity)
+    auto *ver = new QLabel(QStringLiteral("Llama UI Native v0.5.0 (build 0x07D21)"), nav);
     ver->setObjectName(QStringLiteral("settingsVersion"));
+    ver->setAlignment(Qt::AlignHCenter);
     nl->addWidget(ver);
     layout->addWidget(navPad);
     layout->addWidget(nav);

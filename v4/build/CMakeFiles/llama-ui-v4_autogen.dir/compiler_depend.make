@@ -456,6 +456,7 @@ llama-ui-v4_autogen/timestamp: /home/stry4ok/Development/Projects/LlamaUI-Native
   /usr/include/qt6/QtCore/qversiontagging.h \
   /usr/include/qt6/QtCore/qxptype_traits.h \
   /usr/include/qt6/QtCore/qyieldcpu.h \
+  /usr/include/qt6/QtGui/QColor \
   /usr/include/qt6/QtGui/qaction.h \
   /usr/include/qt6/QtGui/qbitmap.h \
   /usr/include/qt6/QtGui/qbrush.h \
@@ -1064,8 +1065,6 @@ llama-ui-v4_autogen/timestamp: /home/stry4ok/Development/Projects/LlamaUI-Native
 
 /usr/lib/cmake/Qt6Network/Qt6QTlsBackendCertOnlyPluginAdditionalTargetInfo.cmake:
 
-/usr/lib/cmake/Qt6Network/Qt6QNetworkManagerNetworkInformationPluginTargetsPrecheck.cmake:
-
 /usr/lib/cmake/Qt6Network/Qt6QNetworkManagerNetworkInformationPluginTargets.cmake:
 
 /usr/lib/cmake/Qt6Network/Qt6QNetworkManagerNetworkInformationPluginConfig.cmake:
@@ -1493,6 +1492,8 @@ llama-ui-v4_autogen/timestamp: /home/stry4ok/Development/Projects/LlamaUI-Native
 /usr/lib/cmake/Qt6Gui/Qt6QVkKhrDisplayIntegrationPluginAdditionalTargetInfo.cmake:
 
 /usr/lib/cmake/Qt6/QtPublicSbomGenerationCycloneDXHelpers.cmake:
+
+/usr/lib/cmake/Qt6/QtPublicSbomCycloneDXHelpers.cmake:
 
 /usr/include/c++/15.2.1/ratio:
 
@@ -2814,6 +2815,10 @@ CMakeFiles/4.4.2/CMakeCXXCompiler.cmake:
 
 /usr/include/qt6/QtCore/qyieldcpu.h:
 
+/usr/lib/cmake/Qt6Network/Qt6QNetworkManagerNetworkInformationPluginTargetsPrecheck.cmake:
+
+/usr/include/qt6/QtGui/QColor:
+
 /usr/include/qt6/QtGui/qtguiglobal.h:
 
 /usr/include/qt6/QtGui/qfont.h:
@@ -2901,5 +2906,3 @@ CMakeFiles/4.4.2/CMakeCXXCompiler.cmake:
 /usr/lib/cmake/Qt6/QtPublicFindPackageHelpers.cmake:
 
 /usr/lib/cmake/Qt6/QtPublicGitHelpers.cmake:
-
-/usr/lib/cmake/Qt6/QtPublicSbomCycloneDXHelpers.cmake:

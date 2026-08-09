@@ -369,6 +369,8 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o: \
  /usr/include/qt6/QtWidgets/qsizepolicy.h \
  /usr/include/qt6/QtGui/qcursor.h /usr/include/qt6/QtGui/qbitmap.h \
  /usr/include/qt6/QtWidgets/qtabwidget.h \
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/UVLADIE3JM/../../../src/Theme.h \
+ /usr/include/qt6/QtGui/QColor \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/moc_Composer.cpp \
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/../../../src/widgets/Composer.h \
  /usr/include/qt6/QtWidgets/QWidget \

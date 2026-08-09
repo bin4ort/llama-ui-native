@@ -442,7 +442,7 @@ QPushButton[convRow="true"] {
   color: %3; text-align: left; padding: 6px 10px;
 }
 QPushButton[convRow="true"]:hover { background-color: %7; }
-QPushButton[full="true"] { width: 100%%; }
+QPushButton[full="true"] { width: 100%; }
 
 /* Models selector trigger (v2 ModelsSelectorDropdown) */
 #modelSelect {
@@ -456,10 +456,9 @@ QPushButton[full="true"] { width: 100%%; }
 
 /* Settings page (v2 SettingsChatDesktopSidebar + section cards) */
 #settingsNav { background-color: %21; border-right: 1px solid %5; }
-#settingsHeading { font-size: 24px; font-weight: 600; padding: 8px 8px; }
-#settingsNavList { background: transparent; font-size: 14px; }
-#settingsNavList::item { padding: 4px 12px; border-radius: 8px; font-size: 14px; }
-#settingsNavList::item:selected { background-color: %7; color: %3; }
+#settingsHeading { font-size: 24px; font-weight: 600; }
+#settingsNavList { background: transparent; }
+#settingsNavList::item { border: none; }
 #settingsVersion { color: %10; font-size: 11px; padding: 4px 8px; }
 #settingsSectionTitle { font-size: 18px; font-weight: 600; }
 #settingsSectionHeader { border-bottom: 1px solid %5; padding-bottom: 24px; }

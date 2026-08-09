@@ -359,6 +359,8 @@ CMakeFiles/llama-ui-v4.dir/src/main.cpp.o: \
  /usr/include/qt6/QtWidgets/qsizepolicy.h \
  /usr/include/qt6/QtGui/qcursor.h /usr/include/qt6/QtGui/qbitmap.h \
  /usr/include/qt6/QtWidgets/qtabwidget.h \
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Theme.h \
+ /usr/include/qt6/QtGui/QColor /usr/include/qt6/QtCore/QString \
  /usr/include/qt6/QtWidgets/QApplication \
  /usr/include/qt6/QtWidgets/qapplication.h \
  /usr/include/qt6/QtCore/qcoreapplication.h \

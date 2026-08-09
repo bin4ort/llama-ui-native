@@ -22,6 +22,7 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Api.h
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/ConversationStore.h
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/MainWindow.h
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Theme.h
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/UVLADIE3JM/moc_Api.cpp
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/UVLADIE3JM/moc_ConversationStore.cpp
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/UVLADIE3JM/moc_MainWindow.cpp
@@ -459,6 +460,7 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o
  /usr/include/qt6/QtCore/qversiontagging.h
  /usr/include/qt6/QtCore/qxptype_traits.h
  /usr/include/qt6/QtCore/qyieldcpu.h
+ /usr/include/qt6/QtGui/QColor
  /usr/include/qt6/QtGui/qaction.h
  /usr/include/qt6/QtGui/qbitmap.h
  /usr/include/qt6/QtGui/qbrush.h
@@ -4503,6 +4505,7 @@ CMakeFiles/llama-ui-v4.dir/src/i18n.cpp.o
 CMakeFiles/llama-ui-v4.dir/src/main.cpp.o
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/main.cpp
  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/MainWindow.h
+ /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Theme.h
  /usr/include/alloca.h
  /usr/include/asm-generic/bitsperlong.h
  /usr/include/asm-generic/errno-base.h
@@ -4792,6 +4795,7 @@ CMakeFiles/llama-ui-v4.dir/src/main.cpp.o
  /usr/include/qt6/QtCore/QRect
  /usr/include/qt6/QtCore/QSize
  /usr/include/qt6/QtCore/QSizeF
+ /usr/include/qt6/QtCore/QString
  /usr/include/qt6/QtCore/QTimer
  /usr/include/qt6/QtCore/q17memory.h
  /usr/include/qt6/QtCore/q20bit.h
@@ -4943,6 +4947,7 @@ CMakeFiles/llama-ui-v4.dir/src/main.cpp.o
  /usr/include/qt6/QtCore/qversiontagging.h
  /usr/include/qt6/QtCore/qxptype_traits.h
  /usr/include/qt6/QtCore/qyieldcpu.h
+ /usr/include/qt6/QtGui/QColor
  /usr/include/qt6/QtGui/QGuiApplication
  /usr/include/qt6/QtGui/QScreen
  /usr/include/qt6/QtGui/QTransform
@@ -8168,6 +8173,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o
  /usr/include/qt6/QtGui/QColor
  /usr/include/qt6/QtGui/QIcon
  /usr/include/qt6/QtGui/QIntValidator
+ /usr/include/qt6/QtGui/QPainter
  /usr/include/qt6/QtGui/QTransform
  /usr/include/qt6/QtGui/qabstracttextdocumentlayout.h
  /usr/include/qt6/QtGui/qaction.h
@@ -8192,6 +8198,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o
  /usr/include/qt6/QtGui/qinputmethod.h
  /usr/include/qt6/QtGui/qkeysequence.h
  /usr/include/qt6/QtGui/qpaintdevice.h
+ /usr/include/qt6/QtGui/qpainter.h
  /usr/include/qt6/QtGui/qpalette.h
  /usr/include/qt6/QtGui/qpen.h
  /usr/include/qt6/QtGui/qpicture.h
@@ -8234,6 +8241,8 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o
  /usr/include/qt6/QtWidgets/QPushButton
  /usr/include/qt6/QtWidgets/QScrollArea
  /usr/include/qt6/QtWidgets/QStackedWidget
+ /usr/include/qt6/QtWidgets/QStyle
+ /usr/include/qt6/QtWidgets/QStyledItemDelegate
  /usr/include/qt6/QtWidgets/QVBoxLayout
  /usr/include/qt6/QtWidgets/qabstractbutton.h
  /usr/include/qt6/QtWidgets/qabstractitemdelegate.h
@@ -8266,6 +8275,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o
  /usr/include/qt6/QtWidgets/qslider.h
  /usr/include/qt6/QtWidgets/qstackedwidget.h
  /usr/include/qt6/QtWidgets/qstyle.h
+ /usr/include/qt6/QtWidgets/qstyleditemdelegate.h
  /usr/include/qt6/QtWidgets/qstyleoption.h
  /usr/include/qt6/QtWidgets/qtabbar.h
  /usr/include/qt6/QtWidgets/qtabwidget.h

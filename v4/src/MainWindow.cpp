@@ -553,6 +553,7 @@ void MainWindow::setEmpty(bool empty) {
 void MainWindow::applyTheme(const QString &paletteId) {
     qApp->setStyleSheet(Theme::stylesheet(paletteId));
     const auto t = Theme::tokens(paletteId);
+    m_tokens = t;
     Icons::setColor(t.mutedForeground);
     m_sidebar->applyIcons();
     m_composer->applyIcons();
@@ -1119,7 +1120,7 @@ void MainWindow::openSettings() {
 }
 
 void MainWindow::openSettings(int section) {
-    SettingsDialog dlg(m_config, m_propsDefaults, this);
+    SettingsDialog dlg(m_config, m_propsDefaults, m_tokens, this);
     if (section >= 0) dlg.setSection(section);
     connect(&dlg, &SettingsDialog::clearAllConversationsRequested, this, [this]() {
         auto &convs = m_store->conversations();

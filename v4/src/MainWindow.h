@@ -7,6 +7,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QMainWindow>
+#include "Theme.h"
 
 class Api;
 class ConversationStore;
@@ -94,6 +95,7 @@ private:
     int m_toolTurn = 0;
     QJsonArray m_pendingTools;
     QJsonObject m_propsDefaults;
+    Theme::Tokens m_tokens;
     qint64 m_promptChars = 0;
     qint64 m_completionChars = 0;
     int m_nCtx = 4096;

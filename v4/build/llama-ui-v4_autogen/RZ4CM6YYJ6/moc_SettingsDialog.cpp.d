@@ -1,5 +1,6 @@
 /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/RZ4CM6YYJ6/moc_SettingsDialog.cpp: /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/SettingsDialog.h \
   /home/stry4ok/Development/Projects/LlamaUI-Native/v4/build/llama-ui-v4_autogen/moc_predefs.h \
+  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Theme.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
   /usr/include/asm-generic/errno-base.h \
@@ -267,6 +268,7 @@
   /usr/include/pthread.h \
   /usr/include/qt6/QtCore/QJsonObject \
   /usr/include/qt6/QtCore/QList \
+  /usr/include/qt6/QtCore/QString \
   /usr/include/qt6/QtCore/q17memory.h \
   /usr/include/qt6/QtCore/q20bit.h \
   /usr/include/qt6/QtCore/q20functional.h \
@@ -407,6 +409,7 @@
   /usr/include/qt6/QtCore/qversiontagging.h \
   /usr/include/qt6/QtCore/qxptype_traits.h \
   /usr/include/qt6/QtCore/qyieldcpu.h \
+  /usr/include/qt6/QtGui/QColor \
   /usr/include/qt6/QtGui/qaction.h \
   /usr/include/qt6/QtGui/qbitmap.h \
   /usr/include/qt6/QtGui/qbrush.h \

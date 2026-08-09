@@ -21,6 +21,7 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o: llama-ui-
   /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Api.h \
   /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/ConversationStore.h \
   /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/MainWindow.h \
+  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Theme.h \
   llama-ui-v4_autogen/UVLADIE3JM/moc_Api.cpp \
   llama-ui-v4_autogen/UVLADIE3JM/moc_ConversationStore.cpp \
   llama-ui-v4_autogen/UVLADIE3JM/moc_MainWindow.cpp \
@@ -458,6 +459,7 @@ CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o: llama-ui-
   /usr/include/qt6/QtCore/qversiontagging.h \
   /usr/include/qt6/QtCore/qxptype_traits.h \
   /usr/include/qt6/QtCore/qyieldcpu.h \
+  /usr/include/qt6/QtGui/QColor \
   /usr/include/qt6/QtGui/qaction.h \
   /usr/include/qt6/QtGui/qbitmap.h \
   /usr/include/qt6/QtGui/qbrush.h \
@@ -4493,6 +4495,7 @@ CMakeFiles/llama-ui-v4.dir/src/i18n.cpp.o: /home/stry4ok/Development/Projects/Ll
 
 CMakeFiles/llama-ui-v4.dir/src/main.cpp.o: /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/main.cpp \
   /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/MainWindow.h \
+  /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Theme.h \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
   /usr/include/asm-generic/errno-base.h \
@@ -4782,6 +4785,7 @@ CMakeFiles/llama-ui-v4.dir/src/main.cpp.o: /home/stry4ok/Development/Projects/Ll
   /usr/include/qt6/QtCore/QRect \
   /usr/include/qt6/QtCore/QSize \
   /usr/include/qt6/QtCore/QSizeF \
+  /usr/include/qt6/QtCore/QString \
   /usr/include/qt6/QtCore/QTimer \
   /usr/include/qt6/QtCore/q17memory.h \
   /usr/include/qt6/QtCore/q20bit.h \
@@ -4933,6 +4937,7 @@ CMakeFiles/llama-ui-v4.dir/src/main.cpp.o: /home/stry4ok/Development/Projects/Ll
   /usr/include/qt6/QtCore/qversiontagging.h \
   /usr/include/qt6/QtCore/qxptype_traits.h \
   /usr/include/qt6/QtCore/qyieldcpu.h \
+  /usr/include/qt6/QtGui/QColor \
   /usr/include/qt6/QtGui/QGuiApplication \
   /usr/include/qt6/QtGui/QScreen \
   /usr/include/qt6/QtGui/QTransform \
@@ -8152,6 +8157,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o: /home/stry4ok/Devel
   /usr/include/qt6/QtGui/QColor \
   /usr/include/qt6/QtGui/QIcon \
   /usr/include/qt6/QtGui/QIntValidator \
+  /usr/include/qt6/QtGui/QPainter \
   /usr/include/qt6/QtGui/QTransform \
   /usr/include/qt6/QtGui/qabstracttextdocumentlayout.h \
   /usr/include/qt6/QtGui/qaction.h \
@@ -8176,6 +8182,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o: /home/stry4ok/Devel
   /usr/include/qt6/QtGui/qinputmethod.h \
   /usr/include/qt6/QtGui/qkeysequence.h \
   /usr/include/qt6/QtGui/qpaintdevice.h \
+  /usr/include/qt6/QtGui/qpainter.h \
   /usr/include/qt6/QtGui/qpalette.h \
   /usr/include/qt6/QtGui/qpen.h \
   /usr/include/qt6/QtGui/qpicture.h \
@@ -8218,6 +8225,8 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o: /home/stry4ok/Devel
   /usr/include/qt6/QtWidgets/QPushButton \
   /usr/include/qt6/QtWidgets/QScrollArea \
   /usr/include/qt6/QtWidgets/QStackedWidget \
+  /usr/include/qt6/QtWidgets/QStyle \
+  /usr/include/qt6/QtWidgets/QStyledItemDelegate \
   /usr/include/qt6/QtWidgets/QVBoxLayout \
   /usr/include/qt6/QtWidgets/qabstractbutton.h \
   /usr/include/qt6/QtWidgets/qabstractitemdelegate.h \
@@ -8250,6 +8259,7 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/SettingsDialog.cpp.o: /home/stry4ok/Devel
   /usr/include/qt6/QtWidgets/qslider.h \
   /usr/include/qt6/QtWidgets/qstackedwidget.h \
   /usr/include/qt6/QtWidgets/qstyle.h \
+  /usr/include/qt6/QtWidgets/qstyleditemdelegate.h \
   /usr/include/qt6/QtWidgets/qstyleoption.h \
   /usr/include/qt6/QtWidgets/qtabbar.h \
   /usr/include/qt6/QtWidgets/qtabwidget.h \
@@ -9488,8 +9498,6 @@ CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o:
 
 /usr/lib/libkrb5.so.3:
 
-/usr/lib/libidn2.so.0:
-
 /usr/lib/libicui18n.so.78:
 
 /usr/lib/libicudata.so.78:
@@ -9549,6 +9557,10 @@ CMakeFiles/llama-ui-v4.dir/src/ConversationStore.cpp.o:
 CMakeFiles/llama-ui-v4.dir/llama-ui-v4_autogen/mocs_compilation.cpp.o:
 
 /usr/include/qt6/QtCore/QEvent:
+
+/usr/lib/libidn2.so.0:
+
+/usr/include/qt6/QtWidgets/qstyleditemdelegate.h:
 
 /usr/include/qt6/QtWidgets/qplaintextedit.h:
 
@@ -9750,10 +9762,6 @@ CMakeFiles/llama-ui-v4.dir/src/Icons.cpp.o:
 
 /usr/include/qt6/QtGui/QPainter:
 
-/usr/include/qt6/QtSvg/qsvgrenderer.h:
-
-/usr/include/qt6/QtGui/QColor:
-
 /usr/lib/libm.so.6:
 
 /usr/include/qt6/QtCore/qxmlstream.h:
@@ -9851,8 +9859,6 @@ CMakeFiles/llama-ui-v4.dir/src/i18n.cpp.o:
 /usr/include/qt6/QtNetwork/qssl.h:
 
 /usr/include/qt6/QtNetwork/qnetworkrequest.h:
-
-/usr/include/c++/15.2.1/string_view:
 
 /usr/include/c++/15.2.1/ratio:
 
@@ -10150,14 +10156,6 @@ llama-ui-v4_autogen/RZ4CM6YYJ6/moc_SettingsDialog.cpp:
 
 /usr/include/bits/mathcalls-helper-functions.h:
 
-/usr/lib/libc.so.6:
-
-/usr/include/bits/fp-fast.h:
-
-/usr/lib/libQt6DBus.so.6:
-
-/usr/include/sched.h:
-
 /usr/include/c++/15.2.1/bits/stl_algo.h:
 
 /usr/include/c++/15.2.1/bits/stl_uninitialized.h:
@@ -10224,27 +10222,29 @@ llama-ui-v4_autogen/RZ4CM6YYJ6/moc_Composer.cpp:
 
 /usr/include/bits/math-vector.h:
 
+/usr/include/asm-generic/posix_types.h:
+
+/usr/include/c++/15.2.1/bits/stl_map.h:
+
+/usr/include/bits/types/__sigset_t.h:
+
+/usr/include/c++/15.2.1/bits/ostream.tcc:
+
+/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h:
+
 /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/Sidebar.cpp:
 
 /usr/include/c++/15.2.1/bits/stl_vector.h:
 
 /usr/include/bits/time.h:
 
+/usr/include/qt6/QtWidgets/QStyledItemDelegate:
+
 /usr/include/c++/15.2.1/compare:
 
 /usr/include/qt6/QtGui/qclipboard.h:
 
 /usr/include/asm/posix_types_64.h:
-
-/usr/lib/libkrb5support.so.0:
-
-/usr/lib/libEGL.so.1:
-
-/usr/include/bits/posix1_lim.h:
-
-/usr/include/wchar.h:
-
-/usr/include/qt6/QtCore/qtmocconstants.h:
 
 /usr/include/qt6/QtCore/qbytearray.h:
 
@@ -10257,16 +10257,6 @@ llama-ui-v4_autogen/RZ4CM6YYJ6/moc_ContextGauge.cpp:
 /usr/include/qt6/QtCore/QJsonArray:
 
 llama-ui-v4_autogen/UVLADIE3JM/moc_ConversationStore.cpp:
-
-/usr/include/asm-generic/posix_types.h:
-
-/usr/include/c++/15.2.1/bits/stl_map.h:
-
-/usr/include/bits/types/__sigset_t.h:
-
-/usr/include/c++/15.2.1/bits/ostream.tcc:
-
-/usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/c++config.h:
 
 /usr/include/c++/15.2.1/bits/exception.h:
 
@@ -10333,12 +10323,6 @@ llama-ui-v4_autogen/RZ4CM6YYJ6/moc_Sidebar.cpp:
 /usr/include/bits/endian.h:
 
 /home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/widgets/ModelsSelector.h:
-
-CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o:
-
-/usr/include/c++/15.2.1/bits/allocator.h:
-
-/usr/include/c++/15.2.1/ext/atomicity.h:
 
 /usr/include/qt6/QtCore/qiterable.h:
 
@@ -10410,6 +10394,30 @@ llama-ui-v4_autogen/RZ4CM6YYJ6/moc_McpPage.cpp:
 
 /usr/include/bits/thread-shared-types.h:
 
+/usr/lib/libc.so.6:
+
+/usr/include/bits/fp-fast.h:
+
+/usr/lib/libQt6DBus.so.6:
+
+/usr/include/sched.h:
+
+CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o:
+
+/usr/include/c++/15.2.1/ext/atomicity.h:
+
+/usr/include/c++/15.2.1/bits/allocator.h:
+
+/usr/include/qt6/QtCore/qtmocconstants.h:
+
+/usr/lib/libkrb5support.so.0:
+
+/usr/lib/libEGL.so.1:
+
+/usr/include/bits/posix1_lim.h:
+
+/usr/include/wchar.h:
+
 /usr/include/bits/pthreadtypes.h:
 
 /usr/include/c++/15.2.1/tr1/beta_function.tcc:
@@ -10443,6 +10451,8 @@ llama-ui-v4_autogen/RZ4CM6YYJ6/moc_McpPage.cpp:
 /usr/include/qt6/QtCore/QCoreApplication:
 
 /usr/include/c++/15.2.1/bits/functexcept.h:
+
+/usr/include/c++/15.2.1/backward/auto_ptr.h:
 
 /usr/include/bits/long-double.h:
 
@@ -10656,8 +10666,6 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/Composer.cpp.o:
 
 /usr/include/c++/15.2.1/algorithm:
 
-/usr/include/c++/15.2.1/backward/auto_ptr.h:
-
 /usr/include/c++/15.2.1/bits/basic_ios.h:
 
 /usr/include/asm/bitsperlong.h:
@@ -10687,6 +10695,8 @@ llama-ui-v4_autogen/RZ4CM6YYJ6/moc_WizardDialog.cpp:
 /usr/include/qt6/QtCore/qstringalgorithms.h:
 
 /usr/include/qt6/QtGui/qfontinfo.h:
+
+/usr/include/c++/15.2.1/string_view:
 
 /usr/include/c++/15.2.1/tr1/bessel_function.tcc:
 
@@ -10868,9 +10878,9 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/ContextGauge.cpp.o:
 
 /usr/include/qt6/QtCore/qbytearraylist.h:
 
-/usr/include/qt6/QtCore/qrefcount.h:
-
 /usr/include/c++/15.2.1/cstdio:
+
+/usr/include/qt6/QtCore/qrefcount.h:
 
 /usr/include/qt6/QtCore/qcalendar.h:
 
@@ -11072,6 +11082,10 @@ CMakeFiles/llama-ui-v4.dir/src/Theme.cpp.o:
 
 /usr/include/qt6/QtCore/qyieldcpu.h:
 
+/usr/include/qt6/QtSvg/qsvgrenderer.h:
+
+/usr/include/qt6/QtGui/QColor:
+
 /usr/include/qt6/QtCore/q20bit.h:
 
 /usr/include/qt6/QtGui/qbrush.h:
@@ -11108,11 +11122,11 @@ CMakeFiles/llama-ui-v4.dir/src/Theme.cpp.o:
 
 /usr/include/qt6/QtGui/qevent.h:
 
-/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Theme.h:
-
 /usr/include/c++/15.2.1/x86_64-pc-linux-gnu/bits/ctype_base.h:
 
 /usr/include/bits/floatn-common.h:
+
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Theme.h:
 
 /usr/include/qt6/QtWidgets/qtabwidget.h:
 
@@ -11144,6 +11158,10 @@ CMakeFiles/llama-ui-v4.dir/src/Theme.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/15.2.1/include/syslimits.h:
 
+/usr/include/qt6/QtNetwork/qnetworkaccessmanager.h:
+
+/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Api.cpp:
+
 /usr/include/qt6/QtCore/QFlags:
 
 llama-ui-v4_autogen/UVLADIE3JM/moc_Api.cpp:
@@ -11163,7 +11181,3 @@ llama-ui-v4_autogen/UVLADIE3JM/moc_Api.cpp:
 /usr/include/qt6/QtNetwork/qabstractsocket.h:
 
 /usr/include/qt6/QtNetwork/qhttpheaders.h:
-
-/home/stry4ok/Development/Projects/LlamaUI-Native/v4/src/Api.cpp:
-
-/usr/include/qt6/QtNetwork/qnetworkaccessmanager.h:
