@@ -417,4 +417,9 @@ CMakeFiles/llama-ui-v4.dir/src/widgets/McpPage.cpp.o: \
  /usr/include/qt6/QtWidgets/QScrollArea \
  /usr/include/qt6/QtWidgets/qscrollarea.h \
  /usr/include/qt6/QtWidgets/qabstractscrollarea.h \
- /usr/include/qt6/QtCore/QSize /usr/include/qt6/QtWidgets/QVBoxLayout
+ /usr/include/qt6/QtCore/QTimer /usr/include/qt6/QtCore/qtimer.h \
+ /usr/include/qt6/QtCore/qbasictimer.h \
+ /usr/include/qt6/QtCore/qabstracteventdispatcher.h \
+ /usr/include/qt6/QtCore/qeventloop.h \
+ /usr/include/qt6/QtCore/qdeadlinetimer.h /usr/include/qt6/QtCore/QSize \
+ /usr/include/qt6/QtWidgets/QVBoxLayout

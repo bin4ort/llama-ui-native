@@ -354,6 +354,18 @@ QPushButton[primary="true"]:hover { background-color: %15; }
 #mcpState { font-size: 11px; padding: 1px 8px; border-radius: 8px; color: %10; }
 #mcpState[on="true"] { color: #2ecc71; }
 #mcpState[on="false"] { color: %23; }
+#mcpTransport {
+  font-size: 10px; color: %10; border: 1px solid %5;
+  border-radius: 6px; padding: 0 6px;
+}
+#mcpCap {
+  font-size: 11px; border-radius: 10px; padding: 1px 8px;
+}
+#mcpCap[cap="green"] { color: #2ecc71; background-color: rgba(46,204,113,0.12); }
+#mcpCap[cap="blue"] { color: #3498db; background-color: rgba(52,152,219,0.12); }
+#mcpCap[cap="purple"] { color: #9b59b6; background-color: rgba(155,89,182,0.12); }
+#mcpToolsBtn { color: %10; font-size: 12px; text-align: left; }
+#mcpToolsList { color: %10; font-size: 12px; padding-left: 8px; }
 #mcpEmptyTitle { font-size: 20px; font-weight: 600; color: %3; }
 #mcpEmptyDesc { font-size: 14px; color: %10; }
 #mcpEmptyIcon {

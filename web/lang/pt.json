@@ -731,5 +731,7 @@
   "Download your conversations as a JSON file with all messages.": "Download your conversations as a JSON file with all messages.",
   "Import conversations from a previously exported file. This will merge with your existing conversations.": "Import conversations from a previously exported file. This will merge with your existing conversations.",
   "Permanently delete all conversations and their messages. This action cannot be undone.": "Permanently delete all conversations and their messages. This action cannot be undone.",
-  "Upload": "Upload"
+  "Upload": "Upload",
+  "No tools reported": "No tools reported",
+  "SSE": "SSE"
 }

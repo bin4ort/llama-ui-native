@@ -14,6 +14,7 @@
 #include <QPushButton>
 #include <QStyle>
 #include <QScrollArea>
+#include <QTimer>
 #include <QSize>
 #include <QVBoxLayout>
 
@@ -131,10 +132,18 @@ void McpPage::rebuild() {
         auto *vl = new QVBoxLayout(card);
         vl->setContentsMargins(12, 10, 12, 10);
         vl->setSpacing(4);
+        // header: McpLogo + name + transport badge + state + actions
+        // (v2 McpServerCardHeader)
         auto *row1 = new QHBoxLayout;
+        auto *logoLbl = new QLabel(card);
+        logoLbl->setPixmap(Icons::mcpLogo(Icons::color()).pixmap(20, 20));
+        row1->addWidget(logoLbl);
         auto *nameLbl = new QLabel(name, card);
         nameLbl->setObjectName(QStringLiteral("mcpName"));
         row1->addWidget(nameLbl);
+        auto *transport = new QLabel(QStringLiteral("SSE"), card);
+        transport->setObjectName(QStringLiteral("mcpTransport"));
+        row1->addWidget(transport);
         auto *state = new QLabel(
             enabled ? I18n::t(QStringLiteral("Enabled")) : I18n::t(QStringLiteral("Disabled")),
             card);
@@ -142,24 +151,58 @@ void McpPage::rebuild() {
         state->setProperty("on", enabled);
         row1->addWidget(state);
         row1->addStretch(1);
-        auto *testBtn = new QPushButton(I18n::t(QStringLiteral("Test connection")), card);
-        testBtn->setProperty("ghost", true);
-        connect(testBtn, &QPushButton::clicked, this, [this, i, state]() {
-            testServer(i, state);
-        });
-        row1->addWidget(testBtn);
-        auto *editBtn = new QPushButton(I18n::t(QStringLiteral("Edit")), card);
+        auto *editBtn = new QPushButton(card);
         editBtn->setProperty("ghost", true);
+        editBtn->setIcon(Icons::get(QStringLiteral("pencil"), Icons::color()));
+        editBtn->setIconSize(QSize(14, 14));
+        editBtn->setToolTip(I18n::t(QStringLiteral("Edit")));
         connect(editBtn, &QPushButton::clicked, this, [this, i]() { editServer(i); });
         row1->addWidget(editBtn);
-        auto *delBtn = new QPushButton(I18n::t(QStringLiteral("Delete")), card);
+        auto *delBtn = new QPushButton(card);
         delBtn->setProperty("ghost", true);
+        delBtn->setIcon(Icons::get(QStringLiteral("trash-2"), Icons::color()));
+        delBtn->setIconSize(QSize(14, 14));
+        delBtn->setToolTip(I18n::t(QStringLiteral("Delete")));
         connect(delBtn, &QPushButton::clicked, this, [this, i]() { deleteServer(i); });
         row1->addWidget(delBtn);
         vl->addLayout(row1);
+        // capability badges (v2 McpCapabilitiesBadges)
+        auto *badges = new QHBoxLayout;
+        badges->setContentsMargins(0, 0, 0, 0);
+        badges->setSpacing(6);
+        const QList<QPair<QString, QString>> caps{
+            {QStringLiteral("Tools"), QStringLiteral("green")},
+            {QStringLiteral("Resources"), QStringLiteral("blue")},
+            {QStringLiteral("Prompts"), QStringLiteral("purple")},
+        };
+        for (const auto &[label, color] : caps) {
+            auto *b = new QLabel(label, card);
+            b->setObjectName(QStringLiteral("mcpCap"));
+            b->setProperty("cap", color);
+            badges->addWidget(b);
+        }
+        badges->addStretch(1);
+        vl->addLayout(badges);
         auto *urlLbl = new QLabel(url, card);
         urlLbl->setObjectName(QStringLiteral("mcpUrl"));
         vl->addWidget(urlLbl);
+        // collapsible tools list (v2 McpServerCardToolsList)
+        auto *toolsBtn = new QPushButton(
+            QStringLiteral("▾ ") + I18n::t(QStringLiteral("Show details")), card);
+        toolsBtn->setProperty("ghost", true);
+        toolsBtn->setObjectName(QStringLiteral("mcpToolsBtn"));
+        toolsBtn->setCheckable(true);
+        auto *toolsList = new QLabel(
+            QStringLiteral("• ") + I18n::t(QStringLiteral("No tools reported")), card);
+        toolsList->setObjectName(QStringLiteral("mcpToolsList"));
+        toolsList->setVisible(false);
+        connect(toolsBtn, &QPushButton::toggled, this, [toolsBtn, toolsList](bool checked) {
+            toolsBtn->setText(QString(checked ? u"▴ " : u"▾ ") +
+                              I18n::t(QStringLiteral("Show details")));
+            toolsList->setVisible(checked);
+        });
+        vl->addWidget(toolsBtn);
+        vl->addWidget(toolsList);
         m_list->addWidget(card);
     }
     m_list->addStretch(1);
