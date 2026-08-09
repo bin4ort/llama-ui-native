@@ -182,11 +182,18 @@ QLabel *makeRichLabel(const QString &html, const QString &objName,
 class MessageRow : public QWidget {
 public:
     MessageRow(QWidget *parent) : QWidget(parent) {
+        // never stretch vertically beyond the content (the messages
+        // layout would otherwise blow the children up to the full height)
+        setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
         m_layout = new QVBoxLayout(this);
         m_layout->setContentsMargins(0, 0, 0, 0);
         m_layout->setSpacing(2);
     }
-    void addLabel(QLabel *l) { m_label = l; m_layout->addWidget(l); }
+    void addLabel(QLabel *l) {
+        m_label = l;
+        m_layout->addWidget(l, 0, m_right ? Qt::AlignRight : Qt::AlignLeft);
+    }
+    void setRightAligned(bool r) { m_right = r; }
     void addActions(QWidget *actions, Qt::Alignment align) {
         m_actions = actions;
         m_actions->setVisible(true);
@@ -196,7 +203,7 @@ public:
         // v2: muted timestamp under the bubble (my-2)
         auto *ts = new QLabel(I18n::t(QStringLiteral("just now")), this);
         ts->setObjectName(QStringLiteral("msgTimestamp"));
-        m_layout->addWidget(ts, 0, Qt::AlignLeft);
+        m_layout->addWidget(ts, 0, m_right ? Qt::AlignRight : Qt::AlignLeft);
     }
     void setActionsVisible(bool v) {
         if (m_actions) m_actions->setVisible(v && m_label && !m_label->text().isEmpty());
@@ -205,6 +212,7 @@ private:
     QVBoxLayout *m_layout;
     QLabel *m_label = nullptr;
     QWidget *m_actions = nullptr;
+    bool m_right = false;
 };
 
 } // namespace
@@ -316,6 +324,7 @@ void MessageView::addMessage(const ChatMessage &msg) {
                 if (textW < 600) label->setWordWrap(false);
             }
         }
+        row->setRightAligned(true);
         row->addLabel(label);
         m_userRows.append(row);
         updateUserRowWidth(row);
