@@ -511,6 +511,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // recompute the floating-form spacer once the window has settled
     QTimer::singleShot(400, this, [this]() { setEmpty(m_empty); });
 
+
     // restore last conversation if any
     if (!m_store->conversations().isEmpty()) {
         m_store->setActive(&m_store->conversations().first());
