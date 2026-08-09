@@ -241,11 +241,12 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props, QWidge
     buttons->setMinimumHeight(60);
     // v2 footer: buttons grouped and centered in the content pane
     auto *bl = new QHBoxLayout(buttons);
-    bl->setContentsMargins(24, 10, 24, 10);
+    // v2: the footer aligns with the content column (right ~1240)
+    bl->setContentsMargins(69, 10, 160, 10);
     auto *group = new QWidget(buttons);
     group->setObjectName(QStringLiteral("settingsFooterGroup"));
-    group->setMinimumWidth(780);
-    group->setMaximumWidth(780);
+    group->setMinimumWidth(790);
+    group->setMaximumWidth(790);
     auto *gl = new QHBoxLayout(group);
     gl->setContentsMargins(0, 0, 0, 0);
     gl->setSpacing(8);
