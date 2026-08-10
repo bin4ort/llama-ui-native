@@ -116,6 +116,49 @@ int main(int argc, char *argv[]) {
         return app.exec();
     }
 
+    // --geom-dump: print widget tree geometry (dialog/page hierarchy)
+    if (args.contains(QStringLiteral("--geom-dump"))) {
+        QTimer::singleShot(2500, [&window, &app]() {
+            QWidget *target = qApp->activeModalWidget();
+            if (!target) target = &window;
+            // activate the layout of the current stack page first
+            QCoreApplication::processEvents();
+            std::function<void(QWidget *, int)> dump;
+            dump = [&dump](QWidget *w, int depth) {
+                const QRect r = w->geometry();
+                // print both parent-relative and card-relative coords for
+                // the settings field label/checkbox debugging
+                QWidget *card = nullptr;
+                QWidget *p = w->parentWidget();
+                while (p) {
+                    if (p->objectName() == QStringLiteral("settingsCard")) { card = p; break; }
+                    p = p->parentWidget();
+                }
+                fprintf(stderr, "%*s%s[%s] %d,%d %dx%d vis=%d%s\n", depth * 2, "",
+                        w->objectName().toUtf8().constData(),
+                        w->metaObject()->className(),
+                        r.x(), r.y(), r.width(), r.height(), w->isVisible() ? 1 : 0,
+                        card ? " [IN-CARD]" : "");
+                if (card && (w->metaObject()->className() == QStringLiteral("QLabel") ||
+                             w->metaObject()->className() == QStringLiteral("QCheckBox"))) {
+                    const QPoint rel = w->mapTo(card, QPoint(0, 0));
+                    const QPoint g = w->mapToGlobal(QPoint(0, 0));
+                    const QPoint cg = card->mapToGlobal(QPoint(0, 0));
+                    fprintf(stderr, "      REL-TO-CARD: %s at %d,%d global=%d,%d cardGlobal=%d,%d sizeHint=%dx%d\n",
+                            w->metaObject()->className(), rel.x(), rel.y(),
+                            g.x(), g.y(), cg.x(), cg.y(),
+                            w->sizeHint().width(), w->sizeHint().height());
+                }
+                for (QObject *c : w->children())
+                    if (auto *cw = qobject_cast<QWidget *>(c))
+                        dump(cw, depth + 1);
+            };
+            dump(target, 0);
+            app.exit(0);
+        });
+        return app.exec();
+    }
+
     // --screenshot <path> [--shot-width <px>]: grab the window, downscale
     // and exit (used by the automated vision verification loop — small
     // JPEGs fit the local vision model's context window).
@@ -131,7 +174,12 @@ int main(int argc, char *argv[]) {
             if (!target) target = &window;
             QImage img = target->grab().toImage();
             img = img.scaledToWidth(width, Qt::SmoothTransformation);
-            const bool ok = img.save(args.at(idx + 1), "JPG", 65);
+            const QString ext = args.at(idx + 1).endsWith(QStringLiteral(".png"),
+                                                           Qt::CaseInsensitive)
+                                    ? QStringLiteral("PNG")
+                                    : QStringLiteral("JPG");
+            const bool ok = img.save(args.at(idx + 1), ext.toUtf8().constData(),
+                                     ext == QLatin1String("PNG") ? -1 : 65);
             app.exit(ok ? 0 : 1);
         });
         return app.exec();

@@ -19,7 +19,7 @@ QJsonObject load() {
     // Defaults (same keys/defaults as the web app's settings-store)
     QJsonObject defaults{
         {QStringLiteral("language"), QStringLiteral("en")},
-        {QStringLiteral("theme"), QStringLiteral("system")},
+        {QStringLiteral("theme"), QStringLiteral("dark")},
         {QStringLiteral("serverEndpoint"), QStringLiteral("http://127.0.0.1:8080")},
         {QStringLiteral("systemMessage"), QString()},
         {QStringLiteral("temperature"), QString()},
@@ -29,6 +29,18 @@ QJsonObject load() {
         {QStringLiteral("sendOnEnter"), true},
         {QStringLiteral("logLevel"), 2},
         {QStringLiteral("model"), QString()},
+        // v2 capture defaults (settings-store)
+        {QStringLiteral("showMessageStats"), false},
+        {QStringLiteral("showThoughtInProgress"), true},
+        {QStringLiteral("alwaysShowToolCallContent"), false},
+        {QStringLiteral("renderUserContentAsMarkdown"), false},
+        {QStringLiteral("renderThinkingAsMarkdown"), true},
+        {QStringLiteral("fullHeightCodeBlocks"), false},
+        {QStringLiteral("disableAutoScroll"), false},
+        {QStringLiteral("alwaysShowSidebarOnDesktop"), false},
+        {QStringLiteral("showRawModelNames"), false},
+        {QStringLiteral("showModelQuantization"), true},
+        {QStringLiteral("showModelTags"), true},
     };
     if (f.open(QIODevice::ReadOnly)) {
         const auto doc = QJsonDocument::fromJson(f.readAll());

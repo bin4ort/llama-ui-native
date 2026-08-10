@@ -40,6 +40,7 @@ signals:
 private:
     QWidget *buildSection(const QString &title, const QList<SettingField> &fields,
                           bool useComboLang = false, bool useComboTheme = false);
+    QWidget *buildTools();
     QWidget *buildImportExport();
     void apply();
 

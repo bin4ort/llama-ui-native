@@ -210,6 +210,10 @@ QString stylesheet(const QString &paletteId) {
                                 1.0);
     };
     const QColor userBubble = alphaMix(t.primary, t.background, 0.05);
+    // v2 destructive button: bg-destructive/60 (60% alpha over the bg)
+    const QColor destructiveBtn = alphaMix(t.destructive, t.background, 0.6);
+    // v2 input: bg-background = white 9% over page bg; border-input = white 30%
+    const QColor inputBg = alphaMix(QColor(Qt::white), t.background, 0.09);
     // v2 form: bg-muted/60 (light) / bg-muted/75 (dark), border/20
     const bool dark = t.background.lightnessF() < 0.5;
     const QColor formBg = alphaMix(t.muted, t.background, dark ? 0.75 : 0.60);
@@ -227,16 +231,16 @@ QMainWindow, QDialog { background-color: %2; color: %3; }
 #sidebar[expanded="true"] {
   background-color: %27; border: 1px solid %28; border-radius: 16px;
 }
-#sidebar QPushButton[strip="true"] {
+QPushButton[strip="true"] {
   background: transparent; border: none; border-radius: 10px;
   color: %6; font-size: 14px; padding: 6px;
 }
-#sidebar QPushButton[strip="true"]:hover { background-color: %7; color: %3; }
-#sidebar QPushButton[logoBtn="true"] {
-  background-color: rgba(229,229,229,0.05); border: none; border-radius: 18px;
+QPushButton[strip="true"]:hover { background-color: %7; color: %3; }
+QPushButton[logoBtn="true"] {
+  background: transparent; border: none; border-radius: 18px;
   padding: 0;
 }
-#sidebar QPushButton[logoBtn="true"]:hover { background-color: rgba(229,229,229,0.10); }
+QPushButton[logoBtn="true"]:hover { background-color: rgba(229,229,229,0.10); }
 #sidebar QPushButton[sideAction="true"] {
   background: transparent; border: none; border-radius: 8px;
   color: %6; text-align: left; padding: 7px 16px; font-size: 14px;
@@ -294,12 +298,12 @@ QMainWindow, QDialog { background-color: %2; color: %3; }
 }
 
 /* Inputs (UI-SPEC §3.2) */
-QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox {
+QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox, QPlainTextEdit {
   background-color: %19; border: 1px solid %20; border-radius: 8px;
-  color: %3; padding: 6px 10px; min-height: 24px; font-size: 14px;
+  color: %3; padding: 6px 10px; min-height: 22px; font-size: 14px;
   selection-background-color: %13; selection-color: %14;
 }
-QLineEdit:focus, QComboBox:focus { border-color: %12; }
+QLineEdit:focus, QComboBox:focus, QPlainTextEdit:focus { border-color: %12; }
 QLineEdit::placeholder { color: %10; }
 QComboBox::drop-down { border: none; width: 20px; }
 QComboBox QAbstractItemView {
@@ -310,12 +314,12 @@ QComboBox QAbstractItemView {
 /* Checkbox (UI-SPEC §3.5) */
 QCheckBox::indicator {
   width: 16px; height: 16px; border: 1px solid %20; border-radius: 4px;
-  background-color: %22; 
+  background-color: %19;
 }
 QCheckBox::indicator:checked {
   background-color: %13; border-color: %13;
 }
-QCheckBox { color: %3; font-size: 14px; spacing: 8px; }
+QCheckBox { color: %3; font-size: 12px; spacing: 8px; }
 
 /* Buttons (UI-SPEC §3.1) */
 QPushButton {
@@ -328,6 +332,10 @@ QPushButton[outline="true"] {
   background-color: transparent; border: 1px solid %5; color: %3;
 }
 QPushButton[outline="true"]:hover { background-color: %7; }
+QPushButton[outline="true"][destructive="true"] {
+  background-color: %29; color: white; border: 1px solid %5;
+}
+QPushButton[outline="true"][destructive="true"]:hover { background-color: %24; }
 QPushButton[ghost="true"] {
   background-color: transparent; color: %10; border: none;
 }
@@ -377,7 +385,7 @@ QPushButton[primary="true"]:hover { background-color: %15; }
   background-color: %7; border-radius: 12px; color: %3; font-size: 14px;
 }
 #mcpHeader { border-bottom: 1px solid %5; }
-#sidebar QPushButton[mcpActive="true"] { background-color: %7; color: %3; }
+QPushButton[mcpActive="true"] { background-color: %7; color: %3; }
 #mcpTitle { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
 
 QPushButton[persona="true"] {
@@ -462,17 +470,28 @@ QPushButton[full="true"] { width: 100%; }
 #settingsNavList::item { border: none; }
 #settingsVersion { color: %10; font-size: 11px; padding: 4px 8px; }
 #settingsSectionTitle { font-size: 18px; font-weight: 600; }
-#settingsSectionHeader { border-bottom: 1px solid %5; padding-bottom: 24px; }
+#settingsSectionHeader { border-bottom: 1px solid %5; }
 #settingsCard {
-  background-color: %11; border: 1px solid %5; border-radius: 10px;
+  background-color: transparent; border: none;
 }
 #settingsFieldLabel { color: %3; font-size: 14px; font-weight: 500; }
+#settingsGroupTitle { color: %3; font-size: 16px; font-weight: 600; }
+#settingsDesc { color: %10; font-size: 14px; line-height: 20px; }
 #settingsHelp { color: %10; font-size: 12px; }
-#settingsFooter { border-top: 1px solid %5; background-color: %21; }
+#toolsDisclosure {
+  background-color: transparent; border: 1px solid %5; border-radius: 8px;
+  color: %3; font-size: 14px; text-align: left; padding: 8px 12px;
+}
+#toolsDisclosure:hover { background-color: %7; }
+#toolsTable { border-left: 1px solid %5; padding-left: 8px; margin-left: 16px; }
+#toolsColHead { color: %10; font-size: 12px; padding: 4px 8px; }
+#toolsRowName { color: %3; font-size: 14px; padding: 6px 8px; }
+#toolsDivider { background-color: %5; }
+#settingsFooter { }
 #settingsFooter QPushButton { padding: 6px 14px; min-height: 20px; font-size: 14px; }
 
 /* Dialogs (UI-SPEC §3.7) */
-QDialog#appDialog { background-color: %21; border: 1px solid %5; border-radius: 10px; }
+QDialog#appDialog { background-color: %2; border: 1px solid %5; border-radius: 10px; }
 QDialog QLabel#dialogTitle { font-size: 18px; font-weight: 600; }
 QDialog QLabel#dialogDesc { color: %10; font-size: 14px; }
 
@@ -501,8 +520,8 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: trans
                  hex(t.muted),              // 16
                  hex(userBubble),           // 17 (primary/5)
                  hex(t.muted),              // 18
-                 hex(t.input),              // 19
-                 hex(t.input),              // 20
+                 hex(inputBg),              // 19 (input bg: white 9% over bg)
+                 hex(t.input),              // 20 (input border: white 30%)
                  hex(t.popover),            // 21
                  hex(t.card),               // 22
                  hex(t.destructive),        // 23
@@ -510,7 +529,8 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: trans
                  hex(formBg),               // 25 (composer bg)
                  hex(formBorder),           // 26 (composer border)
                  hex(sideBg),               // 27 (sidebar panel bg)
-                 hex(sideBorder));          // 28 (sidebar panel border)
+                 hex(sideBorder),           // 28 (sidebar panel border)
+                 hex(destructiveBtn));      // 29 (destructive/60 btn bg)
 }
 
 } // namespace Theme
