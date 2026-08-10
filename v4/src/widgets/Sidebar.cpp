@@ -31,38 +31,43 @@ Sidebar::Sidebar(ConversationStore *store, QWidget *parent)
     setFixedWidth(48); // v2: collapsed strip w-12
 
     m_outer = new QVBoxLayout(this);
-    m_outer->setContentsMargins(4, 8, 4, 6);
-    m_outer->setSpacing(2);
+    m_outer->setContentsMargins(8, 8, 0, 6); // v2: aside p-2 area — logo at x16
+    m_outer->setSpacing(0);
 
     // logo row: expand/collapse toggle + close button when expanded
-    auto *topRow = new QHBoxLayout;
-    topRow->setContentsMargins(0, 0, 0, 0);
+    // (hosted in a fixed-height widget — a bare layout-in-layout gets a
+    // broken sizeHint in Qt6 and collapses to 8px, shifting everything)
+    auto *topHost = new QWidget(this);
+    topHost->setFixedHeight(40);
+    auto *topRow = new QHBoxLayout(topHost);
+    topRow->setContentsMargins(8, 8, 4, 0); // v2: logo at (16,16), close at (248,16)
     topRow->setSpacing(0);
-    m_logo = new QPushButton(this);
+    m_logo = new QPushButton(topHost);
     m_logo->setProperty("strip", true);
     m_logo->setProperty("logoBtn", true);
     m_logo->setFixedSize(36, 36);
-    m_logo->setIconSize(QSize(20, 20));
+    m_logo->setIconSize(QSize(16, 16)); // v2: size-4 logo
     m_logo->setToolTip(I18n::t(QStringLiteral("Expand navigation")));
     connect(m_logo, &QPushButton::clicked, this, [this]() { setExpanded(!m_expanded); });
     topRow->addWidget(m_logo);
     topRow->addStretch(1);
-    m_closeBtn = new QPushButton(this);
+    m_closeBtn = new QPushButton(topHost);
     m_closeBtn->setProperty("strip", true);
     m_closeBtn->setProperty("logoBtn", true);
     m_closeBtn->setFixedSize(36, 36);
-    m_closeBtn->setIconSize(QSize(20, 20));
+    m_closeBtn->setIconSize(QSize(16, 16)); // v2: size-4
     m_closeBtn->setToolTip(I18n::t(QStringLiteral("Collapse navigation")));
     m_closeBtn->setVisible(false);
     connect(m_closeBtn, &QPushButton::clicked, this, [this]() { setExpanded(false); });
     topRow->addWidget(m_closeBtn);
-    m_outer->addLayout(topRow);
+    m_outer->addWidget(topHost);
 
     // action rows (v2 SIDEBAR_ACTIONS_ITEMS: New chat / Search / MCP / Settings)
-    m_actionsLayout = new QVBoxLayout;
-    m_actionsLayout->setContentsMargins(0, 4, 0, 0);
-    m_actionsLayout->setSpacing(6);
-    m_outer->addLayout(m_actionsLayout);
+    auto *actionsHost = new QWidget(this);
+    m_actionsLayout = new QVBoxLayout(actionsHost);
+    m_actionsLayout->setContentsMargins(8, 4, 0, 0); // adjusted per state in setExpanded // v2: buttons at y52 — Qt6 paints QSS button content +8 low
+    m_actionsLayout->setSpacing(4); // v2: gap-1 between action rows (40px pitch)
+    m_outer->addWidget(actionsHost);
     rebuildActions();
 
     // conversation list
@@ -102,6 +107,8 @@ void Sidebar::setExpanded(bool expanded) {
     m_logo->setToolTip(expanded ? I18n::t(QStringLiteral("Collapse navigation"))
                                 : I18n::t(QStringLiteral("Expand navigation")));
     applyPanelStyle();
+    if (m_actionsLayout)
+        m_actionsLayout->setContentsMargins(8, expanded ? 4 : 12, 0, 0);
     if (expanded) {
         refreshConversations();
         rebuildActions();
@@ -152,7 +159,12 @@ void Sidebar::rebuildActions() {
         auto *btn = new QPushButton(this);
         btn->setProperty("sideAction", true);
         btn->setProperty("iconName", a.icon);
-        btn->setIconSize(QSize(18, 18));
+        if (qEnvironmentVariableIsSet("LLMUI_NOICON")) { btn->setIconSize(QSize(16,16)); }
+        else btn->setIconSize(QSize(16, 16)); // v2: size-4 icons
+        btn->setMinimumHeight(36); // v2: h-9 action rows
+        btn->setMaximumHeight(36);
+        btn->setFixedWidth(m_expanded ? 272 : 36); // v2: w-full rows / w-9 strip
+        btn->setContentsMargins(m_expanded ? QMargins(11, 0, 16, 0) : QMargins(0, 0, 0, 0));
         if (m_expanded) {
             // v2: the kbd hint is hidden until hover
             btn->setText(a.label);
@@ -173,7 +185,7 @@ void Sidebar::rebuildActions() {
             } else if (a.slot == QStringLiteral("mcp")) emit mcpClicked();
             else emit settingsClicked();
         });
-        m_actionsLayout->addWidget(btn);
+        m_actionsLayout->addWidget(btn, 0, m_expanded ? Qt::AlignLeft : Qt::AlignHCenter);
     }
     if (m_searchMode && m_expanded && m_searchInput)
         connect(m_searchInput, &QLineEdit::textChanged, this, [this]() { rebuildList(); });

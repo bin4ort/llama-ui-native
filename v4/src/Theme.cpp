@@ -283,7 +283,8 @@ QPushButton[logoBtn="true"] {
 QPushButton[logoBtn="true"]:hover { background-color: rgba(229,229,229,0.10); }
 #sidebar QPushButton[sideAction="true"] {
   background: transparent; border: none; border-radius: 8px;
-  color: %6; text-align: left; padding: 7px 16px; font-size: 14px;
+  color: %3; text-align: left; padding: 0; font-size: 14px;
+  font-weight: 500;
 }
 #sidebar QPushButton[sideAction="true"]:hover { background-color: %7; color: %3; }
 #sidebar QLabel { color: %6; }
