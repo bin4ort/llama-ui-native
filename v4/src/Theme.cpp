@@ -122,41 +122,70 @@ Tokens tokens(const QString &paletteId) {
         apply(&Tokens::background, "oklch(0.25 0.01 252)"); apply(&Tokens::foreground, "oklch(0.88 0.02 240)");
         apply(&Tokens::card, "oklch(0.27 0.01 252)"); apply(&Tokens::popover, "oklch(0.27 0.01 252)");
         apply(&Tokens::primary, "oklch(0.80 0.04 225)"); apply(&Tokens::primaryForeground, "oklch(0.985 0 0)");
+        apply(&Tokens::secondary, "oklch(0.30 0.01 252)");
+        apply(&Tokens::muted, "oklch(0.35 0.02 240)");
         apply(&Tokens::accent, "oklch(0.65 0.07 195)"); apply(&Tokens::accentForeground, "oklch(0.985 0 0)");
         apply(&Tokens::mutedForeground, "oklch(0.6 0.03 240)"); apply(&Tokens::border, "oklch(0.88 0.02 240 / 15%)");
         apply(&Tokens::input, "oklch(0.88 0.02 240 / 15%)"); apply(&Tokens::ring, "oklch(0.65 0.07 195)");
-        apply(&Tokens::sidebar, "oklch(0.22 0.01 252)"); apply(&Tokens::codeBackground, "oklch(0.22 0.01 252)");
+        apply(&Tokens::sidebar, "oklch(0.22 0.01 252)"); apply(&Tokens::sidebarAccent, "oklch(0.30 0.01 252)");
+        apply(&Tokens::sidebarBorder, "oklch(0.88 0.02 240 / 10%)");
+        apply(&Tokens::codeBackground, "oklch(0.22 0.01 252)");
     } else if (paletteId == QStringLiteral("dracula")) {
         apply(&Tokens::background, "oklch(0.22 0.02 290)"); apply(&Tokens::foreground, "oklch(0.96 0.01 290)");
         apply(&Tokens::card, "oklch(0.24 0.02 290)"); apply(&Tokens::primary, "oklch(0.8 0.1 315)");
+        apply(&Tokens::secondary, "oklch(0.30 0.02 290)");
+        apply(&Tokens::muted, "oklch(0.35 0.02 280)");
         apply(&Tokens::accent, "oklch(0.7 0.15 315)"); apply(&Tokens::mutedForeground, "oklch(0.55 0.03 280)");
         apply(&Tokens::border, "oklch(0.96 0.01 290 / 15%)"); apply(&Tokens::input, "oklch(0.96 0.01 290 / 15%)");
-        apply(&Tokens::ring, "oklch(0.7 0.15 315)"); apply(&Tokens::codeBackground, "oklch(0.2 0.02 290)");
+        apply(&Tokens::ring, "oklch(0.7 0.15 315)");
+        apply(&Tokens::sidebar, "oklch(0.20 0.02 290)"); apply(&Tokens::sidebarAccent, "oklch(0.30 0.02 290)");
+        apply(&Tokens::sidebarBorder, "oklch(0.96 0.01 290 / 10%)");
+        apply(&Tokens::codeBackground, "oklch(0.2 0.02 290)");
     } else if (paletteId == QStringLiteral("cobalt")) {
         apply(&Tokens::background, "oklch(0.22 0.025 255)"); apply(&Tokens::foreground, "oklch(0.92 0.01 255)");
         apply(&Tokens::card, "oklch(0.24 0.025 255)"); apply(&Tokens::primary, "oklch(0.78 0.1 75)");
-        apply(&Tokens::accent, "oklch(0.72 0.14 75)"); apply(&Tokens::border, "oklch(0.92 0.01 255 / 10%)");
+        apply(&Tokens::secondary, "oklch(0.30 0.02 255)");
+        apply(&Tokens::muted, "oklch(0.35 0.02 260)");
+        apply(&Tokens::accent, "oklch(0.72 0.14 75)"); apply(&Tokens::mutedForeground, "oklch(0.6 0.04 260)");
+        apply(&Tokens::border, "oklch(0.92 0.01 255 / 10%)");
         apply(&Tokens::input, "oklch(0.92 0.01 255 / 10%)"); apply(&Tokens::ring, "oklch(0.72 0.14 75)");
+        apply(&Tokens::sidebar, "oklch(0.20 0.025 255)"); apply(&Tokens::sidebarAccent, "oklch(0.30 0.02 255)");
+        apply(&Tokens::sidebarBorder, "oklch(0.92 0.01 255 / 8%)");
         apply(&Tokens::codeBackground, "oklch(0.2 0.025 255)");
     } else if (paletteId == QStringLiteral("solarized")) {
         apply(&Tokens::background, "oklch(0.24 0.02 205)"); apply(&Tokens::foreground, "oklch(0.78 0.03 190)");
         apply(&Tokens::card, "oklch(0.26 0.02 205)"); apply(&Tokens::primary, "oklch(0.55 0.1 185)");
-        apply(&Tokens::primaryForeground, "oklch(0.97 0.01 100)"); apply(&Tokens::accent, "oklch(0.68 0.15 55)");
+        apply(&Tokens::primaryForeground, "oklch(0.97 0.01 100)");
+        apply(&Tokens::secondary, "oklch(0.32 0.02 210)");
+        apply(&Tokens::muted, "oklch(0.35 0.03 215)");
+        apply(&Tokens::accent, "oklch(0.68 0.15 55)");
         apply(&Tokens::mutedForeground, "oklch(0.62 0.04 80)"); apply(&Tokens::border, "oklch(0.78 0.03 190 / 12%)");
         apply(&Tokens::input, "oklch(0.78 0.03 190 / 12%)"); apply(&Tokens::ring, "oklch(0.68 0.15 55)");
+        apply(&Tokens::sidebar, "oklch(0.22 0.02 205)"); apply(&Tokens::sidebarAccent, "oklch(0.32 0.02 210)");
+        apply(&Tokens::sidebarBorder, "oklch(0.78 0.03 190 / 10%)");
         apply(&Tokens::codeBackground, "oklch(0.22 0.02 205)");
     } else if (paletteId == QStringLiteral("gruvbox")) {
         apply(&Tokens::background, "oklch(0.23 0.02 85)"); apply(&Tokens::foreground, "oklch(0.88 0.04 85)");
         apply(&Tokens::card, "oklch(0.25 0.02 85)"); apply(&Tokens::primary, "oklch(0.78 0.12 80)");
+        apply(&Tokens::secondary, "oklch(0.32 0.02 85)");
         apply(&Tokens::accent, "oklch(0.75 0.14 85)"); apply(&Tokens::muted, "oklch(0.4 0.02 80)");
+        apply(&Tokens::mutedForeground, "oklch(0.6 0.04 80)");
         apply(&Tokens::border, "oklch(0.88 0.04 85 / 15%)"); apply(&Tokens::input, "oklch(0.88 0.04 85 / 15%)");
-        apply(&Tokens::ring, "oklch(0.75 0.14 85)"); apply(&Tokens::codeBackground, "oklch(0.21 0.02 85)");
+        apply(&Tokens::ring, "oklch(0.75 0.14 85)");
+        apply(&Tokens::sidebar, "oklch(0.21 0.02 85)"); apply(&Tokens::sidebarAccent, "oklch(0.32 0.02 85)");
+        apply(&Tokens::sidebarBorder, "oklch(0.88 0.04 85 / 10%)");
+        apply(&Tokens::codeBackground, "oklch(0.21 0.02 85)");
     } else if (paletteId == QStringLiteral("amoled")) {
         apply(&Tokens::background, "oklch(0.08 0 0)"); apply(&Tokens::foreground, "oklch(0.96 0 0)");
         apply(&Tokens::card, "oklch(0.12 0 0)"); apply(&Tokens::primary, "oklch(0.88 0 0)");
-        apply(&Tokens::primaryForeground, "oklch(0.12 0 0)"); apply(&Tokens::accent, "oklch(0.18 0 0)");
+        apply(&Tokens::primaryForeground, "oklch(0.12 0 0)");
+        apply(&Tokens::secondary, "oklch(0.18 0 0)");
+        apply(&Tokens::muted, "oklch(0.15 0 0)");
+        apply(&Tokens::accent, "oklch(0.18 0 0)");
         apply(&Tokens::mutedForeground, "oklch(0.62 0 0)"); apply(&Tokens::border, "oklch(0.96 0 0 / 15%)");
         apply(&Tokens::input, "oklch(0.96 0 0 / 15%)"); apply(&Tokens::ring, "oklch(0.45 0 0)");
+        apply(&Tokens::sidebar, "oklch(0.10 0 0)"); apply(&Tokens::sidebarAccent, "oklch(0.18 0 0)");
+        apply(&Tokens::sidebarBorder, "oklch(0.96 0 0 / 8%)");
         apply(&Tokens::codeBackground, "oklch(0.1 0 0)");
     } else if (paletteId == QStringLiteral("snow")) {
         apply(&Tokens::background, "oklch(0.97 0.02 70)"); apply(&Tokens::foreground, "oklch(0.2 0.03 70)");
@@ -165,27 +194,38 @@ Tokens tokens(const QString &paletteId) {
         apply(&Tokens::accent, "oklch(0.9 0.04 60)"); apply(&Tokens::accentForeground, "oklch(0.25 0.05 70)");
         apply(&Tokens::muted, "oklch(0.94 0.03 68)"); apply(&Tokens::mutedForeground, "oklch(0.48 0.05 65)");
         apply(&Tokens::border, "oklch(0.2 0.03 70 / 12%)"); apply(&Tokens::input, "oklch(0.2 0.03 70 / 12%)");
-        apply(&Tokens::ring, "oklch(0.38 0.06 65)"); apply(&Tokens::codeBackground, "oklch(0.96 0.02 70)");
+        apply(&Tokens::ring, "oklch(0.38 0.06 65)");
+        apply(&Tokens::sidebar, "oklch(0.96 0.02 70)"); apply(&Tokens::sidebarAccent, "oklch(0.94 0.03 68)");
+        apply(&Tokens::sidebarBorder, "oklch(0.2 0.03 70 / 8%)");
+        apply(&Tokens::codeBackground, "oklch(0.96 0.02 70)");
     } else if (paletteId == QStringLiteral("gruvbox-light")) {
         apply(&Tokens::background, "oklch(0.95 0.03 85)"); apply(&Tokens::foreground, "oklch(0.22 0.04 85)");
         apply(&Tokens::card, "oklch(0.97 0.02 85)"); apply(&Tokens::primary, "oklch(0.45 0.08 70)");
+        apply(&Tokens::secondary, "oklch(0.90 0.03 85)");
         apply(&Tokens::accent, "oklch(0.85 0.06 70)"); apply(&Tokens::muted, "oklch(0.88 0.03 85)");
+        apply(&Tokens::mutedForeground, "oklch(0.5 0.05 80)");
         apply(&Tokens::border, "oklch(0.22 0.04 85 / 12%)"); apply(&Tokens::input, "oklch(0.22 0.04 85 / 12%)");
-        apply(&Tokens::ring, "oklch(0.45 0.08 70)"); apply(&Tokens::codeBackground, "oklch(0.93 0.03 85)");
+        apply(&Tokens::ring, "oklch(0.45 0.08 70)");
+        apply(&Tokens::sidebar, "oklch(0.93 0.03 85)"); apply(&Tokens::sidebarAccent, "oklch(0.90 0.03 85)");
+        apply(&Tokens::sidebarBorder, "oklch(0.22 0.04 85 / 8%)");
+        apply(&Tokens::codeBackground, "oklch(0.93 0.03 85)");
     } else if (paletteId == QStringLiteral("ionized-purple")) {
         apply(&Tokens::primary, "oklch(0.55 0.12 315)"); apply(&Tokens::accent, "oklch(0.5 0.15 315)");
         apply(&Tokens::mutedForeground, "oklch(0.65 0.06 315)"); apply(&Tokens::border, "oklch(0.45 0.12 315 / 16%)");
         apply(&Tokens::input, "oklch(0.45 0.12 315 / 16%)"); apply(&Tokens::ring, "oklch(0.5 0.15 315)");
+        apply(&Tokens::sidebarBorder, "oklch(0.45 0.12 315 / 10%)");
         apply(&Tokens::codeForeground, "oklch(0.78 0.04 315)");
     } else if (paletteId == QStringLiteral("ionized-red")) {
         apply(&Tokens::primary, "oklch(0.52 0.12 22)"); apply(&Tokens::accent, "oklch(0.48 0.16 20)");
         apply(&Tokens::mutedForeground, "oklch(0.62 0.06 20)"); apply(&Tokens::border, "oklch(0.42 0.12 20 / 16%)");
         apply(&Tokens::input, "oklch(0.42 0.12 20 / 16%)"); apply(&Tokens::ring, "oklch(0.48 0.16 20)");
+        apply(&Tokens::sidebarBorder, "oklch(0.42 0.12 20 / 10%)");
         apply(&Tokens::codeForeground, "oklch(0.78 0.04 20)");
     } else if (paletteId == QStringLiteral("ionized-cyan")) {
         apply(&Tokens::primary, "oklch(0.58 0.12 245)"); apply(&Tokens::accent, "oklch(0.52 0.15 245)");
         apply(&Tokens::mutedForeground, "oklch(0.65 0.06 245)"); apply(&Tokens::border, "oklch(0.45 0.12 245 / 16%)");
         apply(&Tokens::input, "oklch(0.45 0.12 245 / 16%)"); apply(&Tokens::ring, "oklch(0.52 0.15 245)");
+        apply(&Tokens::sidebarBorder, "oklch(0.45 0.12 245 / 10%)");
         apply(&Tokens::codeForeground, "oklch(0.78 0.06 245)");
     }
     return tk;
