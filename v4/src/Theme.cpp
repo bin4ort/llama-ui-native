@@ -516,7 +516,7 @@ QPushButton[full="true"] { width: 100%; }
 #modelList::item:selected { background-color: %7; color: %3; }
 
 /* Settings page (v2 SettingsChatDesktopSidebar + section cards) */
-#settingsNav { background-color: %21; border-right: 1px solid %5; }
+#settingsNav { background-color: transparent; }
 #settingsHeading { font-size: 24px; font-weight: 600; }
 #settingsNavList { background: transparent; }
 #settingsNavList::item { border: none; }

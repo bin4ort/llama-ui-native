@@ -158,6 +158,7 @@ void Sidebar::rebuildActions() {
     for (const auto &a : actions) {
         auto *btn = new QPushButton(this);
         btn->setProperty("sideAction", true);
+        btn->setProperty("strip", true);
         btn->setProperty("iconName", a.icon);
         if (qEnvironmentVariableIsSet("LLMUI_NOICON")) { btn->setIconSize(QSize(16,16)); }
         else btn->setIconSize(QSize(16, 16)); // v2: size-4 icons

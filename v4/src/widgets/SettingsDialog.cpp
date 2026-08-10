@@ -363,7 +363,7 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     buttons->setMinimumHeight(84); // v2: p-6 (48) + buttons (36)
     buttons->setMaximumHeight(84);
     auto *bl = new QHBoxLayout(buttons);
-    bl->setContentsMargins(24, 24, 24, 24); // v2: p-6
+    bl->setContentsMargins(24, 23, 24, 24); // v2: p-6 -> buttons at y840
     bl->setSpacing(8);
     auto *reset = new QPushButton(I18n::t(QStringLiteral("Reset to default")));
     reset->setProperty("outline", true);
