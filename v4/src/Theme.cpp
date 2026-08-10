@@ -409,10 +409,20 @@ QPushButton[chip="true"] {
 }
 QPushButton[chip="true"]:hover { background-color: %7; border-color: %12; }
 
-/* Server error banner (UI-SPEC §6.6) */
-#bannerHost { background-color: %23; border-radius: 10px; padding: 2px; }
-#errorBanner { color: white; font-size: 13px; padding: 4px 8px; }
-#bannerHost QPushButton[outline="true"] { border-color: rgba(255,255,255,0.5); color: white; }
+/* Server error banner (v2 ChatScreenServerError: Alert destructive =
+ * text-destructive bg-card, rounded-lg border, px-4 py-3, text-sm) */
+#bannerHost {
+  background-color: %11; border: 1px solid %5; border-radius: 10px;
+  padding: 6px 16px;
+}
+#errorBanner { color: %23; font-size: 14px; font-weight: 600; }
+#errorBannerDetail { color: %23; font-size: 12px; opacity: 0.9; }
+#bannerIcon { color: %23; }
+#bannerHost QPushButton[outline="true"] {
+  background-color: rgba(255,100,103,0.20); border: none; color: %23;
+  font-size: 12px; padding: 4px 8px; border-radius: 8px;
+}
+#bannerHost QPushButton[outline="true"]:hover { background-color: rgba(255,100,103,0.30); }
 
 /* Reasoning block (UI-SPEC §3.6) */
 QPushButton[reasoningToggle="true"] {
@@ -523,7 +533,6 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: trans
                  hex(inputBg),              // 19 (input bg: white 9% over bg)
                  hex(t.input),              // 20 (input border: white 30%)
                  hex(t.popover),            // 21
-                 hex(t.card),               // 22
                  hex(t.destructive),        // 23
                  hex(t.destructive.lighter(115)), // 24
                  hex(formBg),               // 25 (composer bg)

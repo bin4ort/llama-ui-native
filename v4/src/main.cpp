@@ -134,11 +134,12 @@ int main(int argc, char *argv[]) {
                     if (p->objectName() == QStringLiteral("settingsCard")) { card = p; break; }
                     p = p->parentWidget();
                 }
-                fprintf(stderr, "%*s%s[%s] %d,%d %dx%d vis=%d%s\n", depth * 2, "",
+                fprintf(stderr, "%*s%s[%s] %d,%d %dx%d vis=%d%s sh=%dx%d\n", depth * 2, "",
                         w->objectName().toUtf8().constData(),
                         w->metaObject()->className(),
                         r.x(), r.y(), r.width(), r.height(), w->isVisible() ? 1 : 0,
-                        card ? " [IN-CARD]" : "");
+                        card ? " [IN-CARD]" : "",
+                        w->sizeHint().width(), w->sizeHint().height());
                 if (card && (w->metaObject()->className() == QStringLiteral("QLabel") ||
                              w->metaObject()->className() == QStringLiteral("QCheckBox"))) {
                     const QPoint rel = w->mapTo(card, QPoint(0, 0));
@@ -154,6 +155,18 @@ int main(int argc, char *argv[]) {
                         dump(cw, depth + 1);
             };
             dump(target, 0);
+            if (auto *col = window.chatCol()) {
+                fprintf(stderr, "--- chatCol items ---\n");
+                for (int i = 0; i < col->count(); ++i) {
+                    QLayoutItem *it = col->itemAt(i);
+                    QWidget *w = it->widget();
+                    fprintf(stderr, "  [%d] %s rect=%dx%d h=%d stretch=%d\n", i,
+                            w ? w->objectName().toUtf8().constData() : "(spacer)",
+                            it->geometry().width(), it->geometry().height(),
+                            it->geometry().y(),
+                            col->stretch(i));
+                }
+            }
             app.exit(0);
         });
         return app.exec();

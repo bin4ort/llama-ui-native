@@ -190,7 +190,7 @@ static QJsonObject encodeAttachment(const QString &path) {
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setWindowTitle(QStringLiteral("Llama UI Native"));
-    resize(1440, 900);
+    resize(1400, 900); // v2 capture viewport
 
     m_config = Config::load();
     I18n::init();
@@ -210,12 +210,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     layout->addWidget(m_sidebar);
 
     auto *chatCol = new QVBoxLayout;
+    m_chatCol = chatCol;
     chatCol->setContentsMargins(0, 0, 0, 0);
     chatCol->setSpacing(8);
-
     // server error banner (v2 ChatScreenServerError) — above the composer
     auto *bannerHost = new QWidget(central);
     bannerHost->setObjectName(QStringLiteral("bannerHost"));
+    bannerHost->setAttribute(Qt::WA_StyledBackground);
     auto *bl = new QHBoxLayout(bannerHost);
     bl->setContentsMargins(0, 0, 0, 0);
     bl->setSpacing(8);
@@ -250,9 +251,30 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_messages = new MessageView(central);
     chatCol->addWidget(m_messages, 1);
 
+    // v2 ChatScreenGreeting: lives in the floating container with the
+    // form (mb-6 above it), NOT inside the messages scroll area
+    m_greetingHost = new QWidget(central);
+    m_greetingHost->setVisible(false);
+    auto *gh = new QVBoxLayout(m_greetingHost);
+    gh->setContentsMargins(0, 0, 0, 0); // v2: greeting hugs the form
+    gh->setSpacing(8);                    // v2: h1 mb-2
+    m_greetingTitle = new QLabel(I18n::t(QStringLiteral("Hello there")));
+    m_greetingTitle->setObjectName(QStringLiteral("greetingTitle"));
+    m_greetingTitle->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+    m_greetingTitle->setFixedHeight(36); // v2: text-3xl lh-9
+    gh->addWidget(m_greetingTitle);
+    m_greetingSub = new QLabel(
+        I18n::t(QStringLiteral("Type a message or upload files to get started")));
+    m_greetingSub->setObjectName(QStringLiteral("greetingSub"));
+    m_greetingSub->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+    m_greetingSub->setFixedHeight(28); // v2: text-lg lh-7
+    gh->addWidget(m_greetingSub);
+
     m_composer = new Composer(central);
     chatCol->addWidget(m_composer, 0, Qt::AlignHCenter);
-    chatCol->insertWidget(chatCol->indexOf(m_composer), bannerHost, 0, Qt::AlignHCenter); // v2: banner above the form
+    // v2 order in the floating container: greeting, banner, form
+    chatCol->insertWidget(chatCol->indexOf(m_composer), bannerHost, 0, Qt::AlignHCenter);
+    chatCol->insertWidget(chatCol->indexOf(bannerHost), m_greetingHost, 0, Qt::AlignHCenter);
     // v2 floats the form at ~50dvh on the empty chat (md:bottom-[calc(50dvh-7rem)])
     // and pins it to the bottom once messages exist
     // v2: the form floats with bottom-4 (16px) — keep a 10px pad so the
@@ -527,10 +549,7 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
     QMainWindow::resizeEvent(event);
     // keep the floating form at ~50dvh on the empty chat (v2)
     if (m_formSpacer && m_empty) {
-        const int h = height();
-        const int desiredBottom = h / 2 + 112;
-        const int spacer = h - desiredBottom - 18;
-        m_formSpacer->setFixedHeight(qMax(20, spacer));
+        updateFormSpacer();
     }
 }
 
@@ -540,16 +559,23 @@ void MainWindow::setEmpty(bool empty) {
     m_empty = empty;
     if (m_formSpacer) {
         m_formSpacer->setVisible(empty);
-        if (empty) {
-            // v2: form bottom sits at 50dvh - 7rem from the window bottom
-            const int h = height();
-            const int desiredBottom = h / 2 + 112; // bottom edge y of the form
-            const int spacer = h - desiredBottom - 18; // 8px margin + 10px pad
-            m_formSpacer->setFixedHeight(qMax(20, spacer));
-        }
+        if (empty) updateFormSpacer();
     }
+    if (m_greetingHost) m_greetingHost->setVisible(empty);
 }
 
+void MainWindow::updateFormSpacer() {
+    if (!m_formSpacer) return;
+    // v2 ChatScreen: the sticky container (greeting + banner + form) has
+    // bottom-[calc(50dvh-7rem)] + bottom-2. With a 112px composer the form
+    // top lands at 50dvh-2px; the packed block below the composer is
+    // [spacer][bottomPad 10] with 8px chatCol gaps, so:
+    //   composerTop = h - composerH - 8 - spacer - 8 - 10
+    const int h = height();
+    const int composerTop = h / 2 - 2; // v2: 50dvh - 2px
+    const int spacer = h - composerTop - m_composer->height() - 26;
+    m_formSpacer->setFixedHeight(qMax(20, spacer));
+}
 void MainWindow::applyTheme(const QString &paletteId) {
     qApp->setStyleSheet(Theme::stylesheet(paletteId));
     const auto t = Theme::tokens(paletteId);

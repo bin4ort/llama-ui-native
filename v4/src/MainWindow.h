@@ -7,6 +7,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QMainWindow>
+#include <QVBoxLayout>
 #include "Theme.h"
 
 class Api;
@@ -27,6 +28,7 @@ public:
     ~MainWindow() override = default;
 
     void expandSidebarForTest();
+    QVBoxLayout *chatCol() const { return m_chatCol; }
     void overrideThemeForTest(const QString &id);
     void openSettingsForTest(int section = -1);
     void openMcpForTest() { openMcp(); }
@@ -38,6 +40,7 @@ protected:
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
+    void updateFormSpacer();
 
 public slots:
     /** E2E self-test: new chat -> send message -> wait for reply -> save
@@ -88,6 +91,10 @@ private:
     QLabel *m_errorBanner = nullptr;
     QLabel *m_errorBannerDetail = nullptr;
     QWidget *m_formSpacer = nullptr;
+    QWidget *m_greetingHost = nullptr;
+    QLabel *m_greetingTitle = nullptr;
+    QLabel *m_greetingSub = nullptr;
+    QVBoxLayout *m_chatCol = nullptr;
     bool m_empty = true;
     QJsonObject m_config;
     QString m_model;

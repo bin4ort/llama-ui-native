@@ -226,7 +226,7 @@ MessageView::MessageView(QWidget *parent) : QScrollArea(parent) {
     m_container = new QWidget;
     m_layout = new QVBoxLayout(m_container);
     m_layout->setContentsMargins(16, 16, 16, 16);
-    m_layout->setSpacing(12);
+    m_layout->setSpacing(8); // v2: greeting title mb-2
     m_rows = m_layout;
     setWidget(m_container);
     showGreeting();
@@ -259,21 +259,9 @@ void MessageView::clearLayout() {
 }
 
 void MessageView::showGreeting() {
+    // the greeting now lives in MainWindow's floating container (v2
+    // ChatScreenGreeting); the messages area stays empty
     clearLayout();
-    // v2: the greeting hugs the floating form (mb-6), not vertically centered
-    m_rows->addStretch(1);
-    auto *title = new QLabel(I18n::t(QStringLiteral("Hello there")));
-    title->setObjectName(QStringLiteral("greetingTitle"));
-    title->setAlignment(Qt::AlignCenter);
-    m_rows->addWidget(title);
-    auto *sub = new QLabel(I18n::t(QStringLiteral("Type a message or upload files to get started")));
-    sub->setObjectName(QStringLiteral("greetingSub"));
-    sub->setAlignment(Qt::AlignCenter);
-    sub->setWordWrap(true);
-    m_rows->addWidget(sub);
-    auto *bottomGap = new QWidget(this);
-    bottomGap->setFixedHeight(8);
-    m_rows->addWidget(bottomGap);
 }
 
 void MessageView::addMessage(const ChatMessage &msg) {
