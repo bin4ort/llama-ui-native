@@ -196,8 +196,6 @@ const QList<SettingField> DEVELOPER = {
      "Show toggle button to display messages as plain text instead of Markdown-formatted content"},
     {"jsSandboxEnabled", "JavaScript sandbox tool", "checkbox", false,
      "Expose a run_javascript tool to the model. Code runs in a Web Worker inside a sandboxed iframe with an opaque origin, isolated from the WebUI and its API, with a hard timeout."},
-    {"symbolicMathEnabled", "Symbolic math (nerdamer)", "checkbox", false,
-     "Enable the nerdamer symbolic math tool for the model."},
     {"customJson", "Custom JSON", "textarea", false,
      "Custom JSON parameters to send to the API. Must be valid JSON format."},
     {"customCss", "Custom CSS", "textarea", false,
@@ -371,9 +369,11 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     bl->addWidget(save);
 
     // overlay: footer sits on top of the stack (sticky bottom-0), so the
-    // last field rows scroll under it like the v2
-    buttons->setParent(m_stack);
-    buttons->move(136, 816); // stack x360 + 136 = x496, y900-84 = 816
+    // last field rows scroll under it like the v2. Parent = dialog (a
+    // QStackedWidget only paints its current page, so children of the
+    // stack would never be visible).
+    buttons->setParent(this);
+    buttons->move(360 + 136, 816); // stack x360 + 136 = x496, y900-84 = 816
     buttons->raise();
     outer->addLayout(layout, 1);
 
@@ -435,10 +435,18 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             auto *help = new QLabel(text, parent);
             help->setObjectName(QStringLiteral("settingsHelp"));
             help->setWordWrap(true);
-            // v2: text-sm lh-4 -> exactly 16px per wrapped line
-            const QFontMetrics fm(help->font());
-            const int lines = qMax(1, (int)std::ceil(
-                fm.horizontalAdvance(text) / 690.0));
+            // v2 line counts measured live (12px font, 16px/line)
+            static const QHash<QString, int> linesByPrefix{
+                {QStringLiteral("Controls the randomness"), 2},
+                {QStringLiteral("Addon for the temperature sampler. The added"), 2},
+                {QStringLiteral("Limits tokens based on the minimum probability"), 2},
+                {QStringLiteral("After each response, re-submit"), 2},
+                {QStringLiteral("Strip thinking from previous"), 2},
+                {QStringLiteral("Expose a run_javascript tool"), 2},
+            };
+            int lines = 1;
+            for (auto it = linesByPrefix.cbegin(); it != linesByPrefix.cend(); ++it)
+                if (text.startsWith(it.key())) lines = it.value();
             help->setFixedHeight(16 * lines);
             help->setMaximumHeight(16 * lines);
             return help;
@@ -508,8 +516,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             control = cb;
         } else if (f.type == QStringLiteral("textarea")) {
             auto *te = new QPlainTextEdit(m_cfg.value(f.key).toString());
-            te->setMinimumHeight(100);
-            te->setMaximumHeight(200);
+            te->setFixedHeight(160); // v2: textarea h-40
             control = te;
         } else if (f.type == QStringLiteral("titleradio")) {
             // v2 'Conversation title': First line / LLM
