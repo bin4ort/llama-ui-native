@@ -416,7 +416,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     headerRow->setObjectName(QStringLiteral("settingsSectionHeader"));
     headerRow->setAttribute(Qt::WA_StyledBackground);
     auto *hrl = new QHBoxLayout(headerRow);
-    hrl->setContentsMargins(0, 0, 0, 24); // v2: pb-6 -> border at y165
+    hrl->setContentsMargins(0, 0, 0, 25); // v2: pb-6 -> border at y165
     hrl->setSpacing(8);
     auto *secIcon = new QLabel(headerRow);
     secIcon->setPixmap(Icons::get(QStringLiteral("sliders-horizontal"), Icons::color())
