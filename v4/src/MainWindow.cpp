@@ -262,6 +262,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_greetingTitle->setObjectName(QStringLiteral("greetingTitle"));
     m_greetingTitle->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     m_greetingTitle->setFixedHeight(36); // v2: text-3xl lh-9
+    m_greetingTitle->setContentsMargins(0, -16, 0, 0); // Qt centers glyphs in the box; shift the paint up
     gh->addWidget(m_greetingTitle);
     m_greetingSub = new QLabel(
         I18n::t(QStringLiteral("Type a message or upload files to get started")));

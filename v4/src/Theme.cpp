@@ -317,12 +317,13 @@ QPushButton[logoBtn="true"]:hover { background-color: rgba(229,229,229,0.10); }
 #composer QPushButton[round="true"] {
   background: transparent; border: none; border-radius: 16px;
   color: %6; min-width: 32px; max-width: 32px; min-height: 32px; max-height: 32px;
+  padding: 0;
 }
 #composer QPushButton[round="true"]:hover { background-color: %7; color: %3; }
 #composer QPushButton[send="true"] {
-  background-color: %13; color: %14; border: none; border-radius: 24px;
-  min-width: 48px; max-width: 48px; min-height: 48px; max-height: 48px;
-  font-size: 18px;
+  background-color: %13; color: %14; border: none; border-radius: 16px;
+  min-width: 32px; max-width: 32px; min-height: 32px; max-height: 32px;
+  font-size: 14px; padding: 0;
 }
 #composer QPushButton[send="true"]:hover { background-color: %15; }
 #composer QPushButton[send="true"]:disabled { background-color: %16; }

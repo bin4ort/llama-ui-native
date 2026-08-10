@@ -28,11 +28,11 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
     setObjectName(QStringLiteral("composer"));
     // QSS backgrounds on plain QWidget subclasses need this attribute
     setAttribute(Qt::WA_StyledBackground);
-    setMaximumWidth(768); // spec: max-w-3xl, centered floating bar
+    setFixedWidth(768); // v2: max-w-3xl form
 
     m_outer = new QVBoxLayout(this);
-    m_outer->setContentsMargins(12, 8, 12, 10);
-    m_outer->setSpacing(4);
+    m_outer->setContentsMargins(12, 13, 12, 13); // v2: inner p-3 (13px vertical)
+    m_outer->setSpacing(12); // v2: textarea -> buttons gap
 
     // attachment chips row (UI-SPEC §4.2)
     m_chipsRow = new QHBoxLayout;
@@ -40,13 +40,21 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
     m_chipsRow->setSpacing(6);
     m_outer->addLayout(m_chipsRow);
 
+    // v2 ChatForm: textarea row on top (min-h-12, px-5), buttons row below
+    m_input = new QTextEdit(this);
+    m_input->setPlaceholderText(I18n::t(QStringLiteral("Type a message...")));
+    m_input->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    m_input->setTabChangesFocus(false);
+    m_outer->addWidget(m_input);
+
     auto *bar = new QHBoxLayout;
-    bar->setContentsMargins(0, 0, 0, 0);
-    bar->setSpacing(6);
+    bar->setContentsMargins(4, 0, 4, 0);
+    bar->setSpacing(8);
 
     m_attach = new QPushButton(this);
     m_attach->setProperty("round", true);
     m_attach->setIconSize(QSize(18, 18));
+    m_attach->setFixedSize(32, 32); // v2: ChatFormActionAdd h-8 w-8
     // v2 ChatFormActionAdd: Plus icon, tooltip lists what can be added
     m_attach->setToolTip(I18n::t(QStringLiteral("Add files, prompts, tools or MCP Servers")));
     connect(m_attach, &QPushButton::clicked, this, &Composer::attachRequested);
@@ -55,19 +63,11 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
     m_persona = new QPushButton(QStringLiteral("Default ▾"), this);
     m_persona->setProperty("persona", true);
     m_persona->setIconSize(QSize(16, 16));
+    m_persona->setFixedHeight(32); // v2: ChatFormActionsPersona
     m_persona->setToolTip(I18n::t(QStringLiteral("Choose a personality preset")));
     connect(m_persona, &QPushButton::clicked, this, &Composer::personaRequested);
     bar->addWidget(m_persona);
-
-    m_input = new QTextEdit(this);
-    m_input->setPlaceholderText(I18n::t(QStringLiteral("Type a message...")));
-    m_input->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_input->setTabChangesFocus(false);
-    bar->addWidget(m_input, 1);
-
-    m_send = new QPushButton(this);
-    m_send->setProperty("send", true);
-    m_send->setIconSize(QSize(22, 22));
+    bar->addStretch(1);
 
     // right cluster (v2 ChatFormActions order): gauge -> model -> send
     m_gauge = new ContextGauge(this);
@@ -75,12 +75,17 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
     bar->addWidget(m_gauge);
 
     m_modelSelect = new ModelsSelector(this);
-    m_modelSelect->setFixedSize(150, 30);
+    m_modelSelect->setFixedSize(188, 24); // v2: model chip h-6
     connect(m_modelSelect, &ModelsSelector::modelSelected, this,
             &Composer::modelSelected);
     bar->addWidget(m_modelSelect);
 
+    m_send = new QPushButton(this);
+    m_send->setProperty("send", true);
+    m_send->setIconSize(QSize(22, 22));
+    m_send->setFixedSize(32, 32); // v2: send h-8 w-8
     bar->addWidget(m_send);
+
     m_outer->addLayout(bar);
 
     auto trySend = [this]() {
@@ -256,7 +261,8 @@ void Composer::updateHeight() {
     const int docH = qCeil(m_input->document()->documentLayout()->documentSize().height());
     const int h = qBound(48, docH + 8, 160);
     m_input->setFixedHeight(h);
-    setFixedHeight(qMax(112, h + 40) + (m_attachments.isEmpty() ? 0 : 28));
+    // v2: form = 13px pad + 48 textarea + 12 gap + 32 buttons + 13px pad = 118
+    setFixedHeight(h + 70);
 }
 
 bool Composer::eventFilter(QObject *obj, QEvent *ev) {
