@@ -1147,7 +1147,8 @@ void MainWindow::openSettings() {
 }
 
 void MainWindow::openSettings(int section) {
-    SettingsDialog dlg(m_config, m_propsDefaults, m_tokens, this);
+    SettingsDialog dlg(m_config, m_propsDefaults, m_tokens,
+                       m_sidebar->isExpanded(), this);
     if (section >= 0) dlg.setSection(section);
     connect(&dlg, &SettingsDialog::clearAllConversationsRequested, this, [this]() {
         auto &convs = m_store->conversations();

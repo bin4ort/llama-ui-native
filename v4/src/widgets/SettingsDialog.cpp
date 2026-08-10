@@ -205,19 +205,21 @@ const QList<SettingField> DEVELOPER = {
 } // namespace
 
 SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
-                               const Theme::Tokens &tokens, QWidget *parent)
+                               const Theme::Tokens &tokens, bool sidebarExpanded,
+                               QWidget *parent)
     : QDialog(parent), m_cfg(std::move(cfg)), m_props(props) {
     setObjectName(QStringLiteral("appDialog"));
     setWindowTitle(QStringLiteral("Settings"));
     setModal(true);
     resize(1400, 900);
+    m_sidebarExpanded = sidebarExpanded;
 
     auto *outer = new QVBoxLayout(this);
     outer->setContentsMargins(0, 0, 0, 0);
     outer->setSpacing(0);
     auto *layout = new QHBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(16); // v2: gap-4 after the w-64 nav -> content at x360
+    layout->setSpacing(sidebarExpanded ? 32 : 16); // v2: gap after the app sidebar
 
     // v2 SettingsChatDesktopSidebar: w-64 nav at x88 (after the app strip),
     // icon + label, active accent state, version footer
@@ -226,17 +228,31 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     nav->setFixedWidth(256);
     nav->setContentsMargins(0, 0, 0, 0);
     auto *navPad = new QWidget(this);
-    navPad->setFixedWidth(72); // app strip room; +16 gap-4 -> nav lands x88
+    // v2: the app sidebar stays visible on the settings page; when expanded
+    // (w-72 = 288) the settings nav shifts right from x88 to x328
+    navPad->setFixedWidth(sidebarExpanded ? 296 : 72);
     navPad->setAutoFillBackground(false);
+    if (sidebarExpanded) {
+        // v2 SidebarNavigation expanded: bg-muted/60 panel, rounded 16
+        navPad->setObjectName(QStringLiteral("sidebar"));
+        navPad->setAttribute(Qt::WA_StyledBackground);
+        navPad->setProperty("expanded", true);
+        navPad->style()->unpolish(navPad);
+        navPad->style()->polish(navPad);
+    }
     auto *stripL = new QVBoxLayout(navPad);
-    stripL->setContentsMargins(16, 16, 16, 0); // v2: aside ml-2 + px-2 (strip x16-52)
+    stripL->setContentsMargins(sidebarExpanded ? 8 : 16, 16,
+                               sidebarExpanded ? 8 : 16, 0);
     stripL->setSpacing(0);
-    auto stripBtn = [this, navPad](const QString &icon, const QString &tip) {
+    auto stripBtn = [this, navPad, sidebarExpanded](const QString &icon, const QString &tip) {
         auto *b = new QPushButton(navPad);
         b->setProperty("strip", true);
-        b->setFixedSize(36, 36); // v2: strip buttons h-9 w-9
+        b->setProperty("sideAction", true);
+        b->setFixedHeight(36); // v2: strip buttons h-9
+        b->setFixedWidth(sidebarExpanded ? 272 : 36);
         b->setIconSize(QSize(16, 16)); // v2: size-4 icons
         b->setIcon(Icons::get(icon, Icons::color()));
+        if (sidebarExpanded) b->setText(tip);
         b->setToolTip(tip);
         b->setCursor(Qt::PointingHandCursor);
         return b;
@@ -373,7 +389,9 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     // QStackedWidget only paints its current page, so children of the
     // stack would never be visible).
     buttons->setParent(this);
-    buttons->move(360 + 136, 816); // stack x360 + 136 = x496, y900-84 = 816
+    // footer follows the content column: collapsed x496, expanded x616
+
+    buttons->move(m_sidebarExpanded ? 616 : 496, 816);
     buttons->raise();
     outer->addLayout(layout, 1);
 
@@ -403,7 +421,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     auto *crow = new QHBoxLayout;
     crow->setContentsMargins(0, 0, 0, 0);
     crow->setSpacing(0);
-    crow->addSpacing(136);
+    crow->addSpacing(m_sidebarExpanded ? 16 : 136);
     crow->addWidget(center);
     crow->addStretch(1);
     col->addLayout(crow);
@@ -679,7 +697,7 @@ QWidget *SettingsDialog::buildTools() {
     auto *crow = new QHBoxLayout;
     crow->setContentsMargins(0, 0, 0, 0);
     crow->setSpacing(0);
-    crow->addSpacing(136);
+    crow->addSpacing(m_sidebarExpanded ? 16 : 136);
     crow->addWidget(center);
     crow->addStretch(1);
     col->addLayout(crow);
@@ -819,7 +837,7 @@ QWidget *SettingsDialog::buildImportExport() {
     auto *crow = new QHBoxLayout;
     crow->setContentsMargins(0, 0, 0, 0);
     crow->setSpacing(0);
-    crow->addSpacing(136);
+    crow->addSpacing(m_sidebarExpanded ? 16 : 136);
     crow->addWidget(center);
     crow->addStretch(1);
     col->addLayout(crow);

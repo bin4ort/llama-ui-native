@@ -19,6 +19,7 @@ class Sidebar : public QWidget {
 public:
     explicit Sidebar(ConversationStore *store, QWidget *parent = nullptr);
     void expandForTest() { setExpanded(true); }
+    bool isExpanded() const { return m_expanded; }
 
     void refreshConversations();
     void setActiveConversation(const QString &id);

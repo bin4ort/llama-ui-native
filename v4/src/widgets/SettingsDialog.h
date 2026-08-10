@@ -28,6 +28,7 @@ class SettingsDialog : public QDialog {
 public:
     explicit SettingsDialog(QJsonObject cfg, const QJsonObject &props,
                             const Theme::Tokens &tokens,
+                            bool sidebarExpanded,
                             QWidget *parent = nullptr);
 
     QJsonObject config() const { return m_cfg; }
@@ -47,6 +48,7 @@ private:
     QJsonObject m_cfg;
     QJsonObject m_props;
     QStackedWidget *m_stack = nullptr;
+    bool m_sidebarExpanded = false;
     QListWidget *m_navList = nullptr;
     QList<QPair<QString, QWidget *>> m_controls; // field key -> control
 };
