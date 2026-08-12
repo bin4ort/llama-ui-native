@@ -498,7 +498,6 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         for (int i = 0; i < controls.size(); ++i) {
             auto *lbl = new QLabel(labels.at(i), card);
             lbl->setObjectName(QStringLiteral("settingsFieldLabel"));
-            lbl->setContentsMargins(0, 1, 0, -1); // v2 line box: text 1px lower than Qt ascent
             const bool isSelect = qobject_cast<QComboBox *>(controls.at(i)) != nullptr;
             const bool isCheck = qobject_cast<QCheckBox *>(controls.at(i)) != nullptr;
             if (isCheck) {
@@ -515,6 +514,9 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
                 controls.at(i)->setMaximumHeight(16);
                 cbWrap->addWidget(controls.at(i));
                 crow->addLayout(cbWrap, 0);
+                // v2 line box: text 1px lower than Qt ascent in the
+                // checkbox row (AlignTop) — shift ink down 1px
+                lbl->setContentsMargins(0, 1, 0, -1);
                 crow->addWidget(lbl, 1, Qt::AlignTop);
                 cardL->addLayout(crow);
                 if (i < helps.size() && !helps.at(i).isEmpty()) {
