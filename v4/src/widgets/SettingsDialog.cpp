@@ -43,22 +43,36 @@ public:
 
     void paint(QPainter *p, const QStyleOptionViewItem &opt,
                const QModelIndex &idx) const override {
-        const bool selected = opt.state & QStyle::State_Selected;
         const QRect r = opt.rect;
+        if (qgetenv("NAV_DEBUG").size())
+            fprintf(stderr, "NAVITEM rect=%d,%d %dx%d text=%s\n", r.x(), r.y(),
+                    r.width(), r.height(),
+                    qPrintable(idx.data(Qt::DisplayRole).toString()));
+        const bool selected = opt.state & QStyle::State_Selected;
+        // v2 item box is 36px tall (h-9) with space-y-1 gaps; the 40px
+        // list pitch adds 2px on each side — center content in 36px
+        const int boxTop = r.top();
+        const int boxH = 36;
         if (selected) {
             p->setRenderHint(QPainter::Antialiasing);
             p->setPen(Qt::NoPen);
             p->setBrush(m_accent);
-            p->drawRoundedRect(QRectF(r).adjusted(0.5, 0.5, -0.5, -0.5), 8, 8);
+            p->drawRoundedRect(QRectF(r.left(), boxTop, r.width(), boxH)
+                                   .adjusted(0.5, 0.5, -0.5, -0.5),
+                               8, 8);
         }
-        const QIcon icon = idx.data(Qt::DecorationRole).value<QIcon>();
-        if (!icon.isNull())
-            icon.paint(p, QRect(r.left() + 12, r.center().y() - 8, 16, 16));
+        // v2: icon h-4 w-4 (16px) at x+12, muted for inactive items and
+        // foreground (white) for the active one — rebuild with the state
+        // color because a single QIcon can't carry both tints
+        const QString iconName = idx.data(Qt::UserRole).toString();
+        if (!iconName.isEmpty())
+            Icons::get(iconName, selected ? m_fg : m_muted)
+                .paint(p, QRect(r.left() + 12, boxTop + 10, 16, 16));
         QFont f = opt.font;
         f.setPixelSize(14);
         p->setFont(f);
         p->setPen(selected ? m_fg : m_muted);
-        p->drawText(QRect(r.left() + 48, r.top(), r.width() - 56, r.height()),
+        p->drawText(QRect(r.left() + 48, boxTop + 8, r.width() - 56, 20),
                     Qt::AlignVCenter | Qt::AlignLeft,
                     idx.data(Qt::DisplayRole).toString());
     }
@@ -285,7 +299,7 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     stripL->addStretch(1);
     auto *nl = new QVBoxLayout(nav);
     nl->setContentsMargins(0, 24, 0, 16); // v2: sticky top-2 (8) + container py-4 (16)
-    nl->setSpacing(16); // v2: gap-4 between heading and nav list
+    nl->setSpacing(24); // v2: gap-4 between heading and nav list
 
     auto *headingRow = new QHBoxLayout;
     headingRow->setContentsMargins(0, 8, 0, 8); // v2: row py-2
@@ -295,6 +309,7 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     headingRow->addWidget(headingIcon);
     auto *heading = new QLabel(I18n::t(QStringLiteral("Settings")), nav);
     heading->setObjectName(QStringLiteral("settingsHeading"));
+    heading->setFixedHeight(32); // v2: H1 text-2xl box h=32
     QFont hf = heading->font();
     hf.setPixelSize(24);
     hf.setWeight(QFont::DemiBold);
@@ -302,7 +317,7 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     headingRow->addWidget(heading);
     headingRow->addStretch(1);
     nl->addLayout(headingRow);
-    nl->addSpacing(8);
+    // (no extra spacing: gap-4 covers it)
 
     m_navList = new QListWidget(nav);
     m_navList->setObjectName(QStringLiteral("settingsNavList"));
@@ -316,12 +331,12 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
         QStringLiteral("Penalties"), QStringLiteral("Agentic"), QStringLiteral("Developer"),
         QStringLiteral("Tools"), QStringLiteral("Import/Export")};
     const QStringList icons = {
-        QStringLiteral("sliders-horizontal"), QStringLiteral("eye"), QStringLiteral("gauge"),
-        QStringLiteral("triangle-alert"), QStringLiteral("bot"), QStringLiteral("code-2"),
-        QStringLiteral("wrench"), QStringLiteral("arrow-left-right")};
+        QStringLiteral("sliders-vertical"), QStringLiteral("monitor"), QStringLiteral("funnel"),
+        QStringLiteral("triangle-alert"), QStringLiteral("list-restart"), QStringLiteral("code"),
+        QStringLiteral("pencil-ruler"), QStringLiteral("database")};
     for (int i = 0; i < sections.size(); ++i) {
         auto *item = new QListWidgetItem(sections.at(i));
-        item->setIcon(Icons::get(icons.at(i), Icons::color()));
+        item->setData(Qt::UserRole, icons.at(i)); // icon name for the delegate
         item->setSizeHint(QSize(0, 40)); // v2: 36px item + space-y-1 = 40px pitch
         m_navList->addItem(item);
     }
@@ -466,6 +481,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             for (auto it = linesByPrefix.cbegin(); it != linesByPrefix.cend(); ++it)
                 if (text.startsWith(it.key())) lines = it.value();
             help->setFixedHeight(16 * lines);
+            help->setContentsMargins(0, -1, 0, 1); // v2 text-xs: Qt ink 1px low
             help->setMaximumHeight(16 * lines);
             return help;
         };
@@ -482,6 +498,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         for (int i = 0; i < controls.size(); ++i) {
             auto *lbl = new QLabel(labels.at(i), card);
             lbl->setObjectName(QStringLiteral("settingsFieldLabel"));
+            lbl->setContentsMargins(0, 1, 0, -1); // v2 line box: text 1px lower than Qt ascent
             const bool isSelect = qobject_cast<QComboBox *>(controls.at(i)) != nullptr;
             const bool isCheck = qobject_cast<QCheckBox *>(controls.at(i)) != nullptr;
             if (isCheck) {

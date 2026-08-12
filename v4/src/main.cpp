@@ -13,10 +13,12 @@
 #include <QScreen>
 #include <QLabel>
 #include <QFontInfo>
+#include <QFont>
 #include <QPainter>
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
+    { QFont af = app.font(); af.setHintingPreference(QFont::PreferDefaultHinting); app.setFont(af); }
     app.setApplicationName(QStringLiteral("llama-ui-v4"));
     app.setOrganizationName(QStringLiteral("LlamaUI"));
 
@@ -158,7 +160,7 @@ int main(int argc, char *argv[]) {
                             w->sizeHint().width(), w->sizeHint().height());
                     if (auto *lbl = qobject_cast<QLabel *>(w)) {
                         const QFontInfo fi(lbl->font());
-                        fprintf(stderr, "      FONT: family=%s size=%d px=%d weight=%d bold=%d\n",
+                        fprintf(stderr, "      FONT: family=%s size=%d px=%d weight=%d bold=%d hint=%d\n",
                                 fi.family().toUtf8().constData(), lbl->font().pointSize(),
                                 lbl->font().pixelSize(), fi.weight(), fi.bold());
                     }
