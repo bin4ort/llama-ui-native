@@ -267,7 +267,7 @@ QMainWindow, QDialog { background-color: %2; color: %3; }
 
 /* Sidebar (v2 SidebarNavigation) — floating rounded panel; transparent
  * strip collapsed, muted/60 panel expanded */
-#sidebar { background: transparent; border: none; border-radius: 16px; }
+#sidebar { background: transparent; border: none; }
 #sidebar[expanded="true"] {
   background-color: %27; border: 1px solid %28; border-radius: 16px;
 }

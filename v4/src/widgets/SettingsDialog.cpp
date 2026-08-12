@@ -249,14 +249,13 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     // (w-72 = 288) the settings nav shifts right from x88 to x328
     navPad->setFixedWidth(sidebarExpanded ? 288 : 72);
     navPad->setAutoFillBackground(false);
-    if (sidebarExpanded) {
-        // v2 SidebarNavigation expanded: bg-muted/60 panel, rounded 16
-        navPad->setObjectName(QStringLiteral("sidebar"));
-        navPad->setAttribute(Qt::WA_StyledBackground);
-        navPad->setProperty("expanded", true);
-        navPad->style()->unpolish(navPad);
-        navPad->style()->polish(navPad);
-    }
+    // v2 SidebarNavigation: transparent in both states; expanded adds the
+    // bg-muted/60 panel (rounded 16)
+    navPad->setObjectName(QStringLiteral("sidebar"));
+    navPad->setAttribute(Qt::WA_StyledBackground);
+    navPad->setProperty("expanded", sidebarExpanded);
+    navPad->style()->unpolish(navPad);
+    navPad->style()->polish(navPad);
     auto *stripL = new QVBoxLayout(navPad);
     stripL->setContentsMargins(sidebarExpanded ? 8 : 16, 16,
                                sidebarExpanded ? 8 : 16, 0);
@@ -264,7 +263,7 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     auto stripBtn = [this, navPad, sidebarExpanded](const QString &icon, const QString &tip) {
         auto *b = new QPushButton(navPad);
         b->setProperty("strip", true);
-        b->setProperty("sideAction", true);
+        if (sidebarExpanded) b->setProperty("sideAction", true);
         b->setFixedHeight(36); // v2: strip buttons h-9
         b->setFixedWidth(sidebarExpanded ? 272 : 36);
         b->setIconSize(QSize(16, 16)); // v2: size-4 icons
