@@ -544,7 +544,7 @@ QPushButton[full="true"] { width: 100%; }
 #settingsFooter QPushButton { padding: 6px 14px; min-height: 20px; font-size: 14px; }
 
 /* Dialogs (UI-SPEC §3.7) */
-QDialog#appDialog { background-color: %2; border: 1px solid %5; border-radius: 10px; }
+QDialog#appDialog { background-color: %2; }
 QDialog QLabel#dialogTitle { font-size: 18px; font-weight: 600; }
 QDialog QLabel#dialogDesc { color: %10; font-size: 14px; }
 

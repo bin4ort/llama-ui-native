@@ -481,11 +481,12 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     hrl->setSpacing(8);
     auto *secIcon = new QLabel(headerRow);
     secIcon->setPixmap(Icons::get(QStringLiteral("sliders-horizontal"), Icons::color())
-                           .pixmap(18, 18));
+                           .pixmap(20, 20)); // v2: h-5 w-5 section icons
     hrl->addWidget(secIcon);
     auto *heading = new QLabel(title, headerRow);
     heading->setObjectName(QStringLiteral("settingsSectionTitle"));
     heading->setMinimumHeight(28); // v2: title box h=28
+    heading->setAlignment(Qt::AlignTop); // v2 H3 ink at box+5
     hrl->addWidget(heading);
     hrl->addStretch(1);
     cl->addWidget(headerRow);
@@ -762,7 +763,7 @@ QWidget *SettingsDialog::buildTools() {
     hrl->setContentsMargins(0, 0, 0, 24);
     hrl->setSpacing(8);
     auto *secIcon = new QLabel(headerRow);
-    secIcon->setPixmap(Icons::get(QStringLiteral("wrench"), Icons::color()).pixmap(18, 18));
+    secIcon->setPixmap(Icons::get(QStringLiteral("wrench"), Icons::color()).pixmap(20, 20)); // v2: h-5 w-5 section icons
     hrl->addWidget(secIcon);
     auto *heading = new QLabel(I18n::t(QStringLiteral("Tools")), headerRow);
     heading->setObjectName(QStringLiteral("settingsSectionTitle"));
@@ -903,7 +904,7 @@ QWidget *SettingsDialog::buildImportExport() {
     hrl->setContentsMargins(0, 0, 0, 24);
     hrl->setSpacing(8);
     auto *secIcon = new QLabel(headerRow);
-    secIcon->setPixmap(Icons::get(QStringLiteral("download"), Icons::color()).pixmap(18, 18));
+    secIcon->setPixmap(Icons::get(QStringLiteral("download"), Icons::color()).pixmap(20, 20)); // v2: h-5 w-5 section icons
     hrl->addWidget(secIcon);
     auto *heading = new QLabel(I18n::t(QStringLiteral("Import/Export")), headerRow);
     heading->setObjectName(QStringLiteral("settingsSectionTitle"));
