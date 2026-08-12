@@ -11,6 +11,9 @@
 #include <QGuiApplication>
 #include <QTimer>
 #include <QScreen>
+#include <QLabel>
+#include <QFontInfo>
+#include <QPainter>
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
@@ -119,6 +122,10 @@ int main(int argc, char *argv[]) {
     // --geom-dump: print widget tree geometry (dialog/page hierarchy)
     if (args.contains(QStringLiteral("--geom-dump"))) {
         QTimer::singleShot(2500, [&window, &app]() {
+            fprintf(stderr, "DPR: window=%g screen=%g logicalDpi=%g\n",
+                    window.devicePixelRatio(),
+                    window.screen() ? window.screen()->devicePixelRatio() : 0.0,
+                    window.screen() ? window.screen()->logicalDotsPerInch() : 0.0);
             QWidget *target = qApp->activeModalWidget();
             if (!target) target = &window;
             // activate the layout of the current stack page first
@@ -149,6 +156,12 @@ int main(int argc, char *argv[]) {
                             w->metaObject()->className(), rel.x(), rel.y(),
                             g.x(), g.y(), cg.x(), cg.y(),
                             w->sizeHint().width(), w->sizeHint().height());
+                    if (auto *lbl = qobject_cast<QLabel *>(w)) {
+                        const QFontInfo fi(lbl->font());
+                        fprintf(stderr, "      FONT: family=%s size=%d px=%d weight=%d bold=%d\n",
+                                fi.family().toUtf8().constData(), lbl->font().pointSize(),
+                                lbl->font().pixelSize(), fi.weight(), fi.bold());
+                    }
                 }
                 for (QObject *c : w->children())
                     if (auto *cw = qobject_cast<QWidget *>(c))
@@ -182,10 +195,16 @@ int main(int argc, char *argv[]) {
                               : 480;
         QTimer::singleShot(900, [&window, &app, &args, idx, width]() {
             // grab the active modal dialog when one is open (settings,
-            // MCP page, search) — window.grab() misses separate windows
+            // MCP page, search) — window.grab() misses separate windows.
+            // render() into a DPR-1 image so the capture matches the
+            // logical geometry 1:1 (grab() at DPR>1 then resampling blurs
+            // text and misaligns pixels vs the DPR-1 reference).
             QWidget *target = qApp->activeModalWidget();
             if (!target) target = &window;
-            QImage img = target->grab().toImage();
+            QImage img(target->size(), QImage::Format_ARGB32);
+            QPainter p(&img);
+            target->render(&p, QPoint(0, 0));
+            p.end();
             img = img.scaledToWidth(width, Qt::SmoothTransformation);
             const QString ext = args.at(idx + 1).endsWith(QStringLiteral(".png"),
                                                            Qt::CaseInsensitive)

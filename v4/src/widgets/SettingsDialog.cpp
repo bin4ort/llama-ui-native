@@ -230,7 +230,7 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     auto *navPad = new QWidget(this);
     // v2: the app sidebar stays visible on the settings page; when expanded
     // (w-72 = 288) the settings nav shifts right from x88 to x328
-    navPad->setFixedWidth(sidebarExpanded ? 296 : 72);
+    navPad->setFixedWidth(sidebarExpanded ? 288 : 72);
     navPad->setAutoFillBackground(false);
     if (sidebarExpanded) {
         // v2 SidebarNavigation expanded: bg-muted/60 panel, rounded 16
@@ -284,8 +284,8 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     stripL->addWidget(bSettings, 0, Qt::AlignLeft);
     stripL->addStretch(1);
     auto *nl = new QVBoxLayout(nav);
-    nl->setContentsMargins(0, 16, 0, 16); // v2: container py-4
-    nl->setSpacing(4);
+    nl->setContentsMargins(0, 24, 0, 16); // v2: sticky top-2 (8) + container py-4 (16)
+    nl->setSpacing(16); // v2: gap-4 between heading and nav list
 
     auto *headingRow = new QHBoxLayout;
     headingRow->setContentsMargins(0, 8, 0, 8); // v2: row py-2
@@ -421,7 +421,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     auto *crow = new QHBoxLayout;
     crow->setContentsMargins(0, 0, 0, 0);
     crow->setSpacing(0);
-    crow->addSpacing(m_sidebarExpanded ? 16 : 136);
+    crow->addSpacing(m_sidebarExpanded ? 8 : 136);
     crow->addWidget(center);
     crow->addStretch(1);
     col->addLayout(crow);
@@ -697,7 +697,7 @@ QWidget *SettingsDialog::buildTools() {
     auto *crow = new QHBoxLayout;
     crow->setContentsMargins(0, 0, 0, 0);
     crow->setSpacing(0);
-    crow->addSpacing(m_sidebarExpanded ? 16 : 136);
+    crow->addSpacing(m_sidebarExpanded ? 8 : 136);
     crow->addWidget(center);
     crow->addStretch(1);
     col->addLayout(crow);
@@ -837,7 +837,7 @@ QWidget *SettingsDialog::buildImportExport() {
     auto *crow = new QHBoxLayout;
     crow->setContentsMargins(0, 0, 0, 0);
     crow->setSpacing(0);
-    crow->addSpacing(m_sidebarExpanded ? 16 : 136);
+    crow->addSpacing(m_sidebarExpanded ? 8 : 136);
     crow->addWidget(center);
     crow->addStretch(1);
     col->addLayout(crow);
