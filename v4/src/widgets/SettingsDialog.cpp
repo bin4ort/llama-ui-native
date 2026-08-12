@@ -297,6 +297,9 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     stripL->addSpacing(4);
     auto *bSettings = stripBtn(QStringLiteral("settings"), I18n::t(QStringLiteral("Settings")));
     bSettings->setProperty("mcpActive", true); // active strip tile (v2 bg-muted)
+    // v2: active tile icon is accent-foreground (white) — the QIcon is a
+    // pixmap and ignores QSS color, so rebuild it
+    bSettings->setIcon(Icons::get(QStringLiteral("settings"), tokens.accentForeground));
     stripL->addWidget(bSettings, 0, Qt::AlignLeft);
     stripL->addStretch(1);
     auto *nl = new QVBoxLayout(nav);

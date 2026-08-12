@@ -272,7 +272,7 @@ QMainWindow, QDialog { background-color: %2; color: %3; }
   background-color: %27; border: 1px solid %28; border-radius: 16px;
 }
 QPushButton[strip="true"] {
-  background: transparent; border: none; border-radius: 10px;
+  background: transparent; border: none; border-radius: 18px;
   color: %6; font-size: 14px; padding: 6px;
 }
 QPushButton[strip="true"]:hover { background-color: %7; color: %3; }
