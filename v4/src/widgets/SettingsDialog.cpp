@@ -404,15 +404,31 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     // QStackedWidget only paints its current page, so children of the
     // stack would never be visible).
     buttons->setParent(this);
-    // footer follows the content column: collapsed x496, expanded x616
-
+    // footer follows the content column: collapsed x496, expanded x616;
+    // sticky bottom-0 -> at y816 for long pages, right after the content
+    // for short ones (v2 SettingsFooter: sticky bottom-0, flow position)
+    m_buttons = buttons;
+    auto repositionFooter = [this]() {
+        if (!m_buttons) return;
+        int y = 816;
+        if (m_stack && m_stack->currentWidget()) {
+            if (auto *center = m_stack->currentWidget()->findChild<QWidget *>(
+                    QStringLiteral("settingsCenter")))
+                y = qMin(816, 112 + center->sizeHint().height() + 24);
+        }
+        m_buttons->move(m_sidebarExpanded ? 616 : 496, y);
+    };
     buttons->move(m_sidebarExpanded ? 616 : 496, 816);
     buttons->raise();
     outer->addLayout(layout, 1);
 
     connect(m_navList, &QListWidget::currentRowChanged, this,
-            [this](int row) { m_stack->setCurrentIndex(qMax(0, row)); });
+            [this, repositionFooter](int row) {
+                m_stack->setCurrentIndex(qMax(0, row));
+                repositionFooter();
+            });
     m_navList->setCurrentRow(0);
+    repositionFooter();
 }
 
 QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingField> &fields,
@@ -882,43 +898,55 @@ QWidget *SettingsDialog::buildImportExport() {
     cl->addWidget(headerRow);
     cl->addSpacing(24); // v2: mb-6 -> first group title at y189
 
-    auto addGroup = [&](const QString &title, const QString &desc,
-                        const QString &buttonText, std::function<void()> fn,
-                        bool destructive = false) {
-        if (!title.isEmpty()) {
-            auto *g = new QLabel(title, center);
-            g->setObjectName(QStringLiteral("settingsGroupTitle"));
-            g->setMinimumHeight(24); // v2: h3 line box
-            g->setFixedHeight(24);
-            cl->addWidget(g);
-            cl->addSpacing(56); // v2: title y189 -> desc y269
-        }
+    // v2 SettingsChatImportExportSection: h4 title (14px, mb-2), desc
+    // (14px muted, mb-4, 2 lines), outline button; section pitch 160;
+    // groups (16px H3, mb-6) wrap the sections (space-y-8)
+    auto addSection = [&](const QString &title, const QString &desc,
+                          const QString &buttonText, std::function<void()> fn,
+                          bool destructive = false, bool redTitle = false) {
+        auto *t = new QLabel(title, center);
+        t->setObjectName(QStringLiteral("settingsFieldLabel"));
+        if (redTitle) t->setProperty("destructiveText", true);
+        t->setFixedHeight(28); // v2: h4 box
+        t->setAlignment(Qt::AlignTop);
+        cl->addWidget(t);
+        cl->addSpacing(8); // v2: mb-2
         auto *d = new QLabel(desc, center);
         d->setObjectName(QStringLiteral("settingsDesc"));
         d->setWordWrap(true);
         d->setFixedHeight(40); // v2: two-line desc
         cl->addWidget(d);
-        cl->addSpacing(20); // v2: desc y269 -> button y329
+        cl->addSpacing(16); // v2: mb-4
         auto *btn = new QPushButton(buttonText, center);
         btn->setProperty("outline", true);
         if (destructive) btn->setProperty("destructive", true);
+        btn->setFixedHeight(36); // v2: h-9
         connect(btn, &QPushButton::clicked, this, fn);
         cl->addWidget(btn, 0, Qt::AlignLeft);
-        cl->addSpacing(64); // v2: card pitch 160 (desc 40 + gap 20 + btn 36 + 64)
+        cl->addSpacing(32); // v2: section pitch 160 (28+8+40+16+36+32)
+    };
+    auto addGroup = [&](const QString &title) {
+        auto *g = new QLabel(title, center);
+        g->setObjectName(QStringLiteral("settingsGroupTitle"));
+        g->setMinimumHeight(24); // v2: h3 line box
+        g->setFixedHeight(24);
+        cl->addWidget(g);
+        cl->addSpacing(24); // v2: mb-6
     };
 
-    addGroup(I18n::t(QStringLiteral("Conversations")),
+    addGroup(I18n::t(QStringLiteral("Conversations")));
+    addSection(I18n::t(QStringLiteral("Export")),
              I18n::t(QStringLiteral("Download your conversations as a ZIP of JSONL files. This includes all messages, attachments, and conversation history.")),
              I18n::t(QStringLiteral("Export conversations")),
              [this]() {
                  QFileDialog::getSaveFileName(this, I18n::t(QStringLiteral("Export conversations")),
                                               QStringLiteral("conversations.json"));
              });
-    addGroup(QString(),
+    addSection(I18n::t(QStringLiteral("Import")),
              I18n::t(QStringLiteral("Import one or more conversations from a previously exported ZIP or JSONL file. This will merge with your existing conversations.")),
              I18n::t(QStringLiteral("Import conversations")),
              []() {});
-    addGroup(QString(),
+    addSection(I18n::t(QStringLiteral("Delete All")),
              I18n::t(QStringLiteral("Permanently delete all conversations and their messages. This action cannot be undone. Consider exporting your conversations first if you want to keep a backup.")),
              I18n::t(QStringLiteral("Delete all conversations")),
              [this]() {
@@ -926,9 +954,10 @@ QWidget *SettingsDialog::buildImportExport() {
                      this, I18n::t(QStringLiteral("Delete all conversations")),
                      I18n::t(QStringLiteral("Are you sure?")));
                  if (ret == QMessageBox::Yes) emit clearAllConversationsRequested();
-             }, true);
+             }, true, true);
 
-    addGroup(I18n::t(QStringLiteral("Settings")),
+    addGroup(I18n::t(QStringLiteral("Settings")));
+    addSection(I18n::t(QStringLiteral("Export")),
              I18n::t(QStringLiteral("Export your chat settings and preferences as a JSON file.")),
              I18n::t(QStringLiteral("Export settings")),
              [this]() {

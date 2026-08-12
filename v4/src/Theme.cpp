@@ -529,6 +529,7 @@ QPushButton[full="true"] { width: 100%; }
 #settingsFieldLabel { color: %3; font-size: 14px; font-weight: 500; }
 #settingsGroupTitle { color: %3; font-size: 16px; font-weight: 600; }
 #settingsDesc { color: %10; font-size: 14px; line-height: 20px; }
+#settingsFieldLabel[destructiveText="true"] { color: %23; }
 #settingsHelp { color: %10; font-size: 12px; }
 #toolsDisclosure {
   background-color: transparent; border: 1px solid %5; border-radius: 8px;
