@@ -21,6 +21,7 @@ struct SettingField {
     QString type; // input / checkbox / textarea
     bool positiveInt = false;
     QString help;
+    QString dependsOn; // v2: field hidden when the dep config is falsy
 };
 
 class SettingsDialog : public QDialog {
@@ -48,6 +49,7 @@ private:
     QJsonObject m_cfg;
     QJsonObject m_props;
     QStackedWidget *m_stack = nullptr;
+    QWidget *m_buttons = nullptr;
     bool m_sidebarExpanded = false;
     QListWidget *m_navList = nullptr;
     QList<QPair<QString, QWidget *>> m_controls; // field key -> control

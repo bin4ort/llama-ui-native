@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QFontMetrics>
+#include <QTimer>
 #include <QFormLayout>
 #include <cmath>
 #include <QHBoxLayout>
@@ -210,11 +211,13 @@ const QList<SettingField> DEVELOPER = {
      "Show toggle button to display messages as plain text instead of Markdown-formatted content"},
     {"jsSandboxEnabled", "JavaScript sandbox tool", "checkbox", false,
      "Expose a run_javascript tool to the model. Code runs in a Web Worker inside a sandboxed iframe with an opaque origin, isolated from the WebUI and its API, with a hard timeout."},
+    {"symbolicMath", "Symbolic math (nerdamer)", "checkbox", false,
+     "Pre-load nerdamer in the sandbox for symbolic computation: simplify, diff, integrate, solve, and more. Requires \"JavaScript sandbox tool\" to be enabled.",
+     "jsSandboxEnabled"},
     {"customJson", "Custom JSON", "textarea", false,
      "Custom JSON parameters to send to the API. Must be valid JSON format."},
     {"customCss", "Custom CSS", "textarea", false,
-     "Custom CSS to inject into the interface."},
-    {"logLevel", "Log level", "loglevel"},
+     "CSS injected into the page at runtime. Set it here, or ship a custom stylesheet in the frontend."},
 };
 } // namespace
 
@@ -410,11 +413,18 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     m_buttons = buttons;
     auto repositionFooter = [this]() {
         if (!m_buttons) return;
+        // v2 footer: sticky bottom-0 -> at y816 on long pages, right after
+        // the content on short ones. The content bottom equals the center's
+        // sizeHint (it already includes the pt-28 top margin); the tools
+        // page is short and sits at the note bottom + 70.
         int y = 816;
         if (m_stack && m_stack->currentWidget()) {
             if (auto *center = m_stack->currentWidget()->findChild<QWidget *>(
-                    QStringLiteral("settingsCenter")))
+                    QStringLiteral("settingsCenter"))) {
                 y = qMin(816, 112 + center->sizeHint().height() + 24);
+                if (m_stack->currentWidget() == m_stack->widget(6))
+                    y = 334; // tools: v2 footer box top (note bottom + 42)
+            }
         }
         m_buttons->move(m_sidebarExpanded ? 616 : 496, y);
     };
@@ -695,6 +705,9 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         }
     };
     for (const auto &f : fields) {
+        // v2: fields with dependsOn are hidden while the dependency is off
+        if (!f.dependsOn.isEmpty() && !m_cfg.value(f.dependsOn).toBool(false))
+            continue;
         if (f.type == QStringLiteral("checkbox")) {
             flushChecks();
             checkLabels << f.label;
