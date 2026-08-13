@@ -264,6 +264,10 @@ QString stylesheet(const QString &paletteId) {
     const QString s = QStringLiteral(R"QSS(
 * { font-family: %1; font-size: 14px; }
 QMainWindow, QDialog { background-color: %2; color: %3; }
+QToolTip {
+  background-color: %21; color: %2; border: none; border-radius: 6px;
+  padding: 6px 12px; font-size: 14px;
+}
 
 /* Sidebar (v2 SidebarNavigation) — floating rounded panel; transparent
  * strip collapsed, muted/60 panel expanded */
