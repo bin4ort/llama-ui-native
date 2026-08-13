@@ -54,17 +54,17 @@ McpPage::McpPage(const QJsonObject &config, QWidget *parent)
 
     // v2: collapsed sidebar strip at x0-56, content pane after it
     auto *navPad = new QWidget(this);
-    navPad->setFixedWidth(56); // v2: w-12 strip + ml-2
+    navPad->setFixedWidth(48); // v2: w-12 strip
     navPad->setAutoFillBackground(false);
     auto *stripL = new QVBoxLayout(navPad);
-    stripL->setContentsMargins(10, 28, 10, 0);
+    stripL->setContentsMargins(16, 16, 16, 0); // v2: (16,16) logo + 36 buttons
     stripL->setSpacing(0);
     auto stripBtn = [this, navPad](const QString &icon, const QString &tip, bool sel = false) {
         auto *b = new QPushButton(navPad);
         b->setProperty("strip", true);
         b->setProperty("mcpActive", sel);
-        b->setFixedSize(28, 28);
-        b->setIconSize(QSize(14, 14));
+        b->setFixedSize(36, 36);
+        b->setIconSize(QSize(16, 16));
         b->setIcon(Icons::get(icon, Icons::color()));
         b->setToolTip(tip);
         b->setCursor(Qt::PointingHandCursor);
@@ -73,45 +73,53 @@ McpPage::McpPage(const QJsonObject &config, QWidget *parent)
     auto *stripLogo = new QPushButton(navPad);
     stripLogo->setProperty("strip", true);
     stripLogo->setProperty("logoBtn", true);
-    stripLogo->setFixedSize(28, 28);
+    stripLogo->setFixedSize(36, 36);
     stripLogo->setIconSize(QSize(12, 12));
     stripLogo->setIcon(Icons::logo(Icons::color()));
     stripLogo->setToolTip(I18n::t(QStringLiteral("Back to Chat")));
     connect(stripLogo, &QPushButton::clicked, this, &QDialog::close);
-    stripL->addWidget(stripLogo, 0, Qt::AlignHCenter);
-    stripL->addSpacing(16);
+    stripL->addWidget(stripLogo, 0, Qt::AlignLeft);
+    stripL->addSpacing(8); // v2: logo row + mt-2
     auto *b1 = stripBtn(QStringLiteral("message-square"), I18n::t(QStringLiteral("New Chat")));
     connect(b1, &QPushButton::clicked, this, &QDialog::close);
-    stripL->addWidget(b1, 0, Qt::AlignHCenter);
-    stripL->addSpacing(16);
+    stripL->addWidget(b1, 0, Qt::AlignLeft);
+    stripL->addSpacing(4);
     auto *b2 = stripBtn(QStringLiteral("search"), I18n::t(QStringLiteral("Search")));
     connect(b2, &QPushButton::clicked, this, &QDialog::close);
-    stripL->addWidget(b2, 0, Qt::AlignHCenter);
-    stripL->addSpacing(16);
+    stripL->addWidget(b2, 0, Qt::AlignLeft);
+    stripL->addSpacing(4);
     auto *b3 = stripBtn(QStringLiteral("boxes"), I18n::t(QStringLiteral("MCP servers")), true);
-    stripL->addWidget(b3, 0, Qt::AlignHCenter);
-    stripL->addSpacing(16);
+    stripL->addWidget(b3, 0, Qt::AlignLeft);
+    stripL->addSpacing(4);
     auto *b4 = stripBtn(QStringLiteral("settings"), I18n::t(QStringLiteral("Settings")));
-    stripL->addWidget(b4, 0, Qt::AlignHCenter);
+    stripL->addWidget(b4, 0, Qt::AlignLeft);
     stripL->addStretch(1);
     outer->addWidget(navPad);
 
     auto *content = new QWidget(this);
     auto *col = new QVBoxLayout(content);
-    col->setContentsMargins(0, 0, 0, 0);
+    col->setContentsMargins(0, 0, 0, 64); // v2: min-h-[calc(100dvh-4rem)]
     col->setSpacing(0);
 
     // v2 full-page layout: sticky header (mt-4, h64) + centered content
+    col->addSpacing(16); // v2: mt-4
     auto *header = new QWidget(content);
     header->setObjectName(QStringLiteral("mcpHeader"));
     header->setFixedHeight(64);
     auto *hl = new QHBoxLayout(header);
-    hl->setContentsMargins(2, 16, 32, 12); // v2: title at x58
+    hl->setContentsMargins(32, 16, 32, 12); // v2: row at y32 (icon x88)
     auto *titleIcon = new QLabel(content);
     titleIcon->setPixmap(Icons::mcpLogo(Icons::color()).pixmap(20, 20));
     hl->addWidget(titleIcon);
     auto *title = new QLabel(I18n::t(QStringLiteral("MCP Servers")), content);
     title->setObjectName(QStringLiteral("mcpTitle"));
+    title->setFixedHeight(36); // room for the 24px ink + the nudge
+    title->setContentsMargins(0, -2, 0, 2); // v2 ink at box+8
+    {
+        QFont f = title->font();
+        f.setLetterSpacing(QFont::AbsoluteSpacing, 0.041);
+        title->setFont(f);
+    }
     hl->addWidget(title);
     hl->addStretch(1);
     auto *closeBtn = new QPushButton(content);
@@ -121,6 +129,7 @@ McpPage::McpPage(const QJsonObject &config, QWidget *parent)
     connect(closeBtn, &QPushButton::clicked, this, &QDialog::close);
     hl->addWidget(closeBtn);
     col->addWidget(header);
+    col->addSpacing(8); // v2: header mb-2
 
     auto *scroll = new QScrollArea(content);
     scroll->setWidgetResizable(true);
@@ -146,6 +155,7 @@ void McpPage::rebuild() {
     if (servers.isEmpty()) {
         // v2 empty state: 16px plus icon + 14px title/desc + primary button
         m_list->setSpacing(6);
+        m_list->addSpacing(22); // v2 centers the block ~11px lower
         m_list->addStretch(1);
         auto *icon = new QLabel(this);
         icon->setObjectName(QStringLiteral("mcpEmptyIcon"));
@@ -153,16 +163,27 @@ void McpPage::rebuild() {
         icon->setAlignment(Qt::AlignCenter);
         icon->setFixedSize(24, 24);
         m_list->addWidget(icon, 0, Qt::AlignHCenter);
-        m_list->addSpacing(4);
+        m_list->addSpacing(13);
         auto *t1 = new QLabel(I18n::t(QStringLiteral("Add your first MCP server")), this);
         t1->setObjectName(QStringLiteral("mcpEmptyTitle"));
         t1->setAlignment(Qt::AlignCenter);
+        {
+            QFont f = t1->font();
+            f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+            t1->setFont(f);
+        }
         m_list->addWidget(t1);
+        m_list->addSpacing(4);
         auto *t2 = new QLabel(I18n::t(QStringLiteral("Connect a remote MCP server by URL.")), this);
         t2->setObjectName(QStringLiteral("mcpEmptyDesc"));
         t2->setAlignment(Qt::AlignCenter);
+        {
+            QFont f = t2->font();
+            f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+            t2->setFont(f);
+        }
         m_list->addWidget(t2);
-        m_list->addSpacing(8);
+        m_list->addSpacing(11);
         auto *btn = new QPushButton(QStringLiteral("+ Add new server"), this);
         btn->setProperty("primary", true);
         btn->setMinimumWidth(160);
