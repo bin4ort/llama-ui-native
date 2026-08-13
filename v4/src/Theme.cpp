@@ -362,6 +362,7 @@ QCheckBox::indicator:checked {
   background-color: %13; border-color: %13;
 }
 QCheckBox { color: %3; font-size: 12px; spacing: 8px; }
+QCheckBox#showSystemMessageCb { font-size: 14px; }
 
 /* Buttons (UI-SPEC §3.1) */
 QPushButton {
@@ -531,6 +532,13 @@ QPushButton[full="true"] { width: 100%; }
 #settingsDesc { color: %10; font-size: 14px; line-height: 20px; }
 #settingsFieldLabel[destructiveText="true"] { color: %23; }
 #settingsHelp { color: %10; font-size: 12px; }
+QPushButton[presetTrigger="true"] {
+  background: transparent; border: none; border-radius: 8px;
+  color: %3; font-size: 14px; text-align: left; padding: 8px 12px;
+}
+QPushButton[presetTrigger="true"]:hover { background-color: %16; }
+#presetRowName { color: %3; font-size: 14px; font-weight: 500; }
+#presetRowDesc { color: %10; font-size: 12px; }
 #toolsDisclosure {
   background-color: transparent; border: 1px solid %5; border-radius: 8px;
   color: %3; font-size: 14px; text-align: left; padding: 8px 12px;

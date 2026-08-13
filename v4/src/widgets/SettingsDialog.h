@@ -45,6 +45,7 @@ private:
     QWidget *buildTools();
     QWidget *buildImportExport();
     void apply();
+    void rebuildCurrentSection();
 
     QJsonObject m_cfg;
     QJsonObject m_props;

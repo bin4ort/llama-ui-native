@@ -3,6 +3,8 @@
 #include "../i18n.h"
 #include "../Theme.h"
 #include "../Config.h"
+#include "../Presets.h"
+#include <QInputDialog>
 #include <QApplication>
 #include <QCheckBox>
 #include <QClipboard>
@@ -435,6 +437,7 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     buttons->raise();
     outer->addLayout(layout, 1);
 
+
     connect(m_navList, &QListWidget::currentRowChanged, this,
             [this, repositionFooter](int row) {
                 m_stack->setCurrentIndex(qMax(0, row));
@@ -443,6 +446,36 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     m_navList->setCurrentRow(0);
     repositionFooter();
 }
+void SettingsDialog::rebuildCurrentSection() {
+    const int idx = m_stack->currentIndex();
+    QWidget *page = m_stack->widget(idx);
+    m_stack->removeWidget(page);
+    page->deleteLater();
+    switch (idx) {
+    case 0: m_stack->insertWidget(0, buildSection(QStringLiteral("General"), GENERAL, true, true)); break;
+    case 1: m_stack->insertWidget(1, buildSection(QStringLiteral("Display"), DISPLAY)); break;
+    case 2: m_stack->insertWidget(2, buildSection(QStringLiteral("Sampling"), SAMPLING)); break;
+    case 3: m_stack->insertWidget(3, buildSection(QStringLiteral("Penalties"), PENALTIES)); break;
+    case 4: m_stack->insertWidget(4, buildSection(QStringLiteral("Agentic"), AGENTIC)); break;
+    case 5: m_stack->insertWidget(5, buildSection(QStringLiteral("Developer"), DEVELOPER)); break;
+    case 6: m_stack->insertWidget(6, buildTools()); break;
+    case 7: m_stack->insertWidget(7, buildImportExport()); break;
+    }
+    m_stack->setCurrentIndex(idx);
+    QTimer::singleShot(0, this, [this]() {
+        int y = 816;
+        if (m_stack && m_stack->currentWidget()) {
+            if (auto *center = m_stack->currentWidget()->findChild<QWidget *>(
+                    QStringLiteral("settingsCenter"))) {
+                y = qMin(816, 112 + center->sizeHint().height() + 24);
+                if (m_stack->currentWidget() == m_stack->widget(6))
+                    y = 334; // tools: v2 footer box top (note bottom + 42)
+            }
+        }
+        if (m_buttons) m_buttons->move(m_sidebarExpanded ? 616 : 496, y);
+    });
+}
+
 
 QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingField> &fields,
                                       bool useComboLang, bool useComboTheme) {
@@ -707,6 +740,121 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
                     {I18n::t(QStringLiteral("Choose the color theme for the interface."))});
     }
 
+    // v2 system message card extras: the "Show system message in
+    // conversations" checkbox + the collapsible prompt preset group
+    auto addSystemMessageExtras = [&](const SettingField &f) {
+        auto *card = qobject_cast<QWidget *>(
+            cl->itemAt(cl->count() - 1)->widget());
+        if (!card) return;
+        auto *cardL = qobject_cast<QVBoxLayout *>(card->layout());
+        if (!cardL) return;
+        cardL->addSpacing(12); // v2: mt-3
+        auto *showCb = new QCheckBox(
+            I18n::t(QStringLiteral("Show system message in conversations")), card);
+        showCb->setObjectName(QStringLiteral("showSystemMessageCb"));
+        showCb->setFixedHeight(20); // v2: text-sm row
+        showCb->setChecked(m_cfg.value(QStringLiteral("showSystemMessage")).toBool(true));
+        connect(showCb, &QCheckBox::toggled, this, [this](bool v) {
+            m_cfg.insert(QStringLiteral("showSystemMessage"), v);
+        });
+        cardL->addWidget(showCb);
+        cardL->addSpacing(14); // v2: mt-4 (net of the QCheckBox metrics)
+
+        // preset group (v2 SettingsChatPresetGroup, collapsed by default)
+        auto *group = new QWidget(card);
+        group->setObjectName(QStringLiteral("presetGroup"));
+        auto *gl = new QVBoxLayout(group);
+        gl->setContentsMargins(0, 0, 0, 0);
+        gl->setSpacing(0);
+        auto *trigger = new QPushButton(group);
+        trigger->setProperty("presetTrigger", true);
+        trigger->setCursor(Qt::PointingHandCursor);
+        auto *content = new QWidget(group);
+        content->setObjectName(QStringLiteral("presetContent"));
+        auto *ctl = new QVBoxLayout(content);
+        ctl->setContentsMargins(16, 0, 0, 0); // v2: ml-4 pl-2
+        ctl->setSpacing(0);
+
+        const auto presets = Presets::list(m_cfg.value(QStringLiteral("presets")).toArray());
+        auto updateTrigger = [trigger, presets]() {
+            trigger->setText(QStringLiteral("  âº  %1   %2")
+                                 .arg(I18n::t(QStringLiteral("Custom prompt presets")),
+                                      QString::number(presets.size())));
+        };
+        updateTrigger();
+        // rows: name + description + delete
+        for (const auto &pr : presets) {
+            auto *row = new QWidget(content);
+            auto *rl = new QHBoxLayout(row);
+            rl->setContentsMargins(0, 6, 0, 6);
+            rl->setSpacing(8);
+            auto *nameCol = new QVBoxLayout;
+            nameCol->setSpacing(2);
+            auto *nm = new QLabel(pr.name, row);
+            nm->setObjectName(QStringLiteral("presetRowName"));
+            auto *ds = new QLabel(pr.description.isEmpty() ? pr.name : pr.description, row);
+            ds->setObjectName(QStringLiteral("presetRowDesc"));
+            nameCol->addWidget(nm);
+            nameCol->addWidget(ds);
+            rl->addLayout(nameCol, 1);
+            auto *del = new QPushButton(row);
+            del->setProperty("ghost", true);
+            del->setIcon(Icons::get(QStringLiteral("trash-2"), Icons::color()));
+            del->setIconSize(QSize(14, 14));
+            del->setFixedSize(28, 28);
+            connect(del, &QPushButton::clicked, this, [this, pr]() {
+                auto arr = m_cfg.value(QStringLiteral("presets")).toArray();
+                for (int j = 0; j < arr.size(); ++j)
+                    if (arr.at(j).toObject().value(QStringLiteral("id")).toString() == pr.id)
+                        arr.removeAt(j);
+                m_cfg.insert(QStringLiteral("presets"), arr);
+                rebuildCurrentSection();
+            });
+            rl->addWidget(del);
+            ctl->addWidget(row);
+        }
+        if (presets.isEmpty()) {
+            auto *empty = new QLabel(I18n::t(QStringLiteral("No presets yet")), content);
+            empty->setObjectName(QStringLiteral("settingsHelp"));
+            empty->setAlignment(Qt::AlignCenter);
+            ctl->addWidget(empty);
+        }
+        // create preset button
+        auto *createRow = new QWidget(content);
+        auto *crl = new QHBoxLayout(createRow);
+        crl->setContentsMargins(0, 8, 0, 4);
+        auto *create = new QPushButton(
+            QStringLiteral("  +  %1").arg(I18n::t(QStringLiteral("Create preset"))), content);
+        create->setProperty("ghost", true);
+        connect(create, &QPushButton::clicked, this, [this, create]() {
+            bool ok = false;
+            const QString name = QInputDialog::getText(
+                this, I18n::t(QStringLiteral("Create preset")),
+                I18n::t(QStringLiteral("Preset name")), QLineEdit::Normal,
+                QString(), &ok);
+            if (!ok || name.isEmpty()) return;
+            bool ok2 = false;
+            const QString contentText = QInputDialog::getMultiLineText(
+                this, I18n::t(QStringLiteral("Create preset")),
+                I18n::t(QStringLiteral("System prompt")), QString(), &ok2);
+            if (!ok2) return;
+            auto arr = Presets::add(m_cfg.value(QStringLiteral("presets")).toArray(),
+                                    name, QString(), contentText);
+            m_cfg.insert(QStringLiteral("presets"), arr);
+            rebuildCurrentSection();
+        });
+        crl->addWidget(create);
+        crl->addStretch(1);
+        ctl->addWidget(createRow);
+        content->setVisible(false);
+        connect(trigger, &QPushButton::clicked, this, [content]() {
+            content->setVisible(!content->isVisible());
+        });
+        gl->addWidget(trigger);
+        gl->addWidget(content);
+        cardL->addWidget(group);
+    };
+
     // fields render in registry order; each checkbox is its own card
     // (v2: one checkbox + help per card)
     QStringList checkLabels;
@@ -733,6 +881,8 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         } else {
             flushChecks();
             addCard({I18n::t(f.label)}, {makeControl(f)}, {I18n::t(f.help)});
+            if (f.key == QStringLiteral("systemMessage"))
+                addSystemMessageExtras(f);
         }
     }
     flushChecks();

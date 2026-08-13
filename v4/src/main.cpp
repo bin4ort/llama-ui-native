@@ -10,6 +10,8 @@
 #include <cstdio>
 #include <QGuiApplication>
 #include <QTimer>
+#include <QScrollArea>
+#include <QScrollBar>
 #include <QScreen>
 #include <QLabel>
 #include <QFontInfo>
@@ -119,6 +121,21 @@ int main(int argc, char *argv[]) {
             app.exit(ok ? 0 : 1);
         });
         return app.exec();
+    }
+
+    // --settings-scroll <px>: scroll the settings content area (for
+    // capturing the below-the-fold preset group)
+    const int scIdx = args.indexOf(QStringLiteral("--settings-scroll"));
+    if (scIdx != -1 && scIdx + 1 < args.size()) {
+        const int sy = args.at(scIdx + 1).toInt();
+        QTimer::singleShot(780, [&window, sy]() {
+            for (QWidget *w : QApplication::allWidgets()) {
+                auto *sa = qobject_cast<QScrollArea *>(w);
+                if (sa && sa->isVisible()) {
+                    sa->verticalScrollBar()->setValue(sy);
+                }
+            }
+        });
     }
 
     // --geom-dump: print widget tree geometry (dialog/page hierarchy)
