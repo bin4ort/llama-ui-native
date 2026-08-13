@@ -332,9 +332,10 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
                                                tokens.mutedForeground, m_navList));
     m_navList->setFocusPolicy(Qt::NoFocus);
     const QStringList sections = {
-        QStringLiteral("General"), QStringLiteral("Display"), QStringLiteral("Sampling"),
-        QStringLiteral("Penalties"), QStringLiteral("Agentic"), QStringLiteral("Developer"),
-        QStringLiteral("Tools"), QStringLiteral("Import/Export")};
+        I18n::t(QStringLiteral("General")), I18n::t(QStringLiteral("Display")),
+        I18n::t(QStringLiteral("Sampling")), I18n::t(QStringLiteral("Penalties")),
+        I18n::t(QStringLiteral("Agentic")), I18n::t(QStringLiteral("Developer")),
+        I18n::t(QStringLiteral("Tools")), I18n::t(QStringLiteral("Import/Export"))};
     const QStringList icons = {
         QStringLiteral("sliders-vertical"), QStringLiteral("monitor"), QStringLiteral("funnel"),
         QStringLiteral("triangle-alert"), QStringLiteral("list-restart"), QStringLiteral("code"),
@@ -483,7 +484,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     secIcon->setPixmap(Icons::get(QStringLiteral("sliders-horizontal"), Icons::color())
                            .pixmap(20, 20)); // v2: h-5 w-5 section icons
     hrl->addWidget(secIcon);
-    auto *heading = new QLabel(title, headerRow);
+    auto *heading = new QLabel(I18n::t(title), headerRow);
     heading->setObjectName(QStringLiteral("settingsSectionTitle"));
     heading->setMinimumHeight(28); // v2: title box h=28
     heading->setAlignment(Qt::AlignTop); // v2 H3 ink at box+5
@@ -497,18 +498,17 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             auto *help = new QLabel(text, parent);
             help->setObjectName(QStringLiteral("settingsHelp"));
             help->setWordWrap(true);
-            // v2 line counts measured live (12px font, 16px/line)
-            static const QHash<QString, int> linesByPrefix{
-                {QStringLiteral("Controls the randomness"), 2},
-                {QStringLiteral("Addon for the temperature sampler. The added"), 2},
-                {QStringLiteral("Limits tokens based on the minimum probability"), 2},
-                {QStringLiteral("After each response, re-submit"), 2},
-                {QStringLiteral("Strip thinking from previous"), 2},
-                {QStringLiteral("Expose a run_javascript tool"), 2},
-            };
-            int lines = 1;
-            for (auto it = linesByPrefix.cbegin(); it != linesByPrefix.cend(); ++it)
-                if (text.startsWith(it.key())) lines = it.value();
+            // v2: text-xs with 16px line-height — the wrapped line count is
+            // measured at the label width (692px) so no language clips
+            // text; the box height keeps the v2's 16px pitch
+            QFont mf(help->font().family());
+            mf.setPixelSize(12);
+            QFontMetrics fm(mf);
+            const int wrapWidth = 692;
+            const QRect wr = fm.boundingRect(QRect(0, 0, wrapWidth, 1000),
+                                             Qt::TextWordWrap, text);
+            const int lines = qMax(1, (wr.height() + fm.lineSpacing() / 2) /
+                                          qMax(1, fm.lineSpacing()));
             help->setFixedHeight(16 * lines);
             help->setContentsMargins(0, -1, 0, 1); // v2 text-xs: Qt ink 1px low
             help->setMaximumHeight(16 * lines);
@@ -655,11 +655,11 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             for (const auto &code : I18n::languages())
                 lang->addItem(langNames.value(code, code), code);
             lang->setCurrentIndex(qMax(0, lang->findData(m_cfg.value(QStringLiteral("language")).toString())));
-            labels << QStringLiteral("Language");
+            labels << I18n::t(QStringLiteral("Language"));
             controls << lang;
             m_controls.append({QStringLiteral("language"), lang});
             // v2 renders Language and Theme as separate cards
-            addCard(labels, controls, {QStringLiteral("Choose the interface language.")});
+            addCard(labels, controls, {I18n::t(QStringLiteral("Choose the interface language."))});
             labels.clear();
             controls.clear();
         }
@@ -685,13 +685,13 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             for (const auto &[label, id] : themes)
                 theme->addItem(label, id);
             theme->setCurrentIndex(qMax(0, theme->findData(m_cfg.value(QStringLiteral("theme")).toString())));
-            labels << QStringLiteral("Theme");
+            labels << I18n::t(QStringLiteral("Theme"));
             controls << theme;
             m_controls.append({QStringLiteral("theme"), theme});
         }
         if (!controls.isEmpty())
             addCard(labels, controls,
-                    {QStringLiteral("Choose the color theme for the interface.")});
+                    {I18n::t(QStringLiteral("Choose the color theme for the interface."))});
     }
 
     // fields render in registry order; each checkbox is its own card
@@ -713,13 +713,13 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             continue;
         if (f.type == QStringLiteral("checkbox")) {
             flushChecks();
-            checkLabels << f.label;
-            checkHelps << f.help;
+            checkLabels << I18n::t(f.label);
+            checkHelps << I18n::t(f.help);
             checkControls << makeControl(f);
             flushChecks();
         } else {
             flushChecks();
-            addCard({f.label}, {makeControl(f)}, {f.help});
+            addCard({I18n::t(f.label)}, {makeControl(f)}, {I18n::t(f.help)});
         }
     }
     flushChecks();
