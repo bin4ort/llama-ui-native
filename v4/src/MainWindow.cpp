@@ -256,19 +256,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_greetingHost = new QWidget(central);
     m_greetingHost->setVisible(false);
     auto *gh = new QVBoxLayout(m_greetingHost);
-    gh->setContentsMargins(0, 0, 0, 0); // v2: greeting hugs the form
+    gh->setContentsMargins(0, 0, 0, 10); // v2: greeting mb-6 (24) minus the col gap 8 = 16 -> +10 net
     gh->setSpacing(8);                    // v2: h1 mb-2
     m_greetingTitle = new QLabel(I18n::t(QStringLiteral("Hello there")));
     m_greetingTitle->setObjectName(QStringLiteral("greetingTitle"));
     m_greetingTitle->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     m_greetingTitle->setFixedHeight(36); // v2: text-3xl lh-9
-    m_greetingTitle->setContentsMargins(0, -16, 0, 0); // Qt centers glyphs in the box; shift the paint up
+    m_greetingTitle->setContentsMargins(0, -9, 0, 9); // v2 H1 ink at the box top
     gh->addWidget(m_greetingTitle);
     m_greetingSub = new QLabel(
         I18n::t(QStringLiteral("Type a message or upload files to get started")));
     m_greetingSub->setObjectName(QStringLiteral("greetingSub"));
     m_greetingSub->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
     m_greetingSub->setFixedHeight(28); // v2: text-lg lh-7
+    m_greetingSub->setContentsMargins(0, -4, 0, 4); // v2 ink at box+1
     gh->addWidget(m_greetingSub);
 
     m_composer = new Composer(central);
