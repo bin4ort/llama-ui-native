@@ -925,7 +925,7 @@ QWidget *SettingsDialog::buildImportExport() {
     hrl->addWidget(heading);
     hrl->addStretch(1);
     cl->addWidget(headerRow);
-    cl->addSpacing(24); // v2: mb-6 -> first group title at y189
+    cl->addSpacing(25); // v2: mb-6 -> first group title at y189
 
     // v2 SettingsChatImportExportSection: h4 title (14px, mb-2), desc
     // (14px muted, mb-4, 2 lines), outline button; section pitch 160;
@@ -938,12 +938,22 @@ QWidget *SettingsDialog::buildImportExport() {
         if (redTitle) t->setProperty("destructiveText", true);
         t->setFixedHeight(28); // v2: h4 box
         t->setAlignment(Qt::AlignTop);
+        {
+            QFont f = t->font();
+            f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+            t->setFont(f);
+        }
         cl->addWidget(t);
-        cl->addSpacing(8); // v2: mb-2
+        cl->addSpacing(4); // v2: desc box 4px below the h4 box
         auto *d = new QLabel(desc, center);
         d->setObjectName(QStringLiteral("settingsDesc"));
         d->setWordWrap(true);
         d->setFixedHeight(40); // v2: two-line desc
+        {
+            QFont f = d->font();
+            f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+            d->setFont(f);
+        }
         cl->addWidget(d);
         cl->addSpacing(16); // v2: mb-4
         auto *btn = new QPushButton(buttonText, center);
@@ -952,11 +962,16 @@ QWidget *SettingsDialog::buildImportExport() {
         btn->setFixedHeight(36); // v2: h-9
         connect(btn, &QPushButton::clicked, this, fn);
         cl->addWidget(btn, 0, Qt::AlignLeft);
-        cl->addSpacing(32); // v2: section pitch 160 (28+8+40+16+36+32)
+        cl->addSpacing(36); // v2: section pitch 160 (28+4+40+16+36+36)
     };
     auto addGroup = [&](const QString &title) {
         auto *g = new QLabel(title, center);
         g->setObjectName(QStringLiteral("settingsGroupTitle"));
+        {
+            QFont f = g->font();
+            f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+            g->setFont(f);
+        }
         g->setMinimumHeight(24); // v2: h3 line box
         g->setFixedHeight(24);
         cl->addWidget(g);
