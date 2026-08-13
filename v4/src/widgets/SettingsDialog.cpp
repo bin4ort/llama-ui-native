@@ -505,7 +505,11 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             // text; the box height keeps the v2's 16px pitch
             QFont mf(help->font().family());
             mf.setPixelSize(12);
+            mf.setLetterSpacing(QFont::AbsoluteSpacing, 0.016);
             QFontMetrics fm(mf);
+            QFont hf = help->font();
+            hf.setLetterSpacing(QFont::AbsoluteSpacing, 0.016);
+            help->setFont(hf);
             const int wrapWidth = width;
             const QRect wr = fm.boundingRect(QRect(0, 0, wrapWidth, 1000),
                                              Qt::TextWordWrap, text);
@@ -532,7 +536,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             // Qt's hinted glyph advances drift ~0.024px/glyph from Skia's
             // (accumulates along the line) — fractional spacing cancels it
             QFont lf = lbl->font();
-            lf.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+            lf.setLetterSpacing(QFont::AbsoluteSpacing, 0.016);
             lbl->setFont(lf);
             const bool isSelect = qobject_cast<QComboBox *>(controls.at(i)) != nullptr;
             const bool isCheck = qobject_cast<QCheckBox *>(controls.at(i)) != nullptr;
