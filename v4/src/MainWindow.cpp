@@ -573,7 +573,7 @@ void MainWindow::updateFormSpacer() {
     // [spacer][bottomPad 10] with 8px chatCol gaps, so:
     //   composerTop = h - composerH - 8 - spacer - 8 - 10
     const int h = height();
-    const int composerTop = h / 2 - 2; // v2: 50dvh - 2px
+    const int composerTop = h / 2 + 2; // v2: form top at 444
     const int spacer = h - composerTop - m_composer->height() - 26;
     m_formSpacer->setFixedHeight(qMax(20, spacer));
 }
