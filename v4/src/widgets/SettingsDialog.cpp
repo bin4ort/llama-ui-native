@@ -95,7 +95,7 @@ const QList<SettingField> GENERAL = {
     {"apiKey", "API Key", "input", false,
      "Set the API Key if you are using the --api-key option for the server."},
     {"systemMessage", "Default system prompt", "textarea", false,
-     "The default system prompt — the starting message that defines how the model should behave."},
+     "The default system prompt — the starting message that defines how the model should behave. Used as the base persona unless a preset is applied."},
     {"pasteLongTextToFileLen", "Paste long text to file length", "input", true,
      "Paste long text as a file attachment instead of inline."},
     {"sendOnEnter", "Send message on Enter", "checkbox", false,
@@ -748,17 +748,17 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         if (!card) return;
         auto *cardL = qobject_cast<QVBoxLayout *>(card->layout());
         if (!cardL) return;
-        cardL->addSpacing(12); // v2: mt-3
+        cardL->addSpacing(4); // v2: mt-3 (net of the card spacing 8)
         auto *showCb = new QCheckBox(
             I18n::t(QStringLiteral("Show system message in conversations")), card);
         showCb->setObjectName(QStringLiteral("showSystemMessageCb"));
-        showCb->setFixedHeight(20); // v2: text-sm row
+        showCb->setFixedHeight(24); // v2: text-sm row + descenders
         showCb->setChecked(m_cfg.value(QStringLiteral("showSystemMessage")).toBool(true));
         connect(showCb, &QCheckBox::toggled, this, [this](bool v) {
             m_cfg.insert(QStringLiteral("showSystemMessage"), v);
         });
         cardL->addWidget(showCb);
-        cardL->addSpacing(14); // v2: mt-4 (net of the QCheckBox metrics)
+        cardL->addSpacing(11); // v2: mt-4 (net of the card spacing 8)
 
         // preset group (v2 SettingsChatPresetGroup, collapsed by default)
         auto *group = new QWidget(card);
