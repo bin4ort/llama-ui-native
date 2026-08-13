@@ -494,7 +494,9 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
 
     auto addCard = [&](const QStringList &labels, const QList<QWidget *> &controls,
                        const QStringList &helps = {}) {
-        auto makeHelp = [](const QString &text, QWidget *parent) {
+        // width: 692 for checkbox cards (v2: help indented under the label
+        // column), 720 for input/select cards (v2: full card width)
+        auto makeHelp = [](const QString &text, QWidget *parent, int width) {
             auto *help = new QLabel(text, parent);
             help->setObjectName(QStringLiteral("settingsHelp"));
             help->setWordWrap(true);
@@ -504,7 +506,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             QFont mf(help->font().family());
             mf.setPixelSize(12);
             QFontMetrics fm(mf);
-            const int wrapWidth = 692;
+            const int wrapWidth = width;
             const QRect wr = fm.boundingRect(QRect(0, 0, wrapWidth, 1000),
                                              Qt::TextWordWrap, text);
             const int lines = qMax(1, (wr.height() + fm.lineSpacing() / 2) /
@@ -527,6 +529,11 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         for (int i = 0; i < controls.size(); ++i) {
             auto *lbl = new QLabel(labels.at(i), card);
             lbl->setObjectName(QStringLiteral("settingsFieldLabel"));
+            // Qt's hinted glyph advances drift ~0.024px/glyph from Skia's
+            // (accumulates along the line) — fractional spacing cancels it
+            QFont lf = lbl->font();
+            lf.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+            lbl->setFont(lf);
             const bool isSelect = qobject_cast<QComboBox *>(controls.at(i)) != nullptr;
             const bool isCheck = qobject_cast<QCheckBox *>(controls.at(i)) != nullptr;
             if (isCheck) {
@@ -549,7 +556,9 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
                 crow->addWidget(lbl, 1, Qt::AlignTop);
                 cardL->addLayout(crow);
                 if (i < helps.size() && !helps.at(i).isEmpty()) {
-                    cardL->addWidget(makeHelp(helps.at(i), card));
+                    auto *h = makeHelp(helps.at(i), card, 692);
+                    h->setContentsMargins(28, -1, 0, 1); // v2: under the label
+                    cardL->addWidget(h);
                 }
                 continue;
             }
@@ -559,7 +568,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
                 controls.at(i)->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
                 cardL->addWidget(controls.at(i));
                 if (i < helps.size() && !helps.at(i).isEmpty()) {
-                    cardL->addWidget(makeHelp(helps.at(i), card));
+                    cardL->addWidget(makeHelp(helps.at(i), card, 720));
                 }
                 continue;
             }
@@ -568,7 +577,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             controls.at(i)->setMinimumWidth(200);
             cardL->addWidget(controls.at(i));
             if (i < helps.size() && !helps.at(i).isEmpty()) {
-                cardL->addWidget(makeHelp(helps.at(i), card));
+                cardL->addWidget(makeHelp(helps.at(i), card, 720));
             }
         }
         cl->addWidget(card);
