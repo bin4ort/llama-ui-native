@@ -1105,7 +1105,7 @@ QWidget *SettingsDialog::buildImportExport() {
             d->setFont(f);
         }
         cl->addWidget(d);
-        cl->addSpacing(16); // v2: mb-4
+        cl->addSpacing(20); // v2: mb-4 + button offset
         auto *btn = new QPushButton(buttonText, center);
         btn->setProperty("outline", true);
         if (destructive) btn->setProperty("destructive", true);
@@ -1117,7 +1117,7 @@ QWidget *SettingsDialog::buildImportExport() {
         }
         connect(btn, &QPushButton::clicked, this, fn);
         cl->addWidget(btn, 0, Qt::AlignLeft);
-        cl->addSpacing(36); // v2: section pitch 160 (28+4+40+16+36+36)
+        cl->addSpacing(32); // v2: section pitch 160 (28+4+40+20+36+32)
     };
     auto addGroup = [&](const QString &title) {
         auto *g = new QLabel(title, center);
