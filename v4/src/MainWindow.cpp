@@ -1171,123 +1171,112 @@ void MainWindow::openSettings(int section) {
 }
 
 void MainWindow::openPersonaMenu() {
-    auto *menu = new QMenu(this);
+    // v2 DialogPresetPicker: the persona button opens the picker dialog
+    // directly (max-w-2xl): header (title + desc), search, Default + rows
+    auto *dlg = new QDialog(this);
+    dlg->setObjectName(QStringLiteral("appDialog"));
+    dlg->setWindowTitle(I18n::t(QStringLiteral("Prompt presets")));
+    dlg->setModal(true);
+    dlg->setFixedWidth(672); // v2: max-w-2xl
+
     const auto raw = Presets::load(m_config);
     const auto presets = Presets::list(raw);
     auto *conv = m_store->active();
-
-    auto activeName = [&]() -> QString {
+    const QString activeName = [&]() -> QString {
         if (conv && !conv->persona.isEmpty()) {
             for (const auto &p : presets)
                 if (p.content == conv->persona) return p.name;
             return QStringLiteral("Custom");
         }
         return QString();
-    };
+    }();
 
-    // v2 menu structure: label, Default (check), favorites, separator,
-    // "All presets…"
-    auto *label = menu->addAction(I18n::t(QStringLiteral("Prompt presets")));
-    label->setEnabled(false);
-    auto *def = menu->addAction(I18n::t(QStringLiteral("Default")));
-    def->setCheckable(true);
-    def->setChecked(conv && conv->persona.isEmpty());
-    connect(def, &QAction::triggered, this, [this, conv]() {
+    auto *lay = new QVBoxLayout(dlg);
+    lay->setContentsMargins(24, 24, 24, 20);
+    lay->setSpacing(8);
+    auto *title = new QLabel(I18n::t(QStringLiteral("Prompt presets")), dlg);
+    title->setObjectName(QStringLiteral("dialogTitle"));
+    lay->addWidget(title);
+    auto *desc = new QLabel(I18n::t(QStringLiteral(
+        "Pick a prompt preset for this conversation. It applies from the next message.")), dlg);
+    desc->setObjectName(QStringLiteral("dialogDesc"));
+    desc->setWordWrap(true);
+    lay->addWidget(desc);
+    auto *search = new QLineEdit(dlg);
+    search->setPlaceholderText(I18n::t(QStringLiteral("Search presets…")));
+    search->setClearButtonEnabled(true);
+    lay->addWidget(search);
+
+    auto *list = new QListWidget(dlg);
+    list->setObjectName(QStringLiteral("presetList"));
+    list->setFrameShape(QFrame::NoFrame);
+    list->setFixedHeight(384); // v2: ScrollArea h-96
+    auto applyPreset = [this, dlg, conv](const QString &content, const QString &name) {
         if (!conv) return;
-        conv->persona.clear();
+        conv->persona = content;
         m_store->save();
         renderConversation(conv);
-        m_composer->setPersonaName(I18n::t(QStringLiteral("Default")));
-    });
-    menu->addSeparator();
-
-    const int favCount = qMin(presets.size(), 8);
-    const QString active = activeName();
-    for (int i = 0; i < favCount; ++i) {
-        const auto &p = presets.at(i);
-        auto *act = menu->addAction(p.name, this, [this, conv, p]() {
-            if (!conv) return;
-            conv->persona = p.content;
-            m_store->save();
-            ConvMsg pm{uid(), QStringLiteral("system"), QStringLiteral("persona"), p.content};
+        if (!content.isEmpty()) {
+            ConvMsg pm{uid(), QStringLiteral("system"), QStringLiteral("persona"), content};
             m_store->appendMessage(conv, pm);
-            ChatMessage cm{ChatMessage::System, pm.id, p.content, QStringLiteral("persona"),
+            ChatMessage cm{ChatMessage::System, pm.id, content, QStringLiteral("persona"),
                            QJsonArray(), false};
             m_messages->addMessage(cm);
-            m_composer->setPersonaName(p.name);
-        });
-        act->setCheckable(true);
-        act->setChecked(active == p.name);
-    }
-    menu->addSeparator();
-    menu->addAction(I18n::t(QStringLiteral("All presets…")), this, [this, presets]() {
-        // picker dialog: searchable list + Default + create-with-wizard
-        auto *dlg = new QDialog(this);
-        dlg->setObjectName(QStringLiteral("appDialog"));
-        dlg->setWindowTitle(I18n::t(QStringLiteral("Prompt presets")));
-        dlg->setModal(true);
-        dlg->resize(420, 480);
-        auto *lay = new QVBoxLayout(dlg);
-        auto *search = new QLineEdit(dlg);
-        search->setPlaceholderText(I18n::t(QStringLiteral("Search presets…")));
-        lay->addWidget(search);
-        auto *list = new QListWidget(dlg);
-        list->setObjectName(QStringLiteral("presetList"));
-        auto populate = [list, presets](const QString &needle) {
-            list->clear();
-            for (const auto &p : presets) {
-                if (!needle.isEmpty() &&
-                    !p.name.contains(needle, Qt::CaseInsensitive) &&
-                    !p.description.contains(needle, Qt::CaseInsensitive))
-                    continue;
-                auto *item = new QListWidgetItem(p.name);
-                item->setData(Qt::UserRole, p.content);
-                item->setToolTip(p.description);
-                list->addItem(item);
-            }
-        };
-        populate(QString());
-        connect(search, &QLineEdit::textChanged, list, [populate](const QString &q) {
-            populate(q);
-        });
-        lay->addWidget(list, 1);
-        auto *foot = new QHBoxLayout;
-        auto *wizardBtn = new QPushButton(I18n::t(QStringLiteral("Create with wizard…")), dlg);
-        wizardBtn->setProperty("ghost", true);
-        wizardBtn->setIcon(Icons::get(QStringLiteral("wand-sparkles"), Icons::color()));
-        connect(wizardBtn, &QPushButton::clicked, dlg, [this, dlg]() {
-            WizardDialog wiz(m_api, m_model, dlg);
-            connect(&wiz, &WizardDialog::presetCreated, this,
-                    [this](const QString &name, const QString &desc, const QString &content) {
-                        auto raw = Presets::load(m_config);
-                        m_config.insert(QStringLiteral("systemPromptPresets"),
-                                        Presets::add(raw, name, desc, content));
-                        Config::save(m_config);
-                    });
-            wiz.exec();
-        });
-        foot->addWidget(wizardBtn);
-        foot->addStretch(1);
-        auto *closeBtn = new QPushButton(I18n::t(QStringLiteral("Close")), dlg);
-        closeBtn->setProperty("outline", true);
-        connect(closeBtn, &QPushButton::clicked, dlg, &QDialog::close);
-        foot->addWidget(closeBtn);
-        lay->addLayout(foot);
-        connect(list, &QListWidget::itemClicked, this, [this, dlg](QListWidgetItem *item) {
-            auto *conv = m_store->active();
-            if (!conv) return;
-            conv->persona = item->data(Qt::UserRole).toString();
-            m_store->save();
-            ConvMsg pm{uid(), QStringLiteral("system"), QStringLiteral("persona"), conv->persona};
-            m_store->appendMessage(conv, pm);
-            ChatMessage cm{ChatMessage::System, pm.id, conv->persona,
-                           QStringLiteral("persona"), QJsonArray(), false};
-            m_messages->addMessage(cm);
-            m_composer->setPersonaName(item->text());
-            dlg->close();
-        });
-        dlg->exec();
-        dlg->deleteLater();
+        }
+        m_composer->setPersonaName(name);
+        dlg->accept();
+    };
+    auto populate = [list, presets, conv, activeName, applyPreset](const QString &needle) {
+        list->clear();
+        auto *defItem = new QListWidgetItem(I18n::t(QStringLiteral("Default")));
+        defItem->setData(Qt::UserRole, QString());
+        list->addItem(defItem);
+        if (conv && conv->persona.isEmpty())
+            defItem->setIcon(Icons::get(QStringLiteral("check"), Icons::color()));
+        for (const auto &p : presets) {
+            if (!needle.isEmpty() &&
+                !p.name.contains(needle, Qt::CaseInsensitive) &&
+                !p.description.contains(needle, Qt::CaseInsensitive))
+                continue;
+            auto *item = new QListWidgetItem(p.name);
+            item->setData(Qt::UserRole, p.content);
+            item->setToolTip(p.description);
+            if (activeName == p.name)
+                item->setIcon(Icons::get(QStringLiteral("check"), Icons::color()));
+            list->addItem(item);
+        }
+    };
+    populate(QString());
+    connect(search, &QLineEdit::textChanged, list, [populate](const QString &q) {
+        populate(q);
     });
-    menu->exec(QCursor::pos());
+    lay->addWidget(list, 1);
+
+    auto *foot = new QHBoxLayout;
+    auto *wizardBtn = new QPushButton(I18n::t(QStringLiteral("Create with wizard…")), dlg);
+    wizardBtn->setProperty("ghost", true);
+    wizardBtn->setIcon(Icons::get(QStringLiteral("wand-sparkles"), Icons::color()));
+    connect(wizardBtn, &QPushButton::clicked, dlg, [this, dlg]() {
+        WizardDialog wiz(m_api, m_model, dlg);
+        connect(&wiz, &WizardDialog::presetCreated, this,
+                [this](const QString &name, const QString &desc, const QString &content) {
+                    auto raw = Presets::load(m_config);
+                    m_config.insert(QStringLiteral("systemPromptPresets"),
+                                    Presets::add(raw, name, desc, content));
+                    Config::save(m_config);
+                });
+        wiz.exec();
+    });
+    foot->addWidget(wizardBtn);
+    foot->addStretch(1);
+    auto *closeBtn = new QPushButton(I18n::t(QStringLiteral("Close")), dlg);
+    closeBtn->setProperty("outline", true);
+    connect(closeBtn, &QPushButton::clicked, dlg, &QDialog::close);
+    foot->addWidget(closeBtn);
+    lay->addLayout(foot);
+    connect(list, &QListWidget::itemClicked, this, [applyPreset](QListWidgetItem *item) {
+        applyPreset(item->data(Qt::UserRole).toString(), item->text());
+    });
+    dlg->exec();
+    dlg->deleteLater();
 }
