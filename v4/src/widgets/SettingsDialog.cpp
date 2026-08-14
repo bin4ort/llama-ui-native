@@ -511,7 +511,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     headerRow->setObjectName(QStringLiteral("settingsSectionHeader"));
     headerRow->setAttribute(Qt::WA_StyledBackground);
     auto *hrl = new QHBoxLayout(headerRow);
-    hrl->setContentsMargins(0, 0, 0, 25); // v2: pb-6 -> border at y165
+    hrl->setContentsMargins(0, 0, 0, 24); // v2: pb-6 -> border at y165
     hrl->setSpacing(8);
     auto *secIcon = new QLabel(headerRow);
     secIcon->setPixmap(Icons::get(QStringLiteral("sliders-horizontal"), Icons::color())
@@ -1110,6 +1110,11 @@ QWidget *SettingsDialog::buildImportExport() {
         btn->setProperty("outline", true);
         if (destructive) btn->setProperty("destructive", true);
         btn->setFixedHeight(36); // v2: h-9
+        {
+            QFont f = btn->font();
+            f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+            btn->setFont(f);
+        }
         connect(btn, &QPushButton::clicked, this, fn);
         cl->addWidget(btn, 0, Qt::AlignLeft);
         cl->addSpacing(36); // v2: section pitch 160 (28+4+40+16+36+36)
