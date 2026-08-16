@@ -12,6 +12,8 @@
 #include <QTimer>
 #include <QScrollArea>
 #include <QScrollBar>
+#include <QStandardPaths>
+#include <QDir>
 #include <QScreen>
 #include <QLabel>
 #include <QFontInfo>
@@ -24,6 +26,13 @@ int main(int argc, char *argv[]) {
     app.setApplicationName(QStringLiteral("llama-ui-v4"));
     app.setOrganizationName(QStringLiteral("LlamaUI"));
 
+    // --fresh: start with an empty store (capture pipeline hygiene — the
+    // selftest runs otherwise leave conversations behind)
+    if (app.arguments().contains(QStringLiteral("--fresh"))) {
+        const QString base = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+        QDir().mkpath(base);
+        QFile::remove(base + QStringLiteral("/conversations.json"));
+    }
     MainWindow window;
     const QStringList a = app.arguments();
     if (a.contains(QStringLiteral("--expand-sidebar")))
