@@ -8,8 +8,8 @@ const { router, theme, settings, i18n, presets, permissions, log, mountToasts, m
 
 // Version: single source is build.json (written by build.mjs from server.h);
 // hardcoded fallback matches the native binary.
-const FALLBACK_VERSION = '0.5.0';
-const FALLBACK_BUILD = '0x07D22';
+const FALLBACK_VERSION = '0.5.1';
+const FALLBACK_BUILD = '0x07D23';
 globalThis.APP_VERSION = FALLBACK_VERSION;
 globalThis.APP_BUILD = FALLBACK_BUILD;
 

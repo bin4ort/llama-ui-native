@@ -4,6 +4,20 @@ All notable changes to Llama UI Native are documented here.
 Version is kept in `server.h` (mirrored in `web/index.js` fallback,
 `web/build.mjs` and `package.json`).
 
+## [0.5.1] - 2026-08-16 — Animations + v4 launcher
+
+**The Qt v4 window replaces the GTK wrapper; the launcher and installer now
+target it.**
+
+- **Animations**: sidebar expand/collapse glides over 200ms (OutCubic);
+  new chat messages fade in over 150ms; the streaming placeholder shows the
+  v2-style "Processing…" with a soft opacity pulse until the first token;
+  the stop button swaps to a filled square while streaming.
+- **Launcher**: `launch.sh`, `Llama UI Native.desktop` and `install.sh`
+  build and run the Qt v4 app (`v4/build/llama-ui-v4`, Qt6 dependencies);
+  the window carries the `icon-128.png` app icon; `--fresh` flag keeps
+  captures clean by removing the stored conversations.
+
 ## [0.5.0] - 2026-08-05 — Early Alpha
 
 **The native executable now ships the vanilla HTML/JS/CSS frontend** (`web/`

@@ -51,6 +51,6 @@ target_link_libraries(llama-ui-v4 PRIVATE Qt6::Widgets Qt6::Network Qt6::Svg)
 # i18n dicts + spec are read at runtime from the repo (frontend/v2/lang).
 target_compile_definitions(llama-ui-v4 PRIVATE
   UI_SPEC_DIR="${CMAKE_SOURCE_DIR}/.."
-  APP_VERSION="0.5.0"
-  APP_BUILD="0x07D22"
+  APP_VERSION="0.5.1"
+  APP_BUILD="0x07D23"
 )
