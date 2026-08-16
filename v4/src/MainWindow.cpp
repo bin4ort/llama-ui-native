@@ -356,13 +356,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             auto *mcpSub = menu.addMenu(I18n::t(QStringLiteral("MCP Servers")));
             mcpSub->setIcon(Icons::mcpLogo(Icons::color()));
             for (const auto &s : servers) {
-                auto *act = mcpSub->addAction(s.name, this, [this, s]() {
-                    // attach an MCP prompt marker so the model can use it
-                    Q_UNUSED(s);
-                    m_composer->focusInput();
-                });
+                auto *act = mcpSub->addAction(s.name);
                 act->setCheckable(true);
                 act->setChecked(s.enabled);
+                connect(act, &QAction::triggered, this, [this, s, act]() {
+                    // v2: toggling persists the server's enabled state
+                    auto arr = m_config.value(QStringLiteral("mcpServers")).toArray();
+                    for (int i = 0; i < arr.size(); ++i) {
+                        auto o = arr.at(i).toObject();
+                        if (o.value(QStringLiteral("name")).toString() == s.name) {
+                            o.insert(QStringLiteral("enabled"), act->isChecked());
+                            arr[i] = o;
+                            break;
+                        }
+                    }
+                    m_config.insert(QStringLiteral("mcpServers"), arr);
+                    Config::save(m_config);
+                    m_composer->focusInput();
+                });
             }
             mcpSub->addSeparator();
             mcpSub->addAction(I18n::t(QStringLiteral("Configure servers…")),

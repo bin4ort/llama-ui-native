@@ -48,7 +48,7 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
     m_outer->addWidget(m_input);
 
     auto *bar = new QHBoxLayout;
-    bar->setContentsMargins(4, 0, 4, 0);
+    bar->setContentsMargins(0, 0, 0, 0); // v2: buttons hug the form padding
     bar->setSpacing(8);
 
     m_attach = new QPushButton(this);
