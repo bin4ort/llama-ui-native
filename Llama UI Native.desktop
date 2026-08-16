@@ -1,8 +1,8 @@
 [Desktop Entry]
 Name=Llama UI Native
-Comment=llama.cpp web UI in a native GTK window
+Comment=llama.cpp web UI in a native Qt window
 Exec=bash -c 'cd "$0" && exec ./launch.sh' "$(dirname %k)"
-Icon=static/icon-128.png
+Icon=icon-128.png
 Terminal=false
 Type=Application
 Categories=Office;ArtificialIntelligence;

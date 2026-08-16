@@ -7,6 +7,9 @@
 #include <QDesktopServices>
 #include <QGuiApplication>
 #include <QClipboard>
+#include <QObject>
+#include <QGraphicsOpacityEffect>
+#include <QPropertyAnimation>
 #include <QSize>
 #include <cstdio>
 #include <QFont>
@@ -264,6 +267,24 @@ void MessageView::showGreeting() {
     clearLayout();
 }
 
+static void fadeInRow(QWidget *w) {
+    // v2: in:fade duration 150 on new messages
+    auto *fx = new QGraphicsOpacityEffect(w);
+    w->setGraphicsEffect(fx);
+    fx->setOpacity(0.0);
+    auto *anim = new QPropertyAnimation(fx, "opacity", w);
+    anim->setDuration(150);
+    anim->setStartValue(0.0);
+    anim->setEndValue(1.0);
+    anim->setEasingCurve(QEasingCurve::OutCubic);
+    QObject::connect(anim, &QPropertyAnimation::finished, w, [w, fx, anim]() {
+        w->setGraphicsEffect(nullptr);
+        fx->deleteLater();
+        anim->deleteLater();
+    });
+    anim->start();
+}
+
 void MessageView::addMessage(const ChatMessage &msg) {
     // drop greeting once real content arrives
     if (m_rows->count() > 0) {
@@ -317,17 +338,20 @@ void MessageView::addMessage(const ChatMessage &msg) {
         m_userRows.append(row);
         updateUserRowWidth(row);
         m_rows->addWidget(row, 0, Qt::AlignHCenter);
+        fadeInRow(row);
     } else if (msg.role == ChatMessage::System) {
         if (msg.type == QStringLiteral("persona")) {
             auto *pill = new QLabel(I18n::t(QStringLiteral("System message")));
             pill->setObjectName(QStringLiteral("systemPill"));
             pill->setAlignment(Qt::AlignCenter);
             m_rows->addWidget(pill);
+            fadeInRow(pill);
         }
         label = makeRichLabel(mdToHtml(msg.content, link, thBg, &m_codeBlocks),
                               QStringLiteral("systemBubble"), row, &m_codeBlocks);
         row->addLabel(label);
         m_rows->addWidget(row, 0, Qt::AlignRight);
+        fadeInRow(row);
     } else if (msg.type == QStringLiteral("tool-call")) {
         // v2 ToolCallBlock header (tool name + args)
         const auto calls = QJsonDocument::fromJson(msg.content.toUtf8()).array();
@@ -343,6 +367,7 @@ void MessageView::addMessage(const ChatMessage &msg) {
         label->setWordWrap(true);
         row->addLabel(label);
         m_rows->addWidget(row);
+        fadeInRow(row);
     } else if (msg.type == QStringLiteral("tool-result")) {
         // v2 ToolCallBlock output row (compact)
         label = new QLabel(msg.content.toHtmlEscaped());
@@ -356,6 +381,7 @@ void MessageView::addMessage(const ChatMessage &msg) {
                               QStringLiteral("assistantText"), row, &m_codeBlocks);
         row->addLabel(label);
         m_rows->addWidget(row);
+        fadeInRow(row);
     }
 
     // action row (v2 ChatMessageActionIcons order: copy, edit, regenerate,
@@ -405,7 +431,19 @@ void MessageView::addMessage(const ChatMessage &msg) {
         m_streamId = msg.id;
         m_streamRaw.clear();
         m_streamReasoning.clear();
-        label->setText(QStringLiteral("…"));
+        // v2 shimmer-text "Processing…": animated placeholder while waiting
+        label->setText(I18n::t(QStringLiteral("Processing…")));
+        m_streamPulse = new QGraphicsOpacityEffect(label);
+        label->setGraphicsEffect(m_streamPulse);
+        m_streamPulse->setOpacity(0.45);
+        auto *pulse = new QPropertyAnimation(m_streamPulse, "opacity", label);
+        pulse->setDuration(900);
+        pulse->setKeyValueAt(0.0, 0.45);
+        pulse->setKeyValueAt(0.5, 1.0);
+        pulse->setKeyValueAt(1.0, 0.45);
+        pulse->setLoopCount(-1);
+        pulse->start();
+        m_streamPulseAnim = pulse;
     }
     // keep the view pinned to the bottom
     QTimer::singleShot(0, this, [this]() {
@@ -413,8 +451,33 @@ void MessageView::addMessage(const ChatMessage &msg) {
     });
 }
 
+void MessageView::endStreaming() {
+    if (m_streamPulseAnim) {
+        m_streamPulseAnim->stop();
+        m_streamPulseAnim->deleteLater();
+        m_streamPulseAnim = nullptr;
+    }
+    if (m_streamingLabel && m_streamPulse) {
+        m_streamingLabel->setGraphicsEffect(nullptr);
+        m_streamPulse->deleteLater();
+        m_streamPulse = nullptr;
+    }
+    m_streamingLabel = nullptr;
+}
+
 void MessageView::updateStreaming(const QString &delta) {
     if (!m_streamingLabel) return;
+    // first content replaces the shimmer placeholder
+    if (m_streamPulseAnim) {
+        m_streamPulseAnim->stop();
+        m_streamPulseAnim->deleteLater();
+        m_streamPulseAnim = nullptr;
+    }
+    if (m_streamingLabel && m_streamPulse) {
+        m_streamingLabel->setGraphicsEffect(nullptr);
+        m_streamPulse->deleteLater();
+        m_streamPulse = nullptr;
+    }
     m_streamRaw += delta;
     const QString palette = Config::value(QStringLiteral("theme")).toString();
     const QColor link = Theme::tokens(palette).primary;

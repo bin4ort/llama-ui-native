@@ -6,6 +6,8 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QHBoxLayout>
+#include <QVariantAnimation>
+#include <QEasingCurve>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -102,7 +104,21 @@ void Sidebar::applyPanelStyle() {
 
 void Sidebar::setExpanded(bool expanded) {
     m_expanded = expanded;
-    setFixedWidth(expanded ? 288 : 48); // v2: w-72 / w-12
+    // v2: md:transition-[width,padding] duration-200 ease-out
+    const int from = width();
+    const int to = expanded ? 288 : 48;
+    if (from != to) {
+        auto *anim = new QVariantAnimation(this);
+        anim->setDuration(200);
+        anim->setStartValue(from);
+        anim->setEndValue(to);
+        anim->setEasingCurve(QEasingCurve::OutCubic);
+        connect(anim, &QVariantAnimation::valueChanged, this, [this](const QVariant &v) {
+            setFixedWidth(v.toInt());
+        });
+        connect(anim, &QVariantAnimation::finished, anim, &QObject::deleteLater);
+        anim->start();
+    }
     m_closeBtn->setVisible(expanded);
     m_logo->setToolTip(expanded ? I18n::t(QStringLiteral("Collapse navigation"))
                                 : I18n::t(QStringLiteral("Expand navigation")));

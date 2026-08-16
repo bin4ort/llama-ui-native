@@ -735,6 +735,7 @@ void MainWindow::sendMessageWithHistory(const QString &text) {
 }
 
 void MainWindow::onStreamFinished() {
+    m_messages->endStreaming();
     m_streaming = false;
     m_composer->setBusy(false);
     if (m_store->active()) {

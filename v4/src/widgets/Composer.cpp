@@ -236,7 +236,7 @@ void Composer::setBusy(bool busy) {
     m_busy = busy;
     if (busy) {
         // stop button replaces send while streaming (UI-SPEC §5.6)
-        m_send->setIcon(Icons::get(QStringLiteral("square"), Icons::color()));
+        m_send->setIcon(Icons::get(QStringLiteral("square-filled"), Icons::color()));
         m_send->setToolTip(I18n::t(QStringLiteral("Stop")));
         m_send->setEnabled(true);
         m_input->setReadOnly(true);

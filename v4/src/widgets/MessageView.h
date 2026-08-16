@@ -9,6 +9,8 @@
 #include <QScrollArea>
 #include <QString>
 #include <QVector>
+#include <QGraphicsOpacityEffect>
+#include <QPropertyAnimation>
 class QLabel;
 class QVBoxLayout;
 class QPushButton;
@@ -29,6 +31,7 @@ public:
 
     void addMessage(const ChatMessage &msg);
     void updateStreaming(const QString &delta);
+    void endStreaming();
     void updateReasoning(const QString &delta);
     void showGreeting();
     QString lastAssistantHtml() const;
@@ -54,6 +57,8 @@ private:
     QVBoxLayout *m_rows;
     QList<QWidget *> m_userRows;
     QLabel *m_streamingLabel = nullptr;
+    QGraphicsOpacityEffect *m_streamPulse = nullptr;
+    QPropertyAnimation *m_streamPulseAnim = nullptr;
     QLabel *m_streamingReasoning = nullptr;
     QPushButton *m_reasoningToggle = nullptr;
     QString m_streamRaw;
