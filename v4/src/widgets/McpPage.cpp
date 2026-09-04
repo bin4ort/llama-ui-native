@@ -118,6 +118,7 @@ McpPage::McpPage(const QJsonObject &config, QWidget *parent)
     {
         QFont f = title->font();
         f.setLetterSpacing(QFont::AbsoluteSpacing, 0.041);
+        f.setHintingPreference(QFont::PreferVerticalHinting);
         title->setFont(f);
     }
     hl->addWidget(title);
@@ -170,6 +171,7 @@ void McpPage::rebuild() {
         {
             QFont f = t1->font();
             f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+            f.setHintingPreference(QFont::PreferVerticalHinting);
             t1->setFont(f);
         }
         m_list->addWidget(t1);
@@ -180,6 +182,7 @@ void McpPage::rebuild() {
         {
             QFont f = t2->font();
             f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+            f.setHintingPreference(QFont::PreferVerticalHinting);
             t2->setFont(f);
         }
         m_list->addWidget(t2);

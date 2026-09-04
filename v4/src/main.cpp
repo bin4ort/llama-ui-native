@@ -22,7 +22,7 @@
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
-    { QFont af = app.font(); af.setHintingPreference(QFont::PreferDefaultHinting); app.setFont(af); }
+    { QFont af = app.font(); af.setHintingPreference(QFont::PreferVerticalHinting); app.setFont(af); }
     app.setApplicationName(QStringLiteral("llama-ui-v4"));
     app.setOrganizationName(QStringLiteral("LlamaUI"));
 

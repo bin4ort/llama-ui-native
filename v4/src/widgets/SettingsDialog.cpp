@@ -73,6 +73,7 @@ public:
                 .paint(p, QRect(r.left() + 12, boxTop + 10, 16, 16));
         QFont f = opt.font;
         f.setPixelSize(14);
+        f.setHintingPreference(QFont::PreferVerticalHinting);
         p->setFont(f);
         p->setPen(selected ? m_fg : m_muted);
         p->drawText(QRect(r.left() + 48, boxTop + 8, r.width() - 56, 20),
@@ -320,6 +321,7 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     QFont hf = heading->font();
     hf.setPixelSize(24);
     hf.setWeight(QFont::DemiBold);
+    hf.setHintingPreference(QFont::PreferVerticalHinting);
     heading->setFont(hf);
     headingRow->addWidget(heading);
     headingRow->addStretch(1);
@@ -539,9 +541,11 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             QFont mf(help->font().family());
             mf.setPixelSize(12);
             mf.setLetterSpacing(QFont::AbsoluteSpacing, 0.016);
+            mf.setHintingPreference(QFont::PreferVerticalHinting);
             QFontMetrics fm(mf);
             QFont hf = help->font();
             hf.setLetterSpacing(QFont::AbsoluteSpacing, 0.016);
+            hf.setHintingPreference(QFont::PreferVerticalHinting);
             help->setFont(hf);
             const int wrapWidth = width;
             const QRect wr = fm.boundingRect(QRect(0, 0, wrapWidth, 1000),
@@ -570,6 +574,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             // (accumulates along the line) — fractional spacing cancels it
             QFont lf = lbl->font();
             lf.setLetterSpacing(QFont::AbsoluteSpacing, 0.016);
+            lf.setHintingPreference(QFont::PreferVerticalHinting);
             lbl->setFont(lf);
             const bool isSelect = qobject_cast<QComboBox *>(controls.at(i)) != nullptr;
             const bool isCheck = qobject_cast<QCheckBox *>(controls.at(i)) != nullptr;
@@ -1091,6 +1096,7 @@ QWidget *SettingsDialog::buildImportExport() {
         {
             QFont f = t->font();
             f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+            f.setHintingPreference(QFont::PreferVerticalHinting);
             t->setFont(f);
         }
         cl->addWidget(t);
@@ -1102,6 +1108,7 @@ QWidget *SettingsDialog::buildImportExport() {
         {
             QFont f = d->font();
             f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+            f.setHintingPreference(QFont::PreferVerticalHinting);
             d->setFont(f);
         }
         cl->addWidget(d);
@@ -1113,6 +1120,7 @@ QWidget *SettingsDialog::buildImportExport() {
         {
             QFont f = btn->font();
             f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+            f.setHintingPreference(QFont::PreferVerticalHinting);
             btn->setFont(f);
         }
         connect(btn, &QPushButton::clicked, this, fn);
@@ -1125,6 +1133,7 @@ QWidget *SettingsDialog::buildImportExport() {
         {
             QFont f = g->font();
             f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+            f.setHintingPreference(QFont::PreferVerticalHinting);
             g->setFont(f);
         }
         g->setMinimumHeight(24); // v2: h3 line box

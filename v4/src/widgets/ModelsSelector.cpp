@@ -34,6 +34,7 @@ void ModelsSelector::paintEvent(QPaintEvent *) {
     p.setRenderHint(QPainter::Antialiasing);
     QFont f = font();
     f.setPixelSize(12);
+    f.setHintingPreference(QFont::PreferVerticalHinting);
     p.setFont(f);
     const QPalette pal = palette();
     p.setPen(pal.color(QPalette::WindowText));
