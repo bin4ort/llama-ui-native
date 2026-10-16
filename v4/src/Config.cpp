@@ -27,6 +27,19 @@ QJsonObject load() {
         {QStringLiteral("top_p"), QString()},
         {QStringLiteral("min_p"), QString()},
         {QStringLiteral("sendOnEnter"), true},
+        {QStringLiteral("pasteLongTextToFileLen"), 2500.0},
+        {QStringLiteral("autoMicOnEmpty"), false},
+        {QStringLiteral("enableContinueGeneration"), false},
+        {QStringLiteral("titleGenerationUseFirstLine"), true},
+        {QStringLiteral("titleGenerationPrompt"),
+         QStringLiteral("Based on the following interaction, generate a short, concise "
+                        "title (maximum 6-8 words) that captures the main topic. Return "
+                        "ONLY the title text, nothing else. Do not use quotes.\n\n"
+                        "User: {{USER}}\n\nAssistant: {{ASSISTANT}}\n\nTitle:")},
+        {QStringLiteral("copyTextAttachmentsAsPlainText"), false},
+        {QStringLiteral("pdfAsImage"), false},
+        {QStringLiteral("maxImageMPixels"), 0.0},
+        {QStringLiteral("showSystemMessage"), true},
         {QStringLiteral("logLevel"), 2},
         {QStringLiteral("model"), QString()},
         // v2 capture defaults (settings-store)

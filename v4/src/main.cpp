@@ -27,11 +27,15 @@ int main(int argc, char *argv[]) {
     app.setOrganizationName(QStringLiteral("LlamaUI"));
 
     // --fresh: start with an empty store (capture pipeline hygiene — the
-    // selftest runs otherwise leave conversations behind)
+    // selftest runs otherwise leave conversations behind). The config is
+    // reset too so captures always use v2 store defaults.
     if (app.arguments().contains(QStringLiteral("--fresh"))) {
         const QString base = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
         QDir().mkpath(base);
         QFile::remove(base + QStringLiteral("/conversations.json"));
+        const QString cfgBase =
+            QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
+        QFile::remove(cfgBase + QStringLiteral("/llama-ui-native/config.json"));
     }
     MainWindow window;
     const QStringList a = app.arguments();
