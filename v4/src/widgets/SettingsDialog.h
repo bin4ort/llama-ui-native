@@ -22,6 +22,8 @@ struct SettingField {
     bool positiveInt = false;
     QString help;
     QString dependsOn; // v2: field hidden when the dep config is falsy
+    bool dependsOnNegated = false; // v2: field hidden when dep is truthy
+    bool experimental = false;     // v2: flask-conical badge after the label
 };
 
 class SettingsDialog : public QDialog {
@@ -49,6 +51,7 @@ private:
 
     QJsonObject m_cfg;
     QJsonObject m_props;
+    Theme::Tokens m_tokens;
     QStackedWidget *m_stack = nullptr;
     QWidget *m_buttons = nullptr;
     bool m_sidebarExpanded = false;

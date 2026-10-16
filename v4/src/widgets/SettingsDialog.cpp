@@ -98,23 +98,23 @@ const QList<SettingField> GENERAL = {
     {"systemMessage", "Default system prompt", "textarea", false,
      "The default system prompt — the starting message that defines how the model should behave. Used as the base persona unless a preset is applied."},
     {"pasteLongTextToFileLen", "Paste long text to file length", "input", true,
-     "Paste long text as a file attachment instead of inline."},
+     "On pasting long text, it will be converted to a file. You can control the file length by setting the value of this parameter. Value 0 means disable."},
     {"sendOnEnter", "Send message on Enter", "checkbox", false,
-     "Use Enter to send messages and Shift + Enter for new lines."},
+     "Use Enter to send messages and Shift + Enter for new lines. When disabled, use Ctrl/Cmd + Enter."},
     {"autoMicOnEmpty", "Show microphone on empty input", "checkbox", false,
-     "Show the microphone button when the input is empty."},
+     "Automatically show microphone button instead of send button when textarea is empty for models with audio modality support.", {}, false, true},
     {"enableContinueGeneration", "Enable \"Continue\" button", "checkbox", false,
-     "Show a button to continue the assistant response."},
-    {"titleGenerationMode", "Conversation title", "titleradio", false,
-     "How conversation titles are generated."},
+     "Enable \"Continue\" button for assistant messages, including reasoning models.", {}, false, true},
+    {"titleGenerationUseFirstLine", "Conversation title", "titleradio", false,
+     "Choose how conversation titles are generated. The first non-empty line uses a fast deterministic rule; the LLM option uses a model-generated title from the first message exchange."},
     {"titleGenerationPrompt", "LLM title generation prompt", "textarea", false,
-     "The prompt used to generate conversation titles with the LLM."},
+     "Optional template for the title generation prompt. Use {{USER}} for the user message and {{ASSISTANT}} for the assistant message.", QStringLiteral("titleGenerationUseFirstLine"), true},
     {"copyTextAttachmentsAsPlainText", "Copy text attachments as plain text", "checkbox", false,
-     "Copy text attachments as plain text instead of files."},
+     "When copying a message with text attachments, combine them into a single plain text string instead of a special format that can be pasted back as attachments."},
     {"pdfAsImage", "Parse PDF as image", "checkbox", false,
-     "Parse PDF files as images instead of text."},
+     "Parse PDF as image instead of text. Automatically falls back to text processing for non-vision models."},
     {"maxImageMPixels", "Maximum image resolution (megapixels)", "input", false,
-     "Maximum resolution of uploaded images."},
+     "Images larger than this will be resized before sending to server. Set to 0 to disable."},
 };
 const QList<SettingField> DISPLAY = {
     {"showMessageStats", "Show message generation statistics", "checkbox", false,
@@ -227,7 +227,7 @@ const QList<SettingField> DEVELOPER = {
 SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
                                const Theme::Tokens &tokens, bool sidebarExpanded,
                                QWidget *parent)
-    : QDialog(parent), m_cfg(std::move(cfg)), m_props(props) {
+    : QDialog(parent), m_cfg(std::move(cfg)), m_props(props), m_tokens(tokens) {
     setObjectName(QStringLiteral("appDialog"));
     setWindowTitle(QStringLiteral("Settings"));
     setModal(true);
@@ -388,10 +388,31 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     buttons->setMinimumHeight(84); // v2: p-6 (48) + buttons (36)
     buttons->setMaximumHeight(84);
     auto *bl = new QHBoxLayout(buttons);
-    bl->setContentsMargins(24, 23, 24, 24); // v2: p-6 -> buttons at y840
+    bl->setContentsMargins(24, 24, 24, 24); // v2: p-6 -> buttons at y840
     bl->setSpacing(8);
-    auto *reset = new QPushButton(I18n::t(QStringLiteral("Reset to default")));
-    reset->setProperty("outline", true);
+    auto *reset = new QPushButton;
+    reset->setProperty("footerReset", true);
+    reset->setCursor(Qt::PointingHandCursor);
+    // v2: icon at +13 (border 1 + px-3), gap-2, text — manual row for
+    // exact placement (QPushButton centers icon+text as a group)
+    {
+        auto *rl = new QHBoxLayout(reset);
+        rl->setContentsMargins(13, 0, 0, 0); // v2: icon label at +13
+        rl->setSpacing(8);
+        auto *ric = new QLabel(reset);
+        ric->setPixmap(Icons::get(QStringLiteral("rotate-ccw"),
+                                  m_tokens.foreground)
+                           .pixmap(16, 16));
+        ric->setFixedSize(16, 16);
+        rl->addWidget(ric, 0, Qt::AlignVCenter);
+        auto *rtx = new QLabel(I18n::t(QStringLiteral("Reset to default")), reset);
+        QFont rf = rtx->font();
+        rf.setHintingPreference(QFont::PreferVerticalHinting);
+        rtx->setFont(rf);
+        rl->addWidget(rtx, 0, Qt::AlignVCenter);
+        rl->addStretch(1);
+    }
+    reset->setFixedSize(156, 36); // v2: outline w156 h36
     connect(reset, &QPushButton::clicked, this, [this]() {
         const auto ret = QMessageBox::question(
             this, I18n::t(QStringLiteral("Reset Settings to Default")),
@@ -406,6 +427,7 @@ SettingsDialog::SettingsDialog(QJsonObject cfg, const QJsonObject &props,
     bl->addWidget(reset);
     bl->addStretch(1);
     auto *save = new QPushButton(I18n::t(QStringLiteral("Save settings")));
+    save->setFixedSize(120, 36); // v2: primary w120 h36
     connect(save, &QPushButton::clicked, this, &SettingsDialog::apply);
     bl->addWidget(save);
 
@@ -528,7 +550,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     cl->addWidget(headerRow);
 
     auto addCard = [&](const QStringList &labels, const QList<QWidget *> &controls,
-                       const QStringList &helps = {}) {
+                       const QStringList &helps = {}, const QList<bool> &experimental = {}) {
         // width: 692 for checkbox cards (v2: help indented under the label
         // column), 720 for input/select cards (v2: full card width)
         auto makeHelp = [](const QString &text, QWidget *parent, int width) {
@@ -595,7 +617,24 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
                 // v2 line box: text 1px lower than Qt ascent in the
                 // checkbox row (AlignTop) — shift ink down 1px
                 lbl->setContentsMargins(0, 1, 0, -1);
-                crow->addWidget(lbl, 1, Qt::AlignTop);
+                auto *lblRow = new QHBoxLayout;
+                lblRow->setContentsMargins(0, 0, 0, 0);
+                lblRow->setSpacing(8); // v2: gap-2 before the flask badge
+                lblRow->addWidget(lbl, 0, Qt::AlignTop);
+                if (i < experimental.size() && experimental.at(i)) {
+                    auto *flWrap = new QVBoxLayout;
+                    flWrap->setContentsMargins(0, 4, 0, 0); // v2: 14px centered in 20px
+                    flWrap->setSpacing(0);
+                    auto *fl = new QLabel(card);
+                    fl->setPixmap(Icons::get(QStringLiteral("flask-conical"),
+                                             m_tokens.mutedForeground)
+                                          .pixmap(14, 14));
+                    fl->setFixedSize(14, 14);
+                    flWrap->addWidget(fl);
+                    lblRow->addLayout(flWrap, 0);
+                }
+                lblRow->addStretch(1);
+                crow->addLayout(lblRow, 1);
                 cardL->addLayout(crow);
                 if (i < helps.size() && !helps.at(i).isEmpty()) {
                     auto *h = makeHelp(helps.at(i), card, 692);
@@ -636,15 +675,83 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             te->setFixedHeight(160); // v2: textarea h-40
             control = te;
         } else if (f.type == QStringLiteral("titleradio")) {
-            // v2 'Conversation title': First line / LLM
-            auto *combo = new QComboBox;
-            combo->addItem(I18n::t(QStringLiteral("First line of the conversation")),
-                           QStringLiteral("first_line"));
-            combo->addItem(QStringLiteral("LLM"),
-                           QStringLiteral("llm"));
-            const QString mode = m_cfg.value(f.key).toString();
-            combo->setCurrentIndex(qMax(0, combo->findData(mode)));
-            control = combo;
+            // v2 'Conversation title': two radio rows (h20, 36px pitch)
+            // with 16px ring + 8px dot indicator, flask badge on LLM
+            auto *grp = new QWidget;
+            grp->setObjectName(QStringLiteral("titleRadioGroup"));
+            auto *gl = new QVBoxLayout(grp);
+            gl->setContentsMargins(0, 8, 0, 0); // v2: mt-4 below the label
+            gl->setSpacing(16);
+            const bool firstLine =
+                m_cfg.value(QStringLiteral("titleGenerationUseFirstLine")).toBool(true);
+            // indicator pixmaps painted from theme tokens (v2: ring =
+            // input border over input bg, dot = foreground outline circle)
+            const QColor ringBg = [] (const QColor &bg) {
+                return QColor::fromRgbF(0.09 * 1.0 + 0.91 * bg.redF(),
+                                        0.09 * 1.0 + 0.91 * bg.greenF(),
+                                        0.09 * 1.0 + 0.91 * bg.blueF());
+            }(m_tokens.background);
+            auto paintRadio = [&](bool checked) {
+                QPixmap pm(16, 16);
+                pm.fill(Qt::transparent);
+                QPainter pt(&pm);
+                pt.setRenderHint(QPainter::Antialiasing);
+                pt.setPen(QPen(m_tokens.input, 1));
+                pt.setBrush(ringBg);
+                pt.drawEllipse(1, 1, 14, 14);
+                if (checked) {
+                    // v2: lucide circle (r=10, stroke 2) at 8px centered
+                    pt.drawPixmap(4, 4, Icons::get(QStringLiteral("circle"),
+                                                   m_tokens.foreground)
+                                              .pixmap(8, 8));
+                }
+                return pm;
+            };
+            const QPixmap pmOn = paintRadio(true), pmOff = paintRadio(false);
+            const QStringList opts{
+                I18n::t(QStringLiteral("Use first non-empty line for the conversation title")),
+                I18n::t(QStringLiteral("Generate title with LLM"))};
+            const QStringList optNames{QStringLiteral("titleRadioFirst"),
+                                       QStringLiteral("titleRadioLlm")};
+            for (int oi = 0; oi < 2; ++oi) {
+                auto *row = new QPushButton(grp);
+                row->setObjectName(optNames.at(oi));
+                row->setCheckable(true);
+                row->setAutoExclusive(true);
+                row->setChecked(oi == 0 ? firstLine : !firstLine);
+                row->setFixedHeight(20);
+                row->setCursor(Qt::PointingHandCursor);
+                row->setStyleSheet(QStringLiteral(
+                    "QPushButton { background: transparent; border: none; padding: 0; }"));
+                auto *rl = new QHBoxLayout(row);
+                rl->setContentsMargins(0, 0, 0, 0);
+                rl->setSpacing(8); // v2: radio at x520, label at x544
+                auto *ind = new QLabel(row);
+                ind->setPixmap(row->isChecked() ? pmOn : pmOff);
+                ind->setFixedSize(16, 16);
+                rl->addWidget(ind, 0, Qt::AlignVCenter);
+                auto *tx = new QLabel(opts.at(oi), row);
+                tx->setObjectName(QStringLiteral("settingsFieldLabel"));
+                QFont rf = tx->font();
+                rf.setLetterSpacing(QFont::AbsoluteSpacing, 0.016);
+                rf.setHintingPreference(QFont::PreferVerticalHinting);
+                tx->setFont(rf);
+                rl->addWidget(tx, 0, Qt::AlignVCenter);
+                if (oi == 1) {
+                    auto *fl = new QLabel(row);
+                    fl->setPixmap(Icons::get(QStringLiteral("flask-conical"),
+                                             m_tokens.mutedForeground)
+                                          .pixmap(14, 14));
+                    fl->setFixedSize(14, 14);
+                    rl->addWidget(fl, 0, Qt::AlignVCenter);
+                }
+                rl->addStretch(1);
+                connect(row, &QPushButton::toggled, grp, [row, ind, pmOn, pmOff]() {
+                    ind->setPixmap(row->isChecked() ? pmOn : pmOff);
+                });
+                gl->addWidget(row);
+            }
+            control = grp;
         } else if (f.type == QStringLiteral("loglevel")) {
             auto *combo = new QComboBox;
             combo->addItem(I18n::t(QStringLiteral("Errors only")), 0);
@@ -658,7 +765,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         } else {
             // v2: the input stays empty and shows the server default as
             // the placeholder ('Default: 0.8'), with a reset button
-            QString value = m_cfg.value(f.key).toString();
+            QString value = m_cfg.value(f.key).toVariant().toString();
             QString defaultText = QStringLiteral("Default");
             const QJsonValue serverVal = m_props.value(f.key);
             if (!serverVal.isUndefined() && !serverVal.isNull()) {
@@ -753,7 +860,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         if (!card) return;
         auto *cardL = qobject_cast<QVBoxLayout *>(card->layout());
         if (!cardL) return;
-        cardL->addSpacing(4); // v2: mt-3 (net of the card spacing 8)
+        cardL->addSpacing(2); // v2: mt-3 (net of the card spacing 8)
         auto *showCb = new QCheckBox(
             I18n::t(QStringLiteral("Show system message in conversations")), card);
         showCb->setObjectName(QStringLiteral("showSystemMessageCb"));
@@ -763,7 +870,7 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
             m_cfg.insert(QStringLiteral("showSystemMessage"), v);
         });
         cardL->addWidget(showCb);
-        cardL->addSpacing(11); // v2: mt-4 (net of the card spacing 8)
+        cardL->addSpacing(6); // v2: mt-4 minus taller checkbox (24 vs 20)
 
         // preset group (v2 SettingsChatPresetGroup, collapsed by default)
         auto *group = new QWidget(card);
@@ -771,9 +878,29 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         auto *gl = new QVBoxLayout(group);
         gl->setContentsMargins(0, 0, 0, 0);
         gl->setSpacing(0);
+        // v2 trigger row: chevron + title + count + Create ghost button
         auto *trigger = new QPushButton(group);
         trigger->setProperty("presetTrigger", true);
         trigger->setCursor(Qt::PointingHandCursor);
+        trigger->setFixedHeight(48); // v2: trigger button h48
+        auto *trl = new QHBoxLayout(trigger);
+        trl->setContentsMargins(12, 0, 12, 0); // v2: px-3
+        trl->setSpacing(8);                    // v2: gap-2
+        auto *chev = new QLabel(trigger);
+        chev->setPixmap(Icons::get(QStringLiteral("chevron-right"), Icons::color())
+                            .pixmap(14, 14));
+        chev->setFixedSize(14, 14);
+        trl->addWidget(chev, 0, Qt::AlignVCenter);
+        auto *ttl = new QLabel(I18n::t(QStringLiteral("Custom prompt presets")), trigger);
+        ttl->setObjectName(QStringLiteral("settingsFieldLabel"));
+        {
+            QFont f = ttl->font();
+            f.setLetterSpacing(QFont::AbsoluteSpacing, 0.016);
+            f.setHintingPreference(QFont::PreferVerticalHinting);
+            ttl->setFont(f);
+        }
+        trl->addWidget(ttl, 0, Qt::AlignVCenter);
+        trl->addStretch(1);
         auto *content = new QWidget(group);
         content->setObjectName(QStringLiteral("presetContent"));
         auto *ctl = new QVBoxLayout(content);
@@ -781,12 +908,23 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         ctl->setSpacing(0);
 
         const auto presets = Presets::list(m_cfg.value(QStringLiteral("presets")).toArray());
-        auto updateTrigger = [trigger, presets]() {
-            trigger->setText(QStringLiteral("  âº  %1   %2")
-                                 .arg(I18n::t(QStringLiteral("Custom prompt presets")),
-                                      QString::number(presets.size())));
-        };
-        updateTrigger();
+        auto *cnt = new QLabel(QString::number(presets.size()), trigger);
+        cnt->setObjectName(QStringLiteral("settingsHelp"));
+        {
+            QFont f = cnt->font();
+            f.setLetterSpacing(QFont::AbsoluteSpacing, 0.016);
+            f.setHintingPreference(QFont::PreferVerticalHinting);
+            cnt->setFont(f);
+        }
+        trl->addWidget(cnt, 0, Qt::AlignVCenter);
+        auto *mkNew = new QPushButton(trigger);
+        mkNew->setProperty("ghost", true);
+        mkNew->setIcon(Icons::get(QStringLiteral("plus"), Icons::color()));
+        mkNew->setIconSize(QSize(12, 12));
+        mkNew->setText(I18n::t(QStringLiteral("Create preset")));
+        mkNew->setFixedSize(136, 32); // v2: ghost sm button x1092 w136 h32
+        mkNew->setCursor(Qt::PointingHandCursor);
+        trl->addWidget(mkNew, 0, Qt::AlignVCenter);
         // rows: name + description + delete
         for (const auto &pr : presets) {
             auto *row = new QWidget(content);
@@ -851,9 +989,15 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
         crl->addWidget(create);
         crl->addStretch(1);
         ctl->addWidget(createRow);
+        connect(mkNew, &QPushButton::clicked, create, &QPushButton::click);
         content->setVisible(false);
-        connect(trigger, &QPushButton::clicked, this, [content]() {
-            content->setVisible(!content->isVisible());
+        connect(trigger, &QPushButton::clicked, this, [content, chev]() {
+            const bool show = !content->isVisible();
+            content->setVisible(show);
+            chev->setPixmap(Icons::get(show ? QStringLiteral("chevron-down")
+                                           : QStringLiteral("chevron-right"),
+                                      Icons::color())
+                                .pixmap(14, 14));
         });
         gl->addWidget(trigger);
         gl->addWidget(content);
@@ -865,23 +1009,29 @@ QWidget *SettingsDialog::buildSection(const QString &title, const QList<SettingF
     QStringList checkLabels;
     QStringList checkHelps;
     QList<QWidget *> checkControls;
+    QList<bool> checkExperimental;
     auto flushChecks = [&]() {
         if (!checkControls.isEmpty()) {
-            addCard(checkLabels, checkControls, checkHelps);
+            addCard(checkLabels, checkControls, checkHelps, checkExperimental);
             checkLabels.clear();
-            checkControls.clear();
             checkHelps.clear();
+            checkControls.clear();
+            checkExperimental.clear();
         }
     };
     for (const auto &f : fields) {
         // v2: fields with dependsOn are hidden while the dependency is off
-        if (!f.dependsOn.isEmpty() && !m_cfg.value(f.dependsOn).toBool(false))
-            continue;
+        // (or on, when dependsOnNegated)
+        if (!f.dependsOn.isEmpty()) {
+            const bool dep = m_cfg.value(f.dependsOn).toBool(false);
+            if (dep == f.dependsOnNegated) continue;
+        }
         if (f.type == QStringLiteral("checkbox")) {
             flushChecks();
             checkLabels << I18n::t(f.label);
             checkHelps << I18n::t(f.help);
             checkControls << makeControl(f);
+            checkExperimental << f.experimental;
             flushChecks();
         } else {
             flushChecks();
@@ -1127,7 +1277,11 @@ QWidget *SettingsDialog::buildImportExport() {
         cl->addWidget(btn, 0, Qt::AlignLeft);
         cl->addSpacing(32); // v2: section pitch 160 (28+4+40+20+36+32)
     };
+    bool firstGroup = true;
     auto addGroup = [&](const QString &title) {
+        if (!firstGroup)
+            cl->addSpacing(16); // v2: gap-4 between groups (48 - 32 from previous section)
+        firstGroup = false;
         auto *g = new QLabel(title, center);
         g->setObjectName(QStringLiteral("settingsGroupTitle"));
         {
@@ -1165,19 +1319,77 @@ QWidget *SettingsDialog::buildImportExport() {
              }, true, true);
 
     addGroup(I18n::t(QStringLiteral("Settings")));
-    addSection(I18n::t(QStringLiteral("Export")),
-             I18n::t(QStringLiteral("Export your chat settings and preferences as a JSON file.")),
-             I18n::t(QStringLiteral("Export settings")),
-             [this]() {
-                 const QString path = QFileDialog::getSaveFileName(
-                     this, I18n::t(QStringLiteral("Export settings")),
-                     QStringLiteral("llama-ui-settings.json"));
-                 if (!path.isEmpty()) {
-                     QFile f(path);
-                     if (f.open(QIODevice::WriteOnly))
-                         f.write(QJsonDocument(m_cfg).toJson(QJsonDocument::Indented));
-                 }
-             });
+    // Export settings: short desc (1 line)
+    auto *expTitle = new QLabel(I18n::t(QStringLiteral("Export")), center);
+    expTitle->setObjectName(QStringLiteral("settingsFieldLabel"));
+    expTitle->setFixedHeight(28);
+    expTitle->setAlignment(Qt::AlignTop);
+    {
+        QFont f = expTitle->font();
+        f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+        f.setHintingPreference(QFont::PreferVerticalHinting);
+        expTitle->setFont(f);
+    }
+    cl->addWidget(expTitle);
+    cl->addSpacing(4);
+    auto *expDesc = new QLabel(I18n::t(QStringLiteral("Export your chat settings and preferences as a JSON file.")), center);
+    expDesc->setObjectName(QStringLiteral("settingsDesc"));
+    expDesc->setWordWrap(true);
+    expDesc->setFixedHeight(20); // v2: single line
+    {
+        QFont f = expDesc->font();
+        f.setHintingPreference(QFont::PreferVerticalHinting);
+        expDesc->setFont(f);
+    }
+    cl->addWidget(expDesc);
+    cl->addSpacing(20);
+    auto *expBtn = new QPushButton(I18n::t(QStringLiteral("Export settings")), center);
+    expBtn->setProperty("outline", true);
+    expBtn->setFixedHeight(36);
+    {
+        QFont f = expBtn->font();
+        f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+        f.setHintingPreference(QFont::PreferVerticalHinting);
+        expBtn->setFont(f);
+    }
+    connect(expBtn, &QPushButton::clicked, this, [this]() {
+        const QString path = QFileDialog::getSaveFileName(
+            this, I18n::t(QStringLiteral("Export settings")),
+            QStringLiteral("llama-ui-settings.json"));
+        if (!path.isEmpty()) {
+            QFile f(path);
+            if (f.open(QIODevice::WriteOnly))
+                f.write(QJsonDocument(m_cfg).toJson(QJsonDocument::Indented));
+        }
+    });
+    cl->addWidget(expBtn, 0, Qt::AlignLeft);
+    cl->addSpacing(32);
+    // Import settings: no desc (v2)
+    auto *impTitle = new QLabel(I18n::t(QStringLiteral("Import")), center);
+    impTitle->setObjectName(QStringLiteral("settingsFieldLabel"));
+    impTitle->setFixedHeight(28);
+    impTitle->setAlignment(Qt::AlignTop);
+    {
+        QFont f = impTitle->font();
+        f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+        f.setHintingPreference(QFont::PreferVerticalHinting);
+        impTitle->setFont(f);
+    }
+    cl->addWidget(impTitle);
+    cl->addSpacing(4);
+    cl->addSpacing(20); // v2: mb-4 where desc would be
+    auto *impBtn = new QPushButton(I18n::t(QStringLiteral("Import settings")), center);
+    impBtn->setProperty("outline", true);
+    impBtn->setFixedHeight(36);
+    {
+        QFont f = impBtn->font();
+        f.setLetterSpacing(QFont::AbsoluteSpacing, 0.024);
+        f.setHintingPreference(QFont::PreferVerticalHinting);
+        impBtn->setFont(f);
+    }
+    connect(impBtn, &QPushButton::clicked, this, []() {});
+    cl->addWidget(impBtn, 0, Qt::AlignLeft);
+    cl->addSpacing(32);
 
     cl->addStretch(1);
     scroll->setWidget(host);
@@ -1200,6 +1412,9 @@ void SettingsDialog::apply() {
             m_cfg.insert(key, te->toPlainText().trimmed());
         } else if (auto *le = qobject_cast<QLineEdit *>(w)) {
             m_cfg.insert(key, le->text().trimmed());
+        } else if (w->objectName() == QStringLiteral("titleRadioGroup")) {
+            if (auto *first = w->findChild<QPushButton *>(QStringLiteral("titleRadioFirst")))
+                m_cfg.insert(key, first->isChecked());
         }
     }
     emit configChanged(m_cfg);
