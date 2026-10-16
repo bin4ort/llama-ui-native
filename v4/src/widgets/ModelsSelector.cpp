@@ -1,5 +1,6 @@
 #include "ModelsSelector.h"
 #include "../i18n.h"
+#include "../Icons.h"
 #include <QDialog>
 #include <QHBoxLayout>
 #include <QLineEdit>
@@ -23,13 +24,6 @@ void ModelsSelector::setModels(const QStringList &displayItems, const QStringLis
 }
 
 void ModelsSelector::paintEvent(QPaintEvent *) {
-    // trigger: short name (without tags) + chevron
-    QString text = m_currentRaw;
-    const int slash = text.lastIndexOf('/');
-    if (slash >= 0) text = text.mid(slash + 1);
-    text.replace(QStringLiteral(".gguf"), QString());
-    if (text.size() > 28) text = text.left(27) + QStringLiteral("…");
-
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
     QFont f = font();
@@ -38,7 +32,29 @@ void ModelsSelector::paintEvent(QPaintEvent *) {
     p.setFont(f);
     const QPalette pal = palette();
     p.setPen(pal.color(QPalette::WindowText));
-    p.drawText(rect().adjusted(8, 0, -18, 0), Qt::AlignVCenter | Qt::AlignLeft, text);
+
+    // v2: sparkles icon + "Default" + chevron when no model selected
+    //     model name + chevron when model selected
+    QString text;
+    bool showSparkles = false;
+    if (m_currentRaw.isEmpty()) {
+        text = I18n::t(QStringLiteral("Default"));
+        showSparkles = true;
+    } else {
+        text = m_currentRaw;
+        const int slash = text.lastIndexOf('/');
+        if (slash >= 0) text = text.mid(slash + 1);
+        text.replace(QStringLiteral(".gguf"), QString());
+        if (text.size() > 28) text = text.left(27) + QStringLiteral("…");
+    }
+
+    int x = 8;
+    if (showSparkles) {
+        QPixmap spark = Icons::get(QStringLiteral("sparkles"), pal.color(QPalette::WindowText)).pixmap(16, 16);
+        p.drawPixmap(x, (height() - 16) / 2, spark);
+        x += 20;
+    }
+    p.drawText(rect().adjusted(x, 0, -18, 0), Qt::AlignVCenter | Qt::AlignLeft, text);
     // chevron
     const QRectF c = QRectF(width() - 14, height() / 2.0 - 2, 8, 5);
     QPolygonF tri;

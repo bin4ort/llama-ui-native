@@ -58,27 +58,35 @@ Composer::Composer(QWidget *parent) : QWidget(parent) {
     // v2 ChatFormActionAdd: Plus icon, tooltip lists what can be added
     m_attach->setToolTip(I18n::t(QStringLiteral("Add files, prompts, tools or MCP Servers")));
     connect(m_attach, &QPushButton::clicked, this, &Composer::attachRequested);
-    bar->addWidget(m_attach);
+bar->addWidget(m_attach);
 
-    m_persona = new QPushButton(QStringLiteral("Default ▾"), this);
-    m_persona->setProperty("persona", true);
-    m_persona->setIconSize(QSize(16, 16));
-    m_persona->setFixedHeight(32); // v2: ChatFormActionsPersona
-    m_persona->setToolTip(I18n::t(QStringLiteral("Choose a personality preset")));
-    connect(m_persona, &QPushButton::clicked, this, &Composer::personaRequested);
-    bar->addWidget(m_persona);
+    // v2: model dropdown (sparkles + "Default" + chevron)
+    m_modelSelect = new ModelsSelector(this);
+    m_modelSelect->setFixedSize(102, 32); // v2: model dropdown w-102 h-32
+    m_modelSelect->setIconSize(QSize(16, 16));
+    m_modelSelect->setToolTip(I18n::t(QStringLiteral("Choose a model")));
+    connect(m_modelSelect, &ModelsSelector::modelSelected, this,
+            &Composer::modelSelected);
+    bar->addWidget(m_modelSelect);
+
     bar->addStretch(1);
+
+    // v2: model info button (cube icon + model name + quantization) - right aligned before send
+    m_modelInfo = new QPushButton(this);
+    m_modelInfo->setObjectName(QStringLiteral("modelInfo"));
+    m_modelInfo->setProperty("modelInfo", true);
+    m_modelInfo->setIconSize(QSize(16, 16));
+    m_modelInfo->setFixedHeight(24); // v2: model info h-24
+    m_modelInfo->setMinimumWidth(188); // v2: model info w-188
+    m_modelInfo->setCursor(Qt::PointingHandCursor);
+    m_modelInfo->setToolTip(I18n::t(QStringLiteral("Model details")));
+    m_modelInfo->setText(I18n::t(QStringLiteral("Default"))); // default text
+    bar->addWidget(m_modelInfo);
 
     // right cluster (v2 ChatFormActions order): gauge -> model -> send
     m_gauge = new ContextGauge(this);
     m_gauge->setVisible(false); // hidden until tokens processed (v2)
     bar->addWidget(m_gauge);
-
-    m_modelSelect = new ModelsSelector(this);
-    m_modelSelect->setFixedSize(188, 24); // v2: model chip h-6
-    connect(m_modelSelect, &ModelsSelector::modelSelected, this,
-            &Composer::modelSelected);
-    bar->addWidget(m_modelSelect);
 
     m_send = new QPushButton(this);
     m_send->setProperty("send", true);
@@ -143,20 +151,29 @@ void Composer::setAttachments(const QJsonArray &atts) {
 void Composer::setModels(const QStringList &displayItems, const QStringList &rawIds,
                          const QString &currentRaw) {
     m_modelSelect->setModels(displayItems, rawIds, currentRaw);
+    // Update model info button with current model display name
+    if (m_modelInfo) {
+        QString infoText = currentRaw;
+        if (!currentRaw.isEmpty()) {
+            int idx = rawIds.indexOf(currentRaw);
+            if (idx >= 0 && idx < displayItems.size())
+                infoText = displayItems.at(idx);
+        } else if (!rawIds.isEmpty()) {
+            infoText = displayItems.first();
+        } else {
+            infoText = I18n::t(QStringLiteral("Default"));
+        }
+        m_modelInfo->setText(infoText);
+    }
     emit modelSelected(currentRaw.isEmpty() ? (rawIds.isEmpty() ? QString() : rawIds.first())
-                                            : currentRaw);
+                                        : currentRaw);
 }
 
 QString Composer::model() const {
     return m_modelSelect->model();
 }
 
-void Composer::setPersonaName(const QString &name) {
-    m_persona->setText(name + QStringLiteral(" ▾"));
-    m_persona->setProperty("active", !name.isEmpty() && name != I18n::t(QStringLiteral("Default")));
-    m_persona->style()->unpolish(m_persona);
-    m_persona->style()->polish(m_persona);
-}
+
 
 void Composer::setContextUsage(qint64 promptChars, qint64 completionChars, int maxCtx) {
     if (!m_gauge) return;
@@ -251,7 +268,8 @@ void Composer::setBusy(bool busy) {
 void Composer::applyIcons() {
     const QColor c = Icons::color();
     if (m_attach) m_attach->setIcon(Icons::get(QStringLiteral("plus"), c));
-    m_persona->setIcon(Icons::get(QStringLiteral("sparkles"), c));
+    if (m_modelSelect) m_modelSelect->setIcon(Icons::get(QStringLiteral("sparkles"), c));
+    if (m_modelInfo) m_modelInfo->setIcon(Icons::get(QStringLiteral("cube"), c));
     m_send->setIcon(Icons::get(m_busy ? QStringLiteral("square")
                                       : QStringLiteral("arrow-up"), c));
 }

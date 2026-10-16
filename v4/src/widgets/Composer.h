@@ -37,8 +37,7 @@ public:
                    const QString &currentRaw);
     QString model() const;
 
-    /** Persona trigger label (v2: sparkles + active name + chevron). */
-    void setPersonaName(const QString &name);
+    
 
     /** Context usage for the gauge (UI-SPEC §5.7). */
     void setContextUsage(qint64 promptChars, qint64 completionChars, int maxCtx);
@@ -49,7 +48,6 @@ public:
 signals:
     void sendRequested(const QString &text);
     void stopRequested();
-    void personaRequested();
     void attachRequested();
     void attachmentsChanged();
     void attachmentPreviewRequested(int index);
@@ -65,8 +63,8 @@ private:
 
     QTextEdit *m_input;
     QPushButton *m_send;
-    QPushButton *m_persona;
     QPushButton *m_attach = nullptr;
+    QPushButton *m_modelInfo = nullptr;
     ModelsSelector *m_modelSelect = nullptr;
     ContextGauge *m_gauge = nullptr;
     QVBoxLayout *m_outer;
