@@ -128,6 +128,7 @@ void Sidebar::setExpanded(bool expanded) {
     if (expanded) {
         refreshConversations();
         rebuildActions();
+        applyIcons();
     }
 }
 
@@ -166,7 +167,7 @@ void Sidebar::rebuildActions() {
          I18n::t(QStringLiteral("Ctrl+Shift+O")), QStringLiteral("new")},
         {QStringLiteral("search"), I18n::t(QStringLiteral("Search")),
          I18n::t(QStringLiteral("Ctrl+K")), QStringLiteral("search")},
-        {QStringLiteral("mcp"), I18n::t(QStringLiteral("MCP Servers")),
+        {QStringLiteral("server"), I18n::t(QStringLiteral("MCP Servers")),
          QString(), QStringLiteral("mcp")},
         {QStringLiteral("settings"), I18n::t(QStringLiteral("Settings")),
          QString(), QStringLiteral("settings")},

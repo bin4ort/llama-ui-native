@@ -271,9 +271,9 @@ QToolTip {
 
 /* Sidebar (v2 SidebarNavigation) — floating rounded panel; transparent
  * strip collapsed, muted/60 panel expanded */
-#sidebar { background: transparent; border: none; }
+#sidebar { background: transparent; border: none; border-radius: 24px; }
 #sidebar[expanded="true"] {
-  background-color: %27; border: 1px solid %28; border-radius: 16px;
+  background-color: %27; border-radius: 16px;
 }
 QPushButton[strip="true"] {
   background: transparent; border: none; border-radius: 18px;
@@ -331,6 +331,11 @@ QPushButton[logoBtn="true"]:hover { background-color: rgba(229,229,229,0.10); }
 }
 #composer QPushButton[send="true"]:hover { background-color: %15; }
 #composer QPushButton[send="true"]:disabled { background-color: %16; }
+#composer QPushButton[modelInfo="true"] {
+  background: transparent; border: none; border-radius: 8px;
+  color: %3; text-align: left; padding: 0 8px; font-size: 12px;
+}
+#composer QPushButton[modelInfo="true"]:hover { background-color: %7; }
 
 /* Message bubbles (UI-SPEC §3.3–3.5) */
 #userBubble {
@@ -359,7 +364,7 @@ QComboBox QAbstractItemView {
 
 /* Checkbox (UI-SPEC §3.5) */
 QCheckBox::indicator {
-  width: 16px; height: 16px; border: 1px solid %20; border-radius: 4px;
+  width: 14px; height: 14px; border: 1px solid %20; border-radius: 4px;
   background-color: %19;
 }
 QCheckBox::indicator:checked {
@@ -387,6 +392,12 @@ QPushButton[ghost="true"] {
   background-color: transparent; color: %10; border: none;
 }
 QPushButton[ghost="true"]:hover { background-color: %7; color: %3; }
+/* v2 SettingsFooter reset: outline look with foreground text (shadcn outline) */
+QPushButton[footerReset="true"] {
+  background-color: transparent; color: %3; border: 1px solid %20;
+  text-align: left; padding: 8px 16px 8px 12px;
+}
+QPushButton[footerReset="true"]:hover { background-color: %7; }
 QPushButton[destructive="true"] { background-color: %23; color: white; }
 QPushButton[destructive="true"]:hover { background-color: %24; }
 QPushButton[primary="true"] { background-color: %13; color: %14; }

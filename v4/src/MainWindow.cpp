@@ -307,7 +307,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         m_api->abort();
         m_composer->setBusy(false);
     });
-    connect(m_composer, &Composer::personaRequested, this, &MainWindow::openPersonaMenu);
+    
     connect(m_composer, &Composer::modelSelected, this, [this](const QString &id) {
         m_model = id;
         if (!id.isEmpty()) {
@@ -608,7 +608,6 @@ void MainWindow::newChat() {
     m_store->create(QString());
     m_messages->clear();
     m_sidebar->setActiveConversation(m_store->active()->id);
-    m_composer->setPersonaName(I18n::t(QStringLiteral("Default")));
     refreshTitle();
     m_sidebar->refreshConversations();
     m_composer->focusInput();
@@ -621,15 +620,6 @@ void MainWindow::selectConversation(const QString &id) {
             m_store->setActive(&c);
             m_sidebar->setActiveConversation(id);
             renderConversation(&c);
-            // persona trigger shows the active preset name (v2)
-            const auto raw = Presets::load(m_config);
-            QString name = I18n::t(QStringLiteral("Default"));
-            if (!c.persona.isEmpty()) {
-                name = QStringLiteral("Custom");
-                for (const auto &p : Presets::list(raw))
-                    if (p.content == c.persona) name = p.name;
-            }
-            m_composer->setPersonaName(name);
             refreshTitle();
             return;
         }
@@ -1170,7 +1160,6 @@ void MainWindow::openSettings(int section) {
         m_sidebar->refreshConversations();
         m_messages->clear();
         setEmpty(true);
-        m_composer->setPersonaName(I18n::t(QStringLiteral("Default")));
     });
     connect(&dlg, &SettingsDialog::configChanged, this, [this](const QJsonObject &cfg) {
         m_config = cfg;
@@ -1235,7 +1224,6 @@ void MainWindow::openPersonaMenu() {
                            QJsonArray(), false};
             m_messages->addMessage(cm);
         }
-        m_composer->setPersonaName(name);
         dlg->accept();
     };
     auto populate = [list, presets, conv, activeName, applyPreset](const QString &needle) {
